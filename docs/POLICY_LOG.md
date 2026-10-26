@@ -214,3 +214,20 @@ violate. Trace: `models/report_v4_111runs.json`.
 Failures in d4/d4b: GRT-0116 congestion at util 40–45 for ldpcenc, salsa20, y_huff (routability
 limits of those designs, not tool bugs); sha512/ldpcenc antenna-repair crash fixed by
 `RUN_ANTENNA_REPAIR: false` (disclosed).
+
+## Functional equivalence of the repaired netlists (19:45 EDT)
+
+`br/equiv.py`: baseline final mapped netlist (gold) vs the arm's final mapped netlist (gate),
+physical-only cells (tap, fill, decap, antenna diodes) dropped, functional sky130 TT Liberty,
+`prep -flatten`, `clk2fflogic`, `equiv_make` / `equiv_simple` / `equiv_induct -seq 8`,
+`equiv_status -assert` — the same shape as AfterClock's mapped-netlist checker. Scope: mapped
+vs mapped under an implicit global clock with zero-delay cell models; not RTL equivalence,
+not timing.
+
+| arm | equivalence points | result | time |
+|---|---|---|---|
+| picorv32-base-v1-tgt050-70 (local re-run, bit-identical to the farm arm) | 39,458 (38,828 simple + 630 induction) | **PROVED** | 442 s |
+
+Negative control (one nand2 swapped for a nor2 in the repaired netlist) and the other three
+exploratory arms are queued; results below as they land.
+

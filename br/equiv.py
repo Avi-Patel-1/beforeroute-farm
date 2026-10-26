@@ -15,6 +15,7 @@ ap.add_argument("--gold", required=True); ap.add_argument("--gate", required=Tru
 ap.add_argument("--top", required=True); ap.add_argument("--liberty", required=True)
 ap.add_argument("--out", required=True); ap.add_argument("--seq", type=int, default=8)
 ap.add_argument("--timeout", type=int, default=3600)
+ap.add_argument("--negative-control", action="store_true", help="corrupt one gate of the gate netlist (nand2 -> nor2) and expect NOT PROVED")
 a = ap.parse_args()
 os.makedirs(a.out, exist_ok=True)
 lib = os.path.abspath(a.liberty)
@@ -39,6 +40,13 @@ rc = {}
 for side, nl in (("gold", a.gold), ("gate", a.gate)):
     nl_f = os.path.join(a.out, side + "-logic.v")
     rc[side + "_physical_cells_dropped"] = strip_physical(nl, nl_f)
+    if side == "gate" and a.negative_control:
+        txt = open(nl_f).read()
+        i = txt.find("sky130_fd_sc_hd__nand2_1 ")
+        assert i >= 0, "no nand2_1 instance to corrupt"
+        txt = txt[:i] + "sky130_fd_sc_hd__nor2_1 " + txt[i + len("sky130_fd_sc_hd__nand2_1 "):]
+        open(nl_f, "w").write(txt)
+        rc["negative_control"] = "one nand2_1 instance replaced by nor2_1 in the gate netlist"
     rc[side] = run(side, f"""read_liberty -ignore_miss_func -ignore_miss_dir -ignore_miss_data_latch {lib}
 read_verilog {nl_f}
 hierarchy -check -top {a.top}
@@ -60,7 +68,7 @@ equiv_induct -undef -seq {a.seq}
 equiv_status -assert
 """) if rc["gold"] == 0 and rc["gate"] == 0 else -1
 res = {"gold": a.gold, "gate": a.gate, "top": a.top, "returncodes": rc, "seconds": time.time() - t0,
-       "status": "PROVED" if rc.get("equiv") == 0 else "NOT PROVED",
+       "status": "PROVED" if rc.get("equiv") == 0 else "NOT PROVED", "negative_control": bool(a.negative_control),
        "scope": "mapped vs mapped, functional Liberty, clk2fflogic implicit global clock, zero delay; not RTL-level, not timing"}
 try:
     log = open(os.path.join(a.out, "equiv.log")).read()
@@ -69,4 +77,4 @@ except Exception:
     pass
 json.dump(res, open(os.path.join(a.out, "result.json"), "w"), indent=1)
 print(json.dumps(res, indent=1)[:1500])
-sys.exit(0 if res['status']=='PROVED' else 1)
+sys.exit(0 if (res['status']=='PROVED') != a.negative_control else 1)
