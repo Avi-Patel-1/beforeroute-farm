@@ -1,0 +1,57 @@
+name: BeforeRoute hero arms
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_tag:
+        description: 'Baseline job spec tag (farm/jobs/<tag>.json)'
+        required: true
+        type: string
+      arms:
+        description: 'JSON array of arms: rerun | uni<H> | tgt<kkk>-<H>'
+        required: true
+        type: string
+      model:
+        description: 'Model file in the repo'
+        required: false
+        default: 'models/model_holdout_picorv32_v1.txt'
+        type: string
+
+jobs:
+  arm:
+    name: ${{ inputs.base_tag }}-${{ matrix.arm }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        arm: ${{ fromJSON(inputs.arms) }}
+    env:
+      IMAGE: ghcr.io/librelane/librelane@sha256:4bc9042ba177f73f275b5b39e7d372a07d3f4043f548a0ba7f640097b7205051
+      PDK_VERSION: 8afc8346a57fe1ab7934ba5a6056ea8b43078e71
+    steps:
+      - uses: actions/checkout@v4
+      - name: Restore PDK cache
+        id: pdk-cache
+        uses: actions/cache@v4
+        with:
+          path: pdk
+          key: sky130-${{ env.PDK_VERSION }}-v1
+      - name: Pull toolchain image
+        run: docker pull "$IMAGE"
+      - name: Fetch PDK (cache miss only)
+        if: steps.pdk-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p pdk
+          docker run --rm -v "$PWD:/work" -w /work -e PDK_ROOT=/work/pdk "$IMAGE" ciel enable --pdk-family sky130 "$PDK_VERSION"
+      - name: Run arm
+        run: bash farm/hero_arm.sh "${{ inputs.base_tag }}" "${{ matrix.arm }}" "${{ inputs.model }}" 4 || true
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hero-${{ inputs.base_tag }}-${{ matrix.arm }}
+          path: results/
+          retention-days: 30
+          if-no-files-found: warn
