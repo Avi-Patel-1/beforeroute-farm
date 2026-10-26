@@ -8,7 +8,7 @@
     "dir::src/sha512_w_mem.v"
   ],
   "CLOCK_PORT": "clk",
-  "CLOCK_PERIOD": 20.0,
+  "CLOCK_PERIOD": 39.27,
   "FP_CORE_UTIL": 35,
   "PL_TARGET_DENSITY_PCT": 45,
   "PDN_VOFFSET": 5,

@@ -9,6 +9,9 @@ Top module: `salsa20`; single clock `clk`; no macros or SRAM.
 ## Local LibreLane 3 config (`config_sky130.json`)
 
 CLOCK_PERIOD 38.0 ns, FP_CORE_UTIL 35, PL_TARGET_DENSITY_PCT 45, farm PDN block.
+Quirk: `LINTER_ERROR_ON_LATCH: false` -- Verilator reports LATCH errors for the block-local temporaries in
+`data_out_logic` (salsa20.v:692) that are only assigned under `if (update_output)`; yosys infers no latches
+(0 latch cells in the synthesized netlist), so the lint class is demoted to a warning instead of disabling lint.
 Original flow settings for reference: OpenLane v1 sky130_fd_sc_hd: CLOCK_PERIOD 38, FP_CORE_UTIL 20, PL_TARGET_DENSITY 0.32, GPL/DPL_CELL_PADDING 4, MAX_FANOUT_CONSTRAINT 6, PL_RESIZER_HOLD_SLACK_MARGIN 0.25, heuristic diode insertion on input ports.
 
 ## Files

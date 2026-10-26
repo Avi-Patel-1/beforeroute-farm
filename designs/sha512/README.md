@@ -8,8 +8,8 @@ Top module: `sha512`; single clock `clk`; no macros or SRAM.
 
 ## Local LibreLane 3 config (`config_sky130.json`)
 
-CLOCK_PERIOD 20.0 ns, FP_CORE_UTIL 35, PL_TARGET_DENSITY_PCT 45, farm PDN block.
-Original flow settings for reference: Not from openlane-ci-designs; the OpenLane v1 sha512 regression used clk 'clk' at ~20 ns. Here CLOCK_PERIOD 20, FP_CORE_UTIL 35, PL_TARGET_DENSITY_PCT 45.
+CLOCK_PERIOD 39.27 ns, FP_CORE_UTIL 35, PL_TARGET_DENSITY_PCT 45, farm PDN block.
+Original flow settings for reference: RTL taken from upstream secworks/sha512 (not the single-file copy in OpenLane v0.21 designs/sha512); OpenLane v0.21 sky130_fd_sc_hd ran that core with CLOCK_PERIOD 39.27, FP_CORE_UTIL 25, PL_TARGET_DENSITY 0.30, SYNTH_MAX_FANOUT 10, which is where the 39.27 ns period comes from.
 
 ## Files
 
