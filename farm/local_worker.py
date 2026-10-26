@@ -23,7 +23,10 @@ def main() -> int:
     ap.add_argument("--jobs", type=int, default=2)
     ap.add_argument("--max", type=int, default=999)
     ap.add_argument("--results", default=os.path.join(ROOT, "results"))
+    ap.add_argument("--time-budget", type=int, default=6600, help="seconds; do not start a job expected to overrun this")
     a = ap.parse_args()
+    EXPECTED = {"spm": 240, "crc_pipe": 300, "aes_cipher": 3600, "picorv32": 2400}
+    t_start = time.time()
     tags = json.load(open(a.tags))
     only = set(a.only_design.split(",")) if a.only_design else None
     n = 0
@@ -36,6 +39,10 @@ def main() -> int:
         if os.path.exists(os.path.join(a.results, tag, "job.json")):
             continue
         if n >= a.max:
+            break
+        remaining = a.time_budget - (time.time() - t_start)
+        if EXPECTED.get(dname, 3600) > remaining:
+            print(f"[w1] stopping before {tag}: expected {EXPECTED.get(dname)}s > remaining {remaining:.0f}s", flush=True)
             break
         n += 1
         t0 = time.time()
