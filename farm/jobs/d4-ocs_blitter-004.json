@@ -1,0 +1,21 @@
+{
+ "tag": "d4-ocs_blitter-004",
+ "design": "designs/ocs_blitter",
+ "config": "config_sky130.json",
+ "overrides": {
+  "FP_CORE_UTIL": 45,
+  "PL_TARGET_DENSITY_PCT": 50,
+  "CLOCK_PERIOD": 18.2,
+  "MAX_TRANSITION_CONSTRAINT": 0.75,
+  "RUN_POST_GRT_DESIGN_REPAIR": false,
+  "RUN_MAGIC_DRC": false,
+  "RUN_KLAYOUT_DRC": false,
+  "RUN_LVS": false,
+  "RUN_KLAYOUT_XOR": false,
+  "RUN_IRDROP_REPORT": false,
+  "RUN_LINTER": false,
+  "EXTRA_EXCLUDED_CELLS": [
+   "sky130_fd_sc_hd__clkdlybuf4s25_1"
+  ]
+ }
+}
