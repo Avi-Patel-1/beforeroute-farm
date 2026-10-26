@@ -40,8 +40,8 @@ def main() -> int:
     for dname, d in DESIGNS.items():
         space = list(
             itertools.product(
-                [35, 45, 55, 65],  # util
-                [-10, 0, 10],  # density delta
+                [35, 40, 45, 50, 55],  # util (65 does not route on the big designs)
+                [-10, 0, 10, 20],  # density delta (capped at 70 below)
                 [0.8, 1.0, 1.3],  # period factor
                 [0.5, 0.75, 1.0],  # max transition ns
                 [0, 1],  # exclude clkdlybuf
@@ -54,10 +54,14 @@ def main() -> int:
             tag = f"{a.prefix}-{dname}-{i:03d}"
             ov = {
                 "FP_CORE_UTIL": util,
-                "PL_TARGET_DENSITY_PCT": max(20, min(95, util + 5 + dd)),
+                "PL_TARGET_DENSITY_PCT": max(20, min(70, util + 5 + dd)),
                 "CLOCK_PERIOD": round(d["period"] * pf, 3),
                 "MAX_TRANSITION_CONSTRAINT": mt,
                 "RUN_POST_GRT_DESIGN_REPAIR": False,
+                # signoff-only steps are not needed for slew/cap/fanout labels (21% of runtime)
+                # (streamouts and WriteLEF stay on: ungated later steps need their GDS/LEF)
+                "RUN_MAGIC_DRC": False, "RUN_KLAYOUT_DRC": False, "RUN_LVS": False, "RUN_KLAYOUT_XOR": False,
+                "RUN_IRDROP_REPORT": False, "RUN_LINTER": False,
             }
             if ex:
                 ov["EXTRA_EXCLUDED_CELLS"] = CLKDLY

@@ -1,0 +1,18 @@
+{
+ "tag": "d2-picorv32-018",
+ "design": "designs/picorv32",
+ "config": "config_sky130.json",
+ "overrides": {
+  "FP_CORE_UTIL": 50,
+  "PL_TARGET_DENSITY_PCT": 65,
+  "CLOCK_PERIOD": 32.5,
+  "MAX_TRANSITION_CONSTRAINT": 0.75,
+  "RUN_POST_GRT_DESIGN_REPAIR": false,
+  "RUN_MAGIC_DRC": false,
+  "RUN_KLAYOUT_DRC": false,
+  "RUN_LVS": false,
+  "RUN_KLAYOUT_XOR": false,
+  "RUN_IRDROP_REPORT": false,
+  "RUN_LINTER": false
+ }
+}
