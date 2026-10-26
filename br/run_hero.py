@@ -24,6 +24,13 @@ import time
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 
+def done(results, tag):
+    try:
+        return json.load(open(os.path.join(results, tag, "job.json"))).get("status") == "completed"
+    except Exception:
+        return False
+
+
 def run(cmd, log_path):
     with open(log_path, "a") as lf:
         lf.write("\n$ " + " ".join(cmd) + "\n")
@@ -101,15 +108,17 @@ def main() -> int:
     # 2. base re-run (noise control)
     if not a.skip_base_rerun:
         t = f"{tag}-rerun"
-        run([sys.executable, os.path.join(HERE, "arms.py"), "--base-run", base_run, "--arm", "base", "--tag", t,
-             "--results", results, "--pdk-root", a.pdk_root, "--jobs", str(a.jobs)], log_path)
+        if not done(results, t):
+            run([sys.executable, os.path.join(HERE, "arms.py"), "--base-run", base_run, "--arm", "base", "--tag", t,
+                 "--results", results, "--pdk-root", a.pdk_root, "--jobs", str(a.jobs)], log_path)
         arms.append(t)
 
     # 3. uniform family
     for h in [x for x in a.uniform.split(",") if x]:
         t = f"{tag}-uni{int(float(h))}"
-        run([sys.executable, os.path.join(HERE, "arms.py"), "--base-run", base_run, "--arm", "uniform", "--tag", t,
-             "--slew-pct", h, "--cap-pct", h, "--results", results, "--pdk-root", a.pdk_root, "--jobs", str(a.jobs)], log_path)
+        if not done(results, t):
+            run([sys.executable, os.path.join(HERE, "arms.py"), "--base-run", base_run, "--arm", "uniform", "--tag", t,
+                 "--slew-pct", h, "--cap-pct", h, "--results", results, "--pdk-root", a.pdk_root, "--jobs", str(a.jobs)], log_path)
         arms.append(t)
 
     # 4. targeted family
@@ -119,9 +128,10 @@ def main() -> int:
         run([sys.executable, os.path.join(HERE, "score.py"), "--model", a.model, "--run-results", os.path.join(results, tag),
              "--frac", k, "--out", flagged], log_path)
         t = f"{tag}-tgt{int(round(float(k) * 1000)):03d}-{int(float(h))}"
-        run([sys.executable, os.path.join(HERE, "arms.py"), "--base-run", base_run, "--arm", "targeted", "--tag", t,
-             "--slew-pct", h, "--cap-pct", h, "--flagged", flagged, "--results", results, "--pdk-root", a.pdk_root,
-             "--jobs", str(a.jobs)], log_path)
+        if not done(results, t):
+            run([sys.executable, os.path.join(HERE, "arms.py"), "--base-run", base_run, "--arm", "targeted", "--tag", t,
+                 "--slew-pct", h, "--cap-pct", h, "--flagged", flagged, "--results", results, "--pdk-root", a.pdk_root,
+                 "--jobs", str(a.jobs)], log_path)
         arms.append(t)
 
     summary = {"tag": tag, "design": spec["design"], "model": a.model, "arms": [arm_summary(results, t) for t in arms],
