@@ -15,6 +15,7 @@ Writes results/<tag>/hero_summary.json with per-arm signoff violations, area, in
 from __future__ import annotations
 
 import argparse
+import glob
 import json
 import os
 import subprocess
@@ -54,6 +55,8 @@ def arm_summary(results, tag):
         out.update({
             "stdcell_area": m.get("design__instance__area__stdcell"),
             "instances": m.get("design__instance__count"),
+            "instances_stdcell": m.get("design__instance__count__stdcell"),
+            "area_timing_repair_buffer": m.get("design__instance__area__class:timing_repair_buffer"),
             "max_slew_count": m.get("design__max_slew_violation__count"),
             "max_cap_count": m.get("design__max_cap_violation__count"),
             "max_fanout_count": m.get("design__max_fanout_violation__count"),
@@ -64,14 +67,38 @@ def arm_summary(results, tag):
     except Exception:
         pass
     try:
-        lab = json.load(open(os.path.join(d, "labels.json")))["summary"]
+        labj = json.load(open(os.path.join(d, "labels.json")))
+        lab = labj["summary"]
         out.update({"signoff_violating_nets": lab["nets_violating"], "nets_total": lab["nets_total"],
                     "corner_counts": lab["corner_counts"]})
+        recs = [r for r in labj.get("nets", []) if r.get("violated")]
+        data = [r for r in recs if r.get("sigtype_s") == "SIGNAL"]
+        out.update({
+            "signoff_violating_data_nets": len(data),
+            "signoff_violating_clock_nets": len(recs) - len(data),
+            "data_slew": sum(1 for r in data if r.get("viol_slew")),
+            "data_cap": sum(1 for r in data if r.get("viol_cap")),
+            "data_fanout": sum(1 for r in data if r.get("viol_fanout")),
+        })
     except Exception:
         pass
     ts = os.path.join(d, "targeted_summary.json")
     if os.path.exists(ts):
         out["targeted"] = json.load(open(ts))
+    # cells changed by the repair step, from the resizer's own log lines
+    import re
+    resized = buffers = nets_touched = 0
+    found = {}
+    for lf in glob.glob(os.path.join(d, "*.log")):
+        txt = open(lf, errors="replace").read()
+        for m in re.finditer(r"RSZ-0039\] Resized (\d+) instances", txt):
+            resized += int(m.group(1))
+        for m in re.finditer(r"RSZ-0038\] Inserted (\d+) buffers in (\d+) nets", txt):
+            buffers += int(m.group(1)); nets_touched += int(m.group(2))
+        for m in re.finditer(r"RSZ-00(34|35|36|37)\] Found (\d+) (slew|fanout|capacitance|long wires)", txt):
+            found[m.group(3)] = found.get(m.group(3), 0) + int(m.group(2))
+    if resized or buffers or nets_touched:
+        out.update({"resized": resized, "buffers": buffers, "nets_touched": nets_touched, "repair_found": found})
     return out
 
 
