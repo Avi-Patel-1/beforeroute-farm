@@ -28,6 +28,14 @@ case "$ARM" in
     python3 -m pip install -q pandas pyarrow lightgbm scikit-learn
     python3 br/score.py --model $MODEL --run-results results/$BASE --frac $FRAC $RULE --out results/$BASE/flagged_$ARM.json
     $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm targeted --tag $BASE-$ARM --slew-pct $H --cap-pct $H --passes $PASSES --flagged /work/results/$BASE/flagged_$ARM.json --results results --pdk-root /work/pdk --jobs $JOBS ;;
+  lt*)
+    # lt050-80-60-40: top 5% split by predicted signoff ratio (>=1.3 | >=1.1 | rest) at margins 80/60/40
+    K=${ARM#lt}; K=${K%%-*}; M=${ARM#lt*-}; H1=${M%%-*}; M2=${M#*-}; H2=${M2%%-*}; H3=${M2#*-}
+    FRAC=$(python3 -c "print(int('$K')/1000)")
+    REG=$(echo "$MODEL" | sed 's#/model_#/reg_#')
+    python3 -m pip install -q pandas pyarrow lightgbm scikit-learn
+    python3 br/score.py --model $MODEL --run-results results/$BASE --frac $FRAC --reg-model $REG --reg-tiers "1.3:$H1,1.1:$H2,0:$H3" --out results/$BASE/tiers_$ARM.json
+    $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm tiered --tag $BASE-$ARM --tiers /work/results/$BASE/tiers_$ARM.json --results results --pdk-root /work/pdk --jobs $JOBS ;;
   tier*)
     # tier020-70_050-40  ->  top 2% at 70%, next (up to 5%) at 40%
     SPEC=$(python3 -c "

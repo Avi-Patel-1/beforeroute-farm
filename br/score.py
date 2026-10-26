@@ -29,6 +29,8 @@ def main() -> int:
     ap.add_argument("--out", default=None)
     ap.add_argument("--tiers", default=None, help="e.g. 0.02:70,0.05:40 -> top 2%% at 70%%, next 3%% at 40%%; writes a tiers JSON")
     ap.add_argument("--rule-fanout", action="store_true", help="also flag every net whose post-GRT fanout already exceeds MAX_FANOUT (deterministic rule, Round 2 proposal)")
+    ap.add_argument("--reg-model", default=None, help="regression model (predicted signoff slew ratio); enables --reg-tiers")
+    ap.add_argument("--reg-tiers", default=None, help="learned-margin tiers over the top-k set, e.g. 1.3:80,1.1:60,0:40 -> predicted ratio >=1.3 at 80%%, >=1.1 at 60%%, rest at 40%%")
     a = ap.parse_args()
     import lightgbm as lgb
 
@@ -48,7 +50,22 @@ def main() -> int:
         k = max(1, int(round((a.frac or 0.05) * len(df))))
         flagged = df.head(k)
     out = a.out or os.path.join(os.path.abspath(a.run_results), "flagged.json")
-    if a.tiers:
+    if a.reg_tiers:
+        import numpy as np
+        reg = lgb.Booster(model_file=a.reg_model)
+        Xf = flagged[FEATURES].copy()
+        Xf["driver_class"] = pd.Categorical(Xf["driver_class"], categories=reg.pandas_categorical[0]) if reg.pandas_categorical else Xf["driver_class"].astype("category")
+        pred = np.exp(reg.predict(Xf))
+        flagged = flagged.assign(pred_ratio=pred)
+        tiers, taken = [], pd.Series(False, index=flagged.index)
+        for item in a.reg_tiers.split(","):
+            thr, h = item.split(":")
+            sel = (flagged["pred_ratio"] >= float(thr)) & ~taken
+            tiers.append({"nets": flagged.loc[sel, "net"].tolist(), "slew_pct": float(h), "cap_pct": float(h), "pred_ratio_min": float(thr)})
+            taken |= sel
+        json.dump({"tiers": tiers}, open(out, "w"))
+        print(json.dumps({"reg_tiers": [(t["pred_ratio_min"], t["slew_pct"], len(t["nets"])) for t in tiers]}))
+    elif a.tiers:
         tiers, prev = [], 0
         for item in a.tiers.split(","):
             k, h = item.split(":")
