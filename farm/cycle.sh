@@ -12,7 +12,7 @@ echo "== $(date '+%F %T') cycle start"
 python3 farm/collect.py --repo $REPO --results results 2>&1 | tail -2
 
 # hero bases = any results dir that has a "-rerun" arm or arms on the farm
-BASES=$(gh run list -R $REPO -w hero.yml --limit 20 --json databaseId --jq '.[].databaseId' | while read r; do gh run view $r -R $REPO --json jobs --jq '.jobs[0].name' 2>/dev/null; done | sed -E 's/-(rerun|uni[0-9]+|tgt[0-9]+-[0-9a-z]+|tier.*|lt[0-9].*)$//' | sort -u)
+BASES=$(gh run list -R $REPO -w hero.yml --limit 20 --json databaseId --jq '.[].databaseId' | while read r; do gh run view $r -R $REPO --json jobs --jq '.jobs[0].name' 2>/dev/null; done | sed -E 's/-(rerun|uni[0-9]+|tgt[0-9]+-[0-9a-z]+|tier.*|lt[0-9].*|thr[0-9]+-[0-9a-z]+)$//' | sort -u)
 SUMMARIES=""
 for b in $BASES; do
   out=$(python3 farm/hero_collect.py --repo $REPO --base "$b" --results results 2>&1)

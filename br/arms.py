@@ -38,6 +38,7 @@ def main() -> int:
     ap.add_argument("--flagged", default=None)
     ap.add_argument("--tiers", default=None, help="tiers JSON for the tiered arm")
     ap.add_argument("--passes", type=int, default=1, help="masked repair passes per tier (targeted/tiered arms)")
+    ap.add_argument("--protect-hold", action="store_true", help="hold-fix delay cells are do-not-touch instances (may be buffered around, not resized)")
     ap.add_argument("--results", default=os.path.join(HERE, "..", "results"))
     ap.add_argument("--override", action="append", default=[])
     ap.add_argument("--pdk-root", default=os.environ.get("PDK_ROOT", "/home/claude/eda/pdk"))
@@ -76,6 +77,8 @@ def main() -> int:
         cfg["BR_FLAGGED_NETS_FILE"] = flagged_abs
     if a.arm in ("targeted", "tiered") and a.passes != 1:
         cfg["BR_REPAIR_PASSES"] = int(a.passes)
+    if a.arm in ("targeted", "tiered") and a.protect_hold:
+        cfg["BR_PROTECT_HOLD_CELLS"] = True
     if a.arm == "tiered":
         if not a.tiers:
             raise SystemExit("--tiers is required for the tiered arm")

@@ -67,6 +67,12 @@ class TargetedRepairPostGRT(RepairDesignPostGRT):
             "JSON {tiers:[{nets:[...], slew_pct, cap_pct}, ...]}: one masked repair pass per tier.",
         ),
         Variable(
+            "BR_PROTECT_HOLD_CELLS",
+            bool,
+            "Mark hold-fix delay cells (instances named hold* or with clkdlybuf/dlygate masters) do-not-touch so the masked repair may buffer their nets but not resize them.",
+            default=False,
+        ),
+        Variable(
             "BR_REPAIR_PASSES",
             int,
             "Masked repair_design passes per tier (a second pass cleans up violations the first pass created).",

@@ -19,15 +19,19 @@ case "$ARM" in
   uni*)
     H=${ARM#uni}
     $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm uniform --tag $BASE-$ARM --slew-pct $H --cap-pct $H --results results --pdk-root /work/pdk --jobs $JOBS ;;
-  tgt*)
-    # tgt050-70 (one pass) | tgt050-70p2 (two masked passes) | tgt050-70f (+ fanout rule)
-    K=${ARM#tgt}; K=${K%%-*}; REST=${ARM##*-}; H=${REST%%[pfv]*}
+  tgt*|thr*)
+    # tgt050-70: top 5% of nets | thr500-70: every net with p >= 0.500 ; suffixes after H:
+    #   p2 = two masked passes, f = + fanout rule, h = hold-fix delay cells protected from resizing, v3 = model tag
+    case "$ARM" in tgt*) K=${ARM#tgt}; SEL=frac;; thr*) K=${ARM#thr}; SEL=thr;; esac
+    K=${K%%-*}; REST=${ARM##*-}; H=${REST%%[pfhv]*}
     PASSES=1; case "$REST" in *p2*) PASSES=2;; esac
     RULE=""; case "$REST" in *f*) RULE="--rule-fanout";; esac
-    FRAC=$(python3 -c "print(int('$K')/1000)")
+    PROT=""; case "$REST" in *h*) PROT="--protect-hold";; esac
+    VAL=$(python3 -c "print(int('$K')/1000)")
+    [ "$SEL" = frac ] && SELARG="--frac $VAL" || SELARG="--threshold $VAL"
     python3 -m pip install -q pandas pyarrow lightgbm scikit-learn
-    python3 br/score.py --model $MODEL --run-results results/$BASE --frac $FRAC $RULE --out results/$BASE/flagged_$ARM.json
-    $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm targeted --tag $BASE-$ARM --slew-pct $H --cap-pct $H --passes $PASSES --flagged /work/results/$BASE/flagged_$ARM.json --results results --pdk-root /work/pdk --jobs $JOBS ;;
+    python3 br/score.py --model $MODEL --run-results results/$BASE $SELARG $RULE --out results/$BASE/flagged_$ARM.json
+    $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm targeted --tag $BASE-$ARM --slew-pct $H --cap-pct $H --passes $PASSES $PROT --flagged /work/results/$BASE/flagged_$ARM.json --results results --pdk-root /work/pdk --jobs $JOBS ;;
   lt*)
     # lt050-80-60-40: top 5% split by predicted signoff ratio (>=1.3 | >=1.1 | rest) at margins 80/60/40
     K=${ARM#lt}; K=${K%%-*}; M=${ARM#lt*-}; H1=${M%%-*}; M2=${M#*-}; H2=${M2%%-*}; H3=${M2#*-}

@@ -60,6 +60,17 @@ tcl("source $::env(SCRIPTS_DIR)/openroad/common/set_rc.tcl")
 tcl("source $::env(SCRIPTS_DIR)/openroad/common/grt.tcl")
 tcl("estimate_parasitics -global_routing")
 
+protect_hold = str(envget("BR_PROTECT_HOLD_CELLS", "0")).lower() in ("1", "true")
+protected = []
+if protect_hold:
+    for inst in block.getInsts():
+        m = inst.getMaster().getName()
+        if inst.getName().startswith("hold") or "clkdlybuf" in m or "dlygate" in m:
+            if not inst.isDoNotTouch():
+                inst.setDoNotTouch(True)
+                protected.append(inst)
+    print(f"[br] protected {len(protected)} hold-fix delay cells from resizing", flush=True)
+
 n_inst_before = len(block.getInsts())
 tier_summaries = []
 n_flagged_found = 0
@@ -103,6 +114,8 @@ for ti, (allowed, slew_pct, cap_pct) in enumerate(tiers):
                            "masked": len(masked), "slew_pct": slew_pct, "cap_pct": cap_pct, "passes": n_passes,
                            "insts_added": len(block.getInsts()) - before})
     print(f"[br] tier {ti}: allowed={len(allowed) if allowed is not None else 'ALL'} found={found} masked={len(masked)} margins={slew_pct}/{cap_pct} insts_added={len(block.getInsts()) - before}", flush=True)
+for inst in protected:
+    inst.setDoNotTouch(False)
 n_inst_after = len(block.getInsts())
 tcl("unset_dont_touch_objects")
 if envget("GRT_DESIGN_REPAIR_RUN_GRT", "1") in ("1", "true", "True"):
@@ -115,6 +128,7 @@ summary = {
     "tiers": tier_summaries,
     "n_flagged_found": n_flagged_found,
     "n_masked": n_masked,
+    "protected_hold_cells": len(protected),
     "insts_before": n_inst_before,
     "insts_after": n_inst_after,
     "insts_added": n_inst_after - n_inst_before,
