@@ -173,3 +173,44 @@ New-design baselines (d3): bm64 275, des 321, md5 192, ocs_blitter 392, salsa20 
 462 violating nets — six new held-out families for the model. sha512 and ldpcenc (and one
 salsa20 config) crash in OpenROAD's antenna repair (GRT-0183 heap underflow, unrelated to this
 work); re-dispatched with `RUN_ANTENNA_REPAIR: false` as d3b/d4b, to be reported as such.
+
+### Round 2 complete (19:30 EDT)
+
+| base | arm | V | E cells | hold kept | ΔA |
+|---|---|---|---|---|---|
+| AES | thr500-70v3 (p ≥ 0.5 → 885 eligible = 7.8%) | **54** (93.5% removed) | 1,072 | 26% | +0.75% |
+| AES | thr500-70hv3 | 798 | – | 99% | repair disabled |
+| PicoRV32-006 | tgt050-70v3 | 29 | 507 | 101% | −1.21% |
+| PicoRV32-006 | thr500-70v3 (416 eligible = 4.3%) | 63 | 448 | 100% | −1.03% |
+| PicoRV32-006 | tgt050-70hv3 / thr500-70hv3 | 381 / 386 | – | 101% | repair disabled |
+
+* The threshold budget does what it was proposed for on AES: 93.5% of violators removed with
+  1,072 cells (uni50: 73% with 1,302; uni70: 99% with 3,957 and +10% area). Its price is the
+  hold margin (26% kept, like uni50): the extra 321 eligible nets include the hold-critical
+  delay cells. So on AES the policy offers two honest operating points — k = 5%: 69% removed,
+  90% hold margin kept; p ≥ 0.5: 93.5% removed, 26% kept — and both dominate the uniform arms
+  on edits. On PicoRV32-006 the threshold undershoots (416 < 477 eligible) and leaves 63 vs 29.
+* Hold-cell protection: negative on all three bases (confirms the mechanism).
+
+## Model v4 — 111 runs, 597,620 nets, 10 designs, leave-one-design-out (19:30 EDT)
+
+| held-out design | runs | violators | PR-AUC | recall at 5% flagged | nets to catch 95% | estimate: recall at 5% | estimate: nets to catch 95% |
+|---|---|---|---|---|---|---|---|
+| BM64 | 1 | 275 | 0.957 | 100.0% | 2.8% | 86.5% | 96.6% |
+| aes_cipher_top | 12 | 8,562 | 0.979 | 77.1% | 6.8% | 70.6% | 10.0% |
+| crc_pipe | 31 | 95 | 0.850 | 100.0% | 0.6% | 53.7% | 99.1% |
+| des | 1 | 321 | 0.962 | 100.0% | 2.5% | 72.6% | 66.5% |
+| md5 | 1 | 192 | 0.989 | 99.5% | 2.9% | 92.7% | 44.3% |
+| ocs_blitter | 1 | 392 | 0.992 | 93.1% | 5.1% | 82.4% | 6.7% |
+| picorv32 | 35 | 13,730 | 0.977 | 97.6% | 4.3% | 84.9% | 44.9% |
+| salsa20 | 1 | 1,259 | 0.984 | 95.6% | 4.9% | 84.4% | 7.1% |
+| y_huff | 1 | 462 | 0.976 | 100.0% | 3.0% | 92.4% | 8.7% |
+
+Every held-out design comes from a different family (RISC-V core, AES, DES, SHA/MD5, salsa20,
+Huffman, LDPC-style, blitter, CRC, SPM). Flagging 5% of nets catches 93–100% of signoff
+violators on 8 of 9 held-out designs with violators; AES is 77% because 6.4% of its nets
+violate. Trace: `models/report_v4_111runs.json`.
+
+Failures in d4/d4b: GRT-0116 congestion at util 40–45 for ldpcenc, salsa20, y_huff (routability
+limits of those designs, not tool bugs); sha512/ldpcenc antenna-repair crash fixed by
+`RUN_ANTENNA_REPAIR: false` (disclosed).
