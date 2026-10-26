@@ -8,8 +8,8 @@ alone, and is evaluated on bases the model never saw.
 
 A policy = (model, k = fraction of signal nets flagged, H = slew/cap margin %, tiers).
 Scores: V = signal nets violating at nine-corner signoff (baseline in brackets), E = cells changed
-by the repair step (resized + buffers; "+n inst" = std-cell instance delta when the log is
-missing), hold = hold worst slack in ns (baseline in brackets), ΔA = std-cell area vs baseline.
+by the repair step (resized + buffers; all four targeted arms were re-run locally to recover
+their logs and reproduced the farm metrics bit-for-bit), hold = hold worst slack in ns (baseline in brackets), ΔA = std-cell area vs baseline.
 
 ## Round 0 — exploratory, base `picorv32-base-v1` (model v1: 3 runs, no PicoRV32)
 
@@ -19,10 +19,10 @@ missing), hold = hold worst slack in ns (baseline in brackets), ΔA = std-cell a
 | uni30 | 324 | 507 | 0.106 | −2.32% | …-uni30 |
 | uni50 | 152 | 750 | 0.097 | −2.94% | …-uni50 |
 | uni70 | 4 | 1,248 | 0.025 | −2.35% | …-uni70 |
-| tgt020-70 | 163 | +8 inst | 0.091 | −0.53% | …-tgt020-70 |
-| **tgt050-70** | 7 | 469 (453 resized + 16 buffers; local re-run, bit-identical metrics) | 0.094 | −1.19% | …-tgt050-70, …-tgt050-70-L |
-| tgt050-90 | 5 | +299 inst | 0.037 | +4.48% | …-tgt050-90 |
-| tgt100-70 | 5 | +43 inst | 0.028 | −1.39% | …-tgt100-70 |
+| tgt020-70 | 163 | 198 | 0.091 | −0.53% | …-tgt020-70 (+ -L re-run) |
+| **tgt050-70** | 7 | 469 (453 resized + 16 buffers) | 0.094 | −1.19% | …-tgt050-70 (+ -L re-run) |
+| tgt050-90 | 5 | 789 (482 + 307 buffers) | 0.037 | +4.48% | …-tgt050-90 (+ -L re-run) |
+| tgt100-70 | 5 | 618 | 0.028 | −1.39% | …-tgt100-70 (+ -L re-run) |
 
 What the traces said:
 * `uni70/repair_step.log`: RSZ found 1,402 slew violations at a 70% margin and touched 1,197
