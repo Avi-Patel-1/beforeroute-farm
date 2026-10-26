@@ -1,0 +1,21 @@
+{
+  "DESIGN_NAME": "sha512",
+  "VERILOG_FILES": [
+    "dir::src/sha512.v",
+    "dir::src/sha512_core.v",
+    "dir::src/sha512_h_constants.v",
+    "dir::src/sha512_k_constants.v",
+    "dir::src/sha512_w_mem.v"
+  ],
+  "CLOCK_PORT": "clk",
+  "CLOCK_PERIOD": 20.0,
+  "FP_CORE_UTIL": 35,
+  "PL_TARGET_DENSITY_PCT": 45,
+  "PDN_VOFFSET": 5,
+  "PDN_HOFFSET": 5,
+  "PDN_VWIDTH": 2,
+  "PDN_HWIDTH": 2,
+  "PDN_VPITCH": 30,
+  "PDN_HPITCH": 30,
+  "PDN_SKIPTRIM": true
+}

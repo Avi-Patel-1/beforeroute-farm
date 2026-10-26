@@ -1,0 +1,13 @@
+{
+  "copied_at": "2026-10-26T18:57:15.190405+00:00",
+  "origin": "https://github.com/efabless/openlane-ci-designs designs/y_huff (commit 6676a20db8775e0ca9a6df099e807b4951b8da6f); upstream OpenCores jpegencode (David Lundgren)",
+  "author": "David Lundgren (c) 2009",
+  "license": "Permissive OpenCores-style notice (per source header)",
+  "top": "y_huff",
+  "clock_port": "clk",
+  "files_sha256": {
+    "y_huff.v": "6292ba953b7016f227cc331be4036b25bf1f88649c6ee6cb75507d02eaca67ea",
+    "LICENSE": "0f91e8e4bc39a67486e587fbb05531416752591a04f8dc60fd632c4390c0d683"
+  },
+  "local_modifications": "None to copied RTL; local config_sky130.json only"
+}

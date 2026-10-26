@@ -1,0 +1,13 @@
+{
+  "copied_at": "2026-10-26T18:57:15.206374+00:00",
+  "origin": "https://github.com/efabless/openlane-ci-designs designs/wbqspiflash (commit 6676a20db8775e0ca9a6df099e807b4951b8da6f); upstream ZipCPU/qspiflash (Gisselquist Technology)",
+  "author": "Dan Gisselquist, Gisselquist Technology LLC (c) 2015-2019",
+  "license": "LGPL-3.0-or-later (per source header)",
+  "top": "wbqspiflash",
+  "clock_port": "i_clk",
+  "files_sha256": {
+    "wbqspiflash.v": "31c1f1b9d627a542379d59359149a33ba9b596afe43598297f1a67b07fff2d1f",
+    "LICENSE": "fb8343b50bca08e1124f9bfe83e798f83e66d0f26dc6cb1c71539e70a3db4d4e"
+  },
+  "local_modifications": "None to copied RTL; local config_sky130.json only"
+}

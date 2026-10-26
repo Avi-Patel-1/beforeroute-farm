@@ -1,0 +1,13 @@
+{
+  "copied_at": "2026-10-26T18:57:15.192656+00:00",
+  "origin": "https://github.com/efabless/openlane-ci-designs designs/usb (commit 6676a20db8775e0ca9a6df099e807b4951b8da6f); upstream avakar/usbcorev",
+  "author": "Martin Vejnar (c) 2017",
+  "license": "MIT (per source header)",
+  "top": "usb",
+  "clock_port": "clk_48",
+  "files_sha256": {
+    "usb2p0_core.v": "6bfa2e3e48369a21767936e29096dbc6f9d99e2441800e80cd9d380b2429f7b8",
+    "LICENSE": "227286b8a0bd3d020e3a5256de5cb427b8a1bd8f76d8cba53e4a85621e08b5fe"
+  },
+  "local_modifications": "None to copied RTL; local config_sky130.json only"
+}

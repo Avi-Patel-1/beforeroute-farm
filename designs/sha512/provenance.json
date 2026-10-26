@@ -1,0 +1,17 @@
+{
+  "copied_at": "2026-10-26T18:57:15.209937+00:00",
+  "origin": "https://github.com/secworks/sha512 src/rtl (commit e4cdf33418a3aa95cee25e1f0b1d8a6ede51c1bd)",
+  "author": "Joachim Strombergson / Secworks Sweden AB (c) 2014",
+  "license": "BSD-2-Clause (LICENSE)",
+  "top": "sha512",
+  "clock_port": "clk",
+  "files_sha256": {
+    "sha512.v": "175837285a5eb7f8a620f632342629186478d9f0b7f3f959afa48c38d2ea00b1",
+    "sha512_core.v": "4f01ed075906c1ea065c5565ad36f3da72c3c2a482c3defebd3dedc1d5b296ac",
+    "sha512_h_constants.v": "6ab74a4fb77354a648c567cc6677cfaf8d6aab2c8e91d73e585b601cf920807e",
+    "sha512_k_constants.v": "b87e10a1065135f931884a68ae30acf9f78b38e4f050cbbd1ad0b056048923d1",
+    "sha512_w_mem.v": "51aca3c6157670bf3586550a94c33f8dfc52570972cf5c3d1a288a594f8ee46d",
+    "LICENSE": "81899e14798bc6a06e02f48959e1825b9e631f0415bccf5b74e589dabd7c7f80"
+  },
+  "local_modifications": "None to copied RTL; local config_sky130.json only"
+}

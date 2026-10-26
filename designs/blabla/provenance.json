@@ -1,0 +1,13 @@
+{
+  "copied_at": "2026-10-26T18:57:15.189615+00:00",
+  "origin": "https://github.com/efabless/openlane-ci-designs designs/blabla (commit 6676a20db8775e0ca9a6df099e807b4951b8da6f); upstream secworks/blabla",
+  "author": "Joachim Strombergson / Assured AB (c) 2017",
+  "license": "BSD-2-Clause (per source header)",
+  "top": "blabla",
+  "clock_port": "clk",
+  "files_sha256": {
+    "blabla.v": "6820fa53123132a1253b1bb42c9585f13a856263ef36581f4cb93dee9ee76cd9",
+    "LICENSE": "b63d1146daed24c80f641cd9805ceb68aa7938c4b952e246807a80e463b1e78f"
+  },
+  "local_modifications": "None to copied RTL; local config_sky130.json only"
+}

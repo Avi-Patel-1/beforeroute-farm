@@ -27,6 +27,7 @@ def main() -> int:
     ap.add_argument("--frac", type=float, default=None)
     ap.add_argument("--threshold", type=float, default=None)
     ap.add_argument("--out", default=None)
+    ap.add_argument("--tiers", default=None, help="e.g. 0.02:70,0.05:40 -> top 2%% at 70%%, next 3%% at 40%%; writes a tiers JSON")
     a = ap.parse_args()
     import lightgbm as lgb
 
@@ -44,7 +45,17 @@ def main() -> int:
         k = max(1, int(round((a.frac or 0.05) * len(df))))
         flagged = df.head(k)
     out = a.out or os.path.join(os.path.abspath(a.run_results), "flagged.json")
-    json.dump(flagged["net"].tolist(), open(out, "w"))
+    if a.tiers:
+        tiers, prev = [], 0
+        for item in a.tiers.split(","):
+            k, h = item.split(":")
+            upto = max(prev, int(round(float(k) * len(df))))
+            tiers.append({"nets": df.iloc[prev:upto]["net"].tolist(), "slew_pct": float(h), "cap_pct": float(h), "frac_upto": float(k)})
+            prev = upto
+        json.dump({"tiers": tiers}, open(out, "w"))
+        flagged = df.iloc[:prev]
+    else:
+        json.dump(flagged["net"].tolist(), open(out, "w"))
     summ = {
         "run": stats["run"], "nets_scored": int(len(df)), "flagged": int(len(flagged)),
         "flag_frac": float(len(flagged) / max(1, len(df))), "min_p_flagged": float(flagged["p"].min()) if len(flagged) else None,

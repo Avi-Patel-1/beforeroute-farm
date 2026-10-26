@@ -1,0 +1,15 @@
+{
+  "DESIGN_NAME": "xtea",
+  "VERILOG_FILES": "dir::src/xtea.v",
+  "CLOCK_PORT": "clock",
+  "CLOCK_PERIOD": 26.03,
+  "FP_CORE_UTIL": 45,
+  "PL_TARGET_DENSITY_PCT": 50,
+  "PDN_VOFFSET": 5,
+  "PDN_HOFFSET": 5,
+  "PDN_VWIDTH": 2,
+  "PDN_HWIDTH": 2,
+  "PDN_VPITCH": 30,
+  "PDN_HPITCH": 30,
+  "PDN_SKIPTRIM": true
+}

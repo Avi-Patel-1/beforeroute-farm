@@ -31,11 +31,12 @@ sys.path.insert(0, HERE)
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--base-run", required=True)
-    ap.add_argument("--arm", required=True, choices=["base", "uniform", "targeted"])
+    ap.add_argument("--arm", required=True, choices=["base", "uniform", "targeted", "tiered"])
     ap.add_argument("--tag", required=True)
     ap.add_argument("--slew-pct", type=float, default=50)
     ap.add_argument("--cap-pct", type=float, default=50)
     ap.add_argument("--flagged", default=None)
+    ap.add_argument("--tiers", default=None, help="tiers JSON for the tiered arm")
     ap.add_argument("--results", default=os.path.join(HERE, "..", "results"))
     ap.add_argument("--override", action="append", default=[])
     ap.add_argument("--pdk-root", default=os.environ.get("PDK_ROOT", "/home/claude/eda/pdk"))
@@ -72,6 +73,11 @@ def main() -> int:
             raise SystemExit("--flagged is required for the targeted arm")
         flagged_abs = os.path.abspath(a.flagged)
         cfg["BR_FLAGGED_NETS_FILE"] = flagged_abs
+    if a.arm == "tiered":
+        if not a.tiers:
+            raise SystemExit("--tiers is required for the tiered arm")
+        flagged_abs = os.path.abspath(a.tiers)
+        cfg["BR_FLAGGED_TIERS_FILE"] = flagged_abs
     arm_overlay = os.path.join(design_dir, f"config.{a.tag}.json")
     json.dump(cfg, open(arm_overlay, "w"), indent=1)
 
@@ -80,7 +86,7 @@ def main() -> int:
     import steps  # noqa: F401  (registers BeforeRoute steps)
 
     Classic = Flow.factory.get("Classic")
-    if a.arm == "targeted":
+    if a.arm in ("targeted", "tiered"):
         FlowCls = Classic.Substitute({"OpenROAD.RepairDesignPostGRT": steps.TargetedRepairPostGRT})
         frm = "BeforeRoute.TargetedRepairPostGRT"
     else:

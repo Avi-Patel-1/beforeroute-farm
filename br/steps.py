@@ -61,6 +61,11 @@ class TargetedRepairPostGRT(RepairDesignPostGRT):
             Optional[LLPath],
             "JSON list of net names that repair_design may touch; all other signal nets are masked.",
         ),
+        Variable(
+            "BR_FLAGGED_TIERS_FILE",
+            Optional[LLPath],
+            "JSON {tiers:[{nets:[...], slew_pct, cap_pct}, ...]}: one masked repair pass per tier.",
+        ),
     ]
 
     def get_script_path(self):

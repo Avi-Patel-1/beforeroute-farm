@@ -1,0 +1,13 @@
+{
+  "copied_at": "2026-10-26T18:57:15.205111+00:00",
+  "origin": "https://github.com/efabless/openlane-ci-designs designs/xtea (commit 6676a20db8775e0ca9a6df099e807b4951b8da6f); upstream OpenCores xtea (David Johnson)",
+  "author": "David Johnson (c) 2006",
+  "license": "LGPL-2.1-or-later",
+  "top": "xtea",
+  "clock_port": "clock",
+  "files_sha256": {
+    "xtea.v": "27e302c760660bad28d0e72533e65a2af1a482cd39313ca174b00f1fd7ab4ece",
+    "LICENSE": "dc626520dcd53a22f727af3ee42c770e56c97a64fe3adb063799d8ab032fe551"
+  },
+  "local_modifications": "None to copied RTL; local config_sky130.json only"
+}
