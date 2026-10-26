@@ -89,12 +89,18 @@ for ti, (allowed, slew_pct, cap_pct) in enumerate(tiers):
         # re-route and re-estimate after the previous tier's edits and legalization
         tcl("source $::env(SCRIPTS_DIR)/openroad/common/grt.tcl")
         tcl("estimate_parasitics -global_routing")
-    tcl("log_cmd repair_design " + " ".join(args))
-    tcl("source $::env(SCRIPTS_DIR)/openroad/common/dpl.tcl")
+    n_passes = int(envget("BR_REPAIR_PASSES", "1") or 1)
+    for pi in range(n_passes):
+        if pi > 0:
+            # second pass on the same eligible set: re-route, re-estimate, repair what pass 1 created
+            tcl("source $::env(SCRIPTS_DIR)/openroad/common/grt.tcl")
+            tcl("estimate_parasitics -global_routing")
+        tcl("log_cmd repair_design " + " ".join(args))
+        tcl("source $::env(SCRIPTS_DIR)/openroad/common/dpl.tcl")
     for net in masked:
         net.setDoNotTouch(False)
     tier_summaries.append({"tier": ti, "allowed": (len(allowed) if allowed is not None else "ALL"), "found": found,
-                           "masked": len(masked), "slew_pct": slew_pct, "cap_pct": cap_pct,
+                           "masked": len(masked), "slew_pct": slew_pct, "cap_pct": cap_pct, "passes": n_passes,
                            "insts_added": len(block.getInsts()) - before})
     print(f"[br] tier {ti}: allowed={len(allowed) if allowed is not None else 'ALL'} found={found} masked={len(masked)} margins={slew_pct}/{cap_pct} insts_added={len(block.getInsts()) - before}", flush=True)
 n_inst_after = len(block.getInsts())
