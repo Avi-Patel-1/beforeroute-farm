@@ -49,10 +49,15 @@ def main() -> int:
             if status != "completed":
                 pending += 1
                 continue
+            if concl in ("cancelled", "skipped"):
+                continue  # a cancelled job uploads only a partial dir; its tag is re-dispatched later
             with tempfile.TemporaryDirectory() as td:
                 d = sh(["gh", "run", "download", str(rid), "-R", a.repo, "-n", f"result-{tag}", "-D", td])
                 if d.returncode != 0:
                     print(f"[collect] {tag}: no artifact ({d.stderr.strip()[:120]})")
+                    continue
+                if not os.path.exists(os.path.join(td, "job.json")):
+                    print(f"[collect] {tag}: artifact has no job.json (partial run) - skipped")
                     continue
                 shutil.copytree(td, dst, dirs_exist_ok=True)
             try:
