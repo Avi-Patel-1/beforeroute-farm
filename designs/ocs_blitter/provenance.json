@@ -1,0 +1,13 @@
+{
+  "copied_at": "2026-10-26T19:02:48.789587+00:00",
+  "origin": "https://github.com/The-OpenROAD-Project/OpenLane designs/ocs_blitter (tag v0.21 (a6ac8cf836df4d776136a9d71b86bfa8e89aa695)); upstream Aleksander Osman's Amiga OCS blitter",
+  "author": "Aleksander Osman (c) 2010",
+  "license": "BSD-2-Clause (per source header)",
+  "top": "ocs_blitter",
+  "clock_port": "CLK_I",
+  "files_sha256": {
+    "ocs_blitter.v": "7d3f0e4304b4a3afd1c0a7bd171cbc844e78f318dd7dcad6124b4af70490e574",
+    "LICENSE": "3e808d8165bd06ac091a6f01763b0942e0bffd33d3391b60bff1588ca72739d8"
+  },
+  "local_modifications": "None to copied RTL; local config_sky130.json only"
+}

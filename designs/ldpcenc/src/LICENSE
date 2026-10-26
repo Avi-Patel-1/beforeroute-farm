@@ -1,0 +1,15 @@
+License notice for ldpcenc: MIT (per source header; upstream LICENSE file not bundled)
+Reproduced from the header of ldpcenc.v:
+
+//==============================================================================
+// ldpcenc.v
+//
+// Top module of Wi-Fi LDPC encoder.
+//------------------------------------------------------------------------------
+// Copyright (c) 2019 Guangxi Liu
+//
+// This source code is licensed under the MIT license found in the
+// LICENSE file in the root directory of this source tree.
+//==============================================================================
+
+

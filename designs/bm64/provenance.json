@@ -1,0 +1,13 @@
+{
+  "copied_at": "2026-10-26T19:02:48.784652+00:00",
+  "origin": "https://github.com/The-OpenROAD-Project/OpenLane designs/BM64 (tag v0.21 (a6ac8cf836df4d776136a9d71b86bfa8e89aa695)); upstream M. A. Morris & Associates Booth multiplier",
+  "author": "Michael A. Morris, dba M. A. Morris & Associates (c) 2010-2012",
+  "license": "LGPL-2.1-or-later (per source header)",
+  "top": "BM64",
+  "clock_port": "Clk",
+  "files_sha256": {
+    "BM64.v": "125db21d15d2949cb8d47dfd15289f1c0895f2dde54089f6a032ac7f7fdee666",
+    "LICENSE": "48d8c2ffea3ce23186cb1ce2aecbd1a7be397d0248070b6eb235917f85fe703a"
+  },
+  "local_modifications": "None to copied RTL; local config_sky130.json only"
+}

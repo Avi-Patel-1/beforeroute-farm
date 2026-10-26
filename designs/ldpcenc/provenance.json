@@ -1,0 +1,13 @@
+{
+  "copied_at": "2026-10-26T19:02:48.790518+00:00",
+  "origin": "https://github.com/The-OpenROAD-Project/OpenLane designs/ldpcenc (tag v0.21 (a6ac8cf836df4d776136a9d71b86bfa8e89aa695)); upstream Guangxi Liu Wi-Fi LDPC encoder",
+  "author": "Guangxi Liu (c) 2019",
+  "license": "MIT (per source header; upstream LICENSE file not bundled)",
+  "top": "ldpcenc",
+  "clock_port": "clk",
+  "files_sha256": {
+    "ldpcenc.v": "a2503d0fcdce89c28482778ae79e7413f9159618ccead007602f540801eca116",
+    "LICENSE": "58d43ca3312c7826aabb6a9886f04270eb23d5f2bf4fb42b5e2d1ef7b73d0438"
+  },
+  "local_modifications": "None to copied RTL; local config_sky130.json only"
+}

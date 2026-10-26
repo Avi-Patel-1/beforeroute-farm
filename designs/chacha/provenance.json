@@ -1,0 +1,13 @@
+{
+  "copied_at": "2026-10-26T19:02:48.782150+00:00",
+  "origin": "https://github.com/The-OpenROAD-Project/OpenLane designs/chacha (tag v0.21 (a6ac8cf836df4d776136a9d71b86bfa8e89aa695)); upstream secworks/chacha",
+  "author": "Secworks Sweden AB (c) 2013",
+  "license": "BSD-2-Clause (per source header)",
+  "top": "chacha",
+  "clock_port": "clk",
+  "files_sha256": {
+    "chacha.v": "67b8e5fac4da862aa5fdf0136cf67c69fa67e1a4674268abc617105fc7a3791c",
+    "LICENSE": "55e9419ccd331d8f4319753546b1e09701330a3037a11aa59ebd95334cfd4c88"
+  },
+  "local_modifications": "None to copied RTL; local config_sky130.json only"
+}

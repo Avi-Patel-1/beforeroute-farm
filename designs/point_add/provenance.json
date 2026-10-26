@@ -1,0 +1,13 @@
+{
+  "copied_at": "2026-10-26T19:02:48.791518+00:00",
+  "origin": "https://github.com/The-OpenROAD-Project/OpenLane designs/point_add (tag v0.21 (a6ac8cf836df4d776136a9d71b86bfa8e89aa695)); upstream OpenCores Elliptic Curve Group core (Homer Hsing, City University of Hong Kong)",
+  "author": "City University of Hong Kong / Homer (Dongsheng) Hsing (c) 2011",
+  "license": "LGPL-3.0-or-later (per source header)",
+  "top": "point_add",
+  "clock_port": "clk",
+  "files_sha256": {
+    "ecg.v": "d62d104451c959ca9d9a93b506a6cdb5dff0016706d279ea13a67345cdeddaf7",
+    "LICENSE": "7cb43c0b1a84ad8078cf47f0630e49ef04164afd838ad5a6f59b16ebcb330ef2"
+  },
+  "local_modifications": "None to copied RTL; local config_sky130.json only"
+}

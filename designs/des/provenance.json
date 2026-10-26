@@ -1,0 +1,13 @@
+{
+  "copied_at": "2026-10-26T19:02:48.783552+00:00",
+  "origin": "https://github.com/The-OpenROAD-Project/OpenLane designs/des (tag v0.21 (a6ac8cf836df4d776136a9d71b86bfa8e89aa695)); upstream OpenCores DES/3DES by Rudolf Usselmann (ASICs World Services)",
+  "author": "Rudolf Usselmann (c) 2001",
+  "license": "Permissive OpenCores/ASICs-ws notice (per source header)",
+  "top": "des",
+  "clock_port": "clk",
+  "files_sha256": {
+    "3des.v": "eea6dd0612db20e5c367e52b0fe1044b90ef38393aea860103af68cd74e4c150",
+    "LICENSE": "ceb898163d203383c9291ace85e7624648be7f1fa5a96cae8550ca9241bb2fc1"
+  },
+  "local_modifications": "None to copied RTL; local config_sky130.json only"
+}

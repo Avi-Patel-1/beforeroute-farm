@@ -97,6 +97,19 @@ def fit(df_train):
     return model
 
 
+def fit_reg(df_train):
+    """Regress the signoff worst-load slew ratio (log) from the pre-route view: a calibrated estimate."""
+    import lightgbm as lgb
+
+    d = df_train[df_train["act_load_slew_ratio"].notna()]
+    X = d[FEATURES].copy()
+    X["driver_class"] = X["driver_class"].astype("category")
+    y = np.log(np.clip(d["act_load_slew_ratio"].values.astype(float), 1e-3, None))
+    params = dict(objective="regression", learning_rate=0.05, num_leaves=31, min_data_in_leaf=40,
+                  feature_fraction=0.8, bagging_fraction=0.8, bagging_freq=1, lambda_l2=1.0, verbose=-1, seed=7, num_threads=2)
+    return lgb.train(params, lgb.Dataset(X, y, categorical_feature=["driver_class"]), num_boost_round=400)
+
+
 def predict(model, df):
     X = df[FEATURES].copy()
     X["driver_class"] = pd.Categorical(X["driver_class"], categories=model.pandas_categorical[0]) if model.pandas_categorical else X["driver_class"].astype("category")
@@ -131,6 +144,22 @@ def main() -> int:
         mask = (te["sigtype"] == "SIGNAL").values if a.data_nets_only else np.ones(len(te), dtype=bool)
         y_te = te["y"].values[mask]
         res = {"model": evaluate(y_te, p[mask]), "train_rows": int(len(tr)), "train_runs": int(tr["run"].nunique()), "test_runs": int(te["run"].nunique())}
+        # regression on the signoff ratio ("learn the estimator's error"), evaluated as a ranker and as a calibrated estimate
+        if tr["act_load_slew_ratio"].notna().sum() > 200:
+            reg = fit_reg(tr)
+            pr = np.exp(predict(reg, te))
+            res["reg_model"] = evaluate(y_te, pr[mask])
+            act = te["act_load_slew_ratio"].values[mask]
+            est = te["worst_load_slew_ratio"].fillna(0).values[mask]
+            ok = ~np.isnan(act.astype(float))
+            if ok.sum() > 0:
+                res["reg_calibration"] = {
+                    "n": int(ok.sum()),
+                    "mae_log_estimate": float(np.mean(np.abs(np.log(np.clip(est[ok], 1e-3, None)) - np.log(np.clip(act[ok], 1e-3, None))))),
+                    "mae_log_model": float(np.mean(np.abs(np.log(np.clip(pr[mask][ok], 1e-3, None)) - np.log(np.clip(act[ok], 1e-3, None))))),
+                    "violators_predicted_over_limit": float(np.mean(pr[mask][ok & (act > 1)] > 1.0)) if (ok & (act > 1)).sum() else None,
+                    "estimate_over_limit_on_violators": float(np.mean(est[ok & (act > 1)] > 1.0)) if (ok & (act > 1)).sum() else None,
+                }
         for bname, col in BASELINES.items():
             res[bname] = evaluate(y_te, te[col].fillna(0).values[mask])
         report["lodo"][held] = res
@@ -157,6 +186,28 @@ def main() -> int:
         hero.save_model(os.path.join(out, f"model_holdout_{a.holdout}.txt"))
         imp = sorted(zip(FEATURES, hero.feature_importance("gain")), key=lambda t: -t[1])
         report["feature_importance_gain"] = [(f, float(g)) for f, g in imp]
+        try:
+            import shap
+            import matplotlib
+            matplotlib.use("Agg")
+            import matplotlib.pyplot as plt
+            te = df[df["design"] == a.holdout]
+            samp = te.sample(min(4000, len(te)), random_state=3) if len(te) else te
+            if len(samp):
+                X = samp[FEATURES].copy()
+                X["driver_class"] = pd.Categorical(X["driver_class"], categories=hero.pandas_categorical[0]) if hero.pandas_categorical else X["driver_class"].astype("category")
+                sv = shap.TreeExplainer(hero).shap_values(X)
+                sv = sv[1] if isinstance(sv, list) else sv
+                plt.figure(figsize=(7.5, 6))
+                shap.summary_plot(sv, X, max_display=14, show=False, plot_size=None)
+                plt.title(f"What predicts the signoff blind spot (held-out {a.holdout})", fontsize=11)
+                plt.tight_layout()
+                plt.savefig(os.path.join(out, f"shap_{a.holdout}.png"), dpi=160)
+                plt.close()
+                mean_abs = np.abs(sv).mean(axis=0)
+                report["shap_mean_abs"] = sorted([(f, float(v)) for f, v in zip(FEATURES, mean_abs)], key=lambda t: -t[1])
+        except Exception as e:  # SHAP is a nice-to-have
+            report["shap_error"] = f"{type(e).__name__}: {e}"
     if df["y"].sum() > 0:
         full = fit(df)
         full.save_model(os.path.join(out, "model_all.txt"))

@@ -1,0 +1,13 @@
+{
+  "copied_at": "2026-10-26T19:02:48.784143+00:00",
+  "origin": "https://github.com/The-OpenROAD-Project/OpenLane designs/md5 (tag v0.21 (a6ac8cf836df4d776136a9d71b86bfa8e89aa695)); upstream OpenCores systemcmd5 (Javier Castillo)",
+  "author": "Javier Castillo / OPENCORES.ORG (c) 2000",
+  "license": "LGPL-2.1-or-later (per source header)",
+  "top": "md5",
+  "clock_port": "clk",
+  "files_sha256": {
+    "md5.v": "dcf8dcd545883ee175a63bf032f1e9a26882cb021f78ed23e7968e66319b03e3",
+    "LICENSE": "4b6ec7e782703813b0f41ac38afa9da245bc72ef643d296f624e96b4bf62bf93"
+  },
+  "local_modifications": "None to copied RTL; local config_sky130.json only"
+}
