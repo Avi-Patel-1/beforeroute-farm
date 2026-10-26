@@ -120,3 +120,56 @@ Trace: `results/model_v3/report.json`, `models/report_v3.json`.
 | `lt050-80-60-40` | top 5% split by predicted signoff ratio ≥1.3 / ≥1.1 / rest at margins 80 / 60 / 40 | regression is now calibrated; spend margin where the predicted overshoot is large, keep hold margin elsewhere |
 | `tgt050-70v3` | same policy, v3 model (61 runs) instead of v2 (24 runs) | isolates the effect of more training runs on the intervention |
 
+### Round 1 complete + Round 2 (18:30 EDT)
+
+`d1-picorv32-006` (baseline 438 = 4.6% of nets; hold 0.109 ns), v2 model:
+
+| arm | V (438) | E cells | hold | ΔA |
+|---|---|---|---|---|
+| uni30 | 421 | 566 | 0.110 | −2.47% |
+| uni50 | 173 | 816 | 0.108 | −3.21% |
+| uni70 | 11 | 1,351 | 0.024 | −2.35% |
+| tgt030-70 | 161 | 302 | 0.110 | −0.78% |
+| **tgt050-70** | **39** | **502** | **0.110** | −1.10% |
+| tgt050-80 | 44 | 489 | 0.109 | −0.43% |
+| tier020-80_050-50 | 139 | 432 | 0.111 | −1.17% |
+
+`d1-picorv32-016` uni70 landed: 12 left, 2,791 cells, hold 0.033 (31%), area +2.6%.
+
+Pre-registered test, k = 5% / H = 70%, three held-out bases: PicoRV32-016 removes 87%,
+PicoRV32-006 removes 91%, AES removes 69% (budget-limited, see above). In all three the
+targeted arm changes 35–50% as many cells as uni70 and keeps 65–100% of the hold margin
+(uni70: 22–31%).
+
+Round 2 arms (v3 held-out models):
+
+| base | arm | V | E cells | hold kept | note |
+|---|---|---|---|---|---|
+| AES | tgt050-70v3 | 254 | 655 | 90% | ≈ v2 (257): model version barely matters |
+| AES | lt050-80-60-40 | 293 | 622 | 91% | worse than one 70% margin |
+| AES | tgt050-70hv3 | 809 | – | 100% | hold-cell protection disables the repair |
+| PicoRV32-016 | tgt050-70v3 | 65 | 571 | 61% | ≈ v2 (68) |
+| PicoRV32-016 | thr500-70v3 | 90 | 506 | 88% | p ≥ 0.5 → 438 eligible instead of 510; cheaper, slightly more residual |
+| PicoRV32-016 | lt050-80-60-40 | 159 | 430 | 34% | worse on both axes |
+| PicoRV32-016 | tgt050-70hv3 / thr500-70hv3 | 505 | – | 99% | repair disabled |
+| PicoRV32-006 | lt050-80-60-40 | 110 | 459 | 100% | worse than tgt050-70 (39) |
+
+What the traces say:
+* **Hold-cell protection is a negative result that explains the mechanism.** With the hold-fix
+  delay cells marked do-not-touch (1,723 on AES, 2,194 on PicoRV32-016) the masked
+  `repair_design` fixes essentially nothing: the signoff violators *are* nets driven by those
+  delay cells, and the resizer's fix is to swap the delay cell for a faster buffer. Hold margin
+  is therefore the intrinsic price of fixing these nets; targeted repair keeps the price low by
+  paying it on 5% of nets instead of all of them.
+* **Learned-margin tiers (80/60/40 by predicted ratio) lose to a single 70% margin** on all
+  three bases: the 40–60% tiers leave their nets unfixed and the 80% tier spends hold margin.
+  Dropped. (The regression is still useful as an estimate; it is not a better margin schedule.)
+* **v3 vs v2 model: no material difference** in the intervention (254 vs 257, 65 vs 68). The
+  ranking at the top is already right with 24 runs; more data sharpens recall curves, not arms.
+* **Threshold budget** (p ≥ 0.5) behaves as intended on PicoRV32-016 (fewer eligible, cheaper,
+  hold kept). The AES threshold arm is the decisive one and is still running.
+
+New-design baselines (d3): bm64 275, des 321, md5 192, ocs_blitter 392, salsa20 1,259, y_huff
+462 violating nets — six new held-out families for the model. sha512 and ldpcenc (and one
+salsa20 config) crash in OpenROAD's antenna repair (GRT-0183 heap underflow, unrelated to this
+work); re-dispatched with `RUN_ANTENNA_REPAIR: false` as d3b/d4b, to be reported as such.
