@@ -88,9 +88,9 @@ def _arm_kind(tag, base):
         return "rerun", a
     if a.startswith("uni"):
         return "uniform", a
-    if a.startswith("tgt"):
+    if a.startswith("tgt") or a.startswith("thr"):
         return "targeted", a
-    if a.startswith("tier"):
+    if a.startswith("tier") or a.startswith("lt"):
         return "tiered", a
     return "other", a
 
@@ -107,6 +107,11 @@ def _arm_label(a):
     if a.startswith("tgt"):
         k, h = a[3:].split("-")
         return f"k={int(k)/10:g}% H={h}"
+    if a.startswith("thr"):
+        k, h = a[3:].split("-")
+        return f"p≥{int(k)/1000:g} H={h}"
+    if a.startswith("lt"):
+        return "learned margins " + a[2:]
     if a.startswith("tier"):
         parts = a[4:].split("_")
         return "tiers " + " / ".join(f"{int(x.split('-')[0])/10:g}%@{x.split('-')[1]}" for x in parts)
