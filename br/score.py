@@ -28,6 +28,7 @@ def main() -> int:
     ap.add_argument("--threshold", type=float, default=None)
     ap.add_argument("--out", default=None)
     ap.add_argument("--tiers", default=None, help="e.g. 0.02:70,0.05:40 -> top 2%% at 70%%, next 3%% at 40%%; writes a tiers JSON")
+    ap.add_argument("--rule-fanout", action="store_true", help="also flag every net whose post-GRT fanout already exceeds MAX_FANOUT (deterministic rule, Round 2 proposal)")
     a = ap.parse_args()
     import lightgbm as lgb
 
@@ -38,6 +39,8 @@ def main() -> int:
     X = df[FEATURES].copy()
     X["driver_class"] = pd.Categorical(X["driver_class"], categories=model.pandas_categorical[0]) if model.pandas_categorical else X["driver_class"].astype("category")
     df["p"] = model.predict(X)
+    if a.rule_fanout:
+        df.loc[df["fanout_ratio"].fillna(0) > 1.0, "p"] = 1.0 + df["p"]  # rule nets rank first
     df = df.sort_values("p", ascending=False)
     if a.threshold is not None:
         flagged = df[df["p"] >= a.threshold]
@@ -57,7 +60,8 @@ def main() -> int:
     else:
         json.dump(flagged["net"].tolist(), open(out, "w"))
     summ = {
-        "run": stats["run"], "nets_scored": int(len(df)), "flagged": int(len(flagged)),
+        "run": stats["run"], "nets_scored": int(len(df)), "flagged": int(len(flagged)), "rule_fanout": bool(a.rule_fanout),
+        "rule_fanout_nets": int((df["fanout_ratio"].fillna(0) > 1.0).sum()) if a.rule_fanout else 0,
         "flag_frac": float(len(flagged) / max(1, len(df))), "min_p_flagged": float(flagged["p"].min()) if len(flagged) else None,
         "true_positives_in_flagged": int(flagged["y"].sum()), "positives_total": int(df["y"].sum()),
         "recall_of_flagged": float(flagged["y"].sum() / max(1, df["y"].sum())),

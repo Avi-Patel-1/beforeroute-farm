@@ -37,6 +37,7 @@ def main() -> int:
     ap.add_argument("--cap-pct", type=float, default=50)
     ap.add_argument("--flagged", default=None)
     ap.add_argument("--tiers", default=None, help="tiers JSON for the tiered arm")
+    ap.add_argument("--passes", type=int, default=1, help="masked repair passes per tier (targeted/tiered arms)")
     ap.add_argument("--results", default=os.path.join(HERE, "..", "results"))
     ap.add_argument("--override", action="append", default=[])
     ap.add_argument("--pdk-root", default=os.environ.get("PDK_ROOT", "/home/claude/eda/pdk"))
@@ -73,6 +74,8 @@ def main() -> int:
             raise SystemExit("--flagged is required for the targeted arm")
         flagged_abs = os.path.abspath(a.flagged)
         cfg["BR_FLAGGED_NETS_FILE"] = flagged_abs
+    if a.arm in ("targeted", "tiered") and a.passes != 1:
+        cfg["BR_REPAIR_PASSES"] = int(a.passes)
     if a.arm == "tiered":
         if not a.tiers:
             raise SystemExit("--tiers is required for the tiered arm")

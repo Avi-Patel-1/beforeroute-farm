@@ -66,6 +66,12 @@ class TargetedRepairPostGRT(RepairDesignPostGRT):
             Optional[LLPath],
             "JSON {tiers:[{nets:[...], slew_pct, cap_pct}, ...]}: one masked repair pass per tier.",
         ),
+        Variable(
+            "BR_REPAIR_PASSES",
+            int,
+            "Masked repair_design passes per tier (a second pass cleans up violations the first pass created).",
+            default=1,
+        ),
     ]
 
     def get_script_path(self):

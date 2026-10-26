@@ -20,11 +20,14 @@ case "$ARM" in
     H=${ARM#uni}
     $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm uniform --tag $BASE-$ARM --slew-pct $H --cap-pct $H --results results --pdk-root /work/pdk --jobs $JOBS ;;
   tgt*)
-    K=${ARM#tgt}; K=${K%%-*}; H=${ARM##*-}
+    # tgt050-70 (one pass) | tgt050-70p2 (two masked passes) | tgt050-70f (+ fanout rule)
+    K=${ARM#tgt}; K=${K%%-*}; REST=${ARM##*-}; H=${REST%%[pf]*}
+    PASSES=1; case "$REST" in *p2*) PASSES=2;; esac
+    RULE=""; case "$REST" in *f*) RULE="--rule-fanout";; esac
     FRAC=$(python3 -c "print(int('$K')/1000)")
     python3 -m pip install -q pandas pyarrow lightgbm scikit-learn
-    python3 br/score.py --model $MODEL --run-results results/$BASE --frac $FRAC --out results/$BASE/flagged_$ARM.json
-    $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm targeted --tag $BASE-$ARM --slew-pct $H --cap-pct $H --flagged /work/results/$BASE/flagged_$ARM.json --results results --pdk-root /work/pdk --jobs $JOBS ;;
+    python3 br/score.py --model $MODEL --run-results results/$BASE --frac $FRAC $RULE --out results/$BASE/flagged_$ARM.json
+    $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm targeted --tag $BASE-$ARM --slew-pct $H --cap-pct $H --passes $PASSES --flagged /work/results/$BASE/flagged_$ARM.json --results results --pdk-root /work/pdk --jobs $JOBS ;;
   tier*)
     # tier020-70_050-40  ->  top 2% at 70%, next (up to 5%) at 40%
     SPEC=$(python3 -c "
