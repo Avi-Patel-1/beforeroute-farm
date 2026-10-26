@@ -15,3 +15,6 @@ pull_image*.sh
 env.sh
 piptest/
 __pycache__/
+deck/*.pptx
+deck/*.pdf
+deck/*.png
