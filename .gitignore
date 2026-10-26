@@ -1,0 +1,17 @@
+pdk/
+results/
+rootfs/
+librelane-image/
+designs/*/runs/
+designs/*/config.*.json
+*.log
+*.log.gz
+manifest.json
+taglist.json
+platforms.txt
+amd64.digest
+apicheck.py
+pull_image*.sh
+env.sh
+piptest/
+__pycache__/

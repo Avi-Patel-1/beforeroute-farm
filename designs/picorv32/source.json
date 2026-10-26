@@ -1,0 +1,14 @@
+{
+  "source": "https://github.com/YosysHQ/picorv32",
+  "revision": "ef203c2b0a3fb793280f5114941416c425c5b461",
+  "top": "picorv32",
+  "parameters": "Unchanged upstream defaults",
+  "files": {
+    "src/picorv32.v": "0836050971b3c6cdd28ac3b1e5719a67fb645161912bef1e472e63995ceb0622",
+    "verify/testbench_ez.v": "bc4bb99e07b5f49fcd0ae8cd3ccb6d071cf318a4d242853aecaa207c7d152be1",
+    "COPYING": "041ebc727233e5bf096dd41260cbb81014d3d29ca007a15f3b1807d4e9ff288e"
+  },
+  "license": "ISC for RTL; public domain upstream testbench",
+  "reset": "active-low resetn",
+  "smoke_scope": "Six-instruction increment loop in upstream testbench_ez; not ISA compliance or mapped equivalence"
+}

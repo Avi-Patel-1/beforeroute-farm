@@ -1,0 +1,73 @@
+#!/usr/bin/env python3
+"""Generate BeforeRoute data-generation job specs (farm/jobs/<tag>.json).
+
+Usage: make_jobs.py [--per-design 35] [--seed 7] [--prefix d1]
+
+Knobs (sampled, base config always included):
+  FP_CORE_UTIL 35..65, PL_TARGET_DENSITY_PCT = util+5 (+/-10), CLOCK_PERIOD x{0.8,1.0,1.3},
+  MAX_TRANSITION_CONSTRAINT {0.5,0.75,1.0} ns, EXTRA_EXCLUDED_CELLS {none, clkdlybuf},
+  RUN_POST_GRT_DESIGN_REPAIR false (training rows describe the baseline flow's blind spot).
+"""
+from __future__ import annotations
+
+import argparse
+import itertools
+import json
+import os
+import random
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+JOBS = os.path.join(HERE, "jobs")
+
+DESIGNS = {
+    "picorv32": {"config": "config_sky130.json", "period": 25.0, "util": 35, "density": 45},
+    "aes_cipher": {"config": "config_sky130.json", "period": 40.0, "util": 35, "density": 45},
+    "crc_pipe": {"config": "config.yaml", "period": 10.0, "util": 45, "density": None},
+    "spm": {"config": "config.yaml", "period": 10.0, "util": 45, "density": None},
+}
+CLKDLY = ["sky130_fd_sc_hd__clkdlybuf4s25_1"]
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--per-design", type=int, default=35)
+    ap.add_argument("--seed", type=int, default=7)
+    ap.add_argument("--prefix", default="d1")
+    a = ap.parse_args()
+    rng = random.Random(a.seed)
+    os.makedirs(JOBS, exist_ok=True)
+    tags = []
+    for dname, d in DESIGNS.items():
+        space = list(
+            itertools.product(
+                [35, 45, 55, 65],  # util
+                [-10, 0, 10],  # density delta
+                [0.8, 1.0, 1.3],  # period factor
+                [0.5, 0.75, 1.0],  # max transition ns
+                [0, 1],  # exclude clkdlybuf
+            )
+        )
+        rng.shuffle(space)
+        picks = [(d["util"], 0, 1.0, 0.75, 0), (d["util"], 0, 1.0, 0.75, 1)]  # base + base-noclkdly
+        picks += [p for p in space if p not in picks][: max(0, a.per_design - len(picks))]
+        for i, (util, dd, pf, mt, ex) in enumerate(picks):
+            tag = f"{a.prefix}-{dname}-{i:03d}"
+            ov = {
+                "FP_CORE_UTIL": util,
+                "PL_TARGET_DENSITY_PCT": max(20, min(95, util + 5 + dd)),
+                "CLOCK_PERIOD": round(d["period"] * pf, 3),
+                "MAX_TRANSITION_CONSTRAINT": mt,
+                "RUN_POST_GRT_DESIGN_REPAIR": False,
+            }
+            if ex:
+                ov["EXTRA_EXCLUDED_CELLS"] = CLKDLY
+            spec = {"tag": tag, "design": f"designs/{dname}", "config": d["config"], "overrides": ov}
+            json.dump(spec, open(os.path.join(JOBS, tag + ".json"), "w"), indent=1)
+            tags.append(tag)
+    json.dump(tags, open(os.path.join(JOBS, f"{a.prefix}.tags.json"), "w"))
+    print(f"wrote {len(tags)} job specs; tag list: farm/jobs/{a.prefix}.tags.json")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -1,0 +1,26 @@
+{
+  "DESIGN_NAME": "aes_cipher_top",
+  "VERILOG_FILES": [
+    "dir::src/aes_cipher_top.v",
+    "dir::src/aes_key_expand_128.v",
+    "dir::src/aes_rcon.v",
+    "dir::src/aes_sbox.v"
+  ],
+  "VERILOG_INCLUDE_DIRS": [
+    "dir::src"
+  ],
+  "CLOCK_PORT": "clk",
+  "CLOCK_PERIOD": 40.0,
+  "FP_CORE_UTIL": 35,
+  "PL_TARGET_DENSITY_PCT": 45,
+  "PDN_VOFFSET": 5,
+  "PDN_HOFFSET": 5,
+  "PDN_VWIDTH": 2,
+  "PDN_HWIDTH": 2,
+  "PDN_VPITCH": 30,
+  "PDN_HPITCH": 30,
+  "PDN_SKIPTRIM": true,
+  "RUN_POST_GRT_DESIGN_REPAIR": true,
+  "GRT_DESIGN_REPAIR_MAX_SLEW_PCT": 70,
+  "GRT_DESIGN_REPAIR_MAX_CAP_PCT": 50
+}

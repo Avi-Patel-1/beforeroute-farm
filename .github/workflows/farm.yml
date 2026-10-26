@@ -1,0 +1,69 @@
+name: BeforeRoute farm
+
+on:
+  workflow_dispatch:
+    inputs:
+      tags:
+        description: 'JSON array of job tags (each has farm/jobs/<tag>.json)'
+        required: true
+        type: string
+      max_parallel:
+        description: 'Max concurrent jobs'
+        required: false
+        default: '20'
+        type: string
+
+concurrency:
+  group: farm-${{ github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  run:
+    name: ${{ matrix.tag }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      max-parallel: ${{ fromJSON(inputs.max_parallel) }}
+      matrix:
+        tag: ${{ fromJSON(inputs.tags) }}
+    env:
+      IMAGE: ghcr.io/librelane/librelane@sha256:4bc9042ba177f73f275b5b39e7d372a07d3f4043f548a0ba7f640097b7205051
+      PDK_VERSION: 8afc8346a57fe1ab7934ba5a6056ea8b43078e71
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Restore PDK cache
+        id: pdk-cache
+        uses: actions/cache@v4
+        with:
+          path: pdk
+          key: sky130-${{ env.PDK_VERSION }}-v1
+
+      - name: Pull toolchain image
+        run: docker pull "$IMAGE"
+
+      - name: Fetch PDK (cache miss only)
+        if: steps.pdk-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p pdk
+          docker run --rm -v "$PWD:/work" -w /work -e PDK_ROOT=/work/pdk "$IMAGE" \
+            ciel enable --pdk-family sky130 "$PDK_VERSION"
+
+      - name: Run job
+        run: |
+          mkdir -p results
+          docker run --rm -v "$PWD:/work" -w /work -e PDK_ROOT=/work/pdk "$IMAGE" \
+            python3 br/run_job.py --job-spec "farm/jobs/${{ matrix.tag }}.json" \
+              --jobs 4 --results results --pdk-root /work/pdk --timeout 16000 || true
+          cat "results/${{ matrix.tag }}/job.json" || echo "no job.json"
+          sudo chown -R "$(id -u):$(id -g)" results || true
+
+      - name: Upload result
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: result-${{ matrix.tag }}
+          path: results/${{ matrix.tag }}
+          retention-days: 30
+          if-no-files-found: warn
