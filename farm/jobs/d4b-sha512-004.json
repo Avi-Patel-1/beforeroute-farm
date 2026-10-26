@@ -1,0 +1,19 @@
+{
+ "tag": "d4b-sha512-004",
+ "design": "designs/sha512",
+ "config": "config_sky130.json",
+ "overrides": {
+  "FP_CORE_UTIL": 35,
+  "PL_TARGET_DENSITY_PCT": 40,
+  "CLOCK_PERIOD": 51.051,
+  "MAX_TRANSITION_CONSTRAINT": 1.0,
+  "RUN_POST_GRT_DESIGN_REPAIR": false,
+  "RUN_MAGIC_DRC": false,
+  "RUN_KLAYOUT_DRC": false,
+  "RUN_LVS": false,
+  "RUN_KLAYOUT_XOR": false,
+  "RUN_IRDROP_REPORT": false,
+  "RUN_LINTER": false,
+  "RUN_ANTENNA_REPAIR": false
+ }
+}
