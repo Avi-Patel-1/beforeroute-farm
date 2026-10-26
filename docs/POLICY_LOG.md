@@ -57,3 +57,24 @@ PicoRV32). Arms: rerun, uni30, uni50, uni70, tgt030-70, tgt050-70, tgt050-80,
 tier020-80_050-50. Results are appended below as they land, with no post-hoc arm selection.
 
 *(pending)*
+
+## Model update (16:30 EDT) — v3, 61 runs / 395,737 nets, leave-one-design-out
+
+| held out | runs | violators | PR-AUC | nets flagged to catch 95% (model) | same, timer estimate |
+|---|---|---|---|---|---|
+| PicoRV32 | 34 | 13,292 | 0.969 | 4.5% | 44.0% |
+| AES | 4 | 2,740 | 0.980 | 6.6% | 9.4% |
+| CRC | 20 | 68 | 0.842 | 0.7% | 97.8% |
+
+The regression variant (predict log signoff ratio) now transfers: log-MAE 0.05–0.09 vs 0.08–0.22
+for the estimate, and 78–100% of true violators are predicted over the limit (estimate: 9–18%).
+Trace: `results/model_v3/report.json`, `models/report_v3.json`.
+
+## Round 2 — proposals (to run on the Round-1 bases once Round 1 has landed; v3 held-out models)
+
+| arm | what changes | why (from the traces) |
+|---|---|---|
+| `tgt050-70p2` | two masked passes on the same top-5% set | pass 1 created 4 fanout violations on flagged nets (Round 0 trace) |
+| `lt050-80-60-40` | top 5% split by predicted signoff ratio ≥1.3 / ≥1.1 / rest at margins 80 / 60 / 40 | regression is now calibrated; spend margin where the predicted overshoot is large, keep hold margin elsewhere |
+| `tgt050-70v3` | same policy, v3 model (61 runs) instead of v2 (24 runs) | isolates the effect of more training runs on the intervention |
+

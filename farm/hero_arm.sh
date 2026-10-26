@@ -21,7 +21,7 @@ case "$ARM" in
     $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm uniform --tag $BASE-$ARM --slew-pct $H --cap-pct $H --results results --pdk-root /work/pdk --jobs $JOBS ;;
   tgt*)
     # tgt050-70 (one pass) | tgt050-70p2 (two masked passes) | tgt050-70f (+ fanout rule)
-    K=${ARM#tgt}; K=${K%%-*}; REST=${ARM##*-}; H=${REST%%[pf]*}
+    K=${ARM#tgt}; K=${K%%-*}; REST=${ARM##*-}; H=${REST%%[pfv]*}
     PASSES=1; case "$REST" in *p2*) PASSES=2;; esac
     RULE=""; case "$REST" in *f*) RULE="--rule-fanout";; esac
     FRAC=$(python3 -c "print(int('$K')/1000)")
