@@ -122,7 +122,7 @@ def main() -> int:
     copy_if(os.path.join(run_dir, "resolved.json"), "resolved.json")
     for ts in glob.glob(os.path.join(run_dir, "*targetedrepair*", "targeted_summary.json")):
         copy_if(ts, "targeted_summary.json")
-    for lg in glob.glob(os.path.join(run_dir, "*repair*postgrt*", "openroad-*.log")):
+    for lg in glob.glob(os.path.join(run_dir, "*repair*postgrt*", "*.log")):
         copy_if(lg, "repair_step.log")
     if done:
         lab = subprocess.run([sys.executable, os.path.join(HERE, "labels.py"), run_dir], capture_output=True, text=True)
