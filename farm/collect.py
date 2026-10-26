@@ -40,7 +40,9 @@ def main() -> int:
         for line in j.stdout.strip().splitlines():
             if not line.strip():
                 continue
-            tag, status, concl = line.split("\t")
+            parts = line.split("\t")
+            tag, status = parts[0], parts[1]
+            concl = parts[2] if len(parts) > 2 else "-"
             dst = os.path.join(a.results, tag)
             if os.path.exists(os.path.join(dst, "job.json")):
                 continue
