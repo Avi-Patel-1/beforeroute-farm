@@ -58,6 +58,16 @@ def load_run(rdir: str):
         if rec["driver"]:
             by_driver_s[rec["driver"]] = name
     lab_by_net = {r["net"]: r for r in lab["nets"]}
+    # signoff view (actual values for every net), keyed by driver
+    so_by_driver = {}
+    so_path = os.path.join(rdir, "nets_signoff.jsonl")
+    if os.path.exists(so_path):
+        for l in open(so_path):
+            r = json.loads(l)
+            if r.get("driver_kind") == "inst":
+                so_by_driver[f"{r['driver_inst']}/{r['driver_pin']}"] = r
+            elif r.get("driver_kind") == "port":
+                so_by_driver[f"PORT:{r['driver_pin']}"] = r
 
     rows = []
     n_join_driver = n_join_name = n_unjoined = 0
@@ -139,6 +149,11 @@ def load_run(rdir: str):
             "s_worst_cap_ratio": (lr or {}).get("worst_cap_ratio_s", 0.0) if lr else 0.0,
             "s_n_corners": len((lr or {}).get("corners", [])) if lr else 0,
         }
+        so = so_by_driver.get(key) if key else None
+        row["act_load_slew_ratio"] = so.get("worst_load_slew_ratio") if so else None
+        row["act_driver_slew_ratio"] = so.get("driver_slew_ratio") if so else None
+        row["act_cap_ratio"] = so.get("cap_ratio") if so else None
+        row["act_net_cap_pf_max"] = so.get("net_cap_pf_max") if so else None
         rows.append(row)
     stats = {
         "run": job["tag"],

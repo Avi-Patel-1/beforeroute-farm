@@ -125,6 +125,14 @@ def main() -> int:
         open(os.path.join(results, "dump.log"), "w").write(d.stdout[-20000:] + "\n--- stderr ---\n" + d.stderr[-20000:])
         ok1 = copy_if(os.path.join(run_dir, "br-dump-postgrt", "nets.jsonl"), "nets.jsonl")
         copy_if(os.path.join(run_dir, "br-dump-postgrt", "dump_summary.json"), "dump_summary.json")
+        # signoff view (final ODB + RCX parasitics): actual per-net slews/caps for all nets
+        t1b = time.time()
+        d2 = subprocess.run([sys.executable, os.path.join(HERE, "run_dump.py"), run_dir, "--signoff", "--pdk-root", a.pdk_root],
+                            capture_output=True, text=True)
+        manifest["dump_signoff_exit"] = d2.returncode
+        manifest["dump_signoff_seconds"] = round(time.time() - t1b, 1)
+        open(os.path.join(results, "dump_signoff.log"), "w").write(d2.stdout[-20000:] + "\n--- stderr ---\n" + d2.stderr[-20000:])
+        copy_if(os.path.join(run_dir, "br-dump-signoff", "nets_signoff.jsonl"), "nets_signoff.jsonl")
         t2 = time.time()
         lab = subprocess.run([sys.executable, os.path.join(HERE, "labels.py"), run_dir], capture_output=True, text=True)
         manifest["labels_exit"] = lab.returncode
