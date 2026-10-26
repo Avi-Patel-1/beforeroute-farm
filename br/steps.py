@@ -77,3 +77,17 @@ class TargetedRepairPostGRT(RepairDesignPostGRT):
             "-python",
             self.get_script_path(),
         ]
+
+
+@Step.factory.register()
+class DumpNetsSignoff(DumpNetsPostGRT):
+    """Same per-net dump, but on the final ODB with extracted (RCX) parasitics read for
+    every corner: the signoff view, for estimate-versus-actual comparisons."""
+
+    id = "BeforeRoute.DumpNetsSignoff"
+    name = "Dump per-net values (signoff view)"
+
+    config_vars = DumpNetsPostGRT.config_vars + [
+        Variable("BR_MODE", Optional[str], "postgrt (default) or signoff"),
+        Variable("BR_SPEF_MAP", Optional[LLPath], "JSON mapping corner wildcard -> SPEF path (signoff mode)"),
+    ]

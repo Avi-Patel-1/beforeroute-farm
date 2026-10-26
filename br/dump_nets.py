@@ -17,7 +17,7 @@ from openroad import Design, Tech, Timing  # noqa: E402
 
 t0 = time.time()
 STEP_DIR = os.environ["STEP_DIR"]
-OUT = os.path.join(STEP_DIR, "nets.jsonl")
+OUT = os.path.join(STEP_DIR, "nets.jsonl")  # (signoff mode writes nets_signoff.jsonl, see below)
 SUMMARY = os.path.join(STEP_DIR, "dump_summary.json")
 
 tech = Tech()
@@ -50,9 +50,23 @@ sdc_max_tran_ns = envfloat("MAX_TRANSITION_CONSTRAINT")
 sdc_max_cap_pf = envfloat("MAX_CAPACITANCE_CONSTRAINT")
 sdc_max_fanout = envfloat("MAX_FANOUT_CONSTRAINT")
 tcl("set_propagated_clock [all_clocks]")
-tcl("source $::env(SCRIPTS_DIR)/openroad/common/set_rc.tcl")
-tcl("source $::env(SCRIPTS_DIR)/openroad/common/grt.tcl")
-tcl("estimate_parasitics -global_routing")
+BR_MODE = envget("BR_MODE", "postgrt")
+if BR_MODE == "signoff":
+    # read the extracted parasitics (RCX SPEF) for every corner: the signoff view
+    import fnmatch
+    spef_map = json.load(open(envget("BR_SPEF_MAP")))
+    i = 0
+    while envget(f"_LIB_CORNER_{i}") is not None:
+        cname = envget(f"_LIB_CORNER_{i}").split()[0]
+        for pat, path in spef_map.items():
+            if fnmatch.fnmatch(cname, pat):
+                tcl(f"read_spef -corner {cname} {path}")
+                break
+        i += 1
+else:
+    tcl("source $::env(SCRIPTS_DIR)/openroad/common/set_rc.tcl")
+    tcl("source $::env(SCRIPTS_DIR)/openroad/common/grt.tcl")
+    tcl("estimate_parasitics -global_routing")
 t_setup = time.time() - t0
 
 block = design.getBlock()
@@ -151,6 +165,8 @@ def density_over(x0, y0, x1, y1):
 # ---- per-net dump -----------------------------------------------------------
 n_written = 0
 n_skipped = 0
+if BR_MODE == "signoff":
+    OUT = os.path.join(STEP_DIR, "nets_signoff.jsonl")
 with open(OUT, "w") as fh:
     for net in block.getNets():
         st = net.getSigType()
@@ -326,6 +342,7 @@ with open(OUT, "w") as fh:
         n_written += 1
 
 summary = {
+    "mode": BR_MODE,
     "design": block.getName(),
     "nets_written": n_written,
     "nets_skipped_pg": n_skipped,

@@ -80,9 +80,39 @@ def arms_fig(arms_path, out):
     print(f"wrote {out}")
 
 
+def gap_fig(csv_path, out, design="PicoRV32"):
+    import pandas as pd
+
+    d = pd.read_csv(csv_path)
+    d = d[d["sig"] == "SIGNAL"]
+    fig, ax = plt.subplots(figsize=(6.2, 5.2))
+    clk = d["cls"].str.startswith("clkdlybuf")
+    ax.scatter(d[~clk]["est"], d[~clk]["act"], s=6, alpha=0.35, color="#4a7fb5", label="data nets")
+    ax.scatter(d[clk]["est"], d[clk]["act"], s=8, alpha=0.6, color="#d9603b", label="nets driven by hold-fix delay cells (clkdlybuf4s25)")
+    lim = max(1.6, float(d["act"].quantile(0.999)))
+    ax.plot([0, lim], [0, lim], color="gray", lw=1, ls="--", label="estimate = signoff")
+    ax.axhline(1.0, color="k", lw=1); ax.axvline(1.0, color="k", lw=1)
+    ax.fill_between([0, 1.0], 1.0, lim, color="#d9603b", alpha=0.08)
+    n_v = int((d["act"] > 1).sum()); n_e = int((d["est"] > 1).sum()); n_blind = int(((d["act"] > 1) & (d["est"] <= 1)).sum())
+    ax.text(0.03, lim * 0.93, f"blind spot: {n_blind} of {n_v} signoff violators\nlooked clean to the pre-route estimate", fontsize=9, color="#a0391c", va="top")
+    ax.set_xlim(0, lim); ax.set_ylim(0, lim)
+    ax.set_xlabel("Worst load slew / limit, pre-route estimate (post-GRT, nine corners)")
+    ax.set_ylabel("Worst load slew / limit, signoff (extracted RCX, nine corners)")
+    ax.set_title(f"{design}: the flow's own estimate vs signoff, per net (n={len(d)})", fontsize=11)
+    ax.legend(fontsize=8, loc="lower right")
+    ax.grid(True, alpha=0.25)
+    fig.tight_layout()
+    fig.savefig(out, dpi=170)
+    print(f"wrote {out}  violators={n_v} est_flagged={n_e} blind={n_blind}")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
+    g = sub.add_parser("gap")
+    g.add_argument("--csv", required=True)
+    g.add_argument("--design", default="PicoRV32")
+    g.add_argument("--out", default="gap.png")
     r = sub.add_parser("recall")
     r.add_argument("--model-dir", required=True)
     r.add_argument("--design", default=None)
@@ -93,6 +123,8 @@ def main() -> int:
     a = ap.parse_args()
     if a.cmd == "recall":
         recall_fig(a.model_dir, a.design, a.out)
+    elif a.cmd == "gap":
+        gap_fig(a.csv, a.out, a.design)
     else:
         arms_fig(a.arms, a.out)
     return 0

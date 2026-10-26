@@ -22,7 +22,7 @@ from librelane.common import Toolbox  # noqa: E402
 from librelane.config import Config  # noqa: E402
 from librelane.state import State  # noqa: E402
 
-from steps import DumpNetsPostGRT  # noqa: E402
+from steps import DumpNetsPostGRT, DumpNetsSignoff  # noqa: E402
 
 
 def find_state_in(run_dir: str) -> str:
@@ -35,19 +35,21 @@ def find_state_in(run_dir: str) -> str:
     return cands[-1]
 
 
-def load_step_config(run_dir: str, pdk_root: str) -> Config:
+def load_step_config(run_dir: str, pdk_root: str, extra: dict | None = None, cls=DumpNetsPostGRT) -> Config:
     """Base the step config on the run's own post-GPL resizer step config (a
     ResizerStep, so it carries every GRT/RSZ/SDC variable this step needs), and
     fill anything missing from resolved.json."""
     base_cands = sorted(glob.glob(os.path.join(run_dir, "*-openroad-repairdesignpostgpl", "config.json")))
     resolved = json.loads(open(os.path.join(run_dir, "resolved.json")).read(), parse_float=Decimal)
-    all_vars = DumpNetsPostGRT.get_all_config_variables()  # includes the universal flow variables
+    all_vars = cls.get_all_config_variables()  # includes the universal flow variables
     wanted = {v.name for v in all_vars}
     merged = {k: v for k, v in resolved.items() if k in wanted or k == "meta"}
     if base_cands:
         for k, v in json.loads(open(base_cands[-1]).read(), parse_float=Decimal).items():
             if k in wanted and k not in merged:
                 merged[k] = v
+    if extra:
+        merged.update(extra)
     for probe in ("MAX_TRANSITION_CONSTRAINT", "MAX_CAPACITANCE_CONSTRAINT", "MAX_FANOUT_CONSTRAINT", "CLOCK_PERIOD"):
         print(f"[br] config {probe} = {merged.get(probe)!r} (in wanted: {probe in wanted})")
     try:
@@ -76,14 +78,27 @@ def main() -> int:
     ap.add_argument("run_dir")
     ap.add_argument("--out", default=None)
     ap.add_argument("--pdk-root", default=os.environ.get("PDK_ROOT", "/home/claude/eda/pdk"))
+    ap.add_argument("--signoff", action="store_true", help="dump the signoff view (final ODB + RCX SPEF per corner)")
     a = ap.parse_args()
     run_dir = os.path.abspath(a.run_dir)
-    out = a.out or os.path.join(run_dir, "br-dump-postgrt")
+    out = a.out or os.path.join(run_dir, "br-dump-signoff" if a.signoff else "br-dump-postgrt")
     os.makedirs(out, exist_ok=True)
-    state_in_path = find_state_in(run_dir)
-    config = load_step_config(run_dir, a.pdk_root)
-    state_in = State.loads(open(state_in_path).read())
-    step = DumpNetsPostGRT(config=config, state_in=state_in, _no_revalidate_conf=True)
+    if a.signoff:
+        cands = sorted(glob.glob(os.path.join(run_dir, "*-openroad-stapostpnr", "state_in.json")))
+        if not cands:
+            raise SystemExit("no STAPostPNR state_in.json")
+        state_in_path = cands[-1]
+        st = json.load(open(state_in_path))
+        spef_map_path = os.path.join(out, "spef_map.json")
+        json.dump(st["spef"], open(spef_map_path, "w"))
+        config = load_step_config(run_dir, a.pdk_root, extra={"BR_MODE": "signoff", "BR_SPEF_MAP": spef_map_path}, cls=DumpNetsSignoff)
+        state_in = State.loads(open(state_in_path).read())
+        step = DumpNetsSignoff(config=config, state_in=state_in, _no_revalidate_conf=True)
+    else:
+        state_in_path = find_state_in(run_dir)
+        config = load_step_config(run_dir, a.pdk_root)
+        state_in = State.loads(open(state_in_path).read())
+        step = DumpNetsPostGRT(config=config, state_in=state_in, _no_revalidate_conf=True)
     print(f"[br] state_in: {state_in_path}")
     print(f"[br] odb: {state_in['odb']}")
     step.start(toolbox=Toolbox(os.path.join(out, "toolbox_tmp")), step_dir=out)
