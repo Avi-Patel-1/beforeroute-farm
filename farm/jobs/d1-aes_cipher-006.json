@@ -1,0 +1,12 @@
+{
+ "tag": "d1-aes_cipher-006",
+ "design": "designs/aes_cipher",
+ "config": "config_sky130.json",
+ "overrides": {
+  "FP_CORE_UTIL": 65,
+  "PL_TARGET_DENSITY_PCT": 70,
+  "CLOCK_PERIOD": 32.0,
+  "MAX_TRANSITION_CONSTRAINT": 0.5,
+  "RUN_POST_GRT_DESIGN_REPAIR": false
+ }
+}

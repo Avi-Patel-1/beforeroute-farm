@@ -1,0 +1,12 @@
+{
+ "tag": "d1-picorv32-026",
+ "design": "designs/picorv32",
+ "config": "config_sky130.json",
+ "overrides": {
+  "FP_CORE_UTIL": 65,
+  "PL_TARGET_DENSITY_PCT": 80,
+  "CLOCK_PERIOD": 32.5,
+  "MAX_TRANSITION_CONSTRAINT": 0.75,
+  "RUN_POST_GRT_DESIGN_REPAIR": false
+ }
+}

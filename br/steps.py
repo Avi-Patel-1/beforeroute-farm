@@ -38,3 +38,42 @@ class DumpNetsPostGRT(ResizerStep):
             "-python",
             self.get_script_path(),
         ]
+
+
+from typing import Optional  # noqa: E402
+from librelane.config import Variable  # noqa: E402
+from librelane.common import Path as LLPath  # noqa: E402
+from librelane.steps.openroad import RepairDesignPostGRT  # noqa: E402
+
+
+@Step.factory.register()
+class TargetedRepairPostGRT(RepairDesignPostGRT):
+    """Stock post-GRT design repair restricted to the nets listed in BR_FLAGGED_NETS_FILE
+    (every other signal net is marked do-not-touch in the database for the duration of
+    repair_design). With no file, behaves exactly like OpenROAD.RepairDesignPostGRT."""
+
+    id = "BeforeRoute.TargetedRepairPostGRT"
+    name = "Targeted Repair Design (Post-Global Routing)"
+
+    config_vars = RepairDesignPostGRT.config_vars + [
+        Variable(
+            "BR_FLAGGED_NETS_FILE",
+            Optional[LLPath],
+            "JSON list of net names that repair_design may touch; all other signal nets are masked.",
+        ),
+    ]
+
+    def get_script_path(self):
+        return os.path.join(HERE, "targeted_repair.py")
+
+    def get_command(self):
+        metrics_path = os.path.join(self.step_dir, "or_metrics_out.json")
+        return [
+            self.get_openroad_path(),
+            "-exit",
+            "-no_splash",
+            "-metrics",
+            metrics_path,
+            "-python",
+            self.get_script_path(),
+        ]

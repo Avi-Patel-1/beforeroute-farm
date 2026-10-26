@@ -1,0 +1,12 @@
+{
+ "tag": "d1-spm-007",
+ "design": "designs/spm",
+ "config": "config.yaml",
+ "overrides": {
+  "FP_CORE_UTIL": 45,
+  "PL_TARGET_DENSITY_PCT": 50,
+  "CLOCK_PERIOD": 10.0,
+  "MAX_TRANSITION_CONSTRAINT": 1.0,
+  "RUN_POST_GRT_DESIGN_REPAIR": false
+ }
+}
