@@ -122,6 +122,7 @@ def main() -> int:
     ap.add_argument("--out", default=None)
     ap.add_argument("--holdout", default="picorv32")
     ap.add_argument("--data-nets-only", action="store_true", help="evaluate on SIGNAL nets only")
+    ap.add_argument("--no-lodo", action="store_true", help="skip the leave-one-design-out loop; only fit the hero/deploy models")
     a = ap.parse_args()
     out = a.out or os.path.join(os.path.dirname(os.path.abspath(a.data)), "model")
     os.makedirs(out, exist_ok=True)
@@ -134,7 +135,7 @@ def main() -> int:
 
     report = {"designs": designs, "rows": int(len(df)), "lodo": {}, "baselines": {}}
     curves = {}
-    for held in designs:
+    for held in ([] if a.no_lodo else designs):
         tr, te = df[df["design"] != held], df[df["design"] == held]
         if te["y"].sum() == 0 or tr["y"].sum() == 0 or len(te) == 0:
             report["lodo"][held] = {"skipped": True, "n_test": int(len(te)), "pos_test": int(te["y"].sum()), "pos_train": int(tr["y"].sum())}
@@ -184,6 +185,8 @@ def main() -> int:
     if tr["y"].sum() > 0:
         hero = fit(tr)
         hero.save_model(os.path.join(out, f"model_holdout_{a.holdout}.txt"))
+        if tr["act_load_slew_ratio"].notna().sum() > 200:
+            fit_reg(tr).save_model(os.path.join(out, f"reg_holdout_{a.holdout}.txt"))
         imp = sorted(zip(FEATURES, hero.feature_importance("gain")), key=lambda t: -t[1])
         report["feature_importance_gain"] = [(f, float(g)) for f, g in imp]
         try:
