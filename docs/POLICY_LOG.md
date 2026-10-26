@@ -20,7 +20,7 @@ missing), hold = hold worst slack in ns (baseline in brackets), ΔA = std-cell a
 | uni50 | 152 | 750 | 0.097 | −2.94% | …-uni50 |
 | uni70 | 4 | 1,248 | 0.025 | −2.35% | …-uni70 |
 | tgt020-70 | 163 | +8 inst | 0.091 | −0.53% | …-tgt020-70 |
-| **tgt050-70** | 7 | +19 inst | 0.094 | −1.19% | …-tgt050-70 |
+| **tgt050-70** | 7 | 469 (453 resized + 16 buffers; local re-run, bit-identical metrics) | 0.094 | −1.19% | …-tgt050-70, …-tgt050-70-L |
 | tgt050-90 | 5 | +299 inst | 0.037 | +4.48% | …-tgt050-90 |
 | tgt100-70 | 5 | +43 inst | 0.028 | −1.39% | …-tgt100-70 |
 
@@ -32,10 +32,11 @@ What the traces said:
 * `tgt050-70/targeted_summary.json`: 483 nets eligible, 9,395 masked, 16 buffers inserted; the
   7 residual violators in `labels.json` are 4 fanout-rule nets (fanout 11–12) and 3 slews at
   1.01–1.07× the limit in a single corner. The 4 fanout nets were *slew* violators with fanout
-  exactly 10 in the baseline (`net1230/1215/1235/1236`, delay-cell drivers, all flagged): the
-  repair pass itself left them with 11–12 loads, i.e. these are repair-created violations that
-  a second masked pass would catch (mechanism to be confirmed in the verbose log of the local
-  re-run; uni70 leaves 1 such net).
+  exactly 10 in the baseline (`net1230/1215/1235/1236`, delay-cell drivers, all flagged, slew
+  fixed by the arm). Pin diff of `final_nets.json` (local re-run, 16:40): the extra 1–2 loads are
+  `ANTENNA_*/DIODE` pins — antenna diodes that the flow's post-route antenna repair attached to
+  these nets, which the signoff fanout check then counts. Not a repair artifact and not a slew
+  problem; the deck reports fanout residuals separately and says what they are.
 * Score ranks 484–966 (the extra nets tgt100-70 makes eligible) contain only 2 violators
   (92 of the 483 are delay-cell nets, the rest ordinary logic), yet tgt100-70 ends at hold
   0.028 ns: those nets buy 2 violators and cost most of the hold margin. tgt050-90 keeps the
@@ -44,10 +45,10 @@ What the traces said:
 Decision (16:00 EDT, before any confirmatory result): k = 5%, H = 70% is the operating point.
 Next proposals: (a) a two-tier policy, top 2% at 80% margin, next 3% at 50%, to see whether a
 softer margin on the lower-confidence tier keeps the hold margin without losing violators
-(in Round 1); (b) a second masked `repair_design` pass on the same eligible set, so that
-violations created by the first pass (the 4 fanout nets above) are cleaned up (Round 2);
-(c) a rule that makes any net already over MAX_FANOUT at post-GRT eligible regardless of score
-(no such net exists in `picorv32-base-v1`, so this is only a safety net).
+(in Round 1); (b) a rule that makes any net already over MAX_FANOUT at post-GRT eligible
+regardless of score (no such net exists in `picorv32-base-v1`, so this is only a safety net).
+A two-pass option was implemented while the fanout residuals were still suspected to be
+repair-created; the pin diff above removed that motivation, so it is not in Round 2.
 
 ## Round 1 — confirmatory (dispatched 19:45 UTC)
 
@@ -74,7 +75,6 @@ Trace: `results/model_v3/report.json`, `models/report_v3.json`.
 
 | arm | what changes | why (from the traces) |
 |---|---|---|
-| `tgt050-70p2` | two masked passes on the same top-5% set | pass 1 created 4 fanout violations on flagged nets (Round 0 trace) |
 | `lt050-80-60-40` | top 5% split by predicted signoff ratio ≥1.3 / ≥1.1 / rest at margins 80 / 60 / 40 | regression is now calibrated; spend margin where the predicted overshoot is large, keep hold margin elsewhere |
 | `tgt050-70v3` | same policy, v3 model (61 runs) instead of v2 (24 runs) | isolates the effect of more training runs on the intervention |
 
