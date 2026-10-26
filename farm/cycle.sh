@@ -34,9 +34,9 @@ if [ "$TRAIN" = 1 ]; then
   last=$(cat results/.trained_on 2>/dev/null || echo 0)
   if [ "$nruns" -ge $((last + 3)) ]; then
     echo "-- rebuilding dataset ($nruns runs, last trained on $last) and retraining in background"
-    ( python3 br/build_dataset.py --results results > results/build_dataset.log 2>&1 && \
+    setsid nohup bash -c "python3 br/build_dataset.py --results results > results/build_dataset.log 2>&1 && \
       python3 br/train.py --data results/dataset.parquet --out results/model_latest --holdout picorv32 > results/train_latest.log 2>&1 && \
-      echo "$nruns" > results/.trained_on ) &
+      echo $nruns > results/.trained_on" > /dev/null 2>&1 < /dev/null &
   else
     echo "-- no retrain ($nruns runs, trained on $last)"
   fi

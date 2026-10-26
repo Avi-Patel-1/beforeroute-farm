@@ -57,7 +57,49 @@ Bases: `d1-aes_cipher-000` (model `model_holdout_aes_v2`, 24 runs without AES),
 PicoRV32). Arms: rerun, uni30, uni50, uni70, tgt030-70, tgt050-70, tgt050-80,
 tier020-80_050-50. Results are appended below as they land, with no post-hoc arm selection.
 
-*(pending)*
+### Results so far (17:10 EDT) — v2 held-out models, pre-registered k = 5%, H = 70%
+
+`d1-aes_cipher-000` (baseline 830 violating signal nets = 7.4% of nets; hold 0.114 ns):
+
+| arm | V (830) | E cells | nets touched | hold | ΔA |
+|---|---|---|---|---|---|
+| uni30 | 538 | 842 | 863 | 0.114 | −2.87% |
+| uni50 | 228 | 1,302 | 1,325 | 0.035 | −2.58% |
+| uni70 | 10 | 3,957 | 3,634 | 0.026 | **+10.0%** |
+| tgt030-70 | 478 | 367 | 311 | 0.107 | −0.47% |
+| **tgt050-70** | 257 | 665 | 530 | 0.103 | −0.23% |
+| tgt050-80 | 269 | 737 | 564 | 0.089 | +1.15% |
+| tier020-80_050-50 | 304 | 559 | 370 | 0.104 | −0.46% |
+
+`d1-picorv32-016` (baseline 515 = 5.0% of nets; hold 0.107 ns; uni70 still running):
+
+| arm | V (515) | E cells | nets touched | hold | ΔA |
+|---|---|---|---|---|---|
+| uni30 | 429 | 426 | 431 | 0.100 | −1.63% |
+| uni50 | 232 | 777 | 736 | 0.033 | −1.82% |
+| tgt030-70 | 201 | 368 | 284 | 0.097 | −0.29% |
+| **tgt050-70** | 68 | 576 | 483 | 0.070 | −0.37% |
+| tgt050-80 | 75 | 651 | 510 | 0.036 | +1.10% |
+| tier020-80_050-50 | 145 | 428 | 315 | 0.028 | −0.21% |
+
+What the traces say:
+* PicoRV32-016 meets the pre-registered criterion: tgt050-70 removes 87% of violators with
+  fewer cells than uni50 (576 vs 777), 3.4× fewer violators left, and 65% of the hold margin
+  kept (uni50: 31%).
+* AES does **not** meet it at k = 5%: 69% removed. Cause, from the flagged list: the top 5% is
+  564 nets and 563 of them are true violators (precision 99.8%, lowest flagged p = 0.996) — the
+  budget was smaller than the violator population (830 = 7.4% of nets). Rescoring the same run:
+  a probability threshold p ≥ 0.5 flags 7.6% of nets with recall 94.6% / precision 91%
+  (`score.py --threshold 0.5`, v2 and v3 models agree). A fixed fraction was the wrong knob;
+  the classifier's own threshold is the natural budget.
+* The tiered arm (top 2% at 80%) costs hold margin on PicoRV32-016 (0.028) — the 80% margin
+  upsizes the delay cells hardest. Margin above 70% is not free.
+* Hold-margin loss tracks how aggressively the hold-fix delay cells get resized, in every arm.
+
+Round 2 (dispatched 17:12 EDT, v3 held-out models, same three bases): `thr500-70v3`
+(threshold budget), `tgt050-70v3` (model-version control), `tgt050-70hv3` and `thr500-70hv3`
+(hold-fix delay cells marked do-not-touch at the instance level, so their nets can be buffered
+but the cells are not swapped), `lt050-80-60-40` (learned margins by predicted ratio).
 
 ## Model update (16:30 EDT) — v3, 61 runs / 395,737 nets, leave-one-design-out
 
