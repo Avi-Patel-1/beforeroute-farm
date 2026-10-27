@@ -167,7 +167,8 @@ def main() -> int:
             records.append(rec)
             csv_rows.append(row)
             for r in blk["runs"]:
-                run_rows.append({"variant": a.variant, "holdout": D, "n": n_val, "seed": seed, **r})
+                run_rows.append({"variant": a.variant, "holdout": D, "n": n_val, "seed": seed,
+                                 **{("n_nets" if kk == "n" else kk): v for kk, v in r.items()}})
             C.log(f"n={n_val} seed={seed} train runs={len(train_runs)} designs={rec['n_train_designs']} pos={n_pos} fit={fit_s:.0f}s | "
                   f"pooled R@5%={blk['pooled'].get('recall@5%', float('nan')):.3f} catch95={blk['pooled'].get('frac_to_catch_95', float('nan')):.3f} "
                   f"PR-AUC={blk['pooled'].get('pr_auc', float('nan')):.3f} | run-med R@5%={blk['per_run']['recall@5%']['median']:.3f} "
