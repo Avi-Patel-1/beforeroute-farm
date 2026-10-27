@@ -135,6 +135,11 @@ def main() -> int:
         open(os.path.join(results, "labels.log"), "w").write(lab.stdout[-20000:] + "\n--- stderr ---\n" + lab.stderr[-20000:])
         copy_if(os.path.join(run_dir, "br-labels", "labels.json"), "labels.json")
         copy_if(os.path.join(run_dir, "br-labels", "final_nets.json"), "final_nets.json")
+        # final mapped netlist (gzipped) for the equivalence check against the baseline
+        import gzip
+        for nl in glob.glob(os.path.join(run_dir, "final", "nl", "*.nl.v"))[:1]:
+            with open(nl, "rb") as fi, gzip.open(os.path.join(results, "final.nl.v.gz"), "wb") as fo:
+                shutil.copyfileobj(fi, fo)
         os.makedirs(os.path.join(results, "checks"), exist_ok=True)
         for rpt in glob.glob(os.path.join(run_dir, "*-openroad-stapostpnr", "*", "checks.rpt")):
             shutil.copy2(rpt, os.path.join(results, "checks", os.path.basename(os.path.dirname(rpt)) + ".checks.rpt"))
