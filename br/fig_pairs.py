@@ -31,6 +31,8 @@ def main() -> int:
     ap.add_argument("--name", default="pairs14")
     ap.add_argument("--out", default=os.path.join(F.ROOT, "figures", "v2"))
     ap.add_argument("--width", type=float, default=11.5)
+    ap.add_argument("--rowh", type=float, default=0.36, help="inches per row")
+    ap.add_argument("--fs", type=int, default=0, help="font size offset")
     a = ap.parse_args()
     F.setup_style()
     rows = {(r["base"], r["arm"]): r for r in PT.table(None, ["rerun", a.other, a.policy])}
@@ -42,7 +44,8 @@ def main() -> int:
             if o and p and o["V"] is not None and p["V"] is not None:
                 items.append(("row", b, gk, o, p, z))
     n = len(items)
-    fig = plt.figure(figsize=(a.width, 0.36 * n + 1.35))
+    F.FS = F.FS + a.fs
+    fig = plt.figure(figsize=(a.width, a.rowh * n + 1.35))
     ax = fig.add_axes([0.2, 0.19, 0.66, 0.79])
     lo, hi = math.log10(0.45), math.log10(3000)
     y = 0
