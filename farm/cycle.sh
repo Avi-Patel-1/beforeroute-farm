@@ -35,6 +35,7 @@ fi
 
 # iterations-to-closure: advance the signoff-guided loop and BeforeRoute+cleanup chains
 python3 farm/advance.py 2>&1 | tail -8
+python3 farm/dispatch_r5.py 2>&1 | tail -6
 
 NEW=$(python3 farm/pack_results.py | wc -l)
 echo "-- packed $NEW new result archives"
