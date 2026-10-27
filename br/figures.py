@@ -88,7 +88,7 @@ def _arm_kind(tag, base):
         return "rerun", a
     if a.startswith("uni"):
         return "uniform", a
-    if a.startswith("tgt") or a.startswith("thr"):
+    if a.startswith("tgt") or a.startswith("thr") or a.startswith("exp"):
         return "targeted", a
     if a.startswith("det"):
         return "rule", a
