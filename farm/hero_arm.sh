@@ -89,8 +89,8 @@ case "$ARM" in
     test -f $LIST
     $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm targeted --tag $BASE-$ARM --slew-pct $H --cap-pct $H --flagged /work/$LIST --results results --pdk-root /work/pdk --jobs $JOBS ;;
   rcal*)
-    # rcal146-20: stock post-GRT repair on every net, router estimate correlated to extraction by a global wire-cap
-    # scale (LAYERS_RC from farm/rc/sky130_cap146.json), margin 20% -- the "just calibrate the estimator" control
+    # rcal<k>-<H>: stock post-GRT repair on every net, router estimate correlated to extraction by a global wire-cap
+    # scale k/100 (LAYERS_RC from farm/rc/sky130_cap<k>.json = LEF cap x k/100), margin H% -- the "just calibrate the estimator" control
     K=${ARM#rcal}; K=${K%%-*}; H=${ARM##*-}
     RC=$(tr -d ' \n' < farm/rc/sky130_cap$K.json)
     $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm uniform --tag $BASE-$ARM --slew-pct $H --cap-pct $H --override "LAYERS_RC=$RC" --results results --pdk-root /work/pdk --jobs $JOBS ;;
