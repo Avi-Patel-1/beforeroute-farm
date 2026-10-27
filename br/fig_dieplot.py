@@ -81,6 +81,9 @@ def main() -> int:
     fxy = np.array([(nets[n]["driver_x_um"], nets[n]["driver_y_um"]) for n in flagged if n in nets]).reshape(-1, 2)
     caught = np.array([nm in flagged for nm in vnames])
     timer = np.array([max(nets[nm].get("worst_load_slew_ratio") or 0, nets[nm].get("cap_ratio") or 0) > 1.0 if nm in nets else False for nm in vnames])
+    # like-for-like: the timer's own ranking (estimated worst-load slew ratio) at the same budget
+    est_rank = sorted(nets, key=lambda k: -(nets[k].get("worst_load_slew_ratio") or 0))[:len(flagged)]
+    est_caught = len(set(est_rank) & set(vnames))
     hs = json.load(open(os.path.join(a.results, a.base, "hero_summary.json")))
     rows = {r["tag"]: r for r in hs["arms"]}
     ref = rows.get(f"{a.base}-rerun") or rows.get(a.base)
@@ -121,7 +124,7 @@ def main() -> int:
     fig.text(0.012, 0.975, f"Before routing: BeforeRoute flags {len(flagged):,} nets ({len(flagged) / len(nets):.0%})",
              fontsize=F.FS + 2, fontweight="semibold", color=F.INK, va="top")
     fig.text(0.012, 0.915, f"{int(caught.sum()):,} of {n_v:,} future signoff violators are inside the flags\n"
-             f"(the timer's own estimate flags {int(timer.sum())} of them)", fontsize=F.FS, color=F.INK2, va="top", linespacing=1.25)
+             f"(the timer's own top-{len(flagged)} ranking: {est_caught}; its over-limit flag: {int(timer.sum())})", fontsize=F.FS, color=F.INK2, va="top", linespacing=1.25)
     # panel B: after targeted repair
     ax = axes[1]
     if len(rxy):
@@ -136,7 +139,7 @@ def main() -> int:
                     ("o", F.CRIT, 6, "signoff violator", None, True),
                     ("x", F.CRIT, 8, "violator the model missed", None, False)], 0.014, 0.038)
     nums = dict(base=a.base, arm=a.arm, signal_nets=len(nets), flagged=len(flagged), violators=n_v,
-                violators_unplaced=v_unpl, caught=int(caught.sum()), timer_flagged_violators=int(timer.sum()),
+                violators_unplaced=v_unpl, caught=int(caught.sum()), timer_flagged_violators=int(timer.sum()), timer_topk_caught=est_caught,
                 residual=n_r, residual_unplaced=r_unpl, arm_cells=cells(arm), uni_cells=cells(uni),
                 arm_hold_kept=hold_kept(arm), uni_hold_kept=hold_kept(uni),
                 uni_residual=uni.get("signoff_violating_data_nets"))

@@ -43,7 +43,8 @@ def main() -> int:
     F.setup_style()
     rows, near, flagged_new, flagged_on = [], [], [0, 0], []
     for base, label in BASES:
-        b = violators(a.results, base)
+        # reference = the rerun arm (same rebuilt checkpoint as the arms), as for every Round-3 number
+        b = violators(a.results, f"{base}-rerun") or violators(a.results, base)
         h = violators(a.results, f"{base}-lst-sgl1-70")
         m = violators(a.results, f"{base}-{a.model_arm}")
         if b is None or h is None:
@@ -68,35 +69,44 @@ def main() -> int:
         print("[whackamole] no bases with a loop pass-1 arm yet")
         return 0
     fig = plt.figure(figsize=(12.1, 5.3))
-    ax = fig.add_axes([0.07, 0.21, 0.56, 0.58])
+    ax = fig.add_axes([0.07, 0.24, 0.56, 0.55])
     x = np.arange(len(rows))
     w = 0.36
-    ho = np.array([r["hind_old"] for r in rows])
-    hn = np.array([r["hind_new"] for r in rows])
+    base_n = np.array([max(1, r["baseline"]) for r in rows], dtype=float)
+    ho = np.array([r["hind_old"] for r in rows]) / base_n * 100
+    hn = np.array([r["hind_new"] for r in rows]) / base_n * 100
     ax.bar(x - w / 2, ho, w, color=F.GREY, zorder=2)
     ax.bar(x - w / 2, hn, w, bottom=ho, color=F.ROSE, zorder=2)
+    tops = []
     for i, r in enumerate(rows):
+        hcount = r["hind_old"] + r["hind_new"]
+        ax.text(x[i] - w / 2, ho[i] + hn[i] + 0.25, str(hcount), ha="center", va="bottom", fontsize=F.FS, color=F.INK)
+        tops.append(ho[i] + hn[i])
         if r["model_old"] is not None:
-            ax.bar(x[i] + w / 2, r["model_old"], w, color=F.GREY, zorder=2)
-            ax.bar(x[i] + w / 2, r["model_new"], w, bottom=r["model_old"], color=F.GREEN, zorder=2)
-            ax.text(x[i] + w / 2, r["model_old"] + r["model_new"] + 0.6, str(r["model_old"] + r["model_new"]), ha="center", va="bottom", fontsize=F.FS, color=F.INK)
+            mo, mn = r["model_old"] / base_n[i] * 100, r["model_new"] / base_n[i] * 100
+            ax.bar(x[i] + w / 2, mo, w, color=F.GREY, zorder=2)
+            ax.bar(x[i] + w / 2, mn, w, bottom=mo, color=F.GREEN, zorder=2)
+            ax.text(x[i] + w / 2, mo + mn + 0.25, str(r["model_old"] + r["model_new"]), ha="center", va="bottom", fontsize=F.FS, color=F.INK)
+            tops.append(mo + mn)
         else:
-            ax.text(x[i] + w / 2, 0.6, "pending", ha="center", va="bottom", fontsize=F.FS - 2, color=F.MUTED, rotation=90)
-        ax.text(x[i] - w / 2, r["hind_old"] + r["hind_new"] + 0.6, str(r["hind_old"] + r["hind_new"]), ha="center", va="bottom", fontsize=F.FS, color=F.INK)
+            ax.text(x[i] + w / 2, 0.3, "pending", ha="center", va="bottom", fontsize=F.FS - 2, color=F.MUTED, rotation=90)
     ax.set_xticks(x)
     ax.set_xticklabels([f"{r['label']}\n({r['baseline']})" for r in rows], fontsize=F.FS - 1)
-    ax.set_ylabel("signal violators left at signoff")
+    ax.set_ylabel("left at signoff, % of baseline")
     ax.yaxis.grid(True)
     ax.set_axisbelow(True)
-    top = max(int(ho.max() + hn.max()), max((r["model_old"] or 0) + (r["model_new"] or 0) for r in rows))
-    ax.set_ylim(0, top * 1.25 + 2)
+    ax.set_ylim(0, max(tops) * 1.22 + 0.5)
+    ax.yaxis.set_major_locator(F.mticker.MaxNLocator(nbins=5, integer=True))
+    ax.yaxis.set_major_formatter(F.mticker.FuncFormatter(lambda v, _: f"{v:.0f}%"))
     fig.text(0.07, 0.965, "Fixing exactly what failed creates new failures", fontsize=F.FS + 4, fontweight="semibold", color=F.INK, va="top")
     fig.text(0.07, 0.885, "left: repair the nets that failed the last signoff · right: repair the model's p ≥ 0.5 list",
              fontsize=F.FS - 1, color=F.INK2, va="top")
+    fig.text(0.07, 0.005, "Both re-run detailed routing from the same post-GRT checkpoint (not an incremental ECO); the left list has no guard band.",
+             fontsize=F.FS - 3, color=F.MUTED, va="bottom")
     F.key_row(fig, [("s", F.GREY, 10, "failed before too", None, True), ("s", F.ROSE, 10, "new (hindsight fix)", None, True),
-                    ("s", F.GREEN, 10, "new (model's fix)", None, True)], 0.07, 0.04)
+                    ("s", F.GREEN, 10, "new (model's fix)", None, True)], 0.07, 0.075)
     # right panel: where the new violators sat before the ECO
-    ax2 = fig.add_axes([0.72, 0.21, 0.26, 0.45])
+    ax2 = fig.add_axes([0.72, 0.24, 0.26, 0.38])
     if near:
         ax2.hist(np.clip(near, 0.85, 1.0), bins=np.linspace(0.85, 1.0, 16), color=F.ROSE, zorder=2)
         ax2.axvline(1.0, color=F.INK2, lw=1.0)
@@ -108,7 +118,7 @@ def main() -> int:
         ax2.set_axisbelow(True)
     msg = f"{len(near)} new violators,\nmedian {np.median(near):.2f}× the limit before" if near else ""
     if flagged_new[1]:
-        msg += f"\n{', '.join(flagged_on)}: the model had flagged\n{flagged_new[0]} of {flagged_new[1]} before routing"
+        msg += f"\nthe model had flagged {flagged_new[0]} of {flagged_new[1]}\n({100 * flagged_new[0] / flagged_new[1]:.0f}%) before routing"
     fig.text(0.72, 0.80, msg, fontsize=F.FS - 1, color=F.INK2, va="top", linespacing=1.2)
     nums = dict(rows=rows, near_median=float(np.median(near)) if near else None, n_new=len(near), model_flagged_new=flagged_new)
     F.save(fig, a.out, a.name, nums)
