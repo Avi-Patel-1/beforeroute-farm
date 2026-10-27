@@ -32,7 +32,9 @@ estimated load slew ratio <= 1). Every result is cached in <out>/cache/<key>.jso
 from __future__ import annotations
 
 import argparse
+import itertools
 import json
+import math
 import os
 import random
 import sys
@@ -65,6 +67,19 @@ PORT_MAP = {  # base feature -> node-portable replacement
 }
 FEATURES_PORT = [PORT_MAP.get(f, f) for f in FEATURES if PORT_MAP.get(f, f)]
 FEATURE_SETS = {"base": FEATURES, "port": FEATURES_PORT}
+
+
+NEEDED = sorted(set(FEATURES) - {"driver_class"} | {
+    "run", "design", "sigtype", "join_how", "driver_kind", "driver_master", "y", "y_slew", "y_cap", "y_fanout",
+    "worst_load_slew_ratio", "driver_slew_ratio", "cap_ratio"})
+
+
+def read(path: str) -> pd.DataFrame:
+    """Only the columns this evaluation uses (RAM is shared); dtypes unchanged so pretrained models see the same values."""
+    import pyarrow.parquet as pq
+
+    have = set(pq.read_schema(path).names)
+    return pd.read_parquet(path, columns=[c for c in NEEDED if c in have])
 
 
 def prep(df: pd.DataFrame, pdk_family: str) -> pd.DataFrame:
@@ -190,7 +205,7 @@ def main() -> int:
         print(f"[transfer] {key}: {res['_seconds']}s", flush=True)
         return res
 
-    sky = prep(pd.read_parquet(a.sky), "sky130")
+    sky = prep(read(a.sky), "sky130")
     sky_s, w_s = sub_neg(sky, a.neg_frac)
 
     def sky_model(name, df, feats, w=None):
@@ -216,7 +231,7 @@ def main() -> int:
             sky_model(sub_name(fs), sky_s, FEATURE_SETS[fs], w_s)
         return 0
 
-    gf = prep(pd.read_parquet(a.gf), "gf180mcu")
+    gf = prep(read(a.gf), "gf180mcu")
     if a.designs:
         gf = gf[gf["design"].isin(a.designs.split(","))]
     designs = sorted(gf["design"].unique())
@@ -284,9 +299,19 @@ def main() -> int:
                 elif k > len(pool):
                     continue
                 elif k == len(pool):
+                    if "all" in ks:
+                        continue  # same subset as k=all
                     draws = [pool]
-                else:
-                    draws = [random.Random(zlib.crc32(f"{d}|{k}|{r}".encode())).sample(pool, k) for r in range(a.repeats)]
+                elif math.comb(len(pool), k) <= a.repeats:  # few distinct subsets: use all of them
+                    draws = [list(c) for c in itertools.combinations(pool, k)]
+                else:  # distinct random subsets, deterministic per (design, k, draw)
+                    draws, seen, r = [], set(), 0
+                    while len(draws) < a.repeats:
+                        c = tuple(sorted(random.Random(zlib.crc32(f"{d}|{k}|{r}".encode())).sample(pool, k)))
+                        r += 1
+                        if c not in seen:
+                            seen.add(c)
+                            draws.append(list(c))
                 for r, picked in enumerate(draws):
                     g = gf[gf["run"].isin(picked)]
                     if g["y"].sum() == 0:
