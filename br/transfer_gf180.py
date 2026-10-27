@@ -180,6 +180,8 @@ def main() -> int:
     ap.add_argument("--neg-frac", type=float, default=0.25)
     ap.add_argument("--gf-share", type=float, default=0.2)
     ap.add_argument("--ft-rounds", type=int, default=100)
+    ap.add_argument("--strict", action="store_true",
+                    help="exclude the held-out design's own sky130 runs from every sky130-trained arm (new PDK AND new design)")
     ap.add_argument("--sky-lodo", action="store_true", help="reference: sky130 leave-one-design-out on the same designs (base features, full recipe)")
     a = ap.parse_args()
     arms = a.arms.split(",")
@@ -219,16 +221,31 @@ def main() -> int:
         print(f"[transfer] trained {name} on {len(df)} rows in {time.time() - t0:.0f}s", flush=True)
         return m
 
-    def full_name(fs):
-        return "sky130_all_neutral.txt" if fs == "base" else f"sky130_all_neutral_{fs}.txt"
+    def full_name(fs, minus=None):
+        n = "sky130_all_neutral" if fs == "base" else f"sky130_all_neutral_{fs}"
+        return n + (f"_minus_{minus}" if minus else "") + ".txt"
 
-    def sub_name(fs):
-        return f"sky130_sub{a.neg_frac:g}_neutral.txt" if fs == "base" else f"sky130_sub{a.neg_frac:g}_neutral_{fs}.txt"
+    def sub_name(fs, minus=None):
+        n = f"sky130_sub{a.neg_frac:g}_neutral" if fs == "base" else f"sky130_sub{a.neg_frac:g}_neutral_{fs}"
+        return n + (f"_minus_{minus}" if minus else "") + ".txt"
+
+    def sky_for(d):
+        """sky130 training rows (full, subsampled + weights) for held-out design d under the chosen protocol."""
+        if not a.strict:
+            return sky, sky_s, w_s
+        keep = (sky_s["design"] != d).values
+        return sky[sky["design"] != d], sky_s[keep], w_s[keep]
 
     if a.pretrain_only:
         for fs in fsets:
-            sky_model(full_name(fs), sky, FEATURE_SETS[fs])
-            sky_model(sub_name(fs), sky_s, FEATURE_SETS[fs], w_s)
+            if a.strict:
+                for d in (a.designs or "").split(","):
+                    full_d, sub_d, wsub_d = sky_for(d)
+                    sky_model(full_name(fs, d), full_d, FEATURE_SETS[fs])
+                    sky_model(sub_name(fs, d), sub_d, FEATURE_SETS[fs], wsub_d)
+            else:
+                sky_model(full_name(fs), sky, FEATURE_SETS[fs])
+                sky_model(sub_name(fs), sky_s, FEATURE_SETS[fs], w_s)
         return 0
 
     gf = prep(read(a.gf), "gf180mcu")
@@ -278,20 +295,24 @@ def main() -> int:
             S.setdefault("sky130_lodo", {})[d] = cached(f"sky130_lodo_{d}", lodo)
 
     ks = [k if k == "all" else int(k) for k in a.ks.split(",")]
+    proto = "strict_" if a.strict else ""
+    S["protocol"] = "strict: held-out design excluded from sky130 training" if a.strict else "all sky130 designs in training"
     for fs in fsets:
         feats = FEATURE_SETS[fs]
-        full = sky_model(full_name(fs), sky, feats) if ("zs" in arms or "ft" in arms) else None
         for d in designs:
+            sky_d, sky_s_d, w_s_d = sky_for(d)
+            need_full = "zs" in arms or "ft" in arms
+            full = sky_model(full_name(fs, d if a.strict else None), sky_d, feats) if need_full else None
             te = gf[gf["design"] == d]
             Xte = X_of(te, feats)
             A = S["arms"].setdefault(fs, {}).setdefault(d, {})
             tsig = f"{zlib.crc32('|'.join(runs_of[d]).encode()):08x}"  # cache keys change when the test runs change
             if "zs" in arms:
-                A.setdefault("zs", {})["0"] = [cached(f"{fs}_zs_{d}_{tsig}", lambda: score_design(te, full.predict(Xte)))]
+                A.setdefault("zs", {})["0"] = [cached(f"{proto}{fs}_zs_{d}_{tsig}", lambda: score_design(te, full.predict(Xte)))]
             if "merge" in arms and fs in arm_fs.get("merge", {fs}):
                 def m0():
-                    return score_design(te, sky_model(sub_name(fs), sky_s, feats, w_s).predict(Xte))
-                A.setdefault("merge", {})["0"] = [cached(f"{fs}_merge_{d}_k0_{tsig}", m0)]
+                    return score_design(te, sky_model(sub_name(fs, d if a.strict else None), sky_s_d, feats, w_s_d).predict(Xte))
+                A.setdefault("merge", {})["0"] = [cached(f"{proto}{fs}_merge_{d}_k0_{tsig}", m0)]
             pool = [r for dd in designs if dd != d for r in runs_of[dd]]
             for k in ks:
                 if k == "all":
@@ -318,15 +339,15 @@ def main() -> int:
                         continue
                     meta = {"picked": list(picked), "gf_rows": int(len(g))}
 
-                    def run_arm(arm, g=g, te=te, Xte=Xte, meta=meta):
+                    def run_arm(arm, g=g, te=te, Xte=Xte, meta=meta, sky_s_d=sky_s_d, w_s_d=w_s_d, full=full):
                         if arm == "gfonly":
                             model = fit_w(g, feats)
                         elif arm in ("merge", "mergew"):
-                            tr = pd.concat([sky_s, g], ignore_index=True)
+                            tr = pd.concat([sky_s_d, g], ignore_index=True)
                             wg = np.ones(len(g))
                             if arm == "mergew":
-                                wg[:] = a.gf_share / (1 - a.gf_share) * w_s.sum() / len(g)
-                            model = fit_w(tr, feats, np.concatenate([w_s, wg]))
+                                wg[:] = a.gf_share / (1 - a.gf_share) * w_s_d.sum() / len(g)
+                            model = fit_w(tr, feats, np.concatenate([w_s_d, wg]))
                             meta = dict(meta, gf_row_weight=float(wg[0]))
                         elif arm == "ft":
                             model = fit_w(g, feats, rounds=a.ft_rounds, init_model=full)
@@ -344,7 +365,7 @@ def main() -> int:
                         if arm in arm_fs and fs not in arm_fs[arm]:
                             continue
                         psig = f"{zlib.crc32('|'.join(sorted(picked)).encode()):08x}"
-                        key = f"{fs}_{arm}_{d}_k{k}_r{r}_{tsig}_{psig}"
+                        key = f"{proto if arm != 'gfonly' else ''}{fs}_{arm}_{d}_k{k}_r{r}_{tsig}_{psig}"
                         A.setdefault(arm, {}).setdefault(str(k), []).append(cached(key, lambda arm=arm: run_arm(arm)))
             json.dump(S, open(os.path.join(a.out, "summary.json"), "w"), indent=1)
             write_tables(S, os.path.join(a.out, "tables.md"))
