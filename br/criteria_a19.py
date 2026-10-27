@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Addenda 19 and 20 criteria, exactly as registered (hashes ae0e8ea8…, ed97fb78… in farm/prereg_hashes.txt).
+"""Addenda 19, 20 and 22 criteria, exactly as registered (hashes in farm/prereg_hashes.txt).
 
 V = signal nets violating max slew or max capacitance at any of the nine signoff corners (labels.json; fanout-only
 violators are not counted, unlike Addenda 1–18 which used every DRV type on data nets).
@@ -21,7 +21,30 @@ BASES = ["d3-bm64-000", "d3-des-000", "d3-md5-000", "d3-ocs_blitter-000", "d3-sa
          "d3b-ldpcenc-000", "d3b-sha512-000", "d5-blabla-000", "d5-chacha-000", "d5-point_add-000",
          "d1-picorv32-006", "d1-picorv32-016", "d1-aes_cipher-000"]
 R1 = ["d1-picorv32-006", "d1-picorv32-016", "d1-aes_cipher-000"]
+# Addendum 22: correlated-flow bases whose seed reached signoff (pico-006 and LDPC did not route under ORFS RC)
+CF_BASES = ["d3cfo-bm64-000", "d3cfo-des-000", "d3cfo-md5-000", "d3cfo-ocs_blitter-000", "d3cfo-salsa20-000",
+            "d3cfo-y_huff-000", "d3bcfo-sha512-000", "d5cfo-blabla-000", "d5cfo-chacha-000", "d5cfo-point_add-000",
+            "d1cfo-picorv32-016", "d1cfo-aes_cipher-000"]
+# the correlated bases whose unrepaired seed has >= 30% of its signoff violators under the limit at the post-GRT estimate
+# (fixed in Addendum 22 from the seeds, before any arm ran): where a learned list has something left to find
+CF_RESIDUAL = ["d3cfo-salsa20-000", "d3bcfo-sha512-000", "d5cfo-blabla-000", "d5cfo-chacha-000", "d5cfo-point_add-000",
+               "d1cfo-picorv32-016"]
 RESULTS = "results"
+
+
+def base_area(base):
+    m = os.path.join(RESULTS, base, "metrics.json")
+    return json.load(open(m)).get("design__instance__area__stdcell") if os.path.exists(m) else None
+
+
+def cells(base, a):
+    p = os.path.join(RESULTS, base, "hero_summary.json")
+    if not os.path.exists(p):
+        return None
+    r = {x["tag"]: x for x in json.load(open(p))["arms"]}.get(f"{base}-{a}")
+    if not r or r.get("buffers") is None:
+        return None
+    return (r.get("buffers") or 0) + (r.get("resized") or 0)
 
 
 def arm(base, a):
@@ -50,10 +73,10 @@ def cmp_counts(a, b):
     return -1 if a < b else 1
 
 
-def frontier(base):
-    base_area = (arm(base, "rerun") or {}).get("area")
+def frontier(base, arms=("rcal213-0", "rcal213-10", "rcal213-20", "rcal213-30"), ref="rerun"):
+    base_area = (arm(base, ref) or {}).get("area") if ref else globals()["base_area"](base)
     pts = []
-    for a in ("rcal213-0", "rcal213-10", "rcal213-20", "rcal213-30"):
+    for a in arms:
         r = arm(base, a)
         if r is None or r["area"] is None or base_area is None:
             return None, base_area
@@ -73,8 +96,8 @@ def F_at(pts, x):
     return pts[-1][1]
 
 
-def below_frontier(base, a):
-    pts, base_area = frontier(base)
+def below_frontier(base, a, arms=("rcal213-0", "rcal213-10", "rcal213-20", "rcal213-30"), ref="rerun"):
+    pts, base_area = frontier(base, arms, ref)
     r = arm(base, a)
     if pts is None or r is None or r["area"] is None:
         return None
@@ -117,23 +140,24 @@ def main() -> int:
     RESULTS = a.results
     out = {}
 
-    def frontier_crit(name, armname):
+    def frontier_crit(name, armname, bases=BASES, need=9, max_above=2,
+                      farms=("rcal213-0", "rcal213-10", "rcal213-20", "rcal213-30"), ref="rerun", what="calibrated"):
         per, detail = {}, {}
-        for b in BASES:
-            r = below_frontier(b, armname)
+        for b in bases:
+            r = below_frontier(b, armname, farms, ref)
             detail[b] = r
             per[b] = None if r is None else ("pass" if r["status"] == "below" else ("fail" if r["status"] == "above" else "tie"))
         below = sum(1 for v in per.values() if v == "pass")
         above = sum(1 for v in per.values() if v == "fail")
         pend = sum(1 for v in per.values() if v is None)
-        if below >= 9 and above + pend <= 2:
+        if below >= need and above + pend <= max_above:
             verdict = "PASS"
-        elif above > 2 or below + pend < 9:
+        elif above > max_above or below + pend < need:
             verdict = "FAIL"
         else:
             verdict = "pending"
         out[name] = {"verdict": verdict, "below": below, "above": above, "pending": pend, "per_base": detail}
-        print(f"  {name} {armname} below the calibrated frontier (need >= 9 below, <= 2 above): {verdict} ({below} below, {above} above, {pend} pending)")
+        print(f"  {name} {armname} below the {what} frontier (need >= {need} below, <= {max_above} above): {verdict} ({below} below, {above} above, {pend} pending)")
 
     def pair_crit(name, x, y, need, n_bases=BASES, sense="fewer", strict=True):
         per, detail = {}, {}
@@ -172,6 +196,31 @@ def main() -> int:
         out[name] = {"verdict": verdict, "higher": higher, "lower": lower, "pending": pend, "per_base": detail}
         print(f"  {name} {x} worst hold slack vs {y} (need >= {need_higher} higher by > 25 ps, <= {max_lower} lower): {verdict} ({higher} higher, {lower} lower, {pend} pending)")
 
+    def cells_frontier_crit(name, armname, bases, farms, need, max_above, label):
+        """Frontier over cells changed (buffers inserted + cells resized) through the stock arms `farms`."""
+        per, det = {}, {}
+        for b in bases:
+            pts = []
+            for fa in farms:
+                r, c = arm(b, fa), cells(b, fa)
+                if r is None or c is None:
+                    pts = None
+                    break
+                pts.append((c, r["V"]))
+            r, c = arm(b, armname), cells(b, armname)
+            if pts is None or r is None or c is None:
+                per[b] = None; det[b] = None; continue
+            pts.sort()
+            f = F_at(pts, c)
+            st = "below" if r["V"] < f - band(r["V"], f) else ("above" if r["V"] > f + band(r["V"], f) else "on")
+            per[b] = st
+            det[b] = {"status": st, "V": r["V"], "cells": c, "F": round(f, 1), "frontier": pts}
+        below = sum(1 for v in per.values() if v == "below"); above = sum(1 for v in per.values() if v == "above")
+        pend = sum(1 for v in per.values() if v is None)
+        v = "PASS" if (below >= need and above + pend <= max_above) else ("FAIL" if (above > max_above or below + pend < need) else "pending")
+        out[name] = {"verdict": v, "below": below, "above": above, "pending": pend, "per_base": det}
+        print(f"  {name} {armname} below the {label} frontier over cells changed (need >= {need} below, <= {max_above} above): {v} ({below} below, {above} above, {pend} pending)")
+
     print("== A19")
     frontier_crit("A19a", "bst500-30-10r")
     frontier_crit("A19b", "thr500-30cr")
@@ -192,6 +241,9 @@ def main() -> int:
     out["A19e"] = {"verdict": ve, "hold_part": vh, "violator_part": vv, "per_base": det}
     print(f"  A19e bst500-30-10rt vs rcal213-10t: hold-violating endpoints no more on >= 9 ({vh}) and violators no more on >= 9 ({vv}): {ve}")
     pair_crit("A19f", "thr500-30crv4", "rcal213-10", 2, n_bases=R1, sense="no more")
+    print("  -- exploratory, NOT registered: the A19a/b frontier over cells changed instead of std-cell area")
+    cells_frontier_crit("A19a-cells (exploratory)", "bst500-30-10r", BASES, ("rcal213-0", "rcal213-10", "rcal213-20", "rcal213-30"), 9, 2, "calibrated")
+    cells_frontier_crit("A19b-cells (exploratory)", "thr500-30cr", BASES, ("rcal213-0", "rcal213-10", "rcal213-20", "rcal213-30"), 9, 2, "calibrated")
     print("== A20")
     hold_crit("A20a", "rcy213-10y", "rcal213-10", 5, 1)
     pair_crit("A20b", "rcy213-10y", "rcal213-10", 12, sense="no more")
@@ -206,6 +258,34 @@ def main() -> int:
     v = tally(per, 13)
     out["A20c"] = {"verdict": v, "per_base": det}
     print(f"  A20c rcy213-10 identical to rcal213-10 (need 13 of 14): {v} ({sum(1 for x in per.values() if x == 'pass')} identical, {sum(1 for x in per.values() if x is None)} pending)")
+    print("== A22 (correlated flow; models trained on the other correlated bases)")
+    # A22a: frontier over CELLS CHANGED (not area: resizing a delay cell into buf_2 lowers area, so area is not monotone in
+    # repair effort), through uni0/10/20/30; below/above with the noise band; >= 7 below and <= 2 above of 12
+    cells_frontier_crit("A22a", "bst500-30-10", CF_RESIDUAL, ("uni0", "uni10", "uni20", "uni30"), 4, 1,
+                        "correlated stock (6 large-residual bases)")
+    cells_frontier_crit("A22a-all", "bst500-30-10", CF_BASES, ("uni0", "uni10", "uni20", "uni30"), 0, 2,
+                        "correlated stock (all 12; no-harm part: above on <= 2)")
+    va = out["A22a"]["verdict"]; vb = out["A22a-all"]["verdict"]
+    out["A22a"]["verdict_combined"] = "PASS" if va == vb == "PASS" else ("FAIL" if "FAIL" in (va, vb) else "pending")
+    print(f"  A22a combined (large-residual part AND no-harm part): {out['A22a']['verdict_combined']}")
+    # reported without criterion: the same over std-cell area
+    frontier_crit("A22a-area (no criterion)", "bst500-30-10", bases=CF_BASES, need=7, max_above=2,
+                  farms=("uni0", "uni10", "uni20", "uni30"), ref=None, what="correlated stock (area)")
+    pair_crit("A22b", "thr500-30c", "rqc-30", 4, n_bases=CF_RESIDUAL)
+    # A22c: thr500-30c changes fewer cells than uni30 on >= 10 AND leaves no more violators (band) on >= 7
+    per_c, per_v, det = {}, {}, {}
+    for b in CF_BASES:
+        rx, ry = arm(b, "thr500-30c"), arm(b, "uni30")
+        cx, cy = cells(b, "thr500-30c"), cells(b, "uni30")
+        if rx is None or ry is None or cx is None or cy is None:
+            per_c[b] = per_v[b] = None; det[b] = None; continue
+        per_c[b] = "pass" if cx < cy else "fail"
+        per_v[b] = "pass" if cmp_counts(rx["V"], ry["V"]) <= 0 else "fail"
+        det[b] = {"cells": (cx, cy), "V": (rx["V"], ry["V"])}
+    vc, vv = tally(per_c, 10, n_total=len(CF_BASES)), tally(per_v, 7, n_total=len(CF_BASES))
+    vcc = "PASS" if vc == vv == "PASS" else ("FAIL" if "FAIL" in (vc, vv) else "pending")
+    out["A22c"] = {"verdict": vcc, "cells_part": vc, "violator_part": vv, "per_base": det}
+    print(f"  A22c thr500-30c vs uni30: fewer cells on >= 10 of 12 ({vc}) and violators no more on >= 7 of 12 ({vv}): {vcc}")
     if a.json:
         json.dump(out, open(a.json, "w"), indent=1, default=str)
     return 0

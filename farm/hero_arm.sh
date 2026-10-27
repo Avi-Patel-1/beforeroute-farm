@@ -233,17 +233,18 @@ print(','.join(f'{int(x.split(\"-\")[0])/1000}:{x.split(\"-\")[1]}' for x in a.s
     python3 br/score.py --model $MODEL --run-results $SRC --threshold $VAL --out results/$BASE/flagged_$ARM.json
     python3 -c "import json; f=json.load(open('results/$BASE/flagged_$ARM.json')); json.dump({'tiers': [{'nets': f, 'slew_pct': $HF, 'cap_pct': $HF}, {'nets': 'ALL', 'slew_pct': $HA, 'cap_pct': $HA}]}, open('results/$BASE/tiers_$ARM.json', 'w'))"
     $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm tiered --tag $BASE-$ARM --tiers /work/results/$BASE/tiers_$ARM.json "${RCOV[@]}" --results results --pdk-root /work/pdk --jobs $JOBS ;;
-  rqn*|rnd*|rqt*)
+  rqn*|rnd*|rqt*|rqc*)
     # list controls under the combined actuator (Addendum 19); same masked repair as thr...cr, only the list differs:
     #   rqn-<H><flags>       : top N nets by rule R8 on the checkpoint re-timed with wire cap x2.130, N = |model list (p >= 0.5)|
     #   rnd<seed>-<H><flags> : N nets drawn at random (seeded), N as above
     #   rqt<thr>-<H><flags>  : every net whose re-timed R8 >= thr/1000 (the calibrated estimate's own list)
+    #   rqc-<H><flags>       : top N nets by rule R8 on the checkpoint's own estimate, no re-timing (Addendum 22: on the
+    #                          correlated-flow bases this is the correlated estimate), N as above
     #   flags as bst (r, o, t)
     H=${ARM##*-}; FL=${H//[0-9]/}; H=${H%%[a-z]*}
     use_checkpoint_features
     CK=$SRC
-    use_rc_checkpoint_features 213
-    RQ=$SRC
+    case "$ARM" in rqc*) RQ=$CK ;; *) use_rc_checkpoint_features 213; RQ=$SRC ;; esac
     RCOV=()
     case "$FL" in *r*) RCOV+=(--override "LAYERS_RC=$(tr -d ' \n' < farm/rc/sky130_cap213.json)");; esac
     case "$FL" in *o*) RCOV+=(--override "LAYERS_RC=$(tr -d ' \n' < farm/rc/sky130_caporfs.json)");; esac
@@ -252,7 +253,7 @@ print(','.join(f'{int(x.split(\"-\")[0])/1000}:{x.split(\"-\")[1]}' for x in a.s
     python3 br/score.py --model $MODEL --run-results $CK --threshold 0.5 --out results/$BASE/flagged_${ARM}_modelsize.json
     N=$(python3 -c "import json; print(len(json.load(open('results/$BASE/flagged_${ARM}_modelsize.json'))))")
     case "$ARM" in
-      rqn*) python3 br/score.py --model none --rule R8 --run-results $RQ --top-n $N --out results/$BASE/flagged_$ARM.json ;;
+      rqn*|rqc*) python3 br/score.py --model none --rule R8 --run-results $RQ --top-n $N --out results/$BASE/flagged_$ARM.json ;;
       rnd*) SEED=${ARM#rnd}; SEED=${SEED%%-*}
             python3 br/score.py --model none --rule RND --seed $SEED --run-results $CK --top-n $N --out results/$BASE/flagged_$ARM.json ;;
       rqt*) T=${ARM#rqt}; T=${T%%-*}
@@ -266,7 +267,7 @@ sudo chown -R "$(id -u):$(id -g)" results || true
 # (br/equiv_cut.py: flops matched by name and cut, ABC proves the next-state and output functions; seconds on these
 # designs); only if it cannot decide (ERROR / FAIL_MATCH / TIMEOUT) the Yosys equiv recipe as before, for the arm
 # families that always had it.
-case "$ARM" in tgt*|thr*|det*|lst-*|lsx-*|exp*|est*|rct*|rcal*|rcy*|bst*|rqn*|rnd*|rqt*|uni*)
+case "$ARM" in tgt*|thr*|det*|lst-*|lsx-*|exp*|est*|rct*|rcal*|rcy*|bst*|rqn*|rnd*|rqt*|rqc*|uni*)
   if [ -f results/$BASE/final.nl.v.gz ] && [ -f results/$BASE-$ARM/final.nl.v.gz ]; then
     TOP=$(python3 -c "import json;print(json.load(open('results/$BASE/resolved.json'))['DESIGN_NAME'])")
     LIBF=pdk/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib

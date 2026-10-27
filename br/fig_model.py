@@ -123,7 +123,7 @@ def main() -> int:
     ax.axis("off")
 
     def box(x, y, w, h, title, lines, edge, title_col=F.INK, fs=F.FS - 1):
-        ax.add_patch(FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0.02,rounding_size=0.15", fc="#0f0f0f", ec=edge, lw=1.4))
+        ax.add_patch(FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0.02,rounding_size=0.15", fc=("#f4f4f4" if F.SURFACE == "#ffffff" else "#0f0f0f"), ec=edge, lw=1.4))
         ax.text(x + 0.18, y + h - 0.22, title, color=title_col, fontsize=fs, fontweight="bold", va="top", ha="left")
         for i, ln in enumerate(lines):
             ax.text(x + 0.18, y + h - 0.72 - i * 0.43, ln, color=F.INK2, fontsize=fs - 2, va="top", ha="left")
@@ -150,7 +150,7 @@ def main() -> int:
             color=F.MUTED, fontsize=F.FS - 3, va="top")
     # trees
     tx, ty, tw, th = 5.0, 3.75, 2.3, 4.6
-    ax.add_patch(FancyBboxPatch((tx, ty), tw, th, boxstyle="round,pad=0.02,rounding_size=0.15", fc="#0f0f0f", ec=F.GREEN, lw=1.8))
+    ax.add_patch(FancyBboxPatch((tx, ty), tw, th, boxstyle="round,pad=0.02,rounding_size=0.15", fc=("#f4f4f4" if F.SURFACE == "#ffffff" else "#0f0f0f"), ec=F.GREEN, lw=1.8))
     ax.text(tx + tw / 2, ty + th - 0.2, "Gradient-boosted\ntrees (LightGBM)", color=F.INK, fontsize=F.FS - 1, fontweight="bold", ha="center", va="top")
     rng = np.random.default_rng(3)
     for k, (cx, cy) in enumerate([(tx + 0.55, ty + 2.35), (tx + 1.6, ty + 2.35), (tx + 0.55, ty + 0.95), (tx + 1.6, ty + 0.95)]):
