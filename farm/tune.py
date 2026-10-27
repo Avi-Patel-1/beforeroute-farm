@@ -7,7 +7,8 @@ Per design, four arms (job tags x1<arm>-<design>-<nnn>, farm/jobs/<tag>.json, ru
   d  LibreLane defaults at clock period 1.0/0.85/0.7/0.6/0.5 x the design's default
   e  expert preset (DELAY 0 synthesis, timing-driven placement, post-GRT timing and design repair) at the same periods
 Objective: effective clock period T_eff = CLOCK_PERIOD - worst setup slack (ns, nine-corner signoff), minimized.
-Feasible: router DRC errors = 0, worst hold slack >= 0, max-slew + max-cap pin violations <= 10.
+Feasible: router DRC errors = 0, worst hold slack >= 0, and (Amendment 24.1) max-slew + max-cap pin violations over the
+nine corners no more than the design's LibreLane-defaults run at its default clock (x1d-<design>-001).
 State: results/tune/state.json and one Optuna SQLite study per design and arm under results/tune/.
 Usage:
   tune.py --init [--dry-run]     write the 8 tuner start-up trials and the r/d/e specs; commit, push, dispatch
@@ -190,7 +191,23 @@ def send(st, groups, msg, dry):
         save_state(st)
 
 
-def outcome(tag, period):
+def drv_count(m):
+    return (m.get("design__max_slew_violation__count") or 0) + (m.get("design__max_cap_violation__count") or 0)
+
+
+def drv_ref(d):
+    """Amendment 24.1: the electrical bar is the design's LibreLane-defaults run at its default clock period
+    (x1d-<design>-001): a configuration may not leave more max-slew + max-cap pins (nine corners) than the stock flow.
+    None until that run has landed (trials are then told later)."""
+    r = os.path.join(ROOT, "results", f"x1d-{d}-001")
+    try:
+        m = json.load(open(os.path.join(r, "metrics.json")))
+    except Exception:
+        return None
+    return drv_count(m) if m.get("timing__setup__ws") is not None else None
+
+
+def outcome(tag, period, ref=None):
     """(status, T_eff, constraints, metrics) from results/<tag>; status None while not landed."""
     d = os.path.join(ROOT, "results", tag)
     if not os.path.exists(os.path.join(d, "job.json")):
@@ -207,8 +224,8 @@ def outcome(tag, period):
     teff = period - ws
     drc = m.get("route__drc_errors") or 0
     hold = m.get("timing__hold__ws")
-    drv = (m.get("design__max_slew_violation__count") or 0) + (m.get("design__max_cap_violation__count") or 0)
-    cons = [float(drc), float(-(hold if hold is not None else -1.0)), float(drv - DRV_MAX)]
+    drv = drv_count(m)
+    cons = [float(drc), float(-(hold if hold is not None else -1.0)), float(drv - (DRV_MAX if ref is None else ref))]
     return "done", teff, cons, m
 
 
@@ -286,7 +303,10 @@ def tell_finished(st, dry):
     for tag, v in st["tags"].items():
         if v["status"] != "dispatched":
             continue
-        status, teff, cons, m = outcome(tag, v["overrides"]["CLOCK_PERIOD"])
+        ref = drv_ref(v["design"])
+        status, teff, cons, m = outcome(tag, v["overrides"]["CLOCK_PERIOD"], ref)
+        if status == "done" and ref is None:
+            continue  # Amendment 24.1: wait for the stock-flow reference before scoring feasibility
         if status is None:
             # runner lost or artifact missing: the trial is dropped (told FAIL, which TPE ignores), not scored
             age = (datetime.datetime.now(datetime.timezone.utc)
@@ -298,8 +318,7 @@ def tell_finished(st, dry):
                   "area": m.get("design__instance__area__stdcell"), "power": m.get("power__total"),
                   "hold": m.get("timing__hold__ws"), "wns": m.get("timing__setup__ws"),
                   "drc": m.get("route__drc_errors"),
-                  "drv": (m.get("design__max_slew_violation__count") or 0) + (m.get("design__max_cap_violation__count") or 0)
-                  if m else None})
+                  "drv": drv_count(m) if m else None, "drv_ref": ref})
         if v["arm"] in ("t", "r") and v.get("trial") is not None and not dry:
             import optuna
             s = study(v["design"], v["arm"], SEED)
