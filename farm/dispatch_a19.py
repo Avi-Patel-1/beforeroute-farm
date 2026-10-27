@@ -134,6 +134,18 @@ def main():
             print(f"[a19] {nb}: seed {s['run']} {v.get('status')}"); continue
         if v.get("conclusion") != "success":
             print(f"[a19] {nb}: seed {s['run']} concluded {v.get('conclusion')}; not dispatching arms"); continue
+        # the job itself always succeeds (hero_arm.sh || true): read the seed's own status from its artifact
+        if not s.get("seed_status"):
+            import tempfile
+            with tempfile.TemporaryDirectory() as td:
+                sh(["gh", "run", "download", str(s["run"]), "-R", REPO, "-n", f"hero-{nb}-seed", "-D", td])
+                try:
+                    s["seed_status"] = json.load(open(os.path.join(td, nb, "job.json"))).get("status", "unknown")
+                except Exception:
+                    s["seed_status"] = "no_artifact"
+            save()
+        if s["seed_status"] != "completed":
+            print(f"[a19] {nb}: seed status {s['seed_status']}; not dispatching arms"); continue
         if dispatch(nb, s["arms"], s["model"], s["ref"], a.dry_run):
             s["arms_dispatched"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()); save()
     return 0
