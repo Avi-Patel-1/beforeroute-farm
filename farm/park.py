@@ -136,6 +136,70 @@ def release(max_n=None):
     print(f"[park] re-queued {n} runs; {left} still parked")
 
 
+def hero_load():
+    """Hero jobs not yet completed (queued or running) across all hero.yml runs."""
+    n = 0
+    for status in ("in_progress", "queued"):
+        r = sh(["gh", "api", f"repos/{REPO}/actions/workflows/hero.yml/runs?status={status}&per_page=100",
+                "--jq", "[.workflow_runs[].id]"])
+        try:
+            ids = json.loads(r.stdout or "[]")
+        except Exception:
+            ids = []
+        for rid in ids:
+            j = sh(["gh", "api", f"repos/{REPO}/actions/runs/{rid}/jobs?per_page=100", "--jq",
+                    "[.jobs[] | select(.status != \"completed\")] | length"])
+            try:
+                n += int(j.stdout.strip() or 0)
+            except ValueError:
+                pass
+    return n
+
+
+def run_jobs(rid):
+    j = sh(["gh", "api", f"repos/{REPO}/actions/runs/{rid}/jobs?per_page=100", "--jq", "[.jobs[].name] | length"])
+    try:
+        return int(j.stdout.strip() or 0)
+    except ValueError:
+        return 4
+
+
+def release_throttled(max_jobs):
+    """Re-queue parked runs only while hero jobs (queued + running) stay <= max_jobs, so the tuner's runs, which are
+    capped below the account's concurrency, never wait behind them."""
+    st = load()
+    todo = sorted((r for r in st["runs"] if not r.get("released_at")), key=lambda r: r["created_at"])
+    load_now = hero_load()
+    picked = []
+    for r in todo:
+        k = r.get("n_jobs") or run_jobs(r["id"])
+        r["n_jobs"] = k
+        if load_now + k > max_jobs:
+            break
+        picked.append(r["id"])
+        load_now += k
+    save(st)
+    print(f"[park] throttled release: hero load {load_now - sum((x.get('n_jobs') or 0) for x in todo if x['id'] in picked)} "
+          f"+ {len(picked)} runs (cap {max_jobs} jobs)")
+    if picked:
+        ids = set(picked)
+        st = load()
+        keep = [x for x in st["runs"] if x["id"] not in ids or x.get("released_at")]
+        # release() works on the unreleased list in creation order; temporarily hide the others
+        hidden = [x for x in st["runs"] if not x.get("released_at") and x["id"] not in ids]
+        for x in hidden:
+            x["released_at"] = "HOLD"
+        save(st)
+        try:
+            release(None)
+        finally:
+            st = load()
+            for x in st["runs"]:
+                if x.get("released_at") == "HOLD":
+                    x["released_at"] = None
+            save(st)
+
+
 def ready(deadline):
     if now() >= deadline:
         return True, f"deadline {deadline} reached"
@@ -158,6 +222,7 @@ def main() -> int:
     ap.add_argument("--deadline", default="2026-10-28T08:00:00Z")
     ap.add_argument("--max", type=int, default=None)
     ap.add_argument("--status", action="store_true")
+    ap.add_argument("--release-throttled", type=int, default=None, metavar="MAX_JOBS")
     a = ap.parse_args()
     if a.park:
         park()
@@ -168,7 +233,9 @@ def main() -> int:
         print(f"[park] release {'now' if ok else 'not yet'}: {why}")
         if ok:
             release(a.max)
-    if a.status or not (a.park or a.release or a.release_when_ready):
+    if a.release_throttled is not None:
+        release_throttled(a.release_throttled)
+    if a.status or not (a.park or a.release or a.release_when_ready or a.release_throttled is not None):
         st = load()
         rel = sum(1 for r in st["runs"] if r.get("released_at"))
         print(f"[park] {len(st['runs'])} parked in total, {rel} re-queued, {len(st['runs']) - rel} waiting")
