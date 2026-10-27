@@ -18,7 +18,8 @@ if ! pgrep -f "farm/collect_loop" > /dev/null; then
 fi
 
 # hero bases = any results dir that has a "-rerun" arm or arms on the farm
-BASES=$(gh run list -R $REPO -w hero.yml --limit 20 --json databaseId --jq '.[].databaseId' | while read r; do gh run view $r -R $REPO --json jobs --jq '.jobs[0].name' 2>/dev/null; done | sed -E 's/-(rerun|uni[0-9]+|tgt[0-9]+-[0-9a-z]+|tier.*|lt[0-9].*|thr[0-9]+-[0-9a-z]+|det[0-9]+-[0-9a-z]+|lst-[0-9a-z]+-[0-9]+)$//' | sort -u)
+BASES=$(gh run list -R $REPO -w hero.yml --limit 20 --json databaseId --jq '.[].databaseId' | while read r; do gh run view $r -R $REPO --json jobs --jq '.jobs[0].name' 2>/dev/null; done | sed -E 's/-(rerun|uni[0-9]+|tgt[0-9]+-[0-9a-z]+|tier.*|lt[0-9].*|thr[0-9]+-[0-9a-z]+|det[0-9]+-[0-9a-z]+|lst-[0-9a-z]+-[0-9]+|exp[0-9]+-[0-9]+|est[0-9]+-[0-9]+|seed)$//' | sort -u)
+BASES=$(printf '%s\n' $BASES d1-aes_cipher-000 d1-picorv32-016 d1-picorv32-006 d3-salsa20-000 d3-des-000 d3-y_huff-000 d3-ocs_blitter-000 d3-bm64-000 d3-md5-000 d3b-sha512-000 d3b-ldpcenc-000 | sort -u)
 SUMMARIES=""
 for b in $BASES; do
   out=$(python3 farm/hero_collect.py --repo $REPO --base "$b" --results results 2>&1)

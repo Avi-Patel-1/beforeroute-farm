@@ -30,6 +30,7 @@ def main() -> int:
     ap.add_argument("--tiers", default=None, help="e.g. 0.02:70,0.05:40 -> top 2%% at 70%%, next 3%% at 40%%; writes a tiers JSON")
     ap.add_argument("--rule-fanout", action="store_true", help="also flag every net whose post-GRT fanout already exceeds MAX_FANOUT (deterministic rule, Round 2 proposal)")
     ap.add_argument("--rule", default=None, help="deterministic ranking instead of the model (AI ablation). R8 = max(est load slew ratio, est driver slew ratio, est cap ratio), frozen 2026-10-26 20:20 EDT as the most robust hand rule on development data (signal nets); R4 = cap_ratio*(1+hpwl/100)")
+    ap.add_argument("--expected-count", type=float, default=None, help="flag the top round(F * sum(p)) nets: the model's own expected violator count times F (auto-budget)")
     ap.add_argument("--reg-model", default=None, help="regression model (predicted signoff slew ratio); enables --reg-tiers")
     ap.add_argument("--reg-tiers", default=None, help="learned-margin tiers over the top-k set, e.g. 1.3:80,1.1:60,0:40 -> predicted ratio >=1.3 at 80%%, >=1.1 at 60%%, rest at 40%%")
     a = ap.parse_args()
@@ -42,6 +43,8 @@ def main() -> int:
     if a.rule:
         if a.rule.upper() == "R4":
             df["p"] = df["cap_ratio"].fillna(0).astype(float) * (1 + df["hpwl_um"].fillna(0).astype(float) / 100)
+        elif a.rule.upper() == "EST":
+            df["p"] = df["worst_load_slew_ratio"].fillna(0).astype(float)
         elif a.rule.upper() == "R8":
             df["p"] = df[["worst_load_slew_ratio", "driver_slew_ratio", "cap_ratio"]].fillna(0).astype(float).max(axis=1)
         else:
@@ -53,7 +56,10 @@ def main() -> int:
     if a.rule_fanout:
         df.loc[df["fanout_ratio"].fillna(0) > 1.0, "p"] = 1.0 + df["p"]  # rule nets rank first
     df = df.sort_values("p", ascending=False)
-    if a.threshold is not None:
+    if a.expected_count is not None:
+        k = max(1, int(round(a.expected_count * float(df["p"].clip(upper=1.0).sum()))))
+        flagged = df.head(k)
+    elif a.threshold is not None:
         flagged = df[df["p"] >= a.threshold]
     else:
         k = max(1, int(round((a.frac or 0.05) * len(df))))

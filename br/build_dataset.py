@@ -182,6 +182,16 @@ def main() -> int:
     results = os.path.abspath(a.results)
     out = a.out or os.path.join(results, "dataset.parquet")
     all_rows, all_stats = [], []
+    frames = []  # per-run DataFrames (much smaller than one huge list of dicts)
+
+    def compact(f):
+        for c in f.columns:
+            if f[c].dtype == "float64":
+                f[c] = f[c].astype("float32")
+            elif f[c].dtype == "int64":
+                f[c] = pd.to_numeric(f[c], downcast="integer")
+        return f
+
     for rdir in sorted(glob.glob(os.path.join(results, "*"))):
         if not os.path.isdir(rdir) or not os.path.exists(os.path.join(rdir, "job.json")):
             continue
@@ -193,15 +203,19 @@ def main() -> int:
         if rows is None:
             print(f"[br] {os.path.basename(rdir)}: skipped ({stats.get('status')})")
             continue
-        all_rows.extend(rows)
+        frames.append(compact(pd.DataFrame(rows)))
+        all_rows = True
         all_stats.append(stats)
         print(f"[br] {stats['run']:28s} nets={stats['nets_g']:6d} join={stats['join_rate']:.3f} "
               f"pos={stats['positives_joined']:5d} ({stats['positive_rate_joined']:.3%})  viol_nets_s={stats['labels_violating_nets_s']}")
     if not all_rows:
         print("[br] no completed runs")
         return 1
-    df = pd.DataFrame(all_rows)
-    df.to_parquet(out, index=False)
+    df = pd.concat(frames, ignore_index=True, sort=False)
+    del frames
+    tmp = out + ".tmp"
+    df.to_parquet(tmp, index=False)
+    os.replace(tmp, out)  # atomic: readers never see a half-written file
     json.dump(all_stats, open(os.path.splitext(out)[0] + ".stats.json", "w"), indent=1)
     print(f"[br] wrote {len(df)} rows from {len(all_stats)} runs -> {out}")
     return 0

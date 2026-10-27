@@ -32,12 +32,27 @@ def main() -> int:
     ap.add_argument("--results", default="results")
     ap.add_argument("--run-id", default=None)
     a = ap.parse_args()
-    runs = [a.run_id] if a.run_id else json.loads(sh(["gh", "run", "list", "-R", a.repo, "-w", "hero.yml", "--limit", "10", "--json", "databaseId", "--jq", "[.[].databaseId]"]).stdout)
+    runs = [a.run_id] if a.run_id else json.loads(sh(["gh", "run", "list", "-R", a.repo, "-w", "hero.yml", "--limit", "300", "--json", "databaseId", "--jq", "[.[].databaseId]"]).stdout)
+    # cache of finished runs' job lists (they never change), so each call only queries live runs
+    cache_path = os.path.join(a.results, ".hero_runs_cache.json")
+    try:
+        cache = json.load(open(cache_path))
+    except Exception:
+        cache = {}
     arms = []
     base_metrics = None
     for rid in runs:
-        j = sh(["gh", "run", "view", str(rid), "-R", a.repo, "--json", "jobs", "--jq", '.jobs[] | "\\(.name)\\t\\(.status)"'])
-        for line in j.stdout.strip().splitlines():
+        ent = cache.get(str(rid))
+        if ent is None or not ent.get("done"):
+            j = sh(["gh", "run", "view", str(rid), "-R", a.repo, "--json", "status,jobs", "--jq", '"\\(.status)\\n" + ([.jobs[] | "\\(.name)\\t\\(.status)"] | join("\\n"))'])
+            lines = j.stdout.strip().splitlines()
+            if not lines:
+                continue
+            ent = {"done": lines[0] == "completed", "jobs": lines[1:]}
+            cache[str(rid)] = ent
+        if not any(l.startswith(a.base + "-") for l in ent["jobs"]):
+            continue
+        for line in ent["jobs"]:
             name, status = line.split("\t")[:2]
             if not name.startswith(a.base + "-") or status != "completed":
                 continue
@@ -72,6 +87,10 @@ def main() -> int:
                                 print(f"[hero] WARNING: baseline rebuilt on runner for {name} differs from local baseline")
             if os.path.exists(os.path.join(dst, "job.json")):
                 arms.append(arm_tag)
+    try:
+        json.dump(cache, open(cache_path, "w"))
+    except Exception:
+        pass
     rows = [arm_summary(a.results, a.base)] + [arm_summary(a.results, t) for t in sorted(set(arms))]
     out = os.path.join(a.results, a.base, "hero_summary.json")
     json.dump({"base": a.base, "arms": rows}, open(out, "w"), indent=1)
