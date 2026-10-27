@@ -13,3 +13,4 @@
 2026-10-27T11:32:43Z  df31a39707509c69cc70d6537e1d0bcb8039a4ef7a63173c97c3a732964140f6  pre-registration with Addendum 17 (combined policy replication on the Round-1 designs: rcal213-10 and thr500-30cr)
 2026-10-27T13:20:07Z  06ae380c957c61103c92079dabec6ac154719155c00f635f5748a042cea67b6e  pre-registration with Addendum 18 (thr500-30crq replicates with the long equivalence check; no criterion)
 2026-10-27T14:02:32Z  ae0e8ea871fab7a7f182877e8edec71e2db9b57707464028d6738db63c32b83c  pre-registration with Addendum 19 (panel baselines: rcal213 frontier, superset bst500-30-10r, list controls rqn/rqt900/rnd1, ORFS RC arms, hold re-fix t arms, correlated-flow cfo bases, re-placed j1/j2 noise bases, Round-1 v4 models) and the hold-protection erratum
+2026-10-27T14:12:54Z  ed97fb78f3818c8911b04ee72668abffcc2ea2f51d27fb60d96e081fa9b1f1ec  pre-registration with Addendum 20 (hold-preserving repair: family restore y; rcy213-10 control, rcy213-10y, thr500-30cry, bst500-30-10ry)

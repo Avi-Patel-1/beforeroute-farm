@@ -162,12 +162,14 @@ case "$ARM" in
     #   d = replicate: no change in behaviour, a repeat run under its own tag (keeps the original arm's results intact),
     #   q = as d, plus the long equivalence check (struct recipe, 3 h 20 min limit),
     #   t = the flow's post-GRT timing repair (setup + hold, RUN_POST_GRT_RESIZER_TIMING) runs after the targeted repair,
-    #   o = the repair step uses OpenROAD-flow-scripts' sky130hd per-layer R and C (farm/rc/sky130_caporfs.json)
+    #   o = the repair step uses OpenROAD-flow-scripts' sky130hd per-layer R and C (farm/rc/sky130_caporfs.json),
+    #   y = hold-preserving repair: delay cells the repair turned into buf_1/2 or clkbuf_1/2 go back to their own family's _2 cell
     case "$ARM" in tgt*) K=${ARM#tgt}; SEL=frac;; thr*) K=${ARM#thr}; SEL=thr;; esac
-    K=${K%%-*}; REST=${ARM##*-}; H=${REST%%[pfhvcrdqto]*}
+    K=${K%%-*}; REST=${ARM##*-}; H=${REST%%[pfhvcrdqtoy]*}
     RCOV=(); case "$REST" in *r*) RCOV=(--override "LAYERS_RC=$(tr -d ' \n' < farm/rc/sky130_cap213.json)");; esac
     case "$REST" in *o*) RCOV=(--override "LAYERS_RC=$(tr -d ' \n' < farm/rc/sky130_caporfs.json)");; esac
     case "$REST" in *t*) RCOV+=(--override "RUN_POST_GRT_RESIZER_TIMING=true");; esac
+    case "$REST" in *y*) RCOV+=(--override "BR_HOLD_FAMILY_RESTORE=true");; esac
     case "$REST" in *c*) use_checkpoint_features;; esac
     PASSES=1; case "$REST" in *p2*) PASSES=2;; esac
     RULE=""; case "$REST" in *f*) RULE="--rule-fanout";; esac
@@ -204,6 +206,16 @@ print(','.join(f'{int(x.split(\"-\")[0])/1000}:{x.split(\"-\")[1]}' for x in a.s
     python3 -m pip install -q pandas pyarrow lightgbm scikit-learn
     python3 br/score.py --model $MODEL --run-results results/$BASE --tiers "$SPEC" --out results/$BASE/tiers_$ARM.json
     $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm tiered --tag $BASE-$ARM --tiers /work/results/$BASE/tiers_$ARM.json --results results --pdk-root /work/pdk --jobs $JOBS ;;
+  rcy*)
+    # rcy<k>-<H>[y][t] (Addendum 20): the stock repair on every net (one "ALL" tier of the BeforeRoute step, no mask) with wire cap
+    #   from farm/rc/sky130_cap<k>.json at H%; without flags it must reproduce rcal<k>-<H> (control for the step itself);
+    #   y = hold-preserving family restore, t = timing repair afterwards
+    K=${ARM#rcy}; K=${K%%-*}; H=${ARM##*-}; FL=${H//[0-9]/}; H=${H%%[a-z]*}
+    RCOV=(--override "LAYERS_RC=$(tr -d ' \n' < farm/rc/sky130_cap$K.json)")
+    case "$FL" in *t*) RCOV+=(--override "RUN_POST_GRT_RESIZER_TIMING=true");; esac
+    case "$FL" in *y*) RCOV+=(--override "BR_HOLD_FAMILY_RESTORE=true");; esac
+    python3 -c "import json; json.dump({'tiers': [{'nets': 'ALL', 'slew_pct': $H, 'cap_pct': $H}]}, open('results/$BASE/tiers_$ARM.json', 'w'))"
+    $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm tiered --tag $BASE-$ARM --tiers /work/results/$BASE/tiers_$ARM.json "${RCOV[@]}" --results results --pdk-root /work/pdk --jobs $JOBS ;;
   bst*)
     # bst<kkk>-<Hf>-<Ha><flags> (Addendum 19, "boost, don't mask"): one repair step, two tiers --
     #   tier 1 = the model's list (p >= kkk/1000, checkpoint features) at Hf% margin, only those nets touchable;
@@ -215,6 +227,7 @@ print(','.join(f'{int(x.split(\"-\")[0])/1000}:{x.split(\"-\")[1]}' for x in a.s
     case "$FL" in *r*) RCOV+=(--override "LAYERS_RC=$(tr -d ' \n' < farm/rc/sky130_cap213.json)");; esac
     case "$FL" in *o*) RCOV+=(--override "LAYERS_RC=$(tr -d ' \n' < farm/rc/sky130_caporfs.json)");; esac
     case "$FL" in *t*) RCOV+=(--override "RUN_POST_GRT_RESIZER_TIMING=true");; esac
+    case "$FL" in *y*) RCOV+=(--override "BR_HOLD_FAMILY_RESTORE=true");; esac
     VAL=$(python3 -c "print(int('$K')/1000)")
     python3 -m pip install -q pandas pyarrow lightgbm scikit-learn
     python3 br/score.py --model $MODEL --run-results $SRC --threshold $VAL --out results/$BASE/flagged_$ARM.json

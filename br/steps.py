@@ -78,6 +78,12 @@ class TargetedRepairPostGRT(RepairDesignPostGRT):
             "Masked repair_design passes per tier (a second pass cleans up violations the first pass created).",
             default=1,
         ),
+        Variable(
+            "BR_HOLD_FAMILY_RESTORE",
+            bool,
+            "Hold-preserving repair: a hold-fix delay cell (clkdlybuf4s{15,18,25,50}_1) that repair_design resized into a plain buffer of comparable drive (buf_1/2, clkbuf_1/2) is put back as its own family's _2 variant (same delay family, buf_2-class drive), then the placement is legalized.",
+            default=False,
+        ),
     ]
 
     def get_script_path(self):

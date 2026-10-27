@@ -9,6 +9,7 @@ which reproduces the stock step exactly.
 """
 import json
 import os
+import re
 import time
 
 from openroad import Design, Tech  # noqa: E402
@@ -72,6 +73,17 @@ if protect_hold:
                 protected.append(inst)
     print(f"[br] protected {len(protected)} hold-fix delay cells from resizing", flush=True)
 
+restore = str(envget("BR_HOLD_FAMILY_RESTORE", "0")).lower() in ("1", "true")
+FAMILY_RE = re.compile(r"^(sky130_fd_sc_hd__clkdlybuf4s(?:15|18|25|50))_1$")
+REVERTIBLE = {"sky130_fd_sc_hd__buf_1", "sky130_fd_sc_hd__buf_2", "sky130_fd_sc_hd__clkbuf_1", "sky130_fd_sc_hd__clkbuf_2"}
+family_before = {}
+if restore:
+    for inst in block.getInsts():
+        m = FAMILY_RE.match(inst.getMaster().getName())
+        if m:
+            family_before[inst.getName()] = m.group(1)
+    print(f"[br] hold-family restore armed: {len(family_before)} delay cells recorded", flush=True)
+
 n_inst_before = len(block.getInsts())
 tier_summaries = []
 n_flagged_found = 0
@@ -117,6 +129,28 @@ for ti, (allowed, slew_pct, cap_pct) in enumerate(tiers):
     print(f"[br] tier {ti}: allowed={len(allowed) if allowed is not None else 'ALL'} found={found} masked={len(masked)} margins={slew_pct}/{cap_pct} insts_added={len(block.getInsts()) - before}", flush=True)
 for inst in protected:
     inst.setDoNotTouch(False)
+family = {"recorded": len(family_before), "restored": 0, "resized_stronger": 0, "kept": 0, "removed": 0, "to": {}}
+if restore:
+    db = tech.getDB()
+    for name, fam in family_before.items():
+        inst = block.findInst(name)
+        if inst is None:
+            family["removed"] += 1
+            continue
+        now = inst.getMaster().getName()
+        if now == fam + "_1":
+            family["kept"] += 1
+            continue
+        if now in REVERTIBLE:
+            target = db.findMaster(fam + "_2")
+            if target is not None and inst.swapMaster(target):
+                family["restored"] += 1
+                family["to"][now] = family["to"].get(now, 0) + 1
+                continue
+        family["resized_stronger"] += 1
+    print(f"[br] hold-family restore: {family}", flush=True)
+    if family["restored"]:
+        tcl("source $::env(SCRIPTS_DIR)/openroad/common/dpl.tcl")  # the _2 cells can be wider than the buffers they replace
 n_inst_after = len(block.getInsts())
 tcl("unset_dont_touch_objects")
 if envget("GRT_DESIGN_REPAIR_RUN_GRT", "1") in ("1", "true", "True"):
@@ -130,6 +164,7 @@ summary = {
     "n_flagged_found": n_flagged_found,
     "n_masked": n_masked,
     "protected_hold_cells": len(protected),
+    "hold_family_restore": family,
     "insts_before": n_inst_before,
     "insts_after": n_inst_after,
     "insts_added": n_inst_after - n_inst_before,
