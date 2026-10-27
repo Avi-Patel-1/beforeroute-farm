@@ -129,7 +129,7 @@ def main() -> int:
     arrow(tx + tw + 0.02, 6.9, ox - 0.05, 6.9)
     box(ox, 2.25, 2.15, 2.85, "Actuator", ["stock repair_design", "on listed nets only,", "wire cap ×2.13,", "30% margin"], F.AXIS, fs=F.FS - 1)
     arrow(ox + 1.05, 5.5, ox + 1.05, 5.15)
-    ax.text(5.0, 3.35, "Trained on 999,919 nets\nfrom 128 runs of 12\nopen designs (4.3%\nviolate at signoff)\n\nTrains in 5.5 min on\n2 CPU cores; scores\n100k nets in 1.3 s",
+    ax.text(5.0, 3.35, "Trained on 999,919 nets\nfrom 128 runs of 12\nopen designs (4.3%\nviolate at signoff)\n\nRetrains on all 1.6M\nnets in 5.5 min on 2\nCPU cores; scores\n100k nets in 1.3 s",
             color=F.INK2, fontsize=F.FS - 3, va="top", ha="left")
 
     # ---------------- top right: gain by family ----------------
