@@ -1,0 +1,22 @@
+{
+ "model": "models/model_holdout_y_huff_v4.txt",
+ "exclude_design": "y_huff",
+ "alpha": 0.1,
+ "lambda": 0.966,
+ "calibration_unit": "run",
+ "calibration_units": 69,
+ "bound_at_lambda": 0.0992369311408105,
+ "calibration_flag_fraction": 0.0404911560987773,
+ "calibration_miss_rate_by_design": {
+  "BM64": 0.09230769230769231,
+  "aes_cipher_top": 0.08651551312649165,
+  "crc_pipe": 0.21875,
+  "des": 0.13178294573643412,
+  "ldpcenc": 0.1796485706792552,
+  "md5": 0.03333333333333333,
+  "ocs_blitter": 0.04627249357326478,
+  "picorv32": 0.07158299303386981,
+  "salsa20": 0.1043910521955261,
+  "sha512": 0.07367851831823713
+ }
+}
