@@ -103,6 +103,9 @@ def main() -> int:
             tbl_shape = find(s, name_prefix="Table")
             chart_shape = find(s, name_prefix="Chart")
             cap = find(s, name_prefix="TextBox")
+            if not spec.get("table") and tbl_shape is not None and spec.get("remove_table"):
+                remove_shape(tbl_shape)
+                tbl_shape = None
             if spec.get("table") and tbl_shape is not None:
                 rows = spec["table"]["rows"]
                 tbl = tbl_shape.table
