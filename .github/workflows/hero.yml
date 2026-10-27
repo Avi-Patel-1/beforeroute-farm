@@ -55,7 +55,7 @@ jobs:
             ${{ steps.spec.outputs.design }}/runs/${{ inputs.base_tag }}
             ${{ steps.spec.outputs.design }}/config.${{ inputs.base_tag }}.json
             results/${{ inputs.base_tag }}
-          key: base-${{ inputs.base_tag }}-${{ hashFiles(format('farm/jobs/{0}.json', inputs.base_tag)) }}-v1
+          key: base-${{ inputs.base_tag }}-${{ hashFiles(format('farm/jobs/{0}.json', inputs.base_tag)) }}-v2
       - name: Run arm
         run: bash farm/hero_arm.sh "${{ inputs.base_tag }}" "${{ matrix.arm }}" "${{ inputs.model }}" 4 || true
       - name: Upload results

@@ -15,6 +15,8 @@ if [ -f results/$BASE/job.json ] && ls $DESIGN/runs/$BASE/*-openroad-checkantenn
 else
   $DOCKER python3 br/run_job.py --job-spec $SPEC --design /work/$DESIGN --jobs $JOBS --results results --pdk-root /work/pdk --keep-run --timeout 16000
   sudo chown -R "$(id -u):$(id -g)" results designs || true
+  NL=$(ls $DESIGN/runs/$BASE/final/nl/*.nl.v 2>/dev/null | head -1)
+  [ -n "$NL" ] && gzip -c "$NL" > results/$BASE/final.nl.v.gz
   python3 - "$DESIGN/runs/$BASE" <<'PY'
 import glob, os, re, shutil, sys
 rd = sys.argv[1]
@@ -85,4 +87,19 @@ print(','.join(f'{int(x.split(\"-\")[0])/1000}:{x.split(\"-\")[1]}' for x in a.s
   *) echo "unknown arm $ARM"; exit 2 ;;
 esac
 sudo chown -R "$(id -u):$(id -g)" results || true
+# functional equivalence of the repaired netlist vs the baseline (targeted / threshold / rule / list arms)
+case "$ARM" in tgt*|thr*|det*|lst-*)
+  if [ -f results/$BASE/final.nl.v.gz ] && [ -f results/$BASE-$ARM/final.nl.v.gz ]; then
+    TOP=$(python3 -c "import json;print(json.load(open('results/$BASE/resolved.json'))['DESIGN_NAME'])")
+    mkdir -p results/$BASE-$ARM/equiv
+    gunzip -c results/$BASE/final.nl.v.gz > results/$BASE-$ARM/equiv/gold.nl.v
+    gunzip -c results/$BASE-$ARM/final.nl.v.gz > results/$BASE-$ARM/equiv/gate.nl.v
+    timeout 3000 $DOCKER python3 br/equiv.py --gold results/$BASE-$ARM/equiv/gold.nl.v --gate results/$BASE-$ARM/equiv/gate.nl.v \
+      --top $TOP --liberty pdk/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib --out results/$BASE-$ARM/equiv --timeout 2900 > results/$BASE-$ARM/equiv/run.log 2>&1 || true
+    sudo chown -R "$(id -u):$(id -g)" results || true
+    rm -f results/$BASE-$ARM/equiv/*.nl.v results/$BASE-$ARM/equiv/*-logic.v
+    gzip -f results/$BASE-$ARM/equiv/gold.json results/$BASE-$ARM/equiv/gate.json 2>/dev/null || true
+    grep -h '"status"' results/$BASE-$ARM/equiv/result.json || echo "[hero] equivalence did not finish"
+  fi ;;
+esac
 ls results
