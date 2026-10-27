@@ -23,10 +23,14 @@ import matplotlib.pyplot as plt  # noqa: E402
 BASES = [("d3-des-000", "DES"), ("d3-y_huff-000", "y_huff"), ("d3-ocs_blitter-000", "ocs_blitter"),
          ("d3-bm64-000", "BM64"), ("d3-md5-000", "MD5"), ("d3-salsa20-000", "salsa20")]
 POL = [  # (arm, label, marker, color, size, filled)
-    ("uni70", "uniform 70% on every net", "s", F.ROSE, 9, True),
-    ("rcal213-10", "wire cap ×2.13 + stock repair (10%, every net)", "D", F.BLUE, 8, True),
-    ("rct213-70", "wire cap ×2.13 list + BeforeRoute repair", "D", F.BLUE, 8, False),
+    ("uni70", "uniform 70%, every net", "s", F.ROSE, 9, True),
+    ("rcal213-10", "corrected estimate + stock repair, every net", "D", F.BLUE, 8, True),
+    ("rct213-70", "corrected estimate's list + our repair", "D", F.BLUE, 8, False),
     ("thr500-70", "BeforeRoute (model p ≥ 0.5)", "*", F.GREEN, 15, True),
+]
+POL_A14 = [  # Addendum 14 (model list + corrected parasitics in the repair), drawn with --a14
+    ("thr500-10cr", "model list, corrected parasitics, 10%", "^", F.GREEN, 9, False),
+    ("thr500-30cr", "model list, corrected parasitics, 30%", "v", F.GREEN, 9, False),
 ]
 
 
@@ -59,7 +63,11 @@ def main() -> int:
     ap.add_argument("--width", type=float, default=12.1)
     ap.add_argument("--height", type=float, default=4.6)
     ap.add_argument("--title", default="Repair policies on six designs the model never saw")
+    ap.add_argument("--a14", action="store_true", help="also draw the Addendum-14 arms")
     a = ap.parse_args()
+    global POL
+    if a.a14:
+        POL = POL + POL_A14
     F.setup_style()
     D = rows(a.results)
     fig = plt.figure(figsize=(a.width, a.height))
@@ -108,8 +116,12 @@ def main() -> int:
     fig.text(0.012, 0.895, "Round 3: six design families the model never saw (baseline violators in brackets); "
              "one run per arm; left of the dashed line = hold violated", fontsize=F.FS - 1, color=F.INK2, va="top")
     items = [(mk, col, ms, lab, None, filled) for _, lab, mk, col, ms, filled in POL]
-    F.key_row(fig, items[:2], 0.012, 0.115, gap=0.03)
-    F.key_row(fig, items[2:], 0.012, 0.045, gap=0.03)
+    if len(items) <= 4:
+        F.key_row(fig, items[:2], 0.012, 0.115, gap=0.03)
+        F.key_row(fig, items[2:], 0.012, 0.045, gap=0.03)
+    else:
+        F.key_row(fig, items[:3], 0.012, 0.13, gap=0.02)
+        F.key_row(fig, items[3:], 0.012, 0.055, gap=0.02)
     nums = {d["base"]: {k: v for k, v in d.items() if k not in ("base",)} for d in D}
     F.save(fig, a.out, a.name, nums)
     print(json.dumps(nums, indent=1))
