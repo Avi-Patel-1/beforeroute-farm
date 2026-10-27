@@ -16,6 +16,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "br"))
 from run_hero import arm_summary  # noqa: E402
@@ -43,12 +44,14 @@ def main() -> int:
     base_metrics = None
     for rid in runs:
         ent = cache.get(str(rid))
-        if ent is None or not ent.get("done"):
+        # finished runs never change; live runs are re-queried at most every 5 minutes, so one cycle over
+        # many bases costs one pass of `gh run view` instead of one pass per base
+        if ent is None or (not ent.get("done") and time.time() - ent.get("t", 0) > 300):
             j = sh(["gh", "run", "view", str(rid), "-R", a.repo, "--json", "status,jobs", "--jq", '"\\(.status)\\n" + ([.jobs[] | "\\(.name)\\t\\(.status)"] | join("\\n"))'])
             lines = j.stdout.strip().splitlines()
             if not lines:
                 continue
-            ent = {"done": lines[0] == "completed", "jobs": lines[1:]}
+            ent = {"done": lines[0] == "completed", "jobs": lines[1:], "t": time.time()}
             cache[str(rid)] = ent
         if not any(l.startswith(a.base + "-") for l in ent["jobs"]):
             continue
