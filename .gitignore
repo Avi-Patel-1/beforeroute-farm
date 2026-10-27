@@ -22,3 +22,7 @@ deck/content.json
 deck/*.pptx
 deck/*.pdf
 explorer/*.json
+docs/
+figures/
+explorer/
+deck/
