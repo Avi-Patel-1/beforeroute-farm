@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """The ML component on one figure: what the model reads, what it is, what it outputs, and what it learned.
 
-Left: schematic (feature families -> 400 boosted trees -> per-net probability -> threshold -> repair list).
+Left: schematic (feature families -> 400 boosted trees -> per-net risk score -> threshold -> repair list).
 Top right: share of the model's split gain by feature family (model_all_v5).
 Bottom right: what the trees learned, out of fold: for nets of 8 Round-3/4 designs, each scored by the model
 that never saw its design, the signoff violation rate and the mean predicted probability against the timer's own
@@ -165,11 +165,11 @@ def main() -> int:
         arrow(4.5, c, tx - 0.05, min(max(c, ty + 0.4), ty + th - 0.4))
     # output
     ox = 7.75
-    box(ox, 5.55, 2.15, 2.75, "Output", ["P(violates at", "9-corner signoff)", "≥ 0.5 → on the", "repair list"], F.GREEN, fs=F.FS - 1)
+    box(ox, 5.55, 2.15, 2.75, "Output", ["risk score 0–1:", "will it violate at", "9-corner signoff?", "≥ 0.5 → repair list"], F.GREEN, fs=F.FS - 1)
     arrow(tx + tw + 0.02, 6.9, ox - 0.05, 6.9)
     box(ox, 2.25, 2.15, 2.85, "Actuator", ["stock repair_design", "on listed nets only,", "wire cap ×2.13,", "30% margin"], F.AXIS, fs=F.FS - 1)
     arrow(ox + 1.05, 5.5, ox + 1.05, 5.15)
-    ax.text(5.0, 3.35, "Trained on 999,919 nets\nfrom 128 runs of 12\nopen designs (4.3%\nviolate at signoff)\n\nRetrains on all 1.6M\nnets in 5.5 min on 2\nCPU cores; scores\n100k nets in 1.3 s",
+    ax.text(5.0, 3.35, "Trained on 999,919 nets\nfrom 128 runs of 12\nopen designs (4.2%\nviolate at signoff)\n\nRetrains on all of\nthem in 27 s on 2\nCPU cores; scores\n100k nets in ~1 s",
             color=F.INK2, fontsize=F.FS - 3, va="top", ha="left")
 
     # ---------------- top right: gain by family ----------------
@@ -228,7 +228,7 @@ def main() -> int:
     for s in ("left", "bottom"):
         ax3.spines[s].set_color(F.AXIS)
     ax3.tick_params(colors=F.INK2, labelsize=F.FS - 3)
-    leg = ax3.legend(loc="center right", frameon=False, fontsize=F.FS - 3, labelcolor=F.INK2, title="line = model, dots = actual", title_fontsize=F.FS - 4)
+    leg = ax3.legend(loc="center right", frameon=False, fontsize=F.FS - 3, labelcolor=F.INK2, title="line = mean score, dots = actual", title_fontsize=F.FS - 4)
     leg.get_title().set_color(F.MUTED)
     ax3.set_title("What it learned: nets start failing at ~0.5 of the timer's limit\n(8 designs, each scored by the model that never saw it)", loc="left", color=F.INK, fontsize=F.FS - 1, pad=8)
     F.save(fig, a.out, a.name, nums)
