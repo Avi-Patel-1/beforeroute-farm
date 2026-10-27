@@ -160,38 +160,85 @@ VARIANT_TEXT = {"runs": "other-design runs", "designs": "other designs (all thei
                 "within": "same-design runs on top of all other designs", "self": "same-design runs only"}
 
 
-def lc_answer(lc: pd.DataFrame) -> tuple:
-    """(a) smallest training size whose pooled catch-95 <= 2 x floor (floor = 0.95 x violator rate of the evaluation runs)."""
+def load_lc_runs(dirs) -> pd.DataFrame:
+    """Per-run learning-curve rows with the training size in 'n' and the run's net count in 'n_nets'. Outputs written
+    before the n/n_nets fix carry the net count in 'n'; their sizes are rebuilt from the record order in learning_curve.json."""
+    import json
+
+    parts = []
+    for d in dirs:
+        for jp in sorted(glob.glob(os.path.join(d, "**", "learning_curve.json"), recursive=True)):
+            cp = os.path.join(os.path.dirname(jp), "learning_curve_runs.csv")
+            if not os.path.exists(cp) or os.path.getsize(cp) < 2:
+                continue
+            runs = pd.read_csv(cp)
+            if "n_nets" not in runs.columns:
+                recs = [r for r in json.load(open(jp)).get("records", []) if "model" in r and "skipped" not in r]
+                sizes = [str(r["n"]) for r in recs for _ in range(int(r["model"]["n_runs"]))]
+                if len(sizes) != len(runs):
+                    print(f"[report] cannot rebuild sizes for {cp} ({len(sizes)} vs {len(runs)} rows); skipped")
+                    continue
+                runs = runs.rename(columns={"n": "n_nets"})
+                runs["n"] = sizes
+            runs["n"] = runs["n"].astype(str)
+            parts.append(runs)
+    return pd.concat(parts, ignore_index=True) if parts else pd.DataFrame()
+
+
+def lc_answer(lc: pd.DataFrame, lcr: pd.DataFrame | None = None, abr: pd.DataFrame | None = None) -> tuple:
+    """(a) smallest training size reaching catch-95 <= 2 x floor (floor = 0.95 x violator rate), two ways:
+    pooled = catch-95 pooled over the evaluation runs vs the pooled floor (one global ranking across runs);
+    per-run = median over evaluation runs of catch-95 / that run's own floor (flagging the top of each run: the operating mode).
+    Seed means; 'all seeds' variants in answers.json. abr (ablation per-run rows) gives per-run references for R8 / raw estimate."""
     if lc.empty:
         return "", {}
+    per_run = {}
+    if lcr is not None and not lcr.empty:
+        r = lcr[lcr["positives"] > 0].copy()
+        r["xf"] = r["frac_to_catch_95"] / (0.95 * r["positives"] / r["n_nets"])
+        per_run = r.groupby(["variant", "holdout", "n", "seed"])["xf"].median().groupby(level=[0, 1, 2]).agg(["mean", "max"]).to_dict("index")
+    ref_run = {}
+    if abr is not None and not abr.empty:
+        q = abr[abr["positives"] > 0].copy()
+        q["xf"] = q["frac_to_catch_95"] / (0.95 * q["positives"] / q["n"])
+        ref_run = q.groupby(["holdout", "rung_name"])["xf"].median().to_dict()
     lc = (lc[lc["skipped"].isna()] if "skipped" in lc.columns else lc).copy()
     lc["n"] = lc["n"].astype(str)
-    lc["floor2"] = 2 * 0.95 * lc["eval_pos"] / lc["eval_n"]
-    lc["meets"] = lc["pooled_catch95"] <= lc["floor2"]
     lc["ratio"] = lc["pooled_catch95"] / (0.95 * lc["eval_pos"] / lc["eval_n"])
-    g = lc.groupby(["variant", "holdout", "n"]).agg(c95=("pooled_catch95", "mean"), floor2=("floor2", "mean"), ratio=("ratio", "mean"),
-                                                     ratio_max=("ratio", "max"), all_meet=("meets", "all"), seeds=("meets", "size"),
-                                                     train_runs=("n_train_runs", "mean"), r8=("r8_pooled_catch95", "mean"),
-                                                     est=("est_slew_pooled_catch95", "mean")).reset_index()
+    lc["r8_ratio"] = lc["r8_pooled_catch95"] / (0.95 * lc["eval_pos"] / lc["eval_n"])
+    lc["est_ratio"] = lc["est_slew_pooled_catch95"] / (0.95 * lc["eval_pos"] / lc["eval_n"])
+    g = lc.groupby(["variant", "holdout", "n"]).agg(c95=("pooled_catch95", "mean"), ratio=("ratio", "mean"), ratio_max=("ratio", "max"),
+                                                     train_runs=("n_train_runs", "mean"), r8=("r8_ratio", "mean"),
+                                                     est=("est_ratio", "mean")).reset_index()
     g["nk"] = g["n"].map(n_key)
     g = g.sort_values(["variant", "holdout", "nk"])
     ans = {}
+
+    def first(x, col, thr=2.0):
+        hit = x[x[col] <= thr]
+        return None if hit.empty else str(hit.iloc[0]["n"])
+
     for (v, d), x in g.groupby(["variant", "holdout"]):
-        mean_hit = x[x["c95"] <= x["floor2"]]
-        all_hit = x[x["all_meet"]]
+        x = x.copy()
+        x["run_x"] = [per_run.get((v, d, n), {}).get("mean", np.nan) for n in x["n"]]
+        x["run_x_max"] = [per_run.get((v, d, n), {}).get("max", np.nan) for n in x["n"]]
         ans.setdefault(d, {})[v] = {
-            "n_star_mean": None if mean_hit.empty else mean_hit.iloc[0]["n"],
-            "n_star_all_seeds": None if all_hit.empty else all_hit.iloc[0]["n"],
-            "curve": {r["n"]: {"catch95": round(r["c95"], 4), "x_floor": round(r["ratio"], 2), "worst_seed_x_floor": round(r["ratio_max"], 2),
+            "pooled_n_star": first(x, "ratio"), "pooled_n_star_all_seeds": first(x, "ratio_max"),
+            "per_run_n_star": first(x, "run_x"), "per_run_n_star_all_seeds": first(x, "run_x_max"),
+            "curve": {r["n"]: {"catch95_pooled": round(r["c95"], 4), "pooled_x_floor": round(r["ratio"], 2),
+                               "per_run_median_x_floor": None if r["run_x"] != r["run_x"] else round(r["run_x"], 2),
                                "train_runs": round(r["train_runs"], 1)} for _, r in x.iterrows()},
-            "r8_x_floor": round(float((x["r8"] / (x["floor2"] / 2)).mean()), 2),
-            "est_x_floor": round(float((x["est"] / (x["floor2"] / 2)).mean()), 2),
+            "r8_pooled_x_floor": round(float(x["r8"].mean()), 2), "est_pooled_x_floor": round(float(x["est"].mean()), 2),
         }
-    out = ["\n### (a) Training data needed to reach catch-95 <= 2x floor (floor = 0.95 x violator rate; pooled over evaluation runs)\n",
-           "Entries: smallest size whose seed-mean catch-95 <= 2x floor / smallest size where every seed does; "
-           "'>max' = never reached. x-floor = catch-95 / floor.\n"]
-    hdr = ("| design | rule R8 x-floor | raw estimate x-floor | " + " | ".join(VARIANT_TEXT[v] for v in ("runs", "designs", "within", "self")) +
-           " | GBM all other designs x-floor |")
+    for d in ans:
+        ans[d]["_ref_per_run_x_floor"] = {k: round(float(ref_run[(d, k)]), 2) for k in ("rule_R8", "est_slew", "lgbm_full") if (d, k) in ref_run}
+    out = ["\n### (a) Training data needed to reach catch-95 <= 2x floor (floor = 0.95 x violator rate of the evaluation runs)\n",
+           "Each cell: pooled / per-run. pooled = catch-95 over all evaluation runs ranked together (one global score scale); "
+           "per-run = median over runs of catch-95 / that run's floor (top-k flagging within each run, the operating mode). "
+           "Smallest training size whose seed mean meets the bar; '>m' = not reached up to m; '-' = not run. "
+           "x-floor columns: catch-95 / floor (pooled / per-run median).\n"]
+    hdr = ("| design | rule R8 x-floor | raw estimate x-floor | GBM LODO x-floor | " +
+           " | ".join(VARIANT_TEXT[v] for v in ("runs", "designs", "within", "self")) + " |")
     out += [hdr, "|" + "---|" * (hdr.count("|") - 1)]
     for d in sorted(ans):
         a = ans[d]
@@ -201,10 +248,13 @@ def lc_answer(lc: pd.DataFrame) -> tuple:
                 cells.append("-")
                 continue
             mx = list(a[v]["curve"])[-1]
-            cells.append(f"{a[v]['n_star_mean'] or '>' + mx} / {a[v]['n_star_all_seeds'] or '>' + mx}")
-        ref = a.get("runs") or a.get("within") or next(iter(a.values()))
-        allx = (a.get("runs", {}).get("curve", {}).get("all") or a.get("within", {}).get("curve", {}).get("0") or {}).get("x_floor")
-        out.append(f"| {d} | {ref['r8_x_floor']} | {ref['est_x_floor']} | " + " | ".join(cells) + f" | {allx if allx is not None else '-'} |")
+            cells.append(f"{a[v]['pooled_n_star'] or '>' + mx} / {a[v]['per_run_n_star'] or '>' + mx}")
+        ref = next(a[v] for v in ("runs", "within", "designs", "self") if v in a)
+        rr = a.get("_ref_per_run_x_floor", {})
+        lodo = (a.get("runs", {}).get("curve", {}).get("all") or {}).get("pooled_x_floor")
+        fmt2 = lambda v: "-" if v is None else f"{v:.2f}"
+        out.append(f"| {d} | {ref['r8_pooled_x_floor']:.2f} / {fmt2(rr.get('rule_R8'))} | {ref['est_pooled_x_floor']:.2f} / {fmt2(rr.get('est_slew'))} | "
+                   f"{fmt2(lodo)} / {fmt2(rr.get('lgbm_full'))} | " + " | ".join(cells) + " |")
     return "\n".join(out), ans
 
 
@@ -394,7 +444,8 @@ def main() -> int:
     lc_parts = [load_csv(d, "learning_curve.csv") for d in (a.lc or "").split(",") if d]
     lc = pd.concat([x for x in lc_parts if not x.empty], ignore_index=True) if any(not x.empty for x in lc_parts) else pd.DataFrame()
     if not lc.empty:
-        txt, answers["a"] = lc_answer(lc)
+        lcr = load_lc_runs([d for d in (a.lc or "").split(",") if d])
+        txt, answers["a"] = lc_answer(lc, lcr, load_csv(a.ablation, "ablation_runs.csv"))
         md.append(txt)
     if not lc.empty:
         s = summarize_lc(lc)
