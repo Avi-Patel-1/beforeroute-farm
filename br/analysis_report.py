@@ -185,7 +185,7 @@ def load_lc_runs(dirs) -> pd.DataFrame:
     return pd.concat(parts, ignore_index=True) if parts else pd.DataFrame()
 
 
-def lc_answer(lc: pd.DataFrame, lcr: pd.DataFrame | None = None, abr: pd.DataFrame | None = None) -> tuple:
+def lc_answer(lc: pd.DataFrame, lcr: pd.DataFrame | None = None, abr: pd.DataFrame | None = None, thr: float = 2.0) -> tuple:
     """(a) smallest training size reaching catch-95 <= 2 x floor (floor = 0.95 x violator rate), two ways:
     pooled = catch-95 pooled over the evaluation runs vs the pooled floor (one global ranking across runs);
     per-run = median over evaluation runs of catch-95 / that run's own floor (flagging the top of each run: the operating mode).
@@ -214,7 +214,7 @@ def lc_answer(lc: pd.DataFrame, lcr: pd.DataFrame | None = None, abr: pd.DataFra
     g = g.sort_values(["variant", "holdout", "nk"])
     ans = {}
 
-    def first(x, col, thr=2.0):
+    def first(x, col):
         hit = x[x[col] <= thr]
         return None if hit.empty else str(hit.iloc[0]["n"])
 
@@ -232,7 +232,7 @@ def lc_answer(lc: pd.DataFrame, lcr: pd.DataFrame | None = None, abr: pd.DataFra
         }
     for d in ans:
         ans[d]["_ref_per_run_x_floor"] = {k: round(float(ref_run[(d, k)]), 2) for k in ("rule_R8", "est_slew", "lgbm_full") if (d, k) in ref_run}
-    out = ["\n### (a) Training data needed to reach catch-95 <= 2x floor (floor = 0.95 x violator rate of the evaluation runs)\n",
+    out = [f"\n### (a) Training data needed to reach catch-95 <= {thr:g}x floor (floor = 0.95 x violator rate of the evaluation runs)\n",
            "Each cell: pooled / per-run. pooled = catch-95 over all evaluation runs ranked together (one global score scale); "
            "per-run = median over runs of catch-95 / that run's floor (top-k flagging within each run, the operating mode). "
            "Smallest training size whose seed mean meets the bar; '>m' = not reached up to m; '-' = not run. "
@@ -477,8 +477,11 @@ def main() -> int:
     lc = pd.concat([x for x in lc_parts if not x.empty], ignore_index=True) if any(not x.empty for x in lc_parts) else pd.DataFrame()
     if not lc.empty:
         lcr = load_lc_runs([d for d in (a.lc or "").split(",") if d])
-        txt, answers["a"] = lc_answer(lc, lcr, load_csv(a.ablation, "ablation_runs.csv"))
+        abr = load_csv(a.ablation, "ablation_runs.csv")
+        txt, answers["a"] = lc_answer(lc, lcr, abr, thr=2.0)
         md.append(txt)
+        txt, answers["a_strict_1.25x"] = lc_answer(lc, lcr, abr, thr=1.25)
+        md.append(txt.replace("### (a)", "### (a, stricter bar)"))
     if not lc.empty:
         s = summarize_lc(lc)
         s.to_csv(os.path.join(a.out, "lc_summary.csv"), index=False)
