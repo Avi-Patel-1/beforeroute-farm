@@ -262,22 +262,35 @@ print(','.join(f'{int(x.split(\"-\")[0])/1000}:{x.split(\"-\")[1]}' for x in a.s
   *) echo "unknown arm $ARM"; exit 2 ;;
 esac
 sudo chown -R "$(id -u):$(id -g)" results || true
-# functional equivalence of the repaired netlist vs the baseline (targeted / threshold / rule / list arms)
-case "$ARM" in tgt*|thr*|det*|lst-*|lsx-*|exp*|est*|rct*)
+# functional equivalence of the repaired netlist vs the baseline, every repair arm. First the state-cut check
+# (br/equiv_cut.py: flops matched by name and cut, ABC proves the next-state and output functions; seconds on these
+# designs); only if it cannot decide (ERROR / FAIL_MATCH / TIMEOUT) the Yosys equiv recipe as before, for the arm
+# families that always had it.
+case "$ARM" in tgt*|thr*|det*|lst-*|lsx-*|exp*|est*|rct*|rcal*|rcy*|bst*|rqn*|rnd*|rqt*|uni*)
   if [ -f results/$BASE/final.nl.v.gz ] && [ -f results/$BASE-$ARM/final.nl.v.gz ]; then
     TOP=$(python3 -c "import json;print(json.load(open('results/$BASE/resolved.json'))['DESIGN_NAME'])")
-    mkdir -p results/$BASE-$ARM/equiv
-    gunzip -c results/$BASE/final.nl.v.gz > results/$BASE-$ARM/equiv/gold.nl.v
-    gunzip -c results/$BASE-$ARM/final.nl.v.gz > results/$BASE-$ARM/equiv/gate.nl.v
-    # suffix q = long equivalence: the struct recipe (equiv_struct -fwd before equiv_simple) with a 3 h 20 min limit (the job limit is 5 h), for designs
-    # whose standard 2900 s check times out (no change to the arm itself)
-    EQT=2900; EQS=(); case "${ARM##*-}" in *q*) EQT=12000; EQS=(--struct);; esac
-    timeout $((EQT + 100)) $DOCKER python3 br/equiv.py --gold results/$BASE-$ARM/equiv/gold.nl.v --gate results/$BASE-$ARM/equiv/gate.nl.v \
-      --top $TOP --liberty pdk/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib --out results/$BASE-$ARM/equiv --timeout $EQT "${EQS[@]}" > results/$BASE-$ARM/equiv/run.log 2>&1 || true
+    LIBF=pdk/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
+    timeout 1300 $DOCKER python3 br/equiv_cut.py --gold results/$BASE/final.nl.v.gz --gate results/$BASE-$ARM/final.nl.v.gz \
+      --top $TOP --liberty $LIBF --out results/$BASE-$ARM/equiv_cut --timeout 1200 > results/$BASE-$ARM/equiv_cut.run.log 2>&1 || true
     sudo chown -R "$(id -u):$(id -g)" results || true
-    rm -f results/$BASE-$ARM/equiv/*.nl.v results/$BASE-$ARM/equiv/*-logic.v
-    gzip -f results/$BASE-$ARM/equiv/gold.json results/$BASE-$ARM/equiv/gate.json 2>/dev/null || true
-    grep -h '"status"' results/$BASE-$ARM/equiv/result.json || echo "[hero] equivalence did not finish"
+    CUT=$(python3 -c "import json;print(json.load(open('results/$BASE-$ARM/equiv_cut/result.json')).get('status',''))" 2>/dev/null || true)
+    echo "[hero] state-cut equivalence: ${CUT:-did not finish}"
+    case "$CUT" in PROVED|COUNTEREXAMPLE) ;;
+    *) case "$ARM" in tgt*|thr*|det*|lst-*|lsx-*|exp*|est*|rct*)
+      mkdir -p results/$BASE-$ARM/equiv
+      gunzip -c results/$BASE/final.nl.v.gz > results/$BASE-$ARM/equiv/gold.nl.v
+      gunzip -c results/$BASE-$ARM/final.nl.v.gz > results/$BASE-$ARM/equiv/gate.nl.v
+      # suffix q = long equivalence: the struct recipe (equiv_struct -fwd before equiv_simple) with a 3 h 20 min limit (the job limit is 5 h), for designs
+      # whose standard 2900 s check times out (no change to the arm itself)
+      EQT=2900; EQS=(); case "${ARM##*-}" in *q*) EQT=12000; EQS=(--struct);; esac
+      timeout $((EQT + 100)) $DOCKER python3 br/equiv.py --gold results/$BASE-$ARM/equiv/gold.nl.v --gate results/$BASE-$ARM/equiv/gate.nl.v \
+        --top $TOP --liberty $LIBF --out results/$BASE-$ARM/equiv --timeout $EQT "${EQS[@]}" > results/$BASE-$ARM/equiv/run.log 2>&1 || true
+      sudo chown -R "$(id -u):$(id -g)" results || true
+      rm -f results/$BASE-$ARM/equiv/*.nl.v results/$BASE-$ARM/equiv/*-logic.v
+      gzip -f results/$BASE-$ARM/equiv/gold.json results/$BASE-$ARM/equiv/gate.json results/$BASE-$ARM/equiv/equiv.log 2>/dev/null || true
+      grep -h '"status"' results/$BASE-$ARM/equiv/result.json || echo "[hero] equivalence did not finish" ;;
+    esac ;;
+    esac
   fi ;;
 esac
 ls results
