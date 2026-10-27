@@ -49,7 +49,8 @@ default_cap = envget("GRT_DESIGN_REPAIR_MAX_CAP_PCT", "10")
 tiers = []
 if tiers_file and os.path.exists(tiers_file):
     for t in json.load(open(tiers_file))["tiers"]:
-        tiers.append((set(t["nets"]), str(t.get("slew_pct", default_slew)), str(t.get("cap_pct", default_cap))))
+        nets = t["nets"]
+        tiers.append((None if nets == "ALL" else set(nets), str(t.get("slew_pct", default_slew)), str(t.get("cap_pct", default_cap))))
 elif flag_file and flag_file != "ALL" and os.path.exists(flag_file):
     tiers.append((set(json.load(open(flag_file))), default_slew, default_cap))
 else:

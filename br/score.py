@@ -32,6 +32,8 @@ def main() -> int:
     ap.add_argument("--rule", default=None, help="deterministic ranking instead of the model (AI ablation). R8 = max(est load slew ratio, est driver slew ratio, est cap ratio), frozen 2026-10-26 20:20 EDT as the most robust hand rule on development data (signal nets); R4 = cap_ratio*(1+hpwl/100)")
     ap.add_argument("--expected-count", type=float, default=None, help="flag the top round(F * sum(p)) nets: the model's own expected violator count times F (auto-budget)")
     ap.add_argument("--reg-model", default=None, help="regression model (predicted signoff slew ratio); enables --reg-tiers")
+    ap.add_argument("--top-n", type=int, default=None, help="flag exactly the top N nets (equal-size list controls)")
+    ap.add_argument("--seed", type=int, default=1, help="seed for --rule RND")
     ap.add_argument("--reg-tiers", default=None, help="learned-margin tiers over the top-k set, e.g. 1.3:80,1.1:60,0:40 -> predicted ratio >=1.3 at 80%%, >=1.1 at 60%%, rest at 40%%")
     a = ap.parse_args()
     import lightgbm as lgb
@@ -47,6 +49,10 @@ def main() -> int:
             df["p"] = df["worst_load_slew_ratio"].fillna(0).astype(float)
         elif a.rule.upper() == "R8":
             df["p"] = df[["worst_load_slew_ratio", "driver_slew_ratio", "cap_ratio"]].fillna(0).astype(float).max(axis=1)
+        elif a.rule.upper() == "RND":
+            import numpy as np
+            df = df.sort_values("net")  # order-independent draw
+            df["p"] = np.random.default_rng(a.seed).random(len(df))
         else:
             raise SystemExit("unknown rule " + a.rule)
     else:
@@ -56,7 +62,9 @@ def main() -> int:
     if a.rule_fanout:
         df.loc[df["fanout_ratio"].fillna(0) > 1.0, "p"] = 1.0 + df["p"]  # rule nets rank first
     df = df.sort_values("p", ascending=False)
-    if a.expected_count is not None:
+    if a.top_n is not None:
+        flagged = df.head(max(0, a.top_n))
+    elif a.expected_count is not None:
         k = max(1, int(round(a.expected_count * float(df["p"].clip(upper=1.0).sum()))))
         flagged = df.head(k)
     elif a.threshold is not None:
