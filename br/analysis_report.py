@@ -399,9 +399,9 @@ def fig_learning_curve(lcr: pd.DataFrame, abr: pd.DataFrame, path: str, label: s
                Line2D([], [], color=RULE_GRAYS["rule_R8"], linewidth=1.2, linestyle=(0, (4, 3)), label="rule R8 (no training)"),
                Line2D([], [], color=INK, linewidth=1.0, linestyle=(0, (1, 1.5)), label="2x floor")]
     fig.legend(handles=handles, loc="upper center", ncol=4, frameon=False, fontsize=8, bbox_to_anchor=(0.5, 0.995))
-    fig.text(0.5, 0.005, "Held-out design per column; lines = seed mean of the per-run median, bands = per-run IQR; "
-             f"floor = 0.95 x the run's violator rate. {label}", ha="center", fontsize=7.2, color=INK2)
-    fig.tight_layout(rect=(0, 0.03, 1, 0.93))
+    fig.text(0.5, 0.004, "Held-out design per column; lines = seed mean of the per-run median, bands = per-run IQR; "
+             f"floor = 0.95 x the run's violator rate.\n{label}", ha="center", va="bottom", fontsize=7.2, color=INK2)
+    fig.tight_layout(rect=(0, 0.05, 1, 0.93))
     fig.savefig(path, dpi=170, facecolor=SURF)
     plt.close(fig)
 
@@ -456,9 +456,9 @@ def fig_ablation(ab: pd.DataFrame, path: str, label: str) -> None:
     handles = [Patch(color=colors[r], label=RUNG_LABEL[r]) for r in rungs]
     handles.append(Line2D([], [], color=INK, linewidth=1.0, linestyle=(0, (1, 1.5)), label="floor (0.95 x violator rate)"))
     fig.legend(handles=handles, loc="upper center", ncol=len(handles), frameon=False, fontsize=7.5, bbox_to_anchor=(0.5, 0.995))
-    fig.text(0.5, 0.005, f"Leave-one-design-out, signal nets, pooled over each held-out design's runs; bars above the catch-95 axis "
-             f"are clipped and labeled.{note} {label}", ha="center", fontsize=7, color=INK2)
-    fig.tight_layout(rect=(0, 0.03, 1, 0.94))
+    fig.text(0.5, 0.004, f"Leave-one-design-out, signal nets, pooled over each held-out design's runs; bars above the catch-95 axis "
+             f"are clipped and labeled.{note}\n{label}", ha="center", va="bottom", fontsize=7, color=INK2)
+    fig.tight_layout(rect=(0, 0.045, 1, 0.94))
     fig.savefig(path, dpi=170, facecolor=SURF)
     plt.close(fig)
 
