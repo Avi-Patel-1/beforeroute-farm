@@ -22,6 +22,10 @@ import matplotlib.pyplot as plt  # noqa: E402
 
 BASES = [("d3-des-000", "DES"), ("d3-y_huff-000", "y_huff"), ("d3-ocs_blitter-000", "ocs_blitter"),
          ("d3-bm64-000", "BM64"), ("d3-md5-000", "MD5"), ("d3-salsa20-000", "salsa20")]
+BASES_45 = [("d3b-sha512-000", "SHA-512"), ("d3b-ldpcenc-000", "LDPC"), ("d5-blabla-000", "BlaBla"),
+            ("d5-chacha-000", "ChaCha"), ("d5-point_add-000", "point_add")]
+# Rounds 4-5: BeforeRoute's p >= 0.5 arm is thr500-70 on Round 4 and thr500-70c on Round 5 (scored at the checkpoint)
+ALIAS = {"thr500-70": ["thr500-70", "thr500-70c"]}
 POL = [  # (arm, label, marker, color, size, filled)
     ("uni70", "uniform 70%, every net", "s", F.ROSE, 9, True),
     ("rcal213-10", "corrected estimate + stock repair, every net", "D", F.BLUE, 8, True),
@@ -43,14 +47,14 @@ def rows(results):
         R = {("base" if r["tag"] == b else r["tag"][len(b) + 1:]): r for r in json.load(open(p))["arms"]}
         ref = R.get("rerun") or R.get("base")
         V0, H0 = ref["signoff_violating_data_nets"], ref.get("hold_ws")
-        d = {"base": b, "label": lab, "V0": V0}
+        d = {"base": b, "label": lab + (" †" if H0 is not None and H0 <= 0 else ""), "V0": V0}
         for arm, *_ in POL:
-            r = R.get(arm)
+            r = next((R[x] for x in ALIAS.get(arm, [arm]) if x in R), None)
             if r is None:
                 continue
             d[arm] = {"left_pct": 100.0 * r["signoff_violating_data_nets"] / V0, "left": r["signoff_violating_data_nets"],
                       "cells": (r.get("resized") or 0) + (r.get("buffers") or 0),
-                      "hold_pct": 100.0 * r["hold_ws"] / H0 if H0 and r.get("hold_ws") is not None else None}
+                      "hold_pct": 100.0 * r["hold_ws"] / H0 if H0 and H0 > 0 and r.get("hold_ws") is not None else None}
         out.append(d)
     return out
 
@@ -64,10 +68,15 @@ def main() -> int:
     ap.add_argument("--height", type=float, default=4.6)
     ap.add_argument("--title", default="Repair policies on six designs the model never saw")
     ap.add_argument("--a14", action="store_true", help="also draw the Addendum-14 arms")
+    ap.add_argument("--rounds45", action="store_true", help="Round-4/5 bases; draws the Addendum-15 arm thr500-30cr")
+    ap.add_argument("--subtitle", default=None)
     a = ap.parse_args()
-    global POL
+    global POL, BASES
     if a.a14:
         POL = POL + POL_A14
+    if a.rounds45:
+        BASES = BASES_45
+        POL = [p for p in POL if p[0] != "rct213-70"] + [("thr500-30cr", "model list + corrected parasitics, 30% (Addendum 15)", "^", F.GREEN, 10, False)]
     F.setup_style()
     D = rows(a.results)
     fig = plt.figure(figsize=(a.width, a.height))
@@ -75,7 +84,7 @@ def main() -> int:
     ys = np.arange(n)[::-1]
     panels = [("left_pct", "violators left, % of baseline", (0, None)), ("cells", "cells changed (log)", None),
               ("hold_pct", "hold slack kept, %", None)]
-    left0, gap, top, bottom = 0.145, 0.035, 0.78, 0.25
+    left0, gap, top, bottom = (0.17 if a.rounds45 else 0.145), 0.035, 0.78, 0.25
     w = (0.985 - left0 - 2 * gap) / 3
     for j, (key, title, _) in enumerate(panels):
         ax = fig.add_axes([left0 + j * (w + gap), bottom, w, top - bottom])
@@ -113,8 +122,9 @@ def main() -> int:
             ax.xaxis.set_major_formatter(F.mticker.FuncFormatter(lambda v, _: f"{v:.0f}%"))
     fig.text(0.012, 0.975, a.title, fontsize=F.FS + 3,
              fontweight="semibold", color=F.INK, va="top")
-    fig.text(0.012, 0.895, "Round 3: six design families the model never saw (baseline violators in brackets); "
-             "one run per arm; left of the dashed line = hold violated", fontsize=F.FS - 1, color=F.INK2, va="top")
+    sub = a.subtitle or ("Round 3: six design families the model never saw (baseline violators in brackets); "
+                         "one run per arm; left of the dashed line = hold violated")
+    fig.text(0.012, 0.895, sub, fontsize=F.FS - 1, color=F.INK2, va="top")
     items = [(mk, col, ms, lab, None, filled) for _, lab, mk, col, ms, filled in POL]
     if len(items) <= 4:
         F.key_row(fig, items[:2], 0.012, 0.115, gap=0.03)
