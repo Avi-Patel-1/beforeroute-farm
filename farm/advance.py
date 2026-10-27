@@ -27,12 +27,51 @@ def landed(results, tag):
 
 
 def signal_violators(results, tag):
+    """signal nets violating slew or cap at signoff (fanout-only residuals are antenna-diode loads, excluded from
+    closure by Addendum 2)"""
     lab = json.load(open(os.path.join(results, tag, "labels.json")))
-    return sum(1 for r in lab["nets"] if r.get("violated") and r.get("sigtype_s") == "SIGNAL")
+    return sum(1 for r in lab["nets"] if r.get("violated") and r.get("sigtype_s") == "SIGNAL" and (r.get("viol_slew") or r.get("viol_cap")))
+
+
+def mapped_residuals(results, base, tag):
+    """slew/cap signal violators of arm `tag`, mapped to net names of the base's post-GRT database
+    (by name, else by driver instance; unmapped nets dropped) -- same mapping as br/iterate.py"""
+    names, by_inst = set(), {}
+    for line in open(os.path.join(results, base, "nets.jsonl")):
+        n = json.loads(line)
+        names.add(n["net"])
+        if n.get("driver_inst"):
+            by_inst.setdefault(n["driver_inst"], n["net"])
+    out = []
+    for r in json.load(open(os.path.join(results, tag, "labels.json")))["nets"]:
+        if not (r.get("violated") and r.get("sigtype_s") == "SIGNAL" and (r.get("viol_slew") or r.get("viol_cap"))):
+            continue
+        nm = r["net"] if r["net"] in names else by_inst.get((r.get("driver_s") or "").split("/")[0])
+        if nm:
+            out.append(nm)
+    return sorted(set(out))
 
 
 def dispatched(base, arm, log):
     return f"{base} {arm}" in log
+
+
+def escalation(results, base, arm, prev_list, prev_arm, log):
+    """Addendum 8: build the two-tier escalation list for a stalled chain; None if the chain already escalated or
+    has no slew/cap residuals left."""
+    chain = "sgl" if "-sgl" in arm else "cln"
+    if f"{base} lsx-{chain}" in log:
+        return None
+    resid = mapped_residuals(results, base, prev_arm)
+    if not resid:
+        return None
+    k = arm.split(chain)[1].split("-")[0]
+    name = f"{chain}{k}x"
+    out = os.path.join(ROOT, "farm", "lists", base, f"{name}.json")
+    lst = json.load(open(prev_list))
+    json.dump({"tiers": [{"nets": sorted(set(lst) | set(resid)), "slew_pct": 70, "cap_pct": 70},
+                         {"nets": resid, "slew_pct": 90, "cap_pct": 90}]}, open(out, "w"))
+    return (base, f"lsx-{name}", out)
 
 
 def main():
@@ -89,14 +128,20 @@ def main():
             info = {}
         if info.get("added", 1) == 0:
             # every residual violator is already on the list: the next pass would repeat the previous one exactly
-            # (deterministic flow) -> the chain has stalled at this violator count; record it, do not dispatch
+            # (deterministic flow) -> the chain has stalled. Addendum 8: one escalation pass (same list at 70%, then
+            # the residual violators again at 90%); afterwards the chain ends.
             with open(state, "a") as f:
                 f.write(f"{base} {arm} STALLED\n")
             try:
-                os.remove(out)  # nothing to dispatch: keep the working tree clean
+                os.remove(out)  # the repeated list itself is not dispatched
             except OSError:
                 pass
-            print(f"[advance] {base} {arm}: stalled (no new nets to add); not dispatched")
+            esc = escalation(a.results, base, arm, prev_list, prev_arm, log)
+            if esc:
+                made.append(esc)
+                print(f"[advance] {base} {arm}: stalled -> escalation pass {esc[1]}")
+            else:
+                print(f"[advance] {base} {arm}: stalled; no escalation (already escalated or no slew/cap residuals)")
             continue
         made.append((base, arm, out))
     if a.dry_run or not made:
