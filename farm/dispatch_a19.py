@@ -78,6 +78,7 @@ def main():
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--phase1", action="store_true")
     ap.add_argument("--a20", action="store_true", help="Addendum 20: hold-preserving repair arms on the 14 bases")
+    ap.add_argument("--a21", action="store_true", help="Addendum 21: utilization-sweep seeds (arms follow in phase 2)")
     a = ap.parse_args()
     lock = open(os.path.join(ROOT, "results", ".a19_lock"), "w")
     try:
@@ -117,6 +118,17 @@ def main():
                 continue
             if dispatch(base, ["rcy213-10", "rcy213-10y", "thr500-30cry", "bst500-30-10ry"], MODEL[base], ref, a.dry_run):
                 st["phase1"][f"{base}:a20"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()); save()
+    if a.a21:
+        U_ARMS = ["rcal213-10", "rcal213-30", "thr500-30cr", "bst500-30-10r", "rqn-30r"]
+        for base in ("d3b-ldpcenc-000", "d3b-sha512-000", "d3-salsa20-000"):
+            fam, rest = base.split("-", 1)
+            for u in ("u50", "u60"):
+                nb = f"{fam}{u}-{rest}"
+                if nb in st["seeds"]:
+                    continue
+                t = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(time.time() - 5))
+                if dispatch(nb, ["seed"], MODEL[base], "util", a.dry_run):
+                    st["seeds"][nb] = {"ref": "util", "after": t, "model": MODEL[base], "arms": U_ARMS}; save()
     # phase 2: follow-up arms once each seed run completed
     pending = [nb for nb, s in st["seeds"].items() if not s.get("arms_dispatched") and not s.get("run")]
     idx = job_index(st, min(st["seeds"][nb]["after"] for nb in pending)) if pending else {}
