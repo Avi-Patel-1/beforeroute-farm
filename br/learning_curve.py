@@ -17,6 +17,7 @@ Variants (3 seeds each; a size that covers the whole pool is fitted once):
            design D; per seed a random order of D's runs: the first k are added to training and the
            test set is D's runs after the first min(4, n_runs-1) (identical for every k of a seed,
            so k = 0/1/2/4 are paired).
+  self     train on k runs of the held-out design only (no other designs), same paired test runs as within.
 Evaluation: signal nets of the held-out design's evaluation runs; recall at 5% flagged, fraction
 flagged to catch 95%, PR-AUC, pooled over runs and per run (median / IQR); calibration of the
 expected violator count per run, |sum p - actual| / actual, with p prior-corrected for the
@@ -63,7 +64,7 @@ def main() -> int:
     ap.add_argument("--data", required=True)
     ap.add_argument("--out", required=True)
     ap.add_argument("--holdout", required=True)
-    ap.add_argument("--variant", choices=["runs", "designs", "within"], default="runs")
+    ap.add_argument("--variant", choices=["runs", "designs", "within", "self"], default="runs")
     ap.add_argument("--n", default="all", help="comma list of training sizes: runs (runs), designs (designs) or in-design runs k (within); all = whole pool")
     ap.add_argument("--seeds", type=int, default=3)
     ap.add_argument("--min-pos", type=int, default=20, help="violators required in the first run/design of an order")
@@ -103,7 +104,7 @@ def main() -> int:
         pd.DataFrame(run_rows).to_csv(os.path.join(a.out, "learning_curve_runs.csv"), index=False)
 
     for n_str in [x.strip() for x in str(a.n).split(",") if x.strip()]:
-        if a.variant == "within":
+        if a.variant in ("within", "self"):
             k = int(n_str)
             if kmax < 1 or k > kmax:
                 records.append({"variant": a.variant, "holdout": D, "n": k, "skipped": f"k={k} > kmax={kmax} ({len(d_runs)} runs of {D})"})
@@ -124,10 +125,13 @@ def main() -> int:
                 chosen = order_designs(pool, rng, a.min_pos)[:size]
                 train_runs = list(pool.loc[pool["design"].isin(chosen), "run"])
                 eval_runs, size_val = d_runs, len(chosen)
-            else:
+            else:  # within: other designs + k runs of D; self: k runs of D only (same paired test runs)
                 perm = [d_runs[i] for i in rng.permutation(len(d_runs))]
-                train_runs = list(pool["run"]) + perm[:k]
+                train_runs = (list(pool["run"]) if a.variant == "within" else []) + perm[:k]
                 eval_runs, size_val = perm[kmax:], k
+            if not train_runs:
+                records.append({"variant": a.variant, "holdout": D, "n": n_val, "seed": seed, "skipped": "empty training set"})
+                continue
             key = frozenset(train_runs)
             tr = train_df.loc[np.concatenate([by_run_train[r] for r in train_runs])]
             n_pos = int(tr["y"].sum())
