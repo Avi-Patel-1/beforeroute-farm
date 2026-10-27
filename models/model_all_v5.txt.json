@@ -1,0 +1,36 @@
+{
+ "data": "results/analysis/farm_dataset/dataset.parquet (analyze run 40428669259 artifact)",
+ "designs": [
+  "BM64",
+  "aes_cipher_top",
+  "crc_pipe",
+  "des",
+  "ldpcenc",
+  "md5",
+  "ocs_blitter",
+  "picorv32",
+  "salsa20",
+  "sha512",
+  "spm",
+  "y_huff"
+ ],
+ "runs": 214,
+ "rows": 1634130,
+ "positives": 69064,
+ "runs_per_design": {
+  "BM64": 4,
+  "aes_cipher_top": 24,
+  "crc_pipe": 60,
+  "des": 7,
+  "ldpcenc": 5,
+  "md5": 5,
+  "ocs_blitter": 7,
+  "picorv32": 36,
+  "salsa20": 5,
+  "sha512": 13,
+  "spm": 42,
+  "y_huff": 6
+ },
+ "note": "classifier only; the signoff-ratio regressor was not fitted (process OOM-killed after the classifier was saved)",
+ "trained_at": "2026-10-27T01:53:00Z"
+}
