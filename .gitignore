@@ -30,3 +30,6 @@ agents/
 results-gf180/
 .claude/
 results-*/
+paper/
+results-layout/
+results-backup/
