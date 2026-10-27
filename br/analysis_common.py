@@ -120,26 +120,28 @@ def predict_lgb(model, df: pd.DataFrame) -> np.ndarray:
     return model.predict(X)
 
 
-def lr_matrix(df: pd.DataFrame) -> np.ndarray:
-    X = df[LR_FEATURES].astype(float).fillna(0.0).clip(lower=0.0).values
+def lr_matrix(df: pd.DataFrame, feats=None) -> np.ndarray:
+    X = df[list(feats or LR_FEATURES)].astype(float).fillna(0.0).clip(lower=0.0).values
     return np.log1p(X)
 
 
-def fit_lr(df_train: pd.DataFrame):
+def fit_lr(df_train: pd.DataFrame, feats=None):
     """Learned linear calibration of the estimate: standardized log1p features, balanced logistic regression."""
     from sklearn.linear_model import LogisticRegression
     from sklearn.pipeline import make_pipeline
     from sklearn.preprocessing import StandardScaler
 
+    feats = list(feats or LR_FEATURES)
     y = df_train["y"].astype(int).values
     m = make_pipeline(StandardScaler(), LogisticRegression(C=1.0, class_weight="balanced", max_iter=3000))
-    m.fit(lr_matrix(df_train), y)
+    m.fit(lr_matrix(df_train, feats), y)
     m._br_spw = float((1 - y).sum() / max(1, y.sum()))  # balanced weights = this positive up-weighting
+    m._br_feats = feats
     return m
 
 
 def predict_lr(model, df: pd.DataFrame) -> np.ndarray:
-    return model.predict_proba(lr_matrix(df))[:, 1]
+    return model.predict_proba(lr_matrix(df, getattr(model, "_br_feats", LR_FEATURES)))[:, 1]
 
 
 def r8(df: pd.DataFrame) -> np.ndarray:
