@@ -233,6 +233,26 @@ print(','.join(f'{int(x.split(\"-\")[0])/1000}:{x.split(\"-\")[1]}' for x in a.s
     python3 br/score.py --model $MODEL --run-results $SRC --threshold $VAL --out results/$BASE/flagged_$ARM.json
     python3 -c "import json; f=json.load(open('results/$BASE/flagged_$ARM.json')); json.dump({'tiers': [{'nets': f, 'slew_pct': $HF, 'cap_pct': $HF}, {'nets': 'ALL', 'slew_pct': $HA, 'cap_pct': $HA}]}, open('results/$BASE/tiers_$ARM.json', 'w'))"
     $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm tiered --tag $BASE-$ARM --tiers /work/results/$BASE/tiers_$ARM.json "${RCOV[@]}" --results results --pdk-root /work/pdk --jobs $JOBS ;;
+  bqn*|bqc*)
+    # bqn-<Hf>-<Ha><flags> / bqc-<Hf>-<Ha><flags> (Addendum 23, "conventional boost"): the bst two-tier step with the
+    #   learned list replaced by the estimate's own top N nets by rule R8, N = |model list (p >= 0.5)| (the bst list size):
+    #   bqn = R8 on the checkpoint re-timed with wire cap x2.130 (the rqn list), bqc = R8 on the checkpoint's own estimate
+    #   (the rqc list; the correlated estimate on the correlated-flow bases). tier 1 = that list at Hf%, only those nets
+    #   touchable; tier 2 = every net, no mask, at Ha%. flags as bst (r, o, t).
+    R=${ARM#bq?-}; HF=${R%%-*}; HA=${R#*-}; FL=${HA//[0-9]/}; HA=${HA%%[a-z]*}
+    use_checkpoint_features
+    CK=$SRC
+    case "$ARM" in bqc*) RQ=$CK ;; *) use_rc_checkpoint_features 213; RQ=$SRC ;; esac
+    RCOV=()
+    case "$FL" in *r*) RCOV+=(--override "LAYERS_RC=$(tr -d ' \n' < farm/rc/sky130_cap213.json)");; esac
+    case "$FL" in *o*) RCOV+=(--override "LAYERS_RC=$(tr -d ' \n' < farm/rc/sky130_caporfs.json)");; esac
+    case "$FL" in *t*) RCOV+=(--override "RUN_POST_GRT_RESIZER_TIMING=true");; esac
+    python3 -m pip install -q pandas pyarrow lightgbm scikit-learn
+    python3 br/score.py --model $MODEL --run-results $CK --threshold 0.5 --out results/$BASE/flagged_${ARM}_modelsize.json
+    N=$(python3 -c "import json; print(len(json.load(open('results/$BASE/flagged_${ARM}_modelsize.json'))))")
+    python3 br/score.py --model none --rule R8 --run-results $RQ --top-n $N --out results/$BASE/flagged_$ARM.json
+    python3 -c "import json; f=json.load(open('results/$BASE/flagged_$ARM.json')); json.dump({'tiers': [{'nets': f, 'slew_pct': $HF, 'cap_pct': $HF}, {'nets': 'ALL', 'slew_pct': $HA, 'cap_pct': $HA}]}, open('results/$BASE/tiers_$ARM.json', 'w'))"
+    $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm tiered --tag $BASE-$ARM --tiers /work/results/$BASE/tiers_$ARM.json "${RCOV[@]}" --results results --pdk-root /work/pdk --jobs $JOBS ;;
   rqn*|rnd*|rqt*|rqc*)
     # list controls under the combined actuator (Addendum 19); same masked repair as thr...cr, only the list differs:
     #   rqn-<H><flags>       : top N nets by rule R8 on the checkpoint re-timed with wire cap x2.130, N = |model list (p >= 0.5)|
@@ -267,7 +287,7 @@ sudo chown -R "$(id -u):$(id -g)" results || true
 # (br/equiv_cut.py: flops matched by name and cut, ABC proves the next-state and output functions; seconds on these
 # designs); only if it cannot decide (ERROR / FAIL_MATCH / TIMEOUT) the Yosys equiv recipe as before, for the arm
 # families that always had it.
-case "$ARM" in tgt*|thr*|det*|lst-*|lsx-*|exp*|est*|rct*|rcal*|rcy*|bst*|rqn*|rnd*|rqt*|rqc*|uni*)
+case "$ARM" in tgt*|thr*|det*|lst-*|lsx-*|exp*|est*|rct*|rcal*|rcy*|bst*|bqn*|bqc*|rqn*|rnd*|rqt*|rqc*|uni*)
   if [ -f results/$BASE/final.nl.v.gz ] && [ -f results/$BASE-$ARM/final.nl.v.gz ]; then
     TOP=$(python3 -c "import json;print(json.load(open('results/$BASE/resolved.json'))['DESIGN_NAME'])")
     LIBF=pdk/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
