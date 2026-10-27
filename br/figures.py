@@ -90,7 +90,7 @@ def _arm_kind(tag, base):
         return "uniform", a
     if a.startswith("tgt") or a.startswith("thr") or a.startswith("exp"):
         return "targeted", a
-    if a.startswith("det"):
+    if a.startswith("det") or a.startswith("est"):
         return "rule", a
     if a.startswith("lst-"):
         return "list", a
