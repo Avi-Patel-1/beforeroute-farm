@@ -83,15 +83,7 @@ def main():
     st = json.load(open(path)) if os.path.exists(path) else {"phase1": {}, "seeds": {}}
     save = lambda: (None if a.dry_run else json.dump(st, open(path, "w"), indent=1))
     if a.phase1:
-        for base, ref in BRANCH.items():
-            key = f"{base}:main"
-            if key not in st["phase1"]:
-                arms = ARMS + ([] if base in ROUND3 else ["rcal213-0"])
-                if dispatch(base, arms, MODEL[base], ref, a.dry_run):
-                    st["phase1"][key] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()); save()
-            if base in MODEL_V4 and f"{base}:v4" not in st["phase1"]:
-                if dispatch(base, ["thr500-30crv4"], MODEL_V4[base], ref, a.dry_run):
-                    st["phase1"][f"{base}:v4"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()); save()
+        # seeds first: their follow-up arms wait on them, so they must not queue behind the arm runs
         for base in BRANCH:
             for nb in derived(base, "cf"):
                 if nb not in st["seeds"]:
@@ -104,6 +96,15 @@ def main():
                     t = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(time.time() - 5))
                     if dispatch(nb, ["seed"], MODEL[base], "jit", a.dry_run):
                         st["seeds"][nb] = {"ref": "jit", "after": t, "model": MODEL[base], "arms": JIT_ARMS}; save()
+        for base, ref in BRANCH.items():
+            key = f"{base}:main"
+            if key not in st["phase1"]:
+                arms = ARMS + ([] if base in ROUND3 else ["rcal213-0"])
+                if dispatch(base, arms, MODEL[base], ref, a.dry_run):
+                    st["phase1"][key] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()); save()
+            if base in MODEL_V4 and f"{base}:v4" not in st["phase1"]:
+                if dispatch(base, ["thr500-30crv4"], MODEL_V4[base], ref, a.dry_run):
+                    st["phase1"][f"{base}:v4"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()); save()
     # phase 2: follow-up arms once each seed run completed
     for nb, s in st["seeds"].items():
         if s.get("arms_dispatched"):
