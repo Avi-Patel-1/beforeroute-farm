@@ -117,11 +117,18 @@ def blind_spot(te):
     return float((pd.to_numeric(v["worst_load_slew_ratio"], errors="coerce").fillna(0) <= 1.0).mean()), float((v["r8"] <= 1.0).mean())
 
 
-def score_design(te, p):
-    """Metrics on SIGNAL nets of one held-out design (pooled over its runs) + per-run values of the main ones."""
+def score_design(te, p, thresholds=(0.5, 0.9)):
+    """Metrics on SIGNAL nets of one held-out design (pooled over its runs) + per-run values of the main ones.
+    Also the operating point at fixed score thresholds (fraction flagged, recall): does a threshold set on
+    sky130 transfer? (models: probability 0.5 / 0.9; baselines: ratio 1.0)."""
     m = (te["sigtype"] == "SIGNAL").values
     p = np.asarray(p)
     out = evaluate(te["y"].values[m], p[m])
+    ys, ps = te["y"].values[m].astype(int), np.nan_to_num(p[m].astype(float))
+    for t in thresholds:
+        f = ps >= t
+        out[f"flagged@{t:g}"] = float(f.mean()) if len(f) else None
+        out[f"recall@{t:g}"] = float(ys[f].sum() / ys.sum()) if ys.sum() else None
     per = []
     sig = te[m]
     ps = p[m]
@@ -156,6 +163,7 @@ def main() -> int:
     ap.add_argument("--neg-frac", type=float, default=0.25)
     ap.add_argument("--gf-share", type=float, default=0.2)
     ap.add_argument("--ft-rounds", type=int, default=100)
+    ap.add_argument("--sky-lodo", action="store_true", help="reference: sky130 leave-one-design-out on the same designs (base features, full recipe)")
     a = ap.parse_args()
     arms = a.arms.split(",")
     fsets = a.feature_sets.split(",")
@@ -222,8 +230,8 @@ def main() -> int:
             "y_slew": int(s["y_slew"].sum()), "y_cap": int(s["y_cap"].sum()), "y_fanout": int(s["y_fanout"].sum()),
         }
         S["baselines"][d] = {
-            "est_load_slew_ratio": score_design(te, pd.to_numeric(te["worst_load_slew_ratio"], errors="coerce").fillna(0).values),
-            "R8": score_design(te, te["r8"].values),
+            "est_load_slew_ratio": score_design(te, pd.to_numeric(te["worst_load_slew_ratio"], errors="coerce").fillna(0).values, thresholds=(1.0,)),
+            "R8": score_design(te, te["r8"].values, thresholds=(1.0,)),
         }
     s_sig = sky[sky["sigtype"] == "SIGNAL"]
     S["describe_sky130"] = {
@@ -231,6 +239,21 @@ def main() -> int:
              "blind_spot_load": blind_spot(g)[0], "blind_spot_r8": blind_spot(g)[1]}
         for dd, g in s_sig.groupby("design")
     }
+
+    if a.sky_lodo:  # within-sky130 reference for the same designs: what a held-out design looks like without a PDK change
+        for d in designs:
+            if d not in set(sky["design"]):
+                continue
+
+            def lodo(d=d):
+                model = fit_w(sky[sky["design"] != d], FEATURES)
+                te = sky[sky["design"] == d]
+                res = score_design(te, model.predict(X_of(te, FEATURES)))
+                res["baseline_est_load_slew_ratio"] = {k: v for k, v in score_design(te, pd.to_numeric(te["worst_load_slew_ratio"], errors="coerce").fillna(0).values, thresholds=(1.0,)).items() if k != "per_run"}
+                res["baseline_R8"] = {k: v for k, v in score_design(te, te["r8"].values, thresholds=(1.0,)).items() if k != "per_run"}
+                res.pop("per_run", None)
+                return res
+            S.setdefault("sky130_lodo", {})[d] = cached(f"sky130_lodo_{d}", lodo)
 
     ks = [k if k == "all" else int(k) for k in a.ks.split(",")]
     for fs in fsets:
@@ -240,12 +263,13 @@ def main() -> int:
             te = gf[gf["design"] == d]
             Xte = X_of(te, feats)
             A = S["arms"].setdefault(fs, {}).setdefault(d, {})
+            tsig = f"{zlib.crc32('|'.join(runs_of[d]).encode()):08x}"  # cache keys change when the test runs change
             if "zs" in arms:
-                A.setdefault("zs", {})["0"] = [cached(f"{fs}_zs_{d}", lambda: score_design(te, full.predict(Xte)))]
+                A.setdefault("zs", {})["0"] = [cached(f"{fs}_zs_{d}_{tsig}", lambda: score_design(te, full.predict(Xte)))]
             if "merge" in arms:
                 def m0():
                     return score_design(te, sky_model(sub_name(fs), sky_s, feats, w_s).predict(Xte))
-                A.setdefault("merge", {})["0"] = [cached(f"{fs}_merge_{d}_k0", m0)]
+                A.setdefault("merge", {})["0"] = [cached(f"{fs}_merge_{d}_k0_{tsig}", m0)]
             pool = [r for dd in designs if dd != d for r in runs_of[dd]]
             for k in ks:
                 if k == "all":
@@ -283,7 +307,8 @@ def main() -> int:
                     for arm in arms:
                         if arm == "zs":
                             continue
-                        key = f"{fs}_{arm}_{d}_k{k}_r{r}"
+                        psig = f"{zlib.crc32('|'.join(sorted(picked)).encode()):08x}"
+                        key = f"{fs}_{arm}_{d}_k{k}_r{r}_{tsig}_{psig}"
                         A.setdefault(arm, {}).setdefault(str(k), []).append(cached(key, lambda arm=arm: run_arm(arm)))
             json.dump(S, open(os.path.join(a.out, "summary.json"), "w"), indent=1)
             write_tables(S, os.path.join(a.out, "tables.md"))
@@ -320,20 +345,53 @@ def write_tables(S, path):
         L.append(f"| {d} | {x['runs']} | {x['signal_nets']} | {x['violators']} | {_f(x['violator_rate'], True)} ({_f(min(pr), True)}-{_f(max(pr), True)}) | "
                  f"{_f(x['blind_spot_load'], True)} | {_f(x['blind_spot_r8'], True)} | {_f(sk.get('violator_rate'), True)} | {_f(sk.get('blind_spot_load'), True)} |")
     L.append("")
+    if S.get("sky130_lodo"):
+        L.append("## Reference: the same designs held out within sky130 (model trained on the other 11 sky130 designs)\n")
+        L.append("| sky130 held-out design | flagged to catch 95% | recall @ 5% | PR-AUC | est-slew baseline: catch 95% / recall @ 5% / PR-AUC | R8: catch 95% / recall @ 5% / PR-AUC |")
+        L.append("|---|---|---|---|---|---|")
+        for d, m in S["sky130_lodo"].items():
+            b, r = m["baseline_est_load_slew_ratio"], m["baseline_R8"]
+            L.append(f"| {d} | {_f(m.get('frac_to_catch_95'), True)} | {_f(m.get('recall@5%'), True)} | {_f(m.get('pr_auc'))} | "
+                     f"{_f(b.get('frac_to_catch_95'), True)} / {_f(b.get('recall@5%'), True)} / {_f(b.get('pr_auc'))} | "
+                     f"{_f(r.get('frac_to_catch_95'), True)} / {_f(r.get('recall@5%'), True)} / {_f(r.get('pr_auc'))} |")
+        L.append("")
+    L.append("## Does a score threshold transfer? (fraction of signal nets flagged / recall at a fixed threshold)\n")
+    L.append("| held-out | est. load slew ratio > 1 | R8 > 1 | " + " | ".join(f"zero-shot [{fs}] p >= 0.5 | zero-shot [{fs}] p >= 0.9" for fs in S["arms"]) + " |")
+    L.append("|---|---|---|" + "---|---|" * len(S["arms"]))
+
+    def op(m, t):
+        return f"{_f(m.get(f'flagged@{t:g}'), True)} / {_f(m.get(f'recall@{t:g}'), True)}"
+    for d in designs:
+        b = S["baselines"][d]
+        cells = [op(b["est_load_slew_ratio"], 1.0), op(b["R8"], 1.0)]
+        for fs, byd in S["arms"].items():
+            zs = (byd.get(d, {}).get("zs") or {}).get("0")
+            cells += [op(zs[0], 0.5), op(zs[0], 0.9)] if zs else ["", ""]
+        L.append(f"| GF180 {d} | " + " | ".join(cells) + " |")
+    for d, m in (S.get("sky130_lodo") or {}).items():
+        cells = [op(m["baseline_est_load_slew_ratio"], 1.0), op(m["baseline_R8"], 1.0), op(m, 0.5), op(m, 0.9)]
+        L.append(f"| sky130 {d} (LODO, base) | " + " | ".join(cells) + " |")
+    L.append("")
     for d in designs:
         rate = S["describe"][d]["violator_rate"] or float("nan")
         L.append(f"## Held-out GF180 design: {d}\n")
         L.append(f"Bounds for a perfect ranker: catch 95% at {_f(0.95 * rate, True)} flagged; recall @ 5% <= {_f(min(1.0, 0.05 / rate) if rate else float('nan'), True)}.\n")
-        L.append("| ranker | flagged to catch 95% | recall @ 5% | PR-AUC | ROC-AUC |")
+        L.append("| ranker | flagged to catch 95% (per-run min-max) | recall @ 5% (per-run min-max) | PR-AUC | ROC-AUC |")
         L.append("|---|---|---|---|---|")
+
+        def rr(m, k):
+            v = [x.get(k) for x in m.get("per_run", []) if x.get(k) is not None]
+            return f" ({_f(min(v), True)}-{_f(max(v), True)})" if len(v) > 1 else ""
+
+        def line(name, m):
+            return (f"| {name} | {_f(m.get('frac_to_catch_95'), True)}{rr(m, 'frac_to_catch_95')} | "
+                    f"{_f(m.get('recall@5%'), True)}{rr(m, 'recall@5%')} | {_f(m.get('pr_auc'))} | {_f(m.get('roc_auc'))} |")
         for name, key in (("baseline: est. load slew ratio", "est_load_slew_ratio"), ("baseline: rule R8", "R8")):
-            m = S["baselines"][d][key]
-            L.append(f"| {name} | {_f(m.get('frac_to_catch_95'), True)} | {_f(m.get('recall@5%'), True)} | {_f(m.get('pr_auc'))} | {_f(m.get('roc_auc'))} |")
+            L.append(line(name, S["baselines"][d][key]))
         for fs, byd in S["arms"].items():
             zs = (byd.get(d, {}).get("zs") or {}).get("0")
             if zs:
-                m = zs[0]
-                L.append(f"| zero-shot sky130 model [{fs} features] | {_f(m.get('frac_to_catch_95'), True)} | {_f(m.get('recall@5%'), True)} | {_f(m.get('pr_auc'))} | {_f(m.get('roc_auc'))} |")
+                L.append(line(f"zero-shot sky130 model [{fs} features]", zs[0]))
         L.append("")
         for fs, byd in S["arms"].items():
             A = byd.get(d, {})
