@@ -2,7 +2,7 @@
 """Iterations to slew/cap closure (Addendum 2), one small panel per base: signal slew/cap violators left after each
 route + extract + nine-corner signoff pass, for the signoff-guided loop (pass 1 = the baseline signoff, then repair
 exactly the nets that failed and re-run) and for BeforeRoute (pass 1 = the model's top-5% repair, then the same
-clean-up loop on what is left). Pending passes are drawn hollow at the axis floor with "running".
+clean-up loop on what is left). A pass still running is drawn hollow at the last known count.
 Same dark style as br/figs_v2.py. Data: br/iterations.py (computed here).
 
 Usage: python3 br/fig_iterations.py --out figures/v2 [--bases d3-des-000,...] [--name iterations]
@@ -66,14 +66,15 @@ def main() -> int:
                     xs.append(j)
                     ys.append(max(p["V"], floor))
                     top = max(top, p["V"])
-                elif p.get("status") in ("pending", "stalled"):
+                elif p.get("status") == "pending":  # stalled / not dispatched = the chain ended; nothing to draw
                     pend.append((j, p["status"]))
             ax.plot(xs, ys, "-", color=col, lw=2.2 if key == "beforeroute" else 1.6, zorder=3)
             ax.plot(xs, ys, mk, color=col, ms=13 if mk == "*" else 7, zorder=4, mec=F.SURFACE if mk == "o" else col)
-            for x, st in pend:
-                ax.plot([x], [floor], mk, mfc=F.SURFACE, mec=col, ms=13 if mk == "*" else 7, mew=1.5, zorder=4)
+            for x, st in pend:  # a running pass: hollow marker at the last known count (its outcome is unknown)
+                yv = ys[-1] if ys else floor
+                ax.plot([x], [yv], mk, mfc=F.SURFACE, mec=col, ms=13 if mk == "*" else 7, mew=1.5, zorder=4)
                 if xs:
-                    ax.plot([xs[-1], x], [ys[-1], floor], ":", color=col, lw=1.2, zorder=2)
+                    ax.plot([xs[-1], x], [ys[-1], yv], ":", color=col, lw=1.2, zorder=2)
             done = passes_to_close(seq)
             nums.setdefault(o["base"], {})[key] = {"passes_to_close": done, "seq": [(p["arm"], p.get("V"), p.get("cells")) for p in seq]}
         ax.set_yscale("symlog", linthresh=1)
@@ -94,7 +95,7 @@ def main() -> int:
         ax.axhline(floor, color=F.AXIS, lw=0.8, zorder=1)
     fig.text(0.055, 0.985, "Route + signoff passes until no slew/cap violator is left", fontsize=F.FS + 2, fontweight="semibold",
              color=F.INK, va="top")
-    fig.text(0.055, 0.075, "pass (hollow = still running)", fontsize=F.FS - 1, color=F.INK2, va="top")
+    fig.text(0.055, 0.075, "pass (hollow = still running, drawn at the last known count)", fontsize=F.FS - 1, color=F.INK2, va="top")
     fig.text(0.004, 0.48, "violators left", fontsize=F.FS - 1, color=F.INK2, rotation=90, va="center")
     F.key_row(fig, [("*", F.GREEN, 13, "BeforeRoute (top 5%, then clean-up)", None, True),
                     ("o", F.LOOP, 7, "fix what failed (pass 1 = baseline)", None, True)], 0.36, 0.04)
