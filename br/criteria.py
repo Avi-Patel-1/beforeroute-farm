@@ -103,6 +103,16 @@ def c_no_more(rows, arm, other):
     return ("pass" if V(a) <= V(o) else "fail"), {"V": V(a), f"{other}_V": V(o), "cells": cells(a), f"{other}_cells": cells(o)}
 
 
+def c_hold_no_worse(rows, arm, other):
+    a, o = rows.get(arm), rows.get(other)
+    if a is None or o is None:
+        return "pending", {}
+    ha, ho = a.get("hold_ws"), o.get("hold_ws")
+    ok = ha is not None and ho is not None and ha >= ho
+    return ("pass" if ok else "fail"), {"hold": round(ha, 4) if ha is not None else None,
+                                        f"{other}_hold": round(ho, 4) if ho is not None else None, "V": V(a), f"{other}_V": V(o)}
+
+
 def c_equiv(results, base, rows, arms):
     out = {}
     for arm in arms:
@@ -198,6 +208,11 @@ def main() -> int:
         "A14": (R3, [
             ("A14a thr500-10cr no more violators than rcal213-10", lambda b, r: c_no_more(r, "thr500-10cr", "rcal213-10"), (4, 6)),
             ("A14b thr500-10cr fewer cells than rcal213-10", lambda b, r: c_fewer_cells(r, "thr500-10cr", "rcal213-10"), (4, 6)),
+        ]),
+        "A15": (R4 + R5, [
+            ("A15a thr500-30cr no more violators than rcal213-10", lambda b, r: c_no_more(r, "thr500-30cr", "rcal213-10"), (3, 5)),
+            ("A15b thr500-30cr fewer cells than rcal213-10", lambda b, r: c_fewer_cells(r, "thr500-30cr", "rcal213-10"), (3, 5)),
+            ("A15c thr500-30cr worst hold slack no worse than rcal213-10", lambda b, r: c_hold_no_worse(r, "thr500-30cr", "rcal213-10"), (3, 5)),
         ]),
         "NV": (["nv1-nvdla_csc-000"], [
             ("A7 (A6.2) tgt050-70c vs uni50", lambda b, r: c_target_vs_uni50(r, "tgt050-70c"), (1, 1)),
