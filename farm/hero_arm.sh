@@ -155,9 +155,10 @@ case "$ARM" in
     #   p2 = two masked passes, f = + fanout rule, h = hold-fix delay cells protected from resizing, v3 = model tag,
     #   c = score features dumped at the checkpoint itself (deployment view),
     #   r = the repair step uses the router's wire cap scaled x2.130 to match extraction (LAYERS_RC = farm/rc/sky130_cap213.json),
-    #   d = replicate: no change in behaviour, a repeat run under its own tag (keeps the original arm's results intact)
+    #   d = replicate: no change in behaviour, a repeat run under its own tag (keeps the original arm's results intact),
+    #   q = as d, plus the long equivalence check (struct recipe, 3 h 20 min limit)
     case "$ARM" in tgt*) K=${ARM#tgt}; SEL=frac;; thr*) K=${ARM#thr}; SEL=thr;; esac
-    K=${K%%-*}; REST=${ARM##*-}; H=${REST%%[pfhvcrd]*}
+    K=${K%%-*}; REST=${ARM##*-}; H=${REST%%[pfhvcrdq]*}
     RCOV=(); case "$REST" in *r*) RCOV=(--override "LAYERS_RC=$(tr -d ' \n' < farm/rc/sky130_cap213.json)");; esac
     case "$REST" in *c*) use_checkpoint_features;; esac
     PASSES=1; case "$REST" in *p2*) PASSES=2;; esac
@@ -205,8 +206,11 @@ case "$ARM" in tgt*|thr*|det*|lst-*|lsx-*|exp*|est*|rct*)
     mkdir -p results/$BASE-$ARM/equiv
     gunzip -c results/$BASE/final.nl.v.gz > results/$BASE-$ARM/equiv/gold.nl.v
     gunzip -c results/$BASE-$ARM/final.nl.v.gz > results/$BASE-$ARM/equiv/gate.nl.v
-    timeout 3000 $DOCKER python3 br/equiv.py --gold results/$BASE-$ARM/equiv/gold.nl.v --gate results/$BASE-$ARM/equiv/gate.nl.v \
-      --top $TOP --liberty pdk/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib --out results/$BASE-$ARM/equiv --timeout 2900 > results/$BASE-$ARM/equiv/run.log 2>&1 || true
+    # suffix q = long equivalence: the struct recipe (equiv_struct -fwd before equiv_simple) with a 3 h 20 min limit (the job limit is 5 h), for designs
+    # whose standard 2900 s check times out (no change to the arm itself)
+    EQT=2900; EQS=(); case "${ARM##*-}" in *q*) EQT=12000; EQS=(--struct);; esac
+    timeout $((EQT + 100)) $DOCKER python3 br/equiv.py --gold results/$BASE-$ARM/equiv/gold.nl.v --gate results/$BASE-$ARM/equiv/gate.nl.v \
+      --top $TOP --liberty pdk/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib --out results/$BASE-$ARM/equiv --timeout $EQT "${EQS[@]}" > results/$BASE-$ARM/equiv/run.log 2>&1 || true
     sudo chown -R "$(id -u):$(id -g)" results || true
     rm -f results/$BASE-$ARM/equiv/*.nl.v results/$BASE-$ARM/equiv/*-logic.v
     gzip -f results/$BASE-$ARM/equiv/gold.json results/$BASE-$ARM/equiv/gate.json 2>/dev/null || true
