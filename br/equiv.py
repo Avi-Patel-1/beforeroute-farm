@@ -15,6 +15,8 @@ ap.add_argument("--gold", required=True); ap.add_argument("--gate", required=Tru
 ap.add_argument("--top", required=True); ap.add_argument("--liberty", required=True)
 ap.add_argument("--out", required=True); ap.add_argument("--seq", type=int, default=8)
 ap.add_argument("--timeout", type=int, default=3600)
+ap.add_argument("--struct", action="store_true", help="insert 'equiv_struct -fwd' before equiv_simple (merges identical logic first; "
+                "same final equiv_status -assert; for designs whose plain proof exceeds the runner time limit)")
 ap.add_argument("--negative-control", action="store_true", help="corrupt one gate of the gate netlist (nand2 -> nor2) and expect NOT PROVED")
 a = ap.parse_args()
 os.makedirs(a.out, exist_ok=True)
@@ -63,6 +65,7 @@ rc["equiv"] = run("equiv", f"""read_json {os.path.join(a.out, 'gold.json')}
 read_json {os.path.join(a.out, 'gate.json')}
 equiv_make gold gate equiv
 hierarchy -top equiv
+{"equiv_struct -fwd" if a.struct else ""}
 equiv_simple -seq 2
 equiv_induct -undef -seq {a.seq}
 equiv_status -assert
