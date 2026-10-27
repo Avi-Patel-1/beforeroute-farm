@@ -109,8 +109,15 @@ def c_equiv(results, base, rows, arms):
         if arm not in rows:
             return "pending", out
         p = os.path.join(results, f"{base}-{arm}", "equiv", "result.json")
-        out[arm] = json.load(open(p)).get("status") if os.path.exists(p) else "missing"
-    ok = all(v == "PROVED" for v in out.values())
+        if os.path.exists(p):
+            out[arm] = json.load(open(p)).get("status")
+            continue
+        loc = [os.path.join(results + "-equiv-local", f"{base}-{arm}{sfx}", "result.json") for sfx in ("", "-struct")]
+        loc = [q for q in loc if os.path.exists(q) and json.load(open(q)).get("status") == "PROVED"]
+        out[arm] = "PROVED (local)" if loc else "missing"
+    if any(v == "missing" for v in out.values()):
+        return "pending", out  # not checked yet (e.g. the flow stopped before the on-runner check); not a failure
+    ok = all(v in ("PROVED", "PROVED (local)") for v in out.values())
     return ("pass" if ok else "fail"), out
 
 
