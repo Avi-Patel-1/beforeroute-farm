@@ -19,6 +19,12 @@ case "$ARM" in
   uni*)
     H=${ARM#uni}
     $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm uniform --tag $BASE-$ARM --slew-pct $H --cap-pct $H --results results --pdk-root /work/pdk --jobs $JOBS ;;
+  lst-*)
+    # lst-<name>-<H>: targeted repair on a committed net list farm/lists/<BASE>/<name>.json (signoff-guided loops, cleanup passes)
+    NAME=${ARM#lst-}; H=${NAME##*-}; NAME=${NAME%-*}
+    LIST=farm/lists/$BASE/$NAME.json
+    test -f $LIST
+    $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm targeted --tag $BASE-$ARM --slew-pct $H --cap-pct $H --flagged /work/$LIST --results results --pdk-root /work/pdk --jobs $JOBS ;;
   det*)
     # det050-70: top 5% of nets by the frozen deterministic rule R8 = max(est load slew, est driver slew, est cap ratio), margin 70 (AI ablation)
     K=${ARM#det}; K=${K%%-*}; H=${ARM##*-}

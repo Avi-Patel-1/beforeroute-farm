@@ -92,6 +92,8 @@ def _arm_kind(tag, base):
         return "targeted", a
     if a.startswith("det"):
         return "rule", a
+    if a.startswith("lst-"):
+        return "list", a
     if a.startswith("tier") or a.startswith("lt"):
         return "tiered", a
     return "other", a
