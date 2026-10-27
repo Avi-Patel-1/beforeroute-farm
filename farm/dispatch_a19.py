@@ -57,15 +57,20 @@ def derived(base, kind):
     return [f"{fam}cfo-{rest}"] if kind == "cf" else [f"{fam}j1-{rest}", f"{fam}j2-{rest}"]
 
 
-def find_run(job_name, after):
-    r = sh(["gh", "run", "list", "-R", REPO, "-w", "hero.yml", "--limit", "60", "--json", "databaseId,createdAt,status,conclusion"])
+def job_index(st, after):
+    """{job name: run id} for hero runs created after `after`; each run's job list is fetched once and kept in the
+    state (a run's job names never change once they appear), so a call costs one list plus one view per new run."""
+    cache = st.setdefault("run_jobs", {})
+    r = sh(["gh", "run", "list", "-R", REPO, "-w", "hero.yml", "--limit", "100", "--json", "databaseId,createdAt"])
     for run in json.loads(r.stdout or "[]"):
-        if run["createdAt"] < after:
+        rid = str(run["databaseId"])
+        if run["createdAt"] < after or cache.get(rid):
             continue
-        j = sh(["gh", "run", "view", str(run["databaseId"]), "-R", REPO, "--json", "jobs", "--jq", ".jobs[].name"])
-        if job_name in j.stdout.split():
-            return run
-    return None
+        j = sh(["gh", "run", "view", rid, "-R", REPO, "--json", "jobs", "--jq", ".jobs[].name"])
+        names = j.stdout.split()
+        if names:
+            cache[rid] = names
+    return {n: int(rid) for rid, names in cache.items() for n in names}
 
 
 def main():
@@ -106,14 +111,17 @@ def main():
                 if dispatch(base, ["thr500-30crv4"], MODEL_V4[base], ref, a.dry_run):
                     st["phase1"][f"{base}:v4"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()); save()
     # phase 2: follow-up arms once each seed run completed
+    pending = [nb for nb, s in st["seeds"].items() if not s.get("arms_dispatched") and not s.get("run")]
+    idx = job_index(st, min(st["seeds"][nb]["after"] for nb in pending)) if pending else {}
+    save()
     for nb, s in st["seeds"].items():
         if s.get("arms_dispatched"):
             continue
         if not s.get("run"):
-            run = find_run(f"{nb}-seed", s["after"])
-            if not run:
+            rid = idx.get(f"{nb}-seed")
+            if not rid:
                 print(f"[a19] {nb}: seed run not visible yet"); continue
-            s["run"] = run["databaseId"]; save()
+            s["run"] = rid; save()
         v = json.loads(sh(["gh", "run", "view", str(s["run"]), "-R", REPO, "--json", "status,conclusion"]).stdout or "{}")
         if v.get("status") != "completed":
             print(f"[a19] {nb}: seed {s['run']} {v.get('status')}"); continue
