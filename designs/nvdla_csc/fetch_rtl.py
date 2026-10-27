@@ -16,7 +16,7 @@ Source of the files (pinned):
     sources (only cpp-macro literals and the #ifdef NVDLA_WINOGRAD/BATCH_ENABLE branches that
     nv_small disables differ) - see designs/nvdla_csc/README.md.
   * LICENSE from nvdla/hw @ 1a65f1f5b48268accaa47c95f95c2601918be095
-    (NVIDIA Open NVDLA License and Agreement v1.0), saved as rtl/LICENSE.NVDLA.
+    (Open NVDLA License and Agreement v1.0), saved as rtl/LICENSE.NVDLA.
 
 Usage:
   python3 -I designs/nvdla_csc/fetch_rtl.py                 # download (idempotent)
@@ -137,10 +137,16 @@ def main() -> int:
                 print(f"[fetch_rtl] missing local source for {rel}", file=sys.stderr)
                 return 2
             shutil.copyfile(src, p)
-        elif rel == "LICENSE":
-            download(RAW.format(repo=UPSTREAM_REPO, commit=UPSTREAM_COMMIT, path="LICENSE"), p)
         else:
-            download(RAW.format(repo=RTL_REPO, commit=RTL_COMMIT, path=f"{RTL_SUBDIR}/{rel}"), p)
+            if rel == "LICENSE":
+                url = RAW.format(repo=UPSTREAM_REPO, commit=UPSTREAM_COMMIT, path="LICENSE")
+            else:
+                url = RAW.format(repo=RTL_REPO, commit=RTL_COMMIT, path=f"{RTL_SUBDIR}/{rel}")
+            try:
+                download(url, p)
+            except RuntimeError as e:
+                print(f"[fetch_rtl] {e}", file=sys.stderr)
+                return 2
         got = sha256(p)
         if got != h:
             os.remove(p)
@@ -149,7 +155,7 @@ def main() -> int:
     stamp = {
         "rtl_source": f"https://github.com/{RTL_REPO}/tree/{RTL_COMMIT}/{RTL_SUBDIR}",
         "upstream": f"https://github.com/{UPSTREAM_REPO}/tree/{UPSTREAM_COMMIT}",
-        "license": "NVIDIA Open NVDLA License and Agreement v1.0 (LICENSE.NVDLA)",
+        "license": "Open NVDLA License and Agreement v1.0 (LICENSE.NVDLA)",
         "files_sha256": FILES,
         "fetched_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "mode": "local-copy" if a.from_dir else "download",

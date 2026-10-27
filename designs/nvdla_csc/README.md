@@ -1,11 +1,12 @@
 # nvdla_csc: NVDLA nv_small Convolution Sequence Controller (`NV_NVDLA_csc`)
 
-One block of NVIDIA's open-source NVDLA accelerator, nv_small configuration (INT8, MAC atomic
-C=8/K=8, 32-bank CBUF, no Winograd/batch). CSC is the sequencer between the convolution buffer
-and the MAC array: it loads feature data and weights from CBUF (data loader `dl`, weight loader
-`wl` + `WL_dec`), generates the MAC sequence (`sg`, with two 4-deep flop FIFOs), and holds
-the CSB register file. In nv_small it has no SRAM macros: the only storage is flops
-(the two FIFO RAMs are in-file `flopram_rwsa_4x20/4x33` models).
+One block of the open-source NVDLA deep-learning accelerator (github.com/nvdla/hw), nv_small
+configuration (INT8, MAC atomic C=8/K=8, 32-bank CBUF, no Winograd/batch). CSC is the
+sequencer between the convolution buffer and the MAC array: it loads feature data and weights
+from CBUF (data loader `dl`, weight loader `wl` + `WL_dec`), generates the MAC sequence (`sg`,
+with two 4-deep flop FIFOs), and holds the CSB register file. In nv_small it has no SRAM
+macros: the only storage is flops (the two FIFO RAMs are in-file `flopram_rwsa_4x20/4x33`
+models).
 
 **The NVDLA RTL is not in this repository.** `fetch_rtl.py` downloads it at job time into
 `rtl/` (git-ignored) and checks every file against a pinned SHA-256; job specs run it through
@@ -28,10 +29,10 @@ Yosys/OpenROAD.
   cpp-macro literals (`'h08` ...) and the `#ifdef NVDLA_WINOGRAD_ENABLE` / `NVDLA_BATCH_ENABLE`
   branches that nv_small disables (CSC_sg.v). The `nv_small` branch tip (771f20c) does not
   match (older `NV_NVDLA_CSC_dl.v`).
-- License: **NVIDIA Open NVDLA License and Agreement v1.0** (nvdla/hw `LICENSE`, fetched to
-  `rtl/LICENSE.NVDLA`; every RTL file keeps NVIDIA's header). Royalty-free patent and
-  copyright license; redistribution must include the license, mark modified files and keep
-  notices; it has a waiver/indemnity clause (sec. 10). We do not redistribute the RTL.
+- License: **Open NVDLA License and Agreement v1.0** (nvdla/hw `LICENSE`, fetched to
+  `rtl/LICENSE.NVDLA`; every RTL file keeps its original copyright header). Royalty-free
+  patent and copyright license; redistribution must include the license, mark modified files
+  and keep notices; it has a waiver/indemnity clause (sec. 10). We do not redistribute the RTL.
 
 ## Files fetched (relative to `vmod/`)
 
@@ -54,12 +55,3 @@ Unmodified; no local edits to the RTL.
 - 783 port bits (sc2mac data/weight buses for both MAC halves, CBUF read ports, CSB).
 - Yosys warnings are benign: "wire X is assigned in a block" (outputs re-declared as `reg`,
   legal Verilog-1995 style) and one `translate_off` hot-comment notice.
-
-## Size (LibreLane 3.0.16, sky130_fd_sc_hd, base config)
-
-- `Yosys.Synthesis`: **21,399 cells**, 0.283 mm² cell area; 4,962 flops (3,392 `dfrtp`,
-  1,444 `dfxtp`, 126 `dfstp`), 0 latches, `check` clean; 1 min 51 s on a 2-vCPU machine
-  (lint through `OpenROAD.STAPrePNR`: 163 s).
-- Pre-PnR STA (ideal clocks, unbuffered nets) at 25 ns: reg-to-reg worst setup slack
-  +9.7 ns at nom_tt_025C_1v80, -2.9 ns at nom_ss_100C_1v60 (the -40 ns overall WNS is the
-  unbuffered `nvdla_core_rstn` recovery check, fixed by repair_design).
