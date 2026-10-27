@@ -42,11 +42,19 @@ def drive_index(m: str | None) -> float:
     return float(mm.group(1)) if mm else float("nan")
 
 
+def _open_jsonl(path: str):
+    """Open a per-net dump, or its gzipped copy (training-run dumps are gzipped to fit the session disk)."""
+    if os.path.exists(path):
+        return open(path)
+    import gzip
+    return gzip.open(path + ".gz", "rt")
+
+
 def load_run(rdir: str):
     job = json.load(open(os.path.join(rdir, "job.json")))
     if job.get("status") != "completed":
         return None, job
-    feats = [json.loads(l) for l in open(os.path.join(rdir, "nets.jsonl"))]
+    feats = [json.loads(l) for l in _open_jsonl(os.path.join(rdir, "nets.jsonl"))]
     lab = json.load(open(os.path.join(rdir, "labels.json")))
     final = json.load(open(os.path.join(rdir, "final_nets.json")))
     resolved = json.load(open(os.path.join(rdir, "resolved.json")))
@@ -61,8 +69,8 @@ def load_run(rdir: str):
     # signoff view (actual values for every net), keyed by driver
     so_by_driver = {}
     so_path = os.path.join(rdir, "nets_signoff.jsonl")
-    if os.path.exists(so_path):
-        for l in open(so_path):
+    if os.path.exists(so_path) or os.path.exists(so_path + ".gz"):
+        for l in _open_jsonl(so_path):
             r = json.loads(l)
             if r.get("driver_kind") == "inst":
                 so_by_driver[f"{r['driver_inst']}/{r['driver_pin']}"] = r

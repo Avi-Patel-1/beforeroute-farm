@@ -20,6 +20,10 @@ def main() -> int:
     ap.add_argument("--out", default="/mnt/user-data/outputs/beforeroute/results")
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
+    # tags already copied to the Mac (results/.mac_manifest.txt, whitespace-separated) are not packed again: their local
+    # archives are deleted after the sync to keep the session's disk allowance free
+    man_p = os.path.join(os.path.abspath(a.results), ".mac_manifest.txt")
+    synced = set(open(man_p).read().split()) if os.path.exists(man_p) else set()
     new = []
     for rdir in sorted(glob.glob(os.path.join(os.path.abspath(a.results), "*"))):
         if not os.path.isdir(rdir) or not os.path.exists(os.path.join(rdir, "job.json")):
@@ -30,7 +34,7 @@ def main() -> int:
             status = json.load(open(os.path.join(rdir, "job.json"))).get("status")
         except Exception:
             status = None
-        if os.path.exists(dst) or status not in ("completed",):
+        if os.path.exists(dst) or tag in synced or status not in ("completed",):
             continue
         with tarfile.open(dst, "w:gz") as tf:
             tf.add(rdir, arcname=tag)
