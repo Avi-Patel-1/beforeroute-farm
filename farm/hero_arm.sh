@@ -36,6 +36,19 @@ BASE_RUN=/work/$DESIGN/runs/$BASE
 case "$ARM" in
   seed)
     echo "[hero] seed: baseline checkpoint only (populates the cache)" ;;
+  dmp)
+    # decision-point dump: per-net features at the post-GRT checkpoint the arms resume from (before antenna
+    # repair), to check that scoring there flags the same nets as scoring the STAMidPNR-3 view
+    ST=$(ls $DESIGN/runs/$BASE/*-openroad-checkantennas/state_out.json | head -1)
+    mkdir -p results/$BASE-dmp
+    $DOCKER python3 br/run_dump.py $BASE_RUN --state /work/$ST --out /work/results/$BASE-dmp/dump --pdk-root /work/pdk > results/$BASE-dmp/dump.log 2>&1 || true
+    sudo chown -R "$(id -u):$(id -g)" results || true
+    cp results/$BASE-dmp/dump/nets.jsonl results/$BASE-dmp/nets.jsonl 2>/dev/null || true
+    cp results/$BASE-dmp/dump/dump_summary.json results/$BASE-dmp/dump_summary.json 2>/dev/null || true
+    rm -rf results/$BASE-dmp/dump
+    if [ -f results/$BASE-dmp/nets.jsonl ]; then st=completed; else st=dump_failed; fi
+    python3 -c "import json;json.dump({'tag':'$BASE-dmp','status':'$st','kind':'decision-point dump','state':'$ST'},open('results/$BASE-dmp/job.json','w'))"
+    gzip -f results/$BASE-dmp/nets.jsonl 2>/dev/null || true ;;
   rerun)
     $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm base --tag $BASE-rerun --results results --pdk-root /work/pdk --jobs $JOBS ;;
   uni*)
