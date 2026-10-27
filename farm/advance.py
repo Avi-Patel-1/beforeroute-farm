@@ -37,7 +37,7 @@ def dispatched(base, arm, log):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--bases", default="d3-salsa20-000,d3-des-000,d3-y_huff-000,d3-ocs_blitter-000,d3-bm64-000,d3-md5-000")
+    ap.add_argument("--bases", default="d3-salsa20-000,d3-des-000,d3-y_huff-000,d3-ocs_blitter-000,d3-bm64-000,d3-md5-000,d3b-sha512-000,d3b-ldpcenc-000")
     ap.add_argument("--results", default=os.path.join(ROOT, "results"))
     ap.add_argument("--max-pass", type=int, default=4)
     ap.add_argument("--seed-arm", default="tgt050-70")
