@@ -41,11 +41,38 @@ DATA_OVERRIDES = {
 }
 
 
+EXT_DESIGNS = {  # extension set: the first three knob points only (base + two max-transition/util variants)
+    "des": 56.0,
+    "y_huff": 31.8,
+    "md5": 103.7,
+}
+
+
+def write_ext(prefix: str) -> int:
+    tags = []
+    for i in range(3):
+        for dname, period in EXT_DESIGNS.items():
+            util, dens, pf, mt = KNOBS[i]
+            tag = f"{prefix}-{dname}-{i:03d}"
+            ov = {"FP_CORE_UTIL": util, "PL_TARGET_DENSITY_PCT": dens, "CLOCK_PERIOD": round(period * pf, 3),
+                  "MAX_TRANSITION_CONSTRAINT": mt}
+            ov.update(DATA_OVERRIDES)
+            spec = {"tag": tag, "design": f"designs/{dname}", "config": "config_gf180.json", "overrides": ov}
+            json.dump(spec, open(os.path.join(JOBS, tag + ".json"), "w"), indent=1)
+            tags.append(tag)
+    json.dump(tags, open(os.path.join(JOBS, f"{prefix}.tags.json"), "w"))
+    print(f"extension: {len(tags)} jobs -> farm/jobs/{prefix}.tags.json")
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--prefix", default="g1")
+    ap.add_argument("--ext", action="store_true", help="write the extension set (des, y_huff, md5 x 3 knob points)")
     a = ap.parse_args()
     os.makedirs(JOBS, exist_ok=True)
+    if a.ext:
+        return write_ext(a.prefix)
     per_design = {}
     for dname, period in DESIGNS.items():
         for i, (util, dens, pf, mt) in enumerate(KNOBS):

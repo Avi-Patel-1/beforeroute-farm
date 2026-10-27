@@ -1,0 +1,11 @@
+{
+  "DESIGN_NAME": "y_huff",
+  "PDK": "gf180mcuD",
+  "STD_CELL_LIBRARY": "gf180mcu_fd_sc_mcu7t5v0",
+  "VERILOG_FILES": "dir::src/y_huff.v",
+  "CLOCK_PORT": "clk",
+  "CLOCK_PERIOD": 31.8,
+  "FP_CORE_UTIL": 30,
+  "PL_TARGET_DENSITY_PCT": 40,
+  "PDN_SKIPTRIM": true
+}

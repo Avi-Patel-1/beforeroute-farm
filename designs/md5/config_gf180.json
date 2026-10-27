@@ -1,0 +1,11 @@
+{
+  "DESIGN_NAME": "md5",
+  "PDK": "gf180mcuD",
+  "STD_CELL_LIBRARY": "gf180mcu_fd_sc_mcu7t5v0",
+  "VERILOG_FILES": "dir::src/md5.v",
+  "CLOCK_PORT": "clk",
+  "CLOCK_PERIOD": 103.7,
+  "FP_CORE_UTIL": 30,
+  "PL_TARGET_DENSITY_PCT": 40,
+  "PDN_SKIPTRIM": true
+}
