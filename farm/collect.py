@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Collect farm artifacts into results/<tag>/ as individual jobs complete.
 
-Usage: collect.py --repo owner/name [--results results] [--limit 20]
+Usage: collect.py --repo owner/name [--results results] [--limit 20] [--workflow farm.yml]
 For every farm workflow run (completed or still in progress), downloads the
 result-<tag> artifact of each completed job that is not yet present locally.
 """
@@ -24,9 +24,10 @@ def main() -> int:
     ap.add_argument("--repo", required=True)
     ap.add_argument("--results", default="results")
     ap.add_argument("--limit", type=int, default=20)
+    ap.add_argument("--workflow", default="farm.yml", help="workflow file whose runs to collect (e.g. farm_gf180.yml)")
     a = ap.parse_args()
     os.makedirs(a.results, exist_ok=True)
-    r = sh(["gh", "run", "list", "-R", a.repo, "-w", "farm.yml", "--limit", str(a.limit), "--json", "databaseId,status"])
+    r = sh(["gh", "run", "list", "-R", a.repo, "-w", a.workflow, "--limit", str(a.limit), "--json", "databaseId,status"])
     if r.returncode != 0:
         print(r.stderr.strip()[:300])
         return 1

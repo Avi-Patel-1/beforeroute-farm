@@ -1,0 +1,18 @@
+{
+ "tag": "g1-picorv32-003",
+ "design": "designs/picorv32",
+ "config": "config_gf180.json",
+ "overrides": {
+  "FP_CORE_UTIL": 30,
+  "PL_TARGET_DENSITY_PCT": 45,
+  "CLOCK_PERIOD": 91.0,
+  "MAX_TRANSITION_CONSTRAINT": 2.0,
+  "RUN_POST_GRT_DESIGN_REPAIR": false,
+  "RUN_MAGIC_DRC": false,
+  "RUN_KLAYOUT_DRC": false,
+  "RUN_LVS": false,
+  "RUN_KLAYOUT_XOR": false,
+  "RUN_IRDROP_REPORT": false,
+  "RUN_LINTER": false
+ }
+}

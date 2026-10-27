@@ -1,0 +1,19 @@
+{
+  "DESIGN_NAME": "aes_cipher_top",
+  "PDK": "gf180mcuD",
+  "STD_CELL_LIBRARY": "gf180mcu_fd_sc_mcu7t5v0",
+  "VERILOG_FILES": [
+    "dir::src/aes_cipher_top.v",
+    "dir::src/aes_key_expand_128.v",
+    "dir::src/aes_rcon.v",
+    "dir::src/aes_sbox.v"
+  ],
+  "VERILOG_INCLUDE_DIRS": [
+    "dir::src"
+  ],
+  "CLOCK_PORT": "clk",
+  "CLOCK_PERIOD": 112.0,
+  "FP_CORE_UTIL": 30,
+  "PL_TARGET_DENSITY_PCT": 40,
+  "PDN_SKIPTRIM": true
+}

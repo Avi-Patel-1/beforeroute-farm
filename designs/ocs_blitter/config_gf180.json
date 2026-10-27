@@ -1,0 +1,11 @@
+{
+  "DESIGN_NAME": "ocs_blitter",
+  "PDK": "gf180mcuD",
+  "STD_CELL_LIBRARY": "gf180mcu_fd_sc_mcu7t5v0",
+  "VERILOG_FILES": "dir::src/ocs_blitter.v",
+  "CLOCK_PORT": "CLK_I",
+  "CLOCK_PERIOD": 51.0,
+  "FP_CORE_UTIL": 30,
+  "PL_TARGET_DENSITY_PCT": 40,
+  "PDN_SKIPTRIM": true
+}

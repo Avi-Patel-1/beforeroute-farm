@@ -2,6 +2,7 @@
 """Dispatch farm jobs to GitHub Actions in batches.
 
 Usage: dispatch.py --repo owner/name --tags farm/jobs/d1.tags.json [--batch 40] [--max-parallel 20] [--ref main]
+                   [--workflow farm.yml]
 Each batch becomes one workflow run (matrix of up to --batch jobs).
 """
 from __future__ import annotations
@@ -19,13 +20,14 @@ def main() -> int:
     ap.add_argument("--batch", type=int, default=40)
     ap.add_argument("--max-parallel", type=int, default=20)
     ap.add_argument("--ref", default="main")
+    ap.add_argument("--workflow", default="farm.yml", help="workflow file (e.g. farm_gf180.yml)")
     ap.add_argument("--dry-run", action="store_true")
     a = ap.parse_args()
     tags = json.load(open(a.tags))
     for i in range(0, len(tags), a.batch):
         chunk = tags[i : i + a.batch]
         cmd = [
-            "gh", "workflow", "run", "farm.yml", "-R", a.repo, "--ref", a.ref,
+            "gh", "workflow", "run", a.workflow, "-R", a.repo, "--ref", a.ref,
             "-f", f"tags={json.dumps(chunk)}", "-f", f"max_parallel={a.max_parallel}",
         ]
         print(f"[dispatch] batch {i // a.batch + 1}: {len(chunk)} jobs")
