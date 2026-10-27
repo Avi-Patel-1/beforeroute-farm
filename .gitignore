@@ -18,3 +18,7 @@ __pycache__/
 deck/*.pptx
 deck/*.pdf
 deck/*.png
+deck/content.json
+deck/*.pptx
+deck/*.pdf
+explorer/*.json
