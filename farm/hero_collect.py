@@ -33,13 +33,30 @@ def main() -> int:
     ap.add_argument("--results", default="results")
     ap.add_argument("--run-id", default=None)
     a = ap.parse_args()
-    runs = [a.run_id] if a.run_id else json.loads(sh(["gh", "run", "list", "-R", a.repo, "-w", "hero.yml", "--limit", "300", "--json", "databaseId", "--jq", "[.[].databaseId]"]).stdout)
     # cache of finished runs' job lists (they never change), so each call only queries live runs
     cache_path = os.path.join(a.results, ".hero_runs_cache.json")
     try:
         cache = json.load(open(cache_path))
     except Exception:
         cache = {}
+    if a.run_id:
+        runs = [a.run_id]
+    else:
+        # repos/{owner}/{repo} endpoint with explicit pages: `gh run list --limit >100` paginates through a
+        # numeric-ID URL that the network proxy rejects. Every run seen before stays in the cache.
+        ids = set()
+        for page in (1, 2, 3):
+            out = sh(["gh", "api", f"repos/{a.repo}/actions/workflows/hero.yml/runs?per_page=100&page={page}",
+                      "--jq", "[.workflow_runs[].id]"]).stdout.strip()
+            try:
+                got = json.loads(out or "[]")
+            except Exception:
+                got = []
+            ids.update(got)
+            if len(got) < 100:
+                break
+        ids.update(int(k) for k in cache)
+        runs = sorted(ids, reverse=True)
     arms = []
     base_metrics = None
     for rid in runs:
