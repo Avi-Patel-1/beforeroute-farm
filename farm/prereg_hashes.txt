@@ -7,3 +7,4 @@
 2026-10-27T06:31:01Z  007fbfdbec6942a284a45a75a2858b34ba8d9bae4355976e03520fc3494ba213  pre-registration with the Addendum-10 erratum and Addendum 11 withdrawn
 2026-10-27T06:32:40Z  eca195ac0a5d282a33b2a77403d2dabbe49f88fa5fb746531851aae499e9cc23  pre-registration with Addendum 12 (re-timed calibrated list rct213-70 vs thr500-70c)
 2026-10-27T06:57:03Z  efbf8fdb701aa04ee6b93c710f852e99973b99c20a8c1878c751ffa0b7f443e6  pre-registration with Addendum 13 (rcal213-10 on Round-4 and Round-5 bases)
+2026-10-27T08:36:11Z  0513505fc106b9cd0817f90573b7e0dc5b311e694188226f5ae2994a36407f45  pre-registration with Addendum 14 (model list + corrected parasitics in the repair: thr500-10cr / thr500-30cr)
