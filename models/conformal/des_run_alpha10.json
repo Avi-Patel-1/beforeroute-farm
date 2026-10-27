@@ -1,0 +1,22 @@
+{
+ "model": "models/model_holdout_des_v4.txt",
+ "exclude_design": "des",
+ "alpha": 0.1,
+ "lambda": 0.967,
+ "calibration_unit": "run",
+ "calibration_units": 74,
+ "bound_at_lambda": 0.09961937925493729,
+ "calibration_flag_fraction": 0.039087470068200084,
+ "calibration_miss_rate_by_design": {
+  "BM64": 0.1076923076923077,
+  "aes_cipher_top": 0.08675417661097852,
+  "crc_pipe": 0.15625,
+  "ldpcenc": 0.18436926304746917,
+  "md5": 0.03333333333333333,
+  "ocs_blitter": 0.05398457583547558,
+  "picorv32": 0.07150292257186323,
+  "salsa20": 0.10770505385252693,
+  "sha512": 0.07530079762065703,
+  "y_huff": 0.11663807890222985
+ }
+}
