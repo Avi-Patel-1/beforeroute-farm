@@ -24,10 +24,10 @@ import re
 
 import pandas as pd
 
-try:
-    from pdk_neutral import guide_role_fracs, neutral_class, nominal_tt
-except ImportError:  # imported as br.build_dataset
-    from br.pdk_neutral import guide_role_fracs, neutral_class, nominal_tt
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from pdk_neutral import guide_role_fracs, neutral_class, nominal_tt  # noqa: E402
 
 DRIVE_RE = re.compile(r"_(\d+)$")
 CLASS_RE = re.compile(r"__([a-z0-9]+?)(?:_\d+)?$")
