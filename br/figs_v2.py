@@ -681,7 +681,7 @@ def fig_pareto_grid(out_dir, bases, name, title, size=None):
 
 
 # ================================================================ (d) pipeline diagram
-def fig_pipeline(out_dir, size=(12.1, 2.6), name="pipeline"):
+def fig_pipeline(out_dir, size=(12.1, 2.6), name="pipeline", step3="70% margin, flagged only"):
     """Flow row with the BeforeRoute step highlighted, its three sub-steps in a zoom-in panel,
     and the feedback loop (signoff reports become training labels). Text widths are measured,
     so the layout holds if wording changes."""
@@ -720,7 +720,7 @@ def fig_pipeline(out_dir, size=(12.1, 2.6), name="pipeline"):
     # zoom-in panel with the three sub-steps, laid out from measured text widths
     steps = [("1", "Score every net", "LightGBM, post-GRT features"),
              ("2", "Mask the rest", "do-not-touch on all others"),
-             ("3", "Stock repair_design", "70% margin, flagged only")]
+             ("3", "Stock repair_design", step3)]
     py0, py1 = 0.10, 1.05
     num_w, pad, arrow_w = 0.36, 0.20, 0.55
     blocks = []
@@ -837,6 +837,7 @@ def main() -> int:
                            fig_pareto_grid(out, ROUND3, "pareto_round3", "Round 3: six new design families, unseen by the model"),
                            fig_pareto_grid(out, EXPLORATORY, "pareto_exploratory", "Round 0 (labels: violators · hold kept)", size=(5.95, 4.9))],
         "pipeline": lambda: fig_pipeline(out),
+        "pipeline_cr": lambda: fig_pipeline(out, name="pipeline_cr", step3="flagged only, wire cap ×2.13, 30%"),
         "iterations": lambda: fig_iterations(out),
     }
     names = list(jobs) if a.names == ["all"] else a.names
