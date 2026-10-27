@@ -255,6 +255,11 @@ def main() -> int:
             ("A15b thr500-30cr fewer cells than rcal213-10", lambda b, r: c_fewer_cells(r, "thr500-30cr", "rcal213-10"), (3, 5)),
             ("A15c thr500-30cr worst hold slack no worse than rcal213-10", lambda b, r: c_hold_no_worse(r, "thr500-30cr", "rcal213-10"), (3, 5)),
         ]),
+        "A17": (["d1-picorv32-006", "d1-picorv32-016", "d1-aes_cipher-000"], [
+            ("A17a thr500-30cr no more violators than rcal213-10 (Round-1 replication)", lambda b, r: c_no_more(r, "thr500-30cr", "rcal213-10"), (2, 3)),
+            ("A17b thr500-30cr fewer cells than rcal213-10", lambda b, r: c_fewer_cells(r, "thr500-30cr", "rcal213-10"), (2, 3)),
+            ("A17c thr500-30cr worst hold slack no worse than rcal213-10", lambda b, r: c_hold_no_worse(r, "thr500-30cr", "rcal213-10"), (2, 3)),
+        ]),
         "NV": (["nv1-nvdla_csc-000"], [
             ("A7 (A6.2) tgt050-70c vs uni50", lambda b, r: c_target_vs_uni50(r, "tgt050-70c"), (1, 1)),
             ("A7 (A6.3) tgt050-70c fewer violators than est050-70c", lambda b, r: c_model_vs_rule(r, "tgt050-70c", ["est050-70c"]), (1, 1)),
