@@ -135,7 +135,7 @@ def main() -> int:
             ax.add_collection(LineCollection(segs, colors=F.GREEN, linewidths=0.5, alpha=0.8, zorder=2))
         segs = [s for net in V for s in L["wires"].get(net, [])]
         ax.add_collection(LineCollection(segs, colors=F.CRIT, linewidths=0.9, zorder=4))
-        ax.set_title(f"{title}\n{len(V)} violating nets" + (f" · {len(new):,} cells inserted" if i > 0 else ""),
+        ax.set_title(f"{title}\n{len(V)} violating nets" + (f" · {len(new):,} cells inserted" if os.path.abspath(d) != os.path.abspath(base_dir) else ""),
                      fontsize=F.FS - 1, color=F.INK, loc="left", pad=4)
         nums[title] = {"violators": len(V), "inserted_cells": len(new), "cells": len(real), "dir": d}
     if a.title:
