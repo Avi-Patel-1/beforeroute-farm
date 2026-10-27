@@ -23,10 +23,82 @@ def mean(lst, key):
     return (float(np.mean(v)), float(np.min(v)), float(np.max(v)), len(v)) if v else (None, None, None, 0)
 
 
+def extension_tables(S, fs="port"):
+    """Per design + mean: catch-95 and PR-AUC of zero-shot (and k=all adaptation if present) vs estimate, R8, perfect;
+    per-run wins/losses of zero-shot against the estimate and against R8 (catch-95, lower wins; PR-AUC, higher wins)."""
+    L = []
+    designs = S["designs"]
+    arms = S["arms"].get(fs, {})
+    proto = S.get("protocol", "?")
+    L.append(f"Protocol: {proto}; feature set: {fs}; signal nets; per held-out design pooled over its runs.\n")
+    head = "| GF180 design | runs | violator rate | perfect catch95 | est catch95 | R8 catch95 | zero-shot catch95 | est PR-AUC | R8 PR-AUC | zero-shot PR-AUC |"
+    extra = [arm for arm in ("ft", "merge") if any("all" in (arms.get(d, {}).get(arm) or {}) for d in designs)]
+    for arm in extra:
+        head += f" {arm} k=all catch95 / PR-AUC |"
+    L.append(head)
+    L.append("|---" * (10 + len(extra)) + "|")
+    acc = {k: [] for k in ("rate", "perf", "est", "r8", "zs", "est_pr", "r8_pr", "zs_pr")}
+    acc_x = {arm: ([], []) for arm in extra}
+    wins = {"est_c": [0, 0, 0], "r8_c": [0, 0, 0], "est_p": [0, 0, 0], "r8_p": [0, 0, 0]}  # win, loss, tie
+    per_run_rows = []
+    for d in designs:
+        x = S["describe"][d]
+        b = S["baselines"][d]
+        zs = ((arms.get(d, {}).get("zs") or {}).get("0") or [{}])[0]
+        rate = x["violator_rate"]
+        vals = dict(rate=rate, perf=0.95 * rate, est=b["est_load_slew_ratio"].get("frac_to_catch_95"),
+                    r8=b["R8"].get("frac_to_catch_95"), zs=zs.get("frac_to_catch_95"),
+                    est_pr=b["est_load_slew_ratio"].get("pr_auc"), r8_pr=b["R8"].get("pr_auc"), zs_pr=zs.get("pr_auc"))
+        for k, v in vals.items():
+            if v is not None:
+                acc[k].append(v)
+        row = (f"| {d} | {x['runs']} | {f(rate)} | {f(vals['perf'])} | {f(vals['est'])} | {f(vals['r8'])} | {f(vals['zs'])} | "
+               f"{f(vals['est_pr'], False)} | {f(vals['r8_pr'], False)} | {f(vals['zs_pr'], False)} |")
+        for arm in extra:
+            r = ((arms.get(d, {}).get(arm) or {}).get("all") or [{}])[0]
+            row += f" {f(r.get('frac_to_catch_95'))} / {f(r.get('pr_auc'), False)} |"
+            if r.get("frac_to_catch_95") is not None:
+                acc_x[arm][0].append(r["frac_to_catch_95"])
+                acc_x[arm][1].append(r["pr_auc"])
+        L.append(row)
+        est_r = {p["run"]: p for p in b["est_load_slew_ratio"].get("per_run", [])}
+        r8_r = {p["run"]: p for p in b["R8"].get("per_run", [])}
+        for p in zs.get("per_run", []):
+            e, r = est_r.get(p["run"], {}), r8_r.get(p["run"], {})
+            for key, other, m, better in (("est_c", e, "frac_to_catch_95", -1), ("r8_c", r, "frac_to_catch_95", -1),
+                                          ("est_p", e, "pr_auc", 1), ("r8_p", r, "pr_auc", 1)):
+                if p.get(m) is None or other.get(m) is None:
+                    continue
+                dlt = (p[m] - other[m]) * better
+                wins[key][0 if dlt > 1e-9 else (1 if dlt < -1e-9 else 2)] += 1
+            rate_r = p["positives"] / p["n"] if p.get("n") else None
+            per_run_rows.append(f"| {p['run']} | {f(rate_r)} | {f(0.95 * rate_r if rate_r else None)} | {f(e.get('frac_to_catch_95'))} | "
+                                f"{f(r.get('frac_to_catch_95'))} | {f(p.get('frac_to_catch_95'))} | {f(e.get('pr_auc'), False)} | "
+                                f"{f(r.get('pr_auc'), False)} | {f(p.get('pr_auc'), False)} |")
+    mrow = (f"| **mean of {len(designs)}** | | {f(np.mean(acc['rate']))} | {f(np.mean(acc['perf']))} | {f(np.mean(acc['est']))} | "
+            f"{f(np.mean(acc['r8']))} | **{f(np.mean(acc['zs']))}** | {f(np.mean(acc['est_pr']), False)} | {f(np.mean(acc['r8_pr']), False)} | "
+            f"**{f(np.mean(acc['zs_pr']), False)}** |")
+    for arm in extra:
+        c, p = acc_x[arm]
+        mrow += f" {f(np.mean(c)) if c else '-'} / {f(np.mean(p), False) if p else '-'} |"
+    L.append(mrow)
+    L.append("")
+    n = sum(wins["est_c"])
+    L.append(f"Per-run wins / losses / ties of zero-shot ({n} runs): catch-95 vs estimate {wins['est_c'][0]} / {wins['est_c'][1]} / {wins['est_c'][2]}; "
+             f"vs R8 {wins['r8_c'][0]} / {wins['r8_c'][1]} / {wins['r8_c'][2]}; PR-AUC vs estimate {wins['est_p'][0]} / {wins['est_p'][1]} / {wins['est_p'][2]}; "
+             f"vs R8 {wins['r8_p'][0]} / {wins['r8_p'][1]} / {wins['r8_p'][2]}.\n")
+    L.append("| run | violator rate | perfect catch95 | est catch95 | R8 catch95 | zero-shot catch95 | est PR-AUC | R8 PR-AUC | zero-shot PR-AUC |")
+    L.append("|---|---|---|---|---|---|---|---|---|")
+    L.extend(per_run_rows)
+    return "\n".join(L)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("out")
     ap.add_argument("--results", default=None, help="farm results dir: also print the per-run table (knobs, nets, violators)")
+    ap.add_argument("--extension", action="store_true",
+                    help="compact table: mean catch-95 / PR-AUC of zero-shot vs estimate vs R8 vs perfect, per-run wins/losses")
     ap.add_argument("--from-cache", default=None,
                     help="rebuild the arm results from <out>/cache for these feature sets (e.g. port), for the run sets in "
                          "summary.json; prefix 'strict_' entries are reported as separate arms")
@@ -56,6 +128,9 @@ def main() -> int:
                     k = "0" if arm == "zs" else k
                     A.setdefault(("strict_" if strict else "") + arm, {}).setdefault(k, []).append(json.load(open(p)))
     L = []
+    if a.extension:
+        print(extension_tables(S))
+        return 0
     if a.results:
         import glob
 
