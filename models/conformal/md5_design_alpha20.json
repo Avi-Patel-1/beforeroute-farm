@@ -1,0 +1,22 @@
+{
+ "model": "models/model_holdout_md5_v4.txt",
+ "exclude_design": "md5",
+ "alpha": 0.2,
+ "lambda": 0.968,
+ "calibration_unit": "design",
+ "calibration_units": 10,
+ "bound_at_lambda": 0.1992392642222895,
+ "calibration_flag_fraction": 0.03869422737585077,
+ "calibration_miss_rate_by_design": {
+  "BM64": 0.10384615384615385,
+  "aes_cipher_top": 0.09093078758949881,
+  "crc_pipe": 0.21875,
+  "des": 0.13953488372093023,
+  "ldpcenc": 0.1898767374770522,
+  "ocs_blitter": 0.05912596401028278,
+  "picorv32": 0.07430538874209304,
+  "salsa20": 0.10542667771333886,
+  "sha512": 0.07597674732999865,
+  "y_huff": 0.11706689536878216
+ }
+}
