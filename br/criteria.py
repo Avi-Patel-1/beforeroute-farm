@@ -162,14 +162,14 @@ def main() -> int:
             ("A6.6 equivalence of the targeted arms", lambda b, r: c_equiv(R, b, r, ["est050-70c", "tgt050-70c", "thr500-70c", "exp100-70c"]), (3, 3)),
         ]),
         "A9": (R3, [
-            ("A9a thr500-70 fewer violators than rcal146-0 (calibrated estimate, no margin)", lambda b, r: c_model_vs_rule(r, "thr500-70", ["rcal146-0"]), (4, 6)),
-            ("A9b thr500-70 fewer cells than rcal146-20 (calibrated estimate, 20% margin)", lambda b, r: c_fewer_cells(r, "thr500-70", "rcal146-20"), (4, 6)),
+            ("A9a thr500-70 fewer violators than rcal146-0 (wire cap x1.461 = under-calibrated, no margin)", lambda b, r: c_model_vs_rule(r, "thr500-70", ["rcal146-0"]), (4, 6)),
+            ("A9b thr500-70 fewer cells than rcal146-20 (wire cap x1.461 = under-calibrated, 20% margin)", lambda b, r: c_fewer_cells(r, "thr500-70", "rcal146-20"), (4, 6)),
         ]),
         "A10": (R3, [
             ("A10a thr500-70 fewer violators than rcal213-10 (wire cap x2.130, stock 10% margin)", lambda b, r: c_model_vs_rule(r, "thr500-70", ["rcal213-10"]), (4, 6)),
             ("A10b thr500-70 fewer cells than rcal213-10", lambda b, r: c_fewer_cells(r, "thr500-70", "rcal213-10"), (4, 6)),
         ]),
-        "A11": (R3, [
+        "A11": (R3, [  # withdrawn 06:28Z before any arm ran (lists carried the output-port bug); kept for the record
             ("A11a thr500-70 fewer violators than lst-cal-70 (learned RC calibration, equal budget)", lambda b, r: c_model_vs_rule(r, "thr500-70", ["lst-cal-70"]), (4, 6)),
             ("A11b thr500-70 fewer violators than lst-calt-70 (learned RC calibration, own threshold)", lambda b, r: c_model_vs_rule(r, "thr500-70", ["lst-calt-70"]), (4, 6)),
         ]),

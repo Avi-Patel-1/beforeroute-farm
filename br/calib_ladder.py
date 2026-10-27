@@ -8,7 +8,8 @@ the other designs' at-risk signal nets (R8 > 0.5) by least squares on log(extrac
   rc_global     one scale (ranking identical to R8; only the threshold moves)
   rc_layer      per routing layer: log k = sum_l b_l * guide_frac_l        (li1, met1, met2, met3+)
   rc_layer_len  + log guide length, log HPWL, log fanout, density           (length/fanout-dependent calibration)
-  rc_wire146    the Addendum-9 calibration as applied in the arms: wire cap (net cap - load pin cap) x 1.461
+  rc_wire146    the Addendum-9 calibration as applied in the arms: wire cap (net cap - load pin cap - output-port
+                load) x 1.461
   rc_wire       one wire-cap scale s fit as median((extracted - pin) / (estimated - pin)) on the training nets
   rc_oracle     the true extracted/estimated ratio of each net (upper bound of any cap calibration)
 Slew is taken to scale with cap (driver-dominated RC), so k_net * R8 approximates the calibrated estimate's R8.
@@ -31,7 +32,9 @@ import analysis_common as C  # noqa: E402
 
 COLS = ["run", "design", "sigtype", "join_how", "driver_kind", "y", "worst_load_slew_ratio", "driver_slew_ratio",
         "cap_ratio", "net_cap_pf_max", "act_net_cap_pf_max", "guide_frac_li1", "guide_frac_met1", "guide_frac_met2",
-        "guide_frac_met3up", "guide_len_um", "hpwl_um", "fanout", "density_mean", "pin_cap_pf_max"]
+        "guide_frac_met3up", "guide_len_um", "hpwl_um", "fanout", "density_mean", "pin_cap_pf_max", "n_load_ports"]
+PORT_LOAD_PF = 0.033442  # OUTPUT_CAP_LOAD (SDC set_load on every output port) in every farm run; part of the
+                         # estimated net cap but not of pin_cap_pf_max (instance pins only), so it is added back here
 LAYERS = ["guide_frac_li1", "guide_frac_met1", "guide_frac_met2", "guide_frac_met3up"]
 
 
@@ -85,10 +88,12 @@ def main() -> int:
             res[kind] = C.eval_block(ev, ev["r8"].to_numpy(float) * k, per_run=False)["pooled"]["frac_to_catch_95"]
             if kind == "rc_layer":
                 res["rc_layer_coef"] = dict(zip(["li1", "met1", "met2", "met3+"], [float(np.exp(x)) for x in b]))
-        est, pin = ev["net_cap_pf_max"].fillna(0).to_numpy(float), ev["pin_cap_pf_max"].fillna(0).to_numpy(float)
+        est = ev["net_cap_pf_max"].fillna(0).to_numpy(float)
+        pin = ev["pin_cap_pf_max"].fillna(0).to_numpy(float) + PORT_LOAD_PF * ev["n_load_ports"].fillna(0).to_numpy(float)
         wire = np.clip(est - pin, 0, None)
         safe_est = np.where(est > 0, est, 1.0)
-        t_est, t_pin = tr["net_cap_pf_max"].to_numpy(float), tr["pin_cap_pf_max"].fillna(0).to_numpy(float)
+        t_est = tr["net_cap_pf_max"].to_numpy(float)
+        t_pin = tr["pin_cap_pf_max"].fillna(0).to_numpy(float) + PORT_LOAD_PF * tr["n_load_ports"].fillna(0).to_numpy(float)
         t_wire = t_est - t_pin
         okw = t_wire > 1e-6
         s_wire = float(np.median((tr["act_net_cap_pf_max"].to_numpy(float)[okw] - t_pin[okw]) / t_wire[okw]))
