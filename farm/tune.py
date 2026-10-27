@@ -165,6 +165,9 @@ def dispatch(tags, dry, max_parallel):
     return done
 
 
+BACKEND = {"name": os.environ.get("BR_BACKEND", "farm")}  # "farm" (GitHub Actions) or "modal" (farm/modal_backend.py)
+
+
 def send(st, groups, msg, dry):
     """groups: [(tags, max_parallel)], in queue order. Specs were written and the tags are in st as 'pending'.
     Commit once, dispatch each group, mark what went out as dispatched (asked_at = dispatch time)."""
@@ -174,7 +177,13 @@ def send(st, groups, msg, dry):
     if not commit_specs(alltags, msg, dry):
         return
     for tags, mp in groups:
-        for t in dispatch(tags, dry, mp):
+        if BACKEND["name"] == "modal" and not dry:
+            sys.path.insert(0, os.path.join(ROOT, "farm"))
+            import modal_backend  # noqa: E402
+            sent = modal_backend.spawn(tags, jobs=4)
+        else:
+            sent = dispatch(tags, dry, mp)
+        for t in sent:
             st["tags"][t]["status"] = "dispatched"
             st["tags"][t]["asked_at"] = now()
     if not dry:
