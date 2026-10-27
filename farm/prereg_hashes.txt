@@ -11,3 +11,4 @@
 2026-10-27T09:53:24Z  226b688cba350521bb28f276db631d2e7c6c8fb5a1fbb4dc74bca03cfed16514  pre-registration with Addendum 15 (combined policy thr500-30cr vs rcal213-10 on the five Round-4/5 bases; mechanism control thr500-30c on Round 3)
 2026-10-27T10:27:52Z  922ad86882c3451b2827c76130acbbfc7058ccbd21b9db7340a8e27643b42ee2  pre-registration with Addendum 16 (replicate thr500-70d on the six Round-3 bases: equivalence + run-to-run variation; no criterion)
 2026-10-27T11:32:43Z  df31a39707509c69cc70d6537e1d0bcb8039a4ef7a63173c97c3a732964140f6  pre-registration with Addendum 17 (combined policy replication on the Round-1 designs: rcal213-10 and thr500-30cr)
+2026-10-27T13:20:07Z  06ae380c957c61103c92079dabec6ac154719155c00f635f5748a042cea67b6e  pre-registration with Addendum 18 (thr500-30crq replicates with the long equivalence check; no criterion)
