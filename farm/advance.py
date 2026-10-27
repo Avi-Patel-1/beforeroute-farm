@@ -95,9 +95,14 @@ def main():
     by_base = {}
     for b, arm, _ in made:
         by_base.setdefault(b, []).append(arm)
+    # chain passes are sequential, so they run on their own branch (fast-forwarded to main) where the runner pool
+    # serves them alongside the long main-branch queue; Round-5 bases stay on r5, where their checkpoint cache lives
+    for ref in {("r5" if b.startswith("d5-") else "chains") for b in by_base}:
+        sh(["git", "push", "-q", "origin", f"main:{ref}"])
     with open(state, "a") as f:
         for b, arms in by_base.items():
-            r = sh(["gh", "workflow", "run", "hero.yml", "-R", REPO, "--ref", "main", "-f", f"base_tag={b}",
+            ref = "r5" if b.startswith("d5-") else "chains"
+            r = sh(["gh", "workflow", "run", "hero.yml", "-R", REPO, "--ref", ref, "-f", f"base_tag={b}",
                     "-f", "arms=" + json.dumps(arms), "-f", "model=models/model_holdout_picorv32_v3.txt"])
             ok = r.returncode == 0
             print(f"[advance] {b}: dispatch {arms} -> {'ok' if ok else r.stderr.strip()[:200]}")
