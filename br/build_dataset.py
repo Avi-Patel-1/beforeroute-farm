@@ -6,6 +6,12 @@ Usage: build_dataset.py [--results <dir>] [--out dataset.parquet]
 Join key: the net's driver (instance/pin at G == driver at S). Nets are renamed
 or split by later steps but driver instances survive; a G net whose driver key
 is absent at S is matched by name as a fallback, else marked unjoined.
+
+PDK-neutral columns (gf180 branch): driver_class is the PDK-neutral logic family
+(br/pdk_neutral.py; the sky130-specific class is kept as driver_class_pdk), the
+guide_frac_* columns are by layer role (pin layer / 1st / 2nd / upper routing layer:
+sky130 li1/met1/met2/met3+, gf180 Metal1/Metal2/Metal3/Metal4+), and net_cap_pf_tt
+is read at the nominal typical corner of whatever PDK the run used.
 """
 from __future__ import annotations
 
@@ -17,6 +23,11 @@ import os
 import re
 
 import pandas as pd
+
+try:
+    from pdk_neutral import guide_role_fracs, neutral_class, nominal_tt
+except ImportError:  # imported as br.build_dataset
+    from br.pdk_neutral import guide_role_fracs, neutral_class, nominal_tt
 
 DRIVE_RE = re.compile(r"_(\d+)$")
 CLASS_RE = re.compile(r"__([a-z0-9]+?)(?:_\d+)?$")
@@ -94,6 +105,7 @@ def load_run(rdir: str):
         lr = lab_by_net.get(s_net) if s_net else None
         layers = f.get("guide_len_by_layer_um") or {}
         gtot = f.get("guide_len_um") or 0.0
+        groles = guide_role_fracs(layers, gtot)
         row = {
             "run": job["tag"],
             "design": summ.get("design"),
@@ -107,7 +119,9 @@ def load_run(rdir: str):
             "n_load_ports": f.get("n_load_ports"),
             "driver_kind": f.get("driver_kind"),
             "driver_master": f.get("driver_master"),
-            "driver_class": master_class(f.get("driver_master")),
+            "driver_class": neutral_class(f.get("driver_master")),
+            "driver_class_pdk": master_class(f.get("driver_master")),
+            "pdk": resolved.get("PDK"),
             "drive_index": drive_index(f.get("driver_master")),
             "driver_slew_ns": f.get("driver_slew_ns"),
             "driver_slew_ratio": f.get("driver_slew_ratio"),
@@ -122,12 +136,13 @@ def load_run(rdir: str):
             "density_mean": f.get("density_mean"),
             "density_max": f.get("density_max"),
             "guide_len_um": gtot,
-            "guide_frac_li1": (layers.get("li1", 0.0) / gtot) if gtot else 0.0,
-            "guide_frac_met1": (layers.get("met1", 0.0) / gtot) if gtot else 0.0,
-            "guide_frac_met2": (layers.get("met2", 0.0) / gtot) if gtot else 0.0,
-            "guide_frac_met3up": (sum(v for k, v in layers.items() if k in ("met3", "met4", "met5")) / gtot) if gtot else 0.0,
+            # by layer role (pin layer, 1st, 2nd, upper routing layers); sky130 values unchanged
+            "guide_frac_li1": groles[0],
+            "guide_frac_met1": groles[1],
+            "guide_frac_met2": groles[2],
+            "guide_frac_met3up": groles[3],
             "net_cap_pf_max": f.get("net_cap_pf_max"),
-            "net_cap_pf_tt": (f.get("net_cap_pf_by_corner") or {}).get("nom_tt_025C_1v80"),
+            "net_cap_pf_tt": nominal_tt(f.get("net_cap_pf_by_corner")),
             "pin_cap_pf_max": f.get("pin_cap_pf_max"),
             "cap_ratio": f.get("cap_ratio"),
             "fanout_ratio": f.get("fanout_ratio"),

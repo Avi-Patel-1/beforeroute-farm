@@ -61,12 +61,10 @@ def main() -> int:
             json.dump(spec, open(os.path.join(JOBS, tag + ".json"), "w"), indent=1)
             per_design.setdefault(dname, []).append(tag)
     base = [f"{a.prefix}-picorv32-000"]
-    # sweep order: small/fast designs first, picorv32 variants last (they start after the baseline is known)
-    sweep = []
-    for i in range(len(KNOBS)):
-        for dname in ("ocs_blitter", "aes_cipher"):
-            sweep.append(per_design[dname][i])
-    sweep += [t for t in per_design["picorv32"] if t not in base]
+    # sweep order (the shared runner queue is FIFO-ish, so order = start order): every design gets
+    # runs early; picorv32 variants trail its baseline (dispatched first, in its own run)
+    o, s, p = per_design["ocs_blitter"], per_design["aes_cipher"], per_design["picorv32"]
+    sweep = [o[0], s[0], o[1], s[1], o[2], s[2], p[1], o[3], s[3], p[2], o[4], s[4], p[3], p[4]]
     json.dump(base, open(os.path.join(JOBS, f"{a.prefix}-base.tags.json"), "w"))
     json.dump(sweep, open(os.path.join(JOBS, f"{a.prefix}.tags.json"), "w"))
     smoke = {"tag": "g0-spm-smoke", "design": "designs/spm", "config": "config_gf180.json", "overrides": dict(DATA_OVERRIDES)}
