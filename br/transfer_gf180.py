@@ -180,6 +180,8 @@ def main() -> int:
     ap.add_argument("--neg-frac", type=float, default=0.25)
     ap.add_argument("--gf-share", type=float, default=0.2)
     ap.add_argument("--ft-rounds", type=int, default=100)
+    ap.add_argument("--cached-only", action="store_true", help="report only results already in the cache (no fitting)")
+    ap.add_argument("--arm-ks", default="", help="per-arm k values, e.g. merge=1+all (default: --ks)")
     ap.add_argument("--strict", action="store_true",
                     help="exclude the held-out design's own sky130 runs from every sky130-trained arm (new PDK AND new design)")
     ap.add_argument("--sky-lodo", action="store_true", help="reference: sky130 leave-one-design-out on the same designs (base features, full recipe)")
@@ -187,6 +189,7 @@ def main() -> int:
     arms = a.arms.split(",")
     fsets = a.feature_sets.split(",")
     arm_rep = {kv.split("=")[0]: int(kv.split("=")[1]) for kv in a.arm_repeats.split(",") if kv}
+    arm_ks = {kv.split("=")[0]: set(kv.split("=")[1].split("+")) for kv in a.arm_ks.split(",") if kv}
     arm_fs = {}
     for kv in (x for x in a.arm_fsets.split(",") if x):
         arm, fsl = kv.split("=")
@@ -199,6 +202,8 @@ def main() -> int:
         path = os.path.join(a.out, "cache", key + ".json")
         if os.path.exists(path):
             return json.load(open(path))
+        if a.cached_only:
+            return None
         t0 = time.time()
         res = fn()
         res["_seconds"] = round(time.time() - t0, 1)
@@ -292,7 +297,9 @@ def main() -> int:
                 res["baseline_R8"] = {k: v for k, v in score_design(te, te["r8"].values, thresholds=(1.0,)).items() if k != "per_run"}
                 res.pop("per_run", None)
                 return res
-            S.setdefault("sky130_lodo", {})[d] = cached(f"sky130_lodo_{d}", lodo)
+            r0 = cached(f"sky130_lodo_{d}", lodo)
+            if r0 is not None:
+                S.setdefault("sky130_lodo", {})[d] = r0
 
     ks = [k if k == "all" else int(k) for k in a.ks.split(",")]
     proto = "strict_" if a.strict else ""
@@ -301,18 +308,22 @@ def main() -> int:
         feats = FEATURE_SETS[fs]
         for d in designs:
             sky_d, sky_s_d, w_s_d = sky_for(d)
-            need_full = "zs" in arms or "ft" in arms
+            need_full = ("zs" in arms or "ft" in arms) and not a.cached_only
             full = sky_model(full_name(fs, d if a.strict else None), sky_d, feats) if need_full else None
             te = gf[gf["design"] == d]
             Xte = X_of(te, feats)
             A = S["arms"].setdefault(fs, {}).setdefault(d, {})
             tsig = f"{zlib.crc32('|'.join(runs_of[d]).encode()):08x}"  # cache keys change when the test runs change
             if "zs" in arms:
-                A.setdefault("zs", {})["0"] = [cached(f"{proto}{fs}_zs_{d}_{tsig}", lambda: score_design(te, full.predict(Xte)))]
+                r0 = cached(f"{proto}{fs}_zs_{d}_{tsig}", lambda: score_design(te, full.predict(Xte)))
+                if r0 is not None:
+                    A.setdefault("zs", {})["0"] = [r0]
             if "merge" in arms and fs in arm_fs.get("merge", {fs}):
                 def m0():
                     return score_design(te, sky_model(sub_name(fs, d if a.strict else None), sky_s_d, feats, w_s_d).predict(Xte))
-                A.setdefault("merge", {})["0"] = [cached(f"{proto}{fs}_merge_{d}_k0_{tsig}", m0)]
+                r0 = cached(f"{proto}{fs}_merge_{d}_k0_{tsig}", m0)
+                if r0 is not None:
+                    A.setdefault("merge", {})["0"] = [r0]
             pool = [r for dd in designs if dd != d for r in runs_of[dd]]
             for k in ks:
                 if k == "all":
@@ -364,9 +375,13 @@ def main() -> int:
                             continue
                         if arm in arm_fs and fs not in arm_fs[arm]:
                             continue
+                        if arm in arm_ks and str(k) not in arm_ks[arm]:
+                            continue
                         psig = f"{zlib.crc32('|'.join(sorted(picked)).encode()):08x}"
                         key = f"{proto if arm != 'gfonly' else ''}{fs}_{arm}_{d}_k{k}_r{r}_{tsig}_{psig}"
-                        A.setdefault(arm, {}).setdefault(str(k), []).append(cached(key, lambda arm=arm: run_arm(arm)))
+                        res_k = cached(key, lambda arm=arm: run_arm(arm))
+                        if res_k is not None:
+                            A.setdefault(arm, {}).setdefault(str(k), []).append(res_k)
             json.dump(S, open(os.path.join(a.out, "summary.json"), "w"), indent=1)
             write_tables(S, os.path.join(a.out, "tables.md"))
 
