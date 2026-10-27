@@ -1,6 +1,0 @@
-{"title": "BeforeRoute", "subtitle": "Learning where pre-route repair and signoff disagree", "name": "Avi Patel",
- "slides": {
-  "2": {"title": "Problem statement", "kicker": "IDENTIFY THE PROBLEM", "bullets": ["Test bullet one", {"text": "sub point", "level": 1}]},
-  "5": {"title": "Data", "kicker": "VISUALIZE THE RESULTS", "table": {"rows": [["Testcase","Signoff violations","Area"],["Baseline","376","124,992"],["Trial 1","0","+0.5%"],["Trial 2","0","+0.1%"]]}, "caption": "caption test"},
-  "7": {"title": "Works cited", "kicker": "", "bullets": ["1. ref"]}
- }}
