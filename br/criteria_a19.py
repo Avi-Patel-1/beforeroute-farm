@@ -286,6 +286,23 @@ def main() -> int:
     vcc = "PASS" if vc == vv == "PASS" else ("FAIL" if "FAIL" in (vc, vv) else "pending")
     out["A22c"] = {"verdict": vcc, "cells_part": vc, "violator_part": vv, "per_base": det}
     print(f"  A22c thr500-30c vs uni30: fewer cells on >= 10 of 12 ({vc}) and violators no more on >= 7 of 12 ({vv}): {vcc}")
+    print("== A23 (conventional-boost controls: the estimate's own list boosted, same two-tier step)")
+    pair_crit("A23a", "bst500-30-10rt", "bqn-30-10rt", 9)
+    # A23b: A19e's rule applied to the control bqn-30-10rt vs rcal213-10t
+    per_h, per_v, det = {}, {}, {}
+    for b in BASES:
+        rx, ry = arm(b, "bqn-30-10rt"), arm(b, "rcal213-10t")
+        if rx is None or ry is None:
+            per_h[b] = per_v[b] = None; det[b] = None; continue
+        hx, hy = rx.get("hold_vio"), ry.get("hold_vio")
+        per_h[b] = None if (hx is None or hy is None) else ("pass" if hx <= hy else "fail")
+        per_v[b] = "pass" if cmp_counts(rx["V"], ry["V"]) <= 0 else "fail"
+        det[b] = {"hold_vio": (hx, hy), "V": (rx["V"], ry["V"])}
+    vh, vv = tally(per_h, 9), tally(per_v, 9)
+    vb = "PASS" if vh == vv == "PASS" else ("FAIL" if "FAIL" in (vh, vv) else "pending")
+    out["A23b"] = {"verdict": vb, "hold_part": vh, "violator_part": vv, "per_base": det}
+    print(f"  A23b bqn-30-10rt vs rcal213-10t: hold-violating endpoints no more on >= 9 ({vh}) and violators no more on >= 9 ({vv}): {vb}")
+    pair_crit("A23c", "bst500-30-10", "bqc-30-10", 4, n_bases=CF_RESIDUAL)
     if a.json:
         json.dump(out, open(a.json, "w"), indent=1, default=str)
     return 0
