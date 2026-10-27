@@ -92,6 +92,10 @@ def main():
             # (deterministic flow) -> the chain has stalled at this violator count; record it, do not dispatch
             with open(state, "a") as f:
                 f.write(f"{base} {arm} STALLED\n")
+            try:
+                os.remove(out)  # nothing to dispatch: keep the working tree clean
+            except OSError:
+                pass
             print(f"[advance] {base} {arm}: stalled (no new nets to add); not dispatched")
             continue
         made.append((base, arm, out))
