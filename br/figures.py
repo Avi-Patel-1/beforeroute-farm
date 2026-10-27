@@ -90,6 +90,8 @@ def _arm_kind(tag, base):
         return "uniform", a
     if a.startswith("tgt") or a.startswith("thr"):
         return "targeted", a
+    if a.startswith("det"):
+        return "rule", a
     if a.startswith("tier") or a.startswith("lt"):
         return "tiered", a
     return "other", a
@@ -110,6 +112,9 @@ def _arm_label(a):
     if a.startswith("thr"):
         k, h = a[3:].split("-")
         return f"p≥{int(k)/1000:g} H={h}"
+    if a.startswith("det"):
+        k, h = a[3:].split("-")
+        return f"rule R8 top {int(k)/10:g}% H={h}"
     if a.startswith("lt"):
         return "learned margins " + a[2:]
     if a.startswith("tier"):
@@ -138,7 +143,7 @@ def pareto_fig(summary_paths, out, title=None):
         arms = []
         for tag, r in rows.items():
             kind, a = _arm_kind(tag, base)
-            if kind in ("uniform", "targeted", "tiered") and r.get("signoff_violating_data_nets") is not None:
+            if kind in ("uniform", "targeted", "tiered", "rule") and r.get("signoff_violating_data_nets") is not None:
                 arms.append((kind, a, r))
         have_logs = all(r.get("resized") is not None or r.get("buffers") is not None for _, _, r in arms)
         if have_logs:
@@ -147,7 +152,7 @@ def pareto_fig(summary_paths, out, title=None):
         else:
             cost = lambda r: (r.get("instances_stdcell") or 0) - (b.get("instances_stdcell") or 0)
             xlabel = "net change in standard-cell instances after repair"
-        pts = {"uniform": [], "targeted": [], "tiered": []}
+        pts = {"uniform": [], "targeted": [], "tiered": [], "rule": []}
         for kind, a, r in arms:
             pts[kind].append((cost(r), r["signoff_violating_data_nets"], r.get("hold_ws"), a, r))
         uni = sorted(pts["uniform"], key=lambda t: int(t[3][3:]))
@@ -156,7 +161,7 @@ def pareto_fig(summary_paths, out, title=None):
             ax.plot([t[0] for t in uni], [t[1] for t in uni], "-o", color="#b04a3a", lw=1.5, ms=6, label="uniform margin H on every net")
             for x, y, h, a, _ in uni:
                 ax.annotate(f"{a[3:]}%", (x, y), textcoords="offset points", xytext=(5, 5), fontsize=8, color="#b04a3a")
-        for kind, marker, color, lab in (("targeted", "*", "#2a6f97", "targeted: top-k% nets by model, margin H"), ("tiered", "D", "#5c8f3a", "tiered margins")):
+        for kind, marker, color, lab in (("targeted", "*", "#2a6f97", "targeted: top-k% nets by model, margin H"), ("tiered", "D", "#5c8f3a", "tiered margins"), ("rule", "s", "#8a6d3b", "same k, deterministic rule instead of the model")):
             p_ = sorted(pts[kind], key=lambda t: t[0])
             if p_:
                 ax.scatter([t[0] for t in p_], [t[1] for t in p_], marker=marker, s=170 if marker == "*" else 60, color=color, zorder=5, label=lab)
@@ -171,7 +176,7 @@ def pareto_fig(summary_paths, out, title=None):
         if col == 0:
             ax.legend(fontsize=7.5, loc="center right")
         labels, vals, cols = ["base"], [hold_b], ["#888"]
-        for kind, color in (("uniform", "#b04a3a"), ("targeted", "#2a6f97"), ("tiered", "#5c8f3a")):
+        for kind, color in (("uniform", "#b04a3a"), ("targeted", "#2a6f97"), ("tiered", "#5c8f3a"), ("rule", "#8a6d3b")):
             for x, y, h, a, _ in sorted(pts[kind], key=lambda t: t[3]):
                 labels.append(a); vals.append(h); cols.append(color)
         ax2.bar(range(len(vals)), [v if v is not None else 0 for v in vals], color=cols)

@@ -19,6 +19,13 @@ case "$ARM" in
   uni*)
     H=${ARM#uni}
     $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm uniform --tag $BASE-$ARM --slew-pct $H --cap-pct $H --results results --pdk-root /work/pdk --jobs $JOBS ;;
+  det*)
+    # det050-70: top 5% of nets by the frozen deterministic rule R8 = max(est load slew, est driver slew, est cap ratio), margin 70 (AI ablation)
+    K=${ARM#det}; K=${K%%-*}; H=${ARM##*-}
+    FRAC=$(python3 -c "print(int('$K')/1000)")
+    python3 -m pip install -q pandas pyarrow lightgbm scikit-learn
+    python3 br/score.py --model none --rule R8 --run-results results/$BASE --frac $FRAC --out results/$BASE/flagged_$ARM.json
+    $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm targeted --tag $BASE-$ARM --slew-pct $H --cap-pct $H --flagged /work/results/$BASE/flagged_$ARM.json --results results --pdk-root /work/pdk --jobs $JOBS ;;
   tgt*|thr*)
     # tgt050-70: top 5% of nets | thr500-70: every net with p >= 0.500 ; suffixes after H:
     #   p2 = two masked passes, f = + fanout rule, h = hold-fix delay cells protected from resizing, v3 = model tag

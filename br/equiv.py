@@ -42,11 +42,11 @@ for side, nl in (("gold", a.gold), ("gate", a.gate)):
     rc[side + "_physical_cells_dropped"] = strip_physical(nl, nl_f)
     if side == "gate" and a.negative_control:
         txt = open(nl_f).read()
-        i = txt.find("sky130_fd_sc_hd__nand2_1 ")
-        assert i >= 0, "no nand2_1 instance to corrupt"
-        txt = txt[:i] + "sky130_fd_sc_hd__nor2_1 " + txt[i + len("sky130_fd_sc_hd__nand2_1 "):]
+        i = txt.find("sky130_fd_sc_hd__nand2_2 ")
+        assert i >= 0, "no nand2_2 instance to corrupt"
+        txt = txt[:i] + "sky130_fd_sc_hd__nor2_2 " + txt[i + len("sky130_fd_sc_hd__nand2_2 "):]
         open(nl_f, "w").write(txt)
-        rc["negative_control"] = "one nand2_1 instance replaced by nor2_1 in the gate netlist"
+        rc["negative_control"] = "one nand2_2 instance replaced by nor2_2 in the gate netlist"
     rc[side] = run(side, f"""read_liberty -ignore_miss_func -ignore_miss_dir -ignore_miss_data_latch {lib}
 read_verilog {nl_f}
 hierarchy -check -top {a.top}
