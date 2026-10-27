@@ -154,9 +154,10 @@ case "$ARM" in
     # tgt050-70: top 5% of nets | thr500-70: every net with p >= 0.500 ; suffixes after H:
     #   p2 = two masked passes, f = + fanout rule, h = hold-fix delay cells protected from resizing, v3 = model tag,
     #   c = score features dumped at the checkpoint itself (deployment view),
-    #   r = the repair step uses the router's wire cap scaled x2.130 to match extraction (LAYERS_RC = farm/rc/sky130_cap213.json)
+    #   r = the repair step uses the router's wire cap scaled x2.130 to match extraction (LAYERS_RC = farm/rc/sky130_cap213.json),
+    #   d = replicate: no change in behaviour, a repeat run under its own tag (keeps the original arm's results intact)
     case "$ARM" in tgt*) K=${ARM#tgt}; SEL=frac;; thr*) K=${ARM#thr}; SEL=thr;; esac
-    K=${K%%-*}; REST=${ARM##*-}; H=${REST%%[pfhvcr]*}
+    K=${K%%-*}; REST=${ARM##*-}; H=${REST%%[pfhvcrd]*}
     RCOV=(); case "$REST" in *r*) RCOV=(--override "LAYERS_RC=$(tr -d ' \n' < farm/rc/sky130_cap213.json)");; esac
     case "$REST" in *c*) use_checkpoint_features;; esac
     PASSES=1; case "$REST" in *p2*) PASSES=2;; esac
