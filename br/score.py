@@ -29,18 +29,27 @@ def main() -> int:
     ap.add_argument("--out", default=None)
     ap.add_argument("--tiers", default=None, help="e.g. 0.02:70,0.05:40 -> top 2%% at 70%%, next 3%% at 40%%; writes a tiers JSON")
     ap.add_argument("--rule-fanout", action="store_true", help="also flag every net whose post-GRT fanout already exceeds MAX_FANOUT (deterministic rule, Round 2 proposal)")
+    ap.add_argument("--rule", default=None, help="deterministic ranking instead of the model (AI ablation). R8 = max(est load slew ratio, est driver slew ratio, est cap ratio), frozen 2026-10-26 20:20 EDT as the most robust hand rule on development data (signal nets); R4 = cap_ratio*(1+hpwl/100)")
     ap.add_argument("--reg-model", default=None, help="regression model (predicted signoff slew ratio); enables --reg-tiers")
     ap.add_argument("--reg-tiers", default=None, help="learned-margin tiers over the top-k set, e.g. 1.3:80,1.1:60,0:40 -> predicted ratio >=1.3 at 80%%, >=1.1 at 60%%, rest at 40%%")
     a = ap.parse_args()
     import lightgbm as lgb
 
-    model = lgb.Booster(model_file=a.model)
+    model = lgb.Booster(model_file=a.model) if not a.rule else None
     rows, stats = load_run(os.path.abspath(a.run_results))
     df = pd.DataFrame(rows)
     df = df[(df["sigtype"] == "SIGNAL") & (df["driver_kind"] != "none")].copy()
-    X = df[FEATURES].copy()
-    X["driver_class"] = pd.Categorical(X["driver_class"], categories=model.pandas_categorical[0]) if model.pandas_categorical else X["driver_class"].astype("category")
-    df["p"] = model.predict(X)
+    if a.rule:
+        if a.rule.upper() == "R4":
+            df["p"] = df["cap_ratio"].fillna(0).astype(float) * (1 + df["hpwl_um"].fillna(0).astype(float) / 100)
+        elif a.rule.upper() == "R8":
+            df["p"] = df[["worst_load_slew_ratio", "driver_slew_ratio", "cap_ratio"]].fillna(0).astype(float).max(axis=1)
+        else:
+            raise SystemExit("unknown rule " + a.rule)
+    else:
+        X = df[FEATURES].copy()
+        X["driver_class"] = pd.Categorical(X["driver_class"], categories=model.pandas_categorical[0]) if model.pandas_categorical else X["driver_class"].astype("category")
+        df["p"] = model.predict(X)
     if a.rule_fanout:
         df.loc[df["fanout_ratio"].fillna(0) > 1.0, "p"] = 1.0 + df["p"]  # rule nets rank first
     df = df.sort_values("p", ascending=False)
@@ -77,7 +86,7 @@ def main() -> int:
     else:
         json.dump(flagged["net"].tolist(), open(out, "w"))
     summ = {
-        "run": stats["run"], "nets_scored": int(len(df)), "flagged": int(len(flagged)), "rule_fanout": bool(a.rule_fanout),
+        "run": stats["run"], "nets_scored": int(len(df)), "flagged": int(len(flagged)), "rule_fanout": bool(a.rule_fanout), "ranking": a.rule or os.path.basename(a.model),
         "rule_fanout_nets": int((df["fanout_ratio"].fillna(0) > 1.0).sum()) if a.rule_fanout else 0,
         "flag_frac": float(len(flagged) / max(1, len(df))), "min_p_flagged": float(flagged["p"].min()) if len(flagged) else None,
         "true_positives_in_flagged": int(flagged["y"].sum()), "positives_total": int(df["y"].sum()),

@@ -81,3 +81,49 @@ PicoRV32).
 * The model used for a base never saw that base's design (not just that run).
 * Numbers in the deck come from `results/<base>/hero_summary.json` files produced by
   `farm/hero_collect.py`, and from `results/model/report.json` produced by `br/train.py`.
+
+---
+
+## Addendum 1 — Round 3, prospective test on new design families (fixed 2026-10-26 20:25 EDT, before dispatch)
+
+Prompted by an external review (Codex, 19:50 EDT) that correctly noted: the probability-threshold
+budget was chosen after inspecting AES outcomes, and the comparator in H1 was too weak.
+
+**Correction to H1 reporting.** The "estimate needs 44% of nets to catch 95%" figure for PicoRV32
+counted clock-net violators (fanout/cap violations on clock buffers, which the slew ranking can
+never reach). On *signal nets only* — the population the intervention acts on — the timer's
+estimated slew ratio is a strong ranking (catch-95 at 3.5–8.8% of nets on 8 of 11 designs).
+From here on, H1 is reported on signal nets against the strongest frozen deterministic rule:
+**R8 = max(estimated load-slew ratio, estimated driver-slew ratio, estimated cap ratio)**,
+chosen on all current development data as the most robust hand rule (mean catch-95 8.0%, median
+6.7%, recall at 5% flagged 67–100%, mean 81%), plus a logistic-regression baseline. The blind spot
+is therefore primarily a *calibration* failure of the estimate (violators sit at 0.8–1.0× the
+limit before routing and 1.1–1.5× after extraction), not purely a ranking failure; the model's
+measured contribution is a better ranking **and** a calibrated budget.
+
+**Bases (outcomes never inspected; baselines ran in sweep d3 and were used only for violator
+counts and as held-out LODO folds):** `d3-salsa20-000`, `d3-des-000`, `d3-y_huff-000`,
+`d3-ocs_blitter-000`, `d3-bm64-000`, `d3-md5-000` — six design families absent from Rounds 0–2.
+
+**Models:** one per base, trained on every run of every *other* design (`models/model_holdout_<design>_v4.txt`, dataset of 127 runs as of 20:20 EDT).
+
+**Arms (all from the base's post-GRT checkpoint, identical suffix):** `rerun`, `uni50`, `uni70`,
+`tgt050-70` (model, top 5%, H = 70), `thr500-70` (model, p ≥ 0.5, H = 70), `det050-70`
+(rule R8, top 5%, H = 70 — the AI ablation: same budget and margin, no learned component).
+
+**Primary outcomes:** signal nets violating at nine-corner signoff; cells changed (resizes +
+buffers from the repair log); hold worst slack; std-cell area; setup worst slack; residual
+breakdown (slew / cap / fanout-with-diodes).
+
+**Pre-specified criteria:**
+1. Targeting beats blanket repair: on ≥ 5 of 6 bases, `tgt050-70` removes at least as large a
+   fraction of violators as `uni50` with ≤ 60% of its cells changed and ≥ its hold worst slack.
+2. The learned ranking adds value over the best hand rule: on ≥ 5 of 6 bases, `tgt050-70` leaves
+   fewer violators than `det050-70` at equal k and H (cells changed and hold reported alongside;
+   if the rule arm matches the model arm, the deck credits the rule and the claim becomes
+   "selective aggressive repair works; the model mainly supplies the budget").
+3. The threshold budget generalizes: `thr500-70` removes ≥ 90% of violators on ≥ 4 of 6 bases;
+   its hold cost is reported, not excused.
+
+Anything not listed above is exploratory. No arm will be re-run with changed k, H or threshold.
+
