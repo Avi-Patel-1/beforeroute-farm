@@ -59,7 +59,11 @@ def main() -> int:
             r = sv(R, f"{b}-lst-sgl{k}-70")
             if r is None:
                 st = "stalled" if f"{b} lst-sgl{k}-70 STALLED" in state else ("pending" if f"{b} lst-sgl{k}-70" in state or k == 1 else "not dispatched")
-                loop.append(dict(pass_=k, arm=f"sgl{k}", status=st))
+                if st == "stalled":  # Addendum 8: one escalation pass
+                    e = sv(R, f"{b}-lsx-sgl{k}x")
+                    loop.append(dict(pass_=k, arm=f"esc{k}", **e) if e else dict(pass_=k, arm=f"esc{k}", status="pending" if f"{b} lsx-sgl{k}x" in state else "stalled"))
+                else:
+                    loop.append(dict(pass_=k, arm=f"sgl{k}", status=st))
                 break
             loop.append(dict(pass_=k, arm=f"sgl{k}", **r))
             if r["V"] == 0:
@@ -76,7 +80,11 @@ def main() -> int:
                     r2 = sv(R, f"{b}-lst-cln{k}-70")
                     if r2 is None:
                         st = "stalled" if f"{b} lst-cln{k}-70 STALLED" in state else ("pending" if f"{b} lst-cln{k}-70" in state else "not dispatched")
-                        br.append(dict(pass_=k + 1, arm=f"cln{k}", status=st))
+                        if st == "stalled":  # Addendum 8: one escalation pass
+                            e = sv(R, f"{b}-lsx-cln{k}x")
+                            br.append(dict(pass_=k + 1, arm=f"esc{k}", **e) if e else dict(pass_=k + 1, arm=f"esc{k}", status="pending" if f"{b} lsx-cln{k}x" in state else "stalled"))
+                        else:
+                            br.append(dict(pass_=k + 1, arm=f"cln{k}", status=st))
                         break
                     br.append(dict(pass_=k + 1, arm=f"cln{k}", **r2))
                     if r2["V"] == 0:
