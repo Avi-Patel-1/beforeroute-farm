@@ -29,6 +29,18 @@ def V(tag):
     return PT.violators(tag)
 
 
+def identical(a, b):
+    """A copy whose std-cell area and routed wirelength equal the original's is the same placement (the placer replaces
+    a density target below its minimum with that minimum, so a +-1 point change can be a no-op)."""
+    try:
+        ma = json.load(open(os.path.join(PT.RESULTS, a, "metrics.json")))
+        mb = json.load(open(os.path.join(PT.RESULTS, b, "metrics.json")))
+    except Exception:
+        return False
+    keys = ("design__instance__area__stdcell", "route__wirelength")
+    return all(ma.get(k) is not None and ma.get(k) == mb.get(k) for k in keys)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--arms", nargs="*", default=["rcal213-10", "thr500-30cr", "bst500-30-10r"])
@@ -38,12 +50,14 @@ def main() -> int:
     out = {}
     for base in DESIGNS:
         cs = copies(base)
-        row = {"base": [V(c) for c in cs]}
+        same = [c for c in cs[1:] if identical(base, c)]
+        cs = [c for c in cs if c not in same]
+        row = {"base": [V(c) for c in cs], "identical_copies": same}
         for arm in a.arms:
             row[arm] = [V(f"{c}-{arm}") if c != base or arm != "rerun" else V(f"{base}-rerun") for c in cs]
         out[base] = row
         name = PT.NAMES.get(base, base)
-        parts = [f"no repair {row['base']}"]
+        parts = [f"no repair {row['base']}" + (f" (identical copies dropped: {same})" if same else "")]
         for arm in a.arms:
             vs = row[arm]
             got = [v for v in vs if v is not None]
