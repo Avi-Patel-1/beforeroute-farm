@@ -22,11 +22,9 @@ import matplotlib.pyplot as plt  # noqa: E402
 ROWS = [  # (key in calib_ladder.json designs, label, marker, color, filled)
     ("est_slew_ablation", "Timer's estimate", "o", F.GREY, True),
     ("rule_R8_ablation", "Rule R8", "s", F.BLUE, True),
-    ("rc_wire", "R8 + wire-cap fit", "D", F.INK2, False),
-    ("rc_layer", "R8 + per-layer fit", "D", F.INK2, False),
-    ("rc_layer_len", "R8 + length/fanout fit", "D", F.INK2, False),
+    ("rc_wire", "R8, wire cap × 2.05", "D", F.INK2, False),
     ("lgbm_full_ablation", "GBM (BeforeRoute)", "*", F.GREEN, True),
-    ("rc_oracle", "R8 + true extracted cap", "o", F.MUTED, False),
+    ("rc_oracle", "R8, true extracted cap", "o", F.MUTED, False),
 ]
 
 
@@ -40,12 +38,13 @@ def main() -> int:
     D = json.load(open(a.data))["designs"]
     med = {k: float(np.median([d[k] for d in D.values()])) for k, *_ in ROWS}
     fl = float(np.median([d["floor"] for d in D.values()]))
-    wins_cal = sum(1 for d in D.values() if d["lgbm_full_ablation"] < d["rc_layer_len"])
+    wins_cal = sum(1 for d in D.values() if d["lgbm_full_ablation"] < d["rc_wire"])
+    s_med = float(np.median([d["s_wire"] for d in D.values()]))
     wins_r8 = sum(1 for d in D.values() if d["lgbm_full_ablation"] < d["rule_R8_ablation"])
     from scipy.stats import binomtest
     p_cal = binomtest(wins_cal, len(D), 0.5).pvalue
     fig = plt.figure(figsize=(5.6, 4.5))
-    ax = fig.add_axes([0.445, 0.255, 0.525, 0.47])
+    ax = fig.add_axes([0.445, 0.255, 0.525, 0.44])
     ny = len(ROWS)
     ys = np.arange(ny)[::-1]
     ax.axvline(100 * fl, color=F.INK2, lw=1.5, ls=(0, (1, 2.2)), zorder=1)
@@ -69,14 +68,14 @@ def main() -> int:
     ax.set_ylim(-0.6, ny - 0.4)
     ax.grid(True, axis="x", zorder=0)
     ax.text(100 * fl, ny - 0.45, f"floor {100 * fl:.1f}%", fontsize=F.FS, color=F.INK2, ha="center", va="bottom", zorder=5)
-    fig.text(0.012, 0.975, "The gain is a per-net correction\nof the router's RC estimate", fontsize=F.FS + 1,
+    fig.text(0.012, 0.975, "Most of the estimate's error is one\nnumber: its wire cap is about 2× low", fontsize=F.FS + 1,
              fontweight="semibold", color=F.INK, va="top", linespacing=1.15)
     fig.text(0.012, 0.835, "Nets flagged to catch 95% of violators", fontsize=F.FS, color=F.INK2, va="top")
-    lines = [f"Median of {len(D)} unseen designs; fits learned on the others.",
-             f"GBM beats R8 on {wins_r8} of {len(D)}, the best fit on {wins_cal} of {len(D)} (p ≈ {float(f'{p_cal:.1g}'):g})."]
+    lines = [f"Median of {len(D)} unseen designs; scale fit on the others.",
+             f"GBM beats the scaled estimate on {wins_cal} of {len(D)} (p ≈ {float(f'{p_cal:.1g}'):g})."]
     fig.text(0.012, 0.012, "\n".join(lines), fontsize=F.FS, color=F.MUTED, va="bottom", linespacing=1.25)
     nums = {"median_pct": {k: round(100 * v, 3) for k, v in med.items()}, "floor_pct": round(100 * fl, 3),
-            "gbm_beats_best_fit": wins_cal, "gbm_beats_R8": wins_r8, "designs": len(D), "sign_test_p_vs_best_fit": p_cal,
+            "gbm_beats_wire_scale": wins_cal, "wire_scale_median_fit": s_med, "gbm_beats_R8": wins_r8, "designs": len(D), "sign_test_p_vs_best_fit": p_cal,
             "source": os.path.relpath(a.data, F.ROOT)}
     F.save(fig, a.out, a.name, nums)
     print(json.dumps(nums, indent=1))
