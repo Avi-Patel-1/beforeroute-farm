@@ -6,8 +6,8 @@ Usage:
   python3 br/figs_analysis.py learning_curve ablation --out figures/v2/ [--analysis agents/analysis/farm]
 
 Nothing is retrained: every number drawn is read from the analysis agent's collected farm outputs
-(LightGBM at 400 rounds, 3 seeds, on the 214-run farm dataset; the local reduced-round runs under
-results/analysis/local are not used):
+(LightGBM at 400 rounds on the 214-run farm dataset, learning curves over 3 seeds; the local reduced-round runs
+under results/analysis/local are not used):
   <analysis>/answers.json           a.<design>.<variant>.curve.<n>.per_run_median_x_floor (seed mean of the per-run
                                     median of catch-95 / floor), a.<design>._ref_per_run_x_floor (rule R8, same metric,
                                     all runs of the design), b.ALL.paired_vs_*.catch95 (per-run sign tests)
@@ -20,8 +20,12 @@ catch-95 = fraction of a run's signal nets that must be flagged (top of the rank
 violators; floor = 0.95 x the violator rate (flag only violators), so catch-95 / floor >= 1 and 1 is perfect.
 
 Style, palette and save() come from br/figs_v2.py (imported as F): black surface, model = green star,
-rule R8 = blue square, raw estimate = grey circle, >= 14 pt text, drawn at final slide size (5.6 x 4.5 in, the
-deck's half-slide picture slot). The numbers each figure drew are merged into <out>/figs_v2_numbers.json.
+rule R8 = blue square (a grey dashed reference line in the learning curve, where it is the no-training baseline;
+LC_R8 below), raw estimate = grey circle, >= 14 pt text, drawn at final slide size (5.6 x 4.5 in, the deck's
+half-slide picture slot). The numbers each figure drew are merged into <out>/figs_v2_numbers.json.
+
+Learning curve: designs whose rule-R8 per-run median exceeds DEGENERATE_X x floor (DES: a handful of violators per
+run, so the ratio is set by one or two nets) are left out of the lines and named in the figure's note.
 """
 from __future__ import annotations
 
@@ -295,7 +299,7 @@ def fig_ablation(out_dir, analysis=ANALYSIS, size=SIZE, name="ablation"):
     answers = load_answers(analysis)
     st = (((answers.get("b") or {}).get("ALL") or {}).get("paired_vs_R8") or {}).get("catch95")
     fig = plt.figure(figsize=size)
-    ax = fig.add_axes([0.415, 0.30, 0.555, 0.455])
+    ax = fig.add_axes([0.415, 0.30, 0.555, 0.42])
     ny = len(rows)
     ys = np.arange(ny)[::-1]
     fl = A["floor"]["median"]
@@ -324,7 +328,7 @@ def fig_ablation(out_dir, analysis=ANALYSIS, size=SIZE, name="ablation"):
     ax.text(100 * fl, ny - 0.45, f"floor {100 * fl:.1f}%", fontsize=F.FS, color=F.INK2, ha="center", va="bottom", zorder=5)
     fig.text(0.012, 0.975, "The gain is a nonlinear model\nof the timer's own numbers", fontsize=F.FS + 1, fontweight="semibold",
              color=F.INK, va="top", linespacing=1.15)
-    fig.text(0.012, 0.848, "Nets flagged to catch 95% of violators", fontsize=F.FS, color=F.INK2, va="top")
+    fig.text(0.012, 0.835, "Nets flagged to catch 95% of violators", fontsize=F.FS, color=F.INK2, va="top")
     nd = len(A["designs"])
     lines = [f"Median of {nd} unseen designs, each pooled over its runs."]
     if st:
