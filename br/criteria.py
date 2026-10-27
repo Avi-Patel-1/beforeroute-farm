@@ -110,7 +110,13 @@ def c_equiv(results, base, rows, arms):
 def verdict(per_base, need):
     st = [s for s, _ in per_base.values()]
     if "pending" in st or len(st) < need[1]:
-        return f"pending ({st.count('pass')} pass, {st.count('fail')} fail, {st.count('pending') + need[1] - len(st)} pending)"
+        npass, nfail, npend = st.count('pass'), st.count('fail'), st.count('pending') + need[1] - len(st)
+        # decided once the pending bases can no longer change the outcome
+        if npass >= need[0]:
+            return f"PASS, decided early ({npass} pass, {nfail} fail, {npend} pending; needed {need[0]} of {need[1]})"
+        if npass + npend < need[0]:
+            return f"FAIL, decided early ({npass} pass, {nfail} fail, {npend} pending; needed {need[0]} of {need[1]})"
+        return f"pending ({npass} pass, {nfail} fail, {npend} pending)"
     n = st.count("pass")
     return f"{'PASS' if n >= need[0] else 'FAIL'} ({n} of {len(st)}; needed {need[0]})"
 
