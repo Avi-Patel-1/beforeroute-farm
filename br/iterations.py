@@ -39,18 +39,13 @@ def sv(results, tag):
     return {"V": n, "cells": cells, "hold": hold}
 
 
-def main() -> int:
+def chains(R, bases):
+    """Per base: {'base', 'loop': [...], 'beforeroute': [...]}; each pass has V/cells/hold or a status."""
     import sys
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--bases", default=DEFAULT)
-    ap.add_argument("--results", default=os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "results"))
-    ap.add_argument("--json", default=None)
-    a = ap.parse_args()
-    R = a.results
     state = open(os.path.join(R, ".advance_dispatched")).read() if os.path.exists(os.path.join(R, ".advance_dispatched")) else ""
     out = []
-    for b in a.bases.split(","):
+    for b in bases:
         ref = sv(R, f"{b}-rerun") or sv(R, b)
         if ref is None:
             continue
@@ -90,6 +85,16 @@ def main() -> int:
                     if r2["V"] == 0:
                         break
         out.append({"base": b, "loop": loop, "beforeroute": br})
+    return out
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--bases", default=DEFAULT)
+    ap.add_argument("--results", default=os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "results"))
+    ap.add_argument("--json", default=None)
+    a = ap.parse_args()
+    out = chains(a.results, a.bases.split(","))
 
     def fmt(seq):
         parts = []
