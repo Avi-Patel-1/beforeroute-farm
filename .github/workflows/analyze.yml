@@ -1,0 +1,176 @@
+name: BeforeRoute analysis
+
+# Rebuild the per-net dataset from farm.yml artifacts on a runner, then run an analysis
+# script as a matrix (one job per entry of args_list):
+#   python3 <script> --data dataset.parquet --out out/ <args>
+# Outputs: artifact "dataset" (dataset.parquet + manifest) and analysis-<name>-<index> (out/).
+# Collect locally with: python3 farm/analysis_collect.py --run-id <id> --out results/analysis/<name>/
+
+on:
+  workflow_dispatch:
+    inputs:
+      script:
+        description: 'Python script in the repo'
+        required: true
+        type: string
+      args_list:
+        description: 'JSON array of argument strings; one matrix job per entry'
+        required: false
+        default: '[""]'
+        type: string
+      name:
+        description: 'Artifact prefix (analysis-<name>-<index>)'
+        required: true
+        type: string
+      max_parallel:
+        description: 'Max concurrent analysis jobs'
+        required: false
+        default: '8'
+        type: string
+      dataset_run_id:
+        description: 'Optional: reuse the dataset artifact of this analyze.yml run (waits for its build job)'
+        required: false
+        default: ''
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    permissions:
+      actions: read
+      contents: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: pip
+          cache-dependency-path: .github/workflows/analyze.yml
+
+      - name: Install Python deps
+        run: pip install pandas==3.0.5 pyarrow==26.0.0 lightgbm==4.7.0 scikit-learn==1.9.1 matplotlib==3.11.2
+
+      - name: Reuse dataset of another analyze run
+        id: reuse
+        if: inputs.dataset_run_id != ''
+        env:
+          SRC_RUN: ${{ inputs.dataset_run_id }}
+        run: |
+          if python3 farm/analysis_fetch.py wait --repo "$REPO" --run-id "$SRC_RUN" --dest dataset --timeout-min 120; then
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+            rm -rf dataset
+          fi
+
+      - name: List farm data artifacts
+        id: manifest
+        if: steps.reuse.outputs.ok != 'true'
+        run: |
+          mkdir -p dataset
+          python3 farm/analysis_fetch.py list --repo "$REPO" --out dataset/manifest.json --github-output
+
+      - name: Restore dataset cache
+        id: cache
+        if: steps.reuse.outputs.ok != 'true'
+        uses: actions/cache@v4
+        with:
+          path: dataset
+          key: br-dataset-v1-${{ steps.manifest.outputs.key }}
+
+      - name: Download artifacts and build dataset (cache miss)
+        if: steps.reuse.outputs.ok != 'true' && steps.cache.outputs.cache-hit != 'true'
+        run: |
+          python3 farm/analysis_fetch.py download --manifest dataset/manifest.json --dest data/results --workers 8
+          mv data/fetched.json dataset/fetched.json
+          df -h . | tail -1
+          python3 br/build_dataset.py --results data/results --out dataset/dataset.parquet > dataset/build_dataset.log 2>&1 || { tail -50 dataset/build_dataset.log; exit 1; }
+          tail -3 dataset/build_dataset.log
+          rm -rf data
+
+      - name: Dataset summary
+        run: |
+          ls -la dataset
+          python3 -c "
+          import pandas as pd
+          d = pd.read_parquet('dataset/dataset.parquet', columns=['run', 'design', 'sigtype', 'y'])
+          print(f'rows={len(d)} runs={d.run.nunique()} positives={int(d.y.sum())}')
+          print(d.groupby('design').agg(runs=('run', 'nunique'), rows=('y', 'size'), pos=('y', 'sum')).to_string())
+          "
+
+      - name: Upload dataset
+        uses: actions/upload-artifact@v4
+        with:
+          name: dataset
+          path: dataset/
+          retention-days: 14
+          compression-level: 0
+
+  run:
+    name: ${{ inputs.name }} [${{ strategy.job-index }}] ${{ matrix.args }}
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    strategy:
+      fail-fast: false
+      max-parallel: ${{ fromJSON(inputs.max_parallel) }}
+      matrix:
+        args: ${{ fromJSON(inputs.args_list) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: pip
+          cache-dependency-path: .github/workflows/analyze.yml
+
+      - name: Install Python deps
+        run: pip install pandas==3.0.5 pyarrow==26.0.0 lightgbm==4.7.0 scikit-learn==1.9.1 matplotlib==3.11.2
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: dataset
+          path: .
+
+      - name: Run analysis
+        env:
+          SCRIPT: ${{ inputs.script }}
+          ARGS: ${{ matrix.args }}
+          JOB_INDEX: ${{ strategy.job-index }}
+        run: |
+          mkdir -p out
+          python3 - <<'PY'
+          import json, os, shlex, subprocess, sys, time
+          args = shlex.split(os.environ.get("ARGS", ""))
+          cmd = [sys.executable, os.environ["SCRIPT"], "--data", "dataset.parquet", "--out", "out/"] + args
+          print("+ " + " ".join(shlex.quote(c) for c in cmd), flush=True)
+          meta = {"script": os.environ["SCRIPT"], "args": os.environ.get("ARGS", ""), "index": int(os.environ["JOB_INDEX"]),
+                  "run_id": os.environ["GITHUB_RUN_ID"], "sha": os.environ["GITHUB_SHA"], "nproc": os.cpu_count()}
+          try:
+              meta["dataset_key"] = json.load(open("manifest.json")).get("key")
+          except Exception:
+              pass
+          t0 = time.time()
+          rc = subprocess.call(cmd)
+          meta.update(exit=rc, seconds=round(time.time() - t0, 1))
+          json.dump(meta, open("out/_meta.json", "w"), indent=1)
+          sys.exit(rc)
+          PY
+
+      - name: Upload output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: analysis-${{ inputs.name }}-${{ strategy.job-index }}
+          path: out/
+          retention-days: 30
+          if-no-files-found: warn
