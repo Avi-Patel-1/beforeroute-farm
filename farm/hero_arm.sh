@@ -8,6 +8,9 @@ DOCKER="docker run --rm -v $PWD:/work -w /work -e PDK_ROOT=/work/pdk $IMAGE"
 SPEC=farm/jobs/$BASE.json
 DESIGN=$(python3 -c "import json;print(json.load(open('$SPEC'))['design'])")
 mkdir -p results
+# 0. RTL that is not committed (job spec "prefetch", e.g. designs/nvdla_csc/fetch_rtl.py): fetched and
+#    hash-checked on the host before the baseline or any arm loads the design config; no-op otherwise.
+python3 br/run_job.py --job-spec $SPEC --prefetch-only --results prefetch-logs || true
 # 1. baseline to a kept checkpoint (deterministic). Restored from the actions cache when available;
 #    otherwise built here and pruned to the steps up to the post-GRT checkpoint so the cache stays small.
 if [ -f results/$BASE/job.json ] && ls $DESIGN/runs/$BASE/*-openroad-checkantennas/state_out.json >/dev/null 2>&1 && [ -f $DESIGN/config.$BASE.json ]; then
