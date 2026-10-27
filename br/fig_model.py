@@ -65,15 +65,55 @@ def oof_curve():
     return df
 
 
+def slide_curve(df, fam, a):
+    fig = plt.figure(figsize=(6.4, 4.7))
+    ax = fig.add_axes([0.13, 0.15, 0.83, 0.6])
+    r = df["worst_load_slew_ratio"].clip(0, 2.0)
+    bins = np.linspace(0, 1.6, 17)
+    xs, obs, pred = [], [], []
+    b = np.digitize(r, bins) - 1
+    for k in range(len(bins) - 1):
+        s_ = df[b == k]
+        if len(s_) < 60:
+            continue
+        xs.append((bins[k] + bins[k + 1]) / 2); obs.append(100 * s_.y.mean()); pred.append(100 * s_.p.mean())
+    ax.axvspan(0, 1.0, color=F.CRIT, alpha=0.08, lw=0)
+    ax.plot(xs, pred, color=F.GREEN, lw=2.6, label="model score", zorder=3)
+    ax.scatter(xs, obs, color=F.INK, s=26, zorder=4, label="actual violation rate")
+    ax.axvline(1.0, color=F.INK2, lw=1, ls=(0, (3, 3)))
+    ax.text(1.03, 8, "timer's\nown limit", color=F.INK2, fontsize=F.FS - 2, va="bottom")
+    blind = 100 * float((df[df.y == 1].worst_load_slew_ratio < 1).mean())
+    ax.text(0.04, 92, f"timer says safe:\n{blind:.0f}% of violators", color=F.CRIT, fontsize=F.FS - 1, va="top")
+    ax.set_xlim(0, 1.6); ax.set_ylim(0, 100)
+    ax.set_xlabel("timer's estimated slew ÷ limit, before routing", fontsize=F.FS - 1, color=F.INK2)
+    ax.set_ylabel("nets failing at signoff (%)", fontsize=F.FS - 1, color=F.INK2)
+    ax.tick_params(colors=F.INK2, labelsize=F.FS - 2)
+    ax.grid(color=F.GRID, lw=0.8)
+    for sp in ("top", "right"):
+        ax.spines[sp].set_visible(False)
+    for sp in ("left", "bottom"):
+        ax.spines[sp].set_color(F.AXIS)
+    ax.legend(loc="center right", frameon=False, fontsize=F.FS - 2, labelcolor=F.INK2)
+    fig.text(0.02, 0.97, "What the model learned", fontsize=F.FS + 1, color=F.INK, fontweight="semibold", va="top")
+    share = fam["Timer's own estimate"]
+    fig.text(0.02, 0.89, f"Nets start failing at about half the timer's limit.\n{share:.0f}% of the model's split gain uses the timer's own numbers.",
+             fontsize=F.FS - 3, color=F.INK2, va="top", linespacing=1.3)
+    F.save(fig, a.out, "model_curve_slide", {"blind_pct": blind})
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=os.path.join(F.ROOT, "figures", "v2"))
     ap.add_argument("--name", default="model_card")
     ap.add_argument("--model", default=os.path.join(F.MODELS, "model_all_v5.txt"))
+    ap.add_argument("--slide-curve", action="store_true", help="half-slide figure: the learned response only")
     a = ap.parse_args()
     F.setup_style()
     fam, ntrees, nfeat = gain_by_family(a.model)
     df = oof_curve()
+    if a.slide_curve:
+        return slide_curve(df, fam, a)
 
     fig = plt.figure(figsize=(16, 7.6))
     # ---------------- left: schematic ----------------

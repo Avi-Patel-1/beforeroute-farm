@@ -50,7 +50,7 @@ def draw_compact(rows, near, out, name, size):
     fig.text(0.012, fy(0.40), "violators left after one pass: share that are new", fontsize=F.FS, color=F.INK2, va="top")
     foot = 0.62                                     # two footer lines (in)
     top, bottom = 0.86, foot + 0.42                 # plot area (in from top / from bottom, incl. tick labels)
-    left, right = 1.30, 1.10                        # base names / count labels (in)
+    left, right = 1.62, 1.10                        # base names / count labels (in)
     ax = fig.add_axes([left / W, bottom / H, (W - left - right) / W, (H - top - bottom) / H])
     n = len(rows)
     y = np.arange(n)[::-1]
