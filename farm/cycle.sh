@@ -9,7 +9,7 @@ REPO=Avi-Patel-1/beforeroute-farm
 TRAIN=0; [ "${1:-}" = "--train" ] && TRAIN=1
 echo "== $(date '+%F %T') cycle start"
 
-python3 farm/collect.py --repo $REPO --results results 2>&1 | tail -2
+python3 farm/collect.py --repo $REPO --results results --limit 40 2>&1 | tail -2
 # equivalence logs are never read after the check: keep them compressed (they were 2.8 GB of 14 GB)
 find results -path "*/equiv/*.log" -size +1M -print0 2>/dev/null | xargs -0 -r -n 20 gzip -f
 
