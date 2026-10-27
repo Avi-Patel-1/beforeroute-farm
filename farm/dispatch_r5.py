@@ -14,6 +14,9 @@ ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 BASES = ["d5-chacha-000", "d5-point_add-000", "d5-blabla-000"]
 ARMS = ["rerun", "uni50", "uni70", "est050-70c", "tgt050-70c", "thr500-70c", "exp100-70c", "lst-sgl1-70"]
 MODEL = "models/model_all_v5.txt"
+# Round 5 runs on its own branch: the runner pool serves queued jobs of different refs side by side, so a
+# separate ref is not stuck behind the long main-branch queue. The branch only ever fast-forwards to main.
+REF = "r5"
 ATTR = "\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_016XcZ7Zp4en4cWPeoAqbHJG"
 
 
@@ -52,7 +55,8 @@ def main():
             if a.dry_run:
                 print(f"[r5] {b}: would dispatch seed"); continue
             t = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(time.time() - 5))
-            r = sh(["gh", "workflow", "run", "hero.yml", "-R", REPO, "--ref", "main", "-f", f"base_tag={b}",
+            sh(["git", "push", "-q", "origin", f"main:{REF}"])
+            r = sh(["gh", "workflow", "run", "hero.yml", "-R", REPO, "--ref", REF, "-f", f"base_tag={b}",
                     "-f", 'arms=["seed"]', "-f", f"model={MODEL}"])
             if r.returncode != 0:
                 print(f"[r5] {b}: seed dispatch failed: {r.stderr.strip()[:200]}"); continue
@@ -93,7 +97,8 @@ def main():
             if sh(["git", "push", "-q", "origin", "main"]).returncode == 0:
                 break
             sh(["git", "pull", "-q", "--rebase", "origin", "main"])
-        r = sh(["gh", "workflow", "run", "hero.yml", "-R", REPO, "--ref", "main", "-f", f"base_tag={b}",
+        sh(["git", "push", "-q", "origin", f"main:{REF}"])  # fast-forward: the list commit and current code
+        r = sh(["gh", "workflow", "run", "hero.yml", "-R", REPO, "--ref", REF, "-f", f"base_tag={b}",
                 "-f", "arms=" + json.dumps(ARMS), "-f", f"model={MODEL}"])
         if r.returncode == 0:
             s["arms_dispatched"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
