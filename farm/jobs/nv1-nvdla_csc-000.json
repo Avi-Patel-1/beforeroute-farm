@@ -1,0 +1,15 @@
+{
+ "tag": "nv1-nvdla_csc-000",
+ "design": "designs/nvdla_csc",
+ "config": "config_sky130.json",
+ "prefetch": ["python3", "-I", "designs/nvdla_csc/fetch_rtl.py"],
+ "overrides": {
+  "RUN_POST_GRT_DESIGN_REPAIR": false,
+  "RUN_MAGIC_DRC": false,
+  "RUN_KLAYOUT_DRC": false,
+  "RUN_LVS": false,
+  "RUN_KLAYOUT_XOR": false,
+  "RUN_IRDROP_REPORT": false,
+  "RUN_LINTER": false
+ }
+}

@@ -50,6 +50,12 @@ jobs:
           docker run --rm -v "$PWD:/work" -w /work -e PDK_ROOT=/work/pdk "$IMAGE" \
             ciel enable --pdk-family sky130 "$PDK_VERSION"
 
+      - name: Prefetch third-party RTL on the host (no-op unless the job spec has "prefetch")
+        run: |
+          # e.g. designs/nvdla_csc/fetch_rtl.py: NVDLA RTL is not committed; it is downloaded and
+          # SHA-256-checked here; run_job.py re-verifies (and re-fetches if needed) in the container.
+          python3 br/run_job.py --job-spec "farm/jobs/${{ matrix.tag }}.json" --prefetch-only --results prefetch-logs || true
+
       - name: Run job
         run: |
           mkdir -p results

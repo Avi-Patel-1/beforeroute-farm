@@ -1,0 +1,31 @@
+{
+  "DESIGN_NAME": "NV_NVDLA_csc",
+  "VERILOG_FILES": [
+    "dir::rtl/vmod/nvdla/csc/NV_NVDLA_csc.v",
+    "dir::rtl/vmod/nvdla/csc/NV_NVDLA_CSC_slcg.v",
+    "dir::rtl/vmod/nvdla/csc/NV_NVDLA_CSC_dl.v",
+    "dir::rtl/vmod/nvdla/csc/NV_NVDLA_CSC_wl.v",
+    "dir::rtl/vmod/nvdla/csc/NV_NVDLA_CSC_WL_dec.v",
+    "dir::rtl/vmod/nvdla/csc/NV_NVDLA_CSC_sg.v",
+    "dir::rtl/vmod/nvdla/csc/NV_NVDLA_CSC_SG_wt_fifo.v",
+    "dir::rtl/vmod/nvdla/csc/NV_NVDLA_CSC_SG_dat_fifo.v",
+    "dir::rtl/vmod/nvdla/csc/NV_NVDLA_CSC_regfile.v",
+    "dir::rtl/vmod/nvdla/csc/NV_NVDLA_CSC_dual_reg.v",
+    "dir::rtl/vmod/nvdla/csc/NV_NVDLA_CSC_single_reg.v",
+    "dir::rtl/vmod/vlibs/NV_CLK_gate_power.v",
+    "dir::rtl/vmod/vlibs/NV_BLKBOX_SINK.v"
+  ],
+  "VERILOG_INCLUDE_DIRS": ["dir::rtl/vmod/include"],
+  "VERILOG_DEFINES": ["SYNTHESIS", "VLIB_BYPASS_POWER_CG", "DESIGNWARE_NOEXIST", "VERILINT"],
+  "CLOCK_PORT": "nvdla_core_clk",
+  "CLOCK_PERIOD": 25.0,
+  "FP_CORE_UTIL": 35,
+  "PL_TARGET_DENSITY_PCT": 45,
+  "PDN_VOFFSET": 5,
+  "PDN_HOFFSET": 5,
+  "PDN_VWIDTH": 2,
+  "PDN_HWIDTH": 2,
+  "PDN_VPITCH": 30,
+  "PDN_HPITCH": 30,
+  "PDN_SKIPTRIM": true
+}

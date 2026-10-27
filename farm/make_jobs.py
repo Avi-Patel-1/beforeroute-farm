@@ -77,6 +77,9 @@ def main() -> int:
             if ex:
                 ov["EXTRA_EXCLUDED_CELLS"] = CLKDLY
             spec = {"tag": tag, "design": f"designs/{dname}", "config": d["config"], "overrides": ov}
+            if os.path.exists(os.path.join(HERE, "..", "designs", dname, "fetch_rtl.py")):
+                # third-party RTL that is not committed (e.g. NVDLA): fetched + hash-checked on the runner
+                spec["prefetch"] = ["python3", "-I", f"designs/{dname}/fetch_rtl.py"]
             json.dump(spec, open(os.path.join(JOBS, tag + ".json"), "w"), indent=1)
             tags.append(tag)
     json.dump(tags, open(os.path.join(JOBS, f"{a.prefix}.tags.json"), "w"))

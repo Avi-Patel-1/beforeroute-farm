@@ -29,3 +29,5 @@ deck/
 agents/
 results-gf180/
 .claude/
+# fetched third-party RTL (NVDLA etc.): never committed, see designs/*/fetch_rtl.py
+designs/*/rtl/

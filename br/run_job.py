@@ -6,7 +6,11 @@ Usage:
              [--override KEY=JSONVALUE ...] [--overrides-json <file>]
              [--results <dir>] [--jobs 2] [--keep-run] [--pdk-root <dir>]
 
-Steps: (1) write an overlay config (base config + overrides) into the design
+Steps: (0) optional `prefetch` from the job spec: a command (argv list, or a
+list of argv lists) run from the repo root before the flow, e.g. a design's
+fetch_rtl.py that downloads third-party RTL that is not committed here
+(designs/nvdla_csc); a failure ends the job with status "prefetch_failed",
+(1) write an overlay config (base config + overrides) into the design
 dir, (2) run `librelane` to completion, (3) DumpNetsPostGRT on the run,
 (4) labels from the nine-corner signoff reports, (5) copy the compact outputs
 (nets.jsonl, labels.json, final_nets.json, metrics.json, resolved.json, the
@@ -25,6 +29,30 @@ import sys
 import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.abspath(os.path.join(HERE, ".."))
+
+
+def run_prefetch(prefetch, results: str, timeout: int = 900) -> dict:
+    """Run the job spec's prefetch command(s) from the repo root; log to <results>/prefetch.log."""
+    cmds = prefetch if prefetch and isinstance(prefetch[0], list) else [prefetch]
+    rec = {"cmds": cmds, "exit": 0}
+    t0 = time.time()
+    with open(os.path.join(results, "prefetch.log"), "w") as lf:
+        for argv in cmds:
+            argv = [sys.executable if (i == 0 and x in ("python3", "python")) else x for i, x in enumerate(argv)]
+            lf.write(f"[br] prefetch: {' '.join(argv)}\n")
+            lf.flush()
+            try:
+                r = subprocess.run(argv, cwd=ROOT, stdout=lf, stderr=subprocess.STDOUT, timeout=timeout)
+                rc = r.returncode
+            except subprocess.TimeoutExpired:
+                rc = -9
+                lf.write("\n[br] PREFETCH TIMEOUT\n")
+            if rc != 0:
+                rec["exit"] = rc
+                break
+    rec["seconds"] = round(time.time() - t0, 1)
+    return rec
 
 
 def load_config(path):
@@ -48,6 +76,7 @@ def main() -> int:
     ap.add_argument("--keep-run", action="store_true")
     ap.add_argument("--pdk-root", default=os.environ.get("PDK_ROOT", "/home/claude/eda/pdk"))
     ap.add_argument("--timeout", type=int, default=7200)
+    ap.add_argument("--prefetch-only", action="store_true", help="run the job spec's prefetch (if any) and exit")
     a = ap.parse_args()
     spec = {}
     if a.job_spec:
@@ -55,6 +84,16 @@ def main() -> int:
         a.design = a.design or spec["design"]
         a.config = a.config or spec["config"]
         a.tag = a.tag or spec["tag"]
+    if a.prefetch_only:
+        if not spec.get("prefetch"):
+            print("[br] no prefetch in job spec")
+            return 0
+        pdir = os.path.abspath(os.path.join(a.results, a.tag or "prefetch"))
+        os.makedirs(pdir, exist_ok=True)
+        rec = run_prefetch(spec["prefetch"], pdir)
+        print(open(os.path.join(pdir, "prefetch.log")).read()[-4000:])
+        print(json.dumps(rec))
+        return 0 if rec["exit"] == 0 else 1
     if not (a.design and a.config and a.tag):
         ap.error("--design, --config and --tag are required (or --job-spec)")
 
@@ -87,6 +126,14 @@ def main() -> int:
         "host": os.uname().nodename,
         "jobs": a.jobs,
     }
+    if spec.get("prefetch"):
+        manifest["prefetch"] = run_prefetch(spec["prefetch"], results)
+        if manifest["prefetch"]["exit"] != 0:
+            manifest["status"] = "prefetch_failed"
+            manifest["ended_at"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+            json.dump(manifest, open(os.path.join(results, "job.json"), "w"), indent=1)
+            print(json.dumps(manifest, indent=1))
+            return 1
     run_dir = os.path.join(design, "runs", a.tag)
     if os.path.exists(run_dir):
         shutil.rmtree(run_dir)
