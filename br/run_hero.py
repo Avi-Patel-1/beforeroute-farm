@@ -79,6 +79,9 @@ def arm_summary(results, tag):
             "data_slew": sum(1 for r in data if r.get("viol_slew")),
             "data_cap": sum(1 for r in data if r.get("viol_cap")),
             "data_fanout": sum(1 for r in data if r.get("viol_fanout")),
+            # severity in the spirit of the ICCAD'24 Problem C score: summed normalized overshoot
+            "data_slew_overshoot": round(sum(max(0.0, (r.get("worst_slew_ratio_s") or 0) - 1) for r in data), 4),
+            "data_cap_overshoot": round(sum(max(0.0, (r.get("worst_cap_ratio_s") or 0) - 1) for r in data), 4),
         })
     except Exception:
         pass
