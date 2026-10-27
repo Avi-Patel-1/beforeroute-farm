@@ -81,8 +81,20 @@ def main():
     for base, arm, out, prev_list, prev_arm in todo:
         r = sh([sys.executable, "br/iterate.py", "--base", base, "--out", out, "--prev-list", prev_list, "--prev-arm", prev_arm, "--results", a.results])
         print(r.stdout.strip() or r.stderr.strip()[:300])
-        if r.returncode == 0:
-            made.append((base, arm, out))
+        if r.returncode != 0:
+            continue
+        try:
+            info = json.loads(r.stdout.strip().splitlines()[-1])
+        except Exception:
+            info = {}
+        if info.get("added", 1) == 0:
+            # every residual violator is already on the list: the next pass would repeat the previous one exactly
+            # (deterministic flow) -> the chain has stalled at this violator count; record it, do not dispatch
+            with open(state, "a") as f:
+                f.write(f"{base} {arm} STALLED\n")
+            print(f"[advance] {base} {arm}: stalled (no new nets to add); not dispatched")
+            continue
+        made.append((base, arm, out))
     if a.dry_run or not made:
         return 0
     sh(["git", "add"] + [m[2] for m in made])
