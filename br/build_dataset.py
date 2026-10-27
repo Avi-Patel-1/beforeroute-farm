@@ -195,7 +195,7 @@ def main() -> int:
     for rdir in sorted(glob.glob(os.path.join(results, "*"))):
         if not os.path.isdir(rdir) or not os.path.exists(os.path.join(rdir, "job.json")):
             continue
-        if rdir.endswith(("-ckpt", "-dmp")):  # checkpoint feature dumps carry no labels of their own
+        if rdir.endswith(("-ckpt", "-dmp")) or "-ckptrc" in os.path.basename(rdir):  # checkpoint feature dumps carry no labels
             continue
         try:
             rows, stats = load_run(rdir)

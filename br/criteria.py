@@ -173,6 +173,10 @@ def main() -> int:
             ("A11a thr500-70 fewer violators than lst-cal-70 (learned RC calibration, equal budget)", lambda b, r: c_model_vs_rule(r, "thr500-70", ["lst-cal-70"]), (4, 6)),
             ("A11b thr500-70 fewer violators than lst-calt-70 (learned RC calibration, own threshold)", lambda b, r: c_model_vs_rule(r, "thr500-70", ["lst-calt-70"]), (4, 6)),
         ]),
+        "A12": (R3, [
+            ("A12a thr500-70c fewer violators than rct213-70 (re-timed wire cap x2.130 list, same actuator)", lambda b, r: c_model_vs_rule(r, "thr500-70c", ["rct213-70"]), (4, 6)),
+            ("A12b thr500-70c fewer cells than rct213-70", lambda b, r: c_fewer_cells(r, "thr500-70c", "rct213-70"), (4, 6)),
+        ]),
         "NV": (["nv1-nvdla_csc-000"], [
             ("A7 (A6.2) tgt050-70c vs uni50", lambda b, r: c_target_vs_uni50(r, "tgt050-70c"), (1, 1)),
             ("A7 (A6.3) tgt050-70c fewer violators than est050-70c", lambda b, r: c_model_vs_rule(r, "tgt050-70c", ["est050-70c"]), (1, 1)),

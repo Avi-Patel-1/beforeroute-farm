@@ -89,9 +89,12 @@ def main() -> int:
                     src_base = os.path.join(td, a.base)
                     if os.path.exists(src_arm):
                         shutil.copytree(src_arm, dst, dirs_exist_ok=True)
-                    src_ck = os.path.join(td, a.base + "-ckpt")  # checkpoint features scored by "c" arms
-                    if os.path.exists(os.path.join(src_ck, "nets.jsonl")) and not os.path.exists(os.path.join(a.results, a.base + "-ckpt", "nets.jsonl")):
-                        shutil.copytree(src_ck, os.path.join(a.results, a.base + "-ckpt"), dirs_exist_ok=True)
+                    for ck in sorted(os.listdir(td)):  # checkpoint features ("c" arms: -ckpt; re-timed: -ckptrc<K>)
+                        if not ck.startswith(a.base + "-ckpt"):
+                            continue
+                        src_ck = os.path.join(td, ck)
+                        if os.path.exists(os.path.join(src_ck, "nets.jsonl")) and not os.path.exists(os.path.join(a.results, ck, "nets.jsonl")):
+                            shutil.copytree(src_ck, os.path.join(a.results, ck), dirs_exist_ok=True)
                     if os.path.exists(src_base):
                         # always keep the lists the runner scored/used for this arm (flagged_*.json, tiers_*.json, *.scores.csv)
                         os.makedirs(os.path.join(a.results, a.base), exist_ok=True)

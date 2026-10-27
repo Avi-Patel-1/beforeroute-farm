@@ -61,6 +61,31 @@ PY
   SRC=$D
   echo "[hero] scoring checkpoint features ($D)"
 }
+use_rc_checkpoint_features() {
+  # post-GRT checkpoint features re-timed with LAYERS_RC = farm/rc/sky130_cap$1.json (wire cap scaled to extraction)
+  local D=results/$BASE-ckptrc$1
+  if [ ! -f $D/nets.jsonl ]; then
+    local ST
+    ST=$(ls $DESIGN/runs/$BASE/*-openroad-checkantennas/state_out.json | head -1)
+    mkdir -p $D
+    $DOCKER python3 br/run_dump.py $BASE_RUN --state /work/$ST --layers-rc /work/farm/rc/sky130_cap$1.json --out /work/$D/dump --pdk-root /work/pdk > $D/dump.log 2>&1 || true
+    sudo chown -R "$(id -u):$(id -g)" results || true
+    if [ ! -f $D/dump/nets.jsonl ]; then echo "[hero] re-timed checkpoint dump failed"; tail -20 $D/dump.log; exit 3; fi
+    cp $D/dump/nets.jsonl $D/dump/dump_summary.json $D/
+    rm -rf $D/dump
+    cp results/$BASE/resolved.json $D/resolved.json
+    python3 - "$D" "$BASE" "$1" <<'PY'
+import json, os, sys
+d, base, k = sys.argv[1], sys.argv[2], sys.argv[3]
+json.dump({"tag": base + "-ckptrc" + k, "status": "completed", "kind": f"checkpoint features re-timed with wire cap x{int(k)/100}, no signoff data"}, open(os.path.join(d, "job.json"), "w"))
+json.dump({"nets": [], "summary": {"nets_violating": 0, "corner_counts": {}}}, open(os.path.join(d, "labels.json"), "w"))
+json.dump({"nets": {}}, open(os.path.join(d, "final_nets.json"), "w"))
+json.dump({}, open(os.path.join(d, "metrics.json"), "w"))
+PY
+  fi
+  SRC=$D
+  echo "[hero] re-timed checkpoint features ($D)"
+}
 case "$ARM" in
   seed)
     echo "[hero] seed: baseline checkpoint only (populates the cache)" ;;
@@ -140,6 +165,16 @@ case "$ARM" in
     python3 -m pip install -q pandas pyarrow lightgbm scikit-learn
     python3 br/score.py --model $MODEL --run-results $SRC $SELARG $RULE --out results/$BASE/flagged_$ARM.json
     $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm targeted --tag $BASE-$ARM --slew-pct $H --cap-pct $H --passes $PASSES $PROT --flagged /work/results/$BASE/flagged_$ARM.json --results results --pdk-root /work/pdk --jobs $JOBS ;;
+  rct*)
+    # rct213-70: list = signal nets whose RE-TIMED estimate (wire cap x K/100 via LAYERS_RC, at the post-GRT checkpoint)
+    # violates: rule R8 >= 1.0; then BeforeRoute's actuator on that list: targeted repair at H% margin (default RC),
+    # every other net do-not-touch. Also dumps the default-RC checkpoint features (results/$BASE-ckpt) for the comparison.
+    K=${ARM#rct}; K=${K%%-*}; H=${ARM##*-}
+    use_checkpoint_features
+    use_rc_checkpoint_features $K
+    python3 -m pip install -q pandas pyarrow lightgbm scikit-learn
+    python3 br/score.py --model none --rule R8 --run-results $SRC --threshold 1.0 --out results/$BASE/flagged_$ARM.json
+    $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm targeted --tag $BASE-$ARM --slew-pct $H --cap-pct $H --passes 1 --flagged /work/results/$BASE/flagged_$ARM.json --results results --pdk-root /work/pdk --jobs $JOBS ;;
   lt*)
     # lt050-80-60-40: top 5% split by predicted signoff ratio (>=1.3 | >=1.1 | rest) at margins 80/60/40
     K=${ARM#lt}; K=${K%%-*}; M=${ARM#lt*-}; H1=${M%%-*}; M2=${M#*-}; H2=${M2%%-*}; H3=${M2#*-}
@@ -161,7 +196,7 @@ print(','.join(f'{int(x.split(\"-\")[0])/1000}:{x.split(\"-\")[1]}' for x in a.s
 esac
 sudo chown -R "$(id -u):$(id -g)" results || true
 # functional equivalence of the repaired netlist vs the baseline (targeted / threshold / rule / list arms)
-case "$ARM" in tgt*|thr*|det*|lst-*|lsx-*|exp*|est*)
+case "$ARM" in tgt*|thr*|det*|lst-*|lsx-*|exp*|est*|rct*)
   if [ -f results/$BASE/final.nl.v.gz ] && [ -f results/$BASE-$ARM/final.nl.v.gz ]; then
     TOP=$(python3 -c "import json;print(json.load(open('results/$BASE/resolved.json'))['DESIGN_NAME'])")
     mkdir -p results/$BASE-$ARM/equiv
