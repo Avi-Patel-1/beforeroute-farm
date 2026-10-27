@@ -105,8 +105,10 @@ case "$ARM" in
   rerun)
     $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm base --tag $BASE-rerun --results results --pdk-root /work/pdk --jobs $JOBS ;;
   uni*)
+    # uni<H>[t]: stock post-GRT repair on every net at H% (the base config's own RC); t = timing repair afterwards
     H=${ARM#uni}
-    $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm uniform --tag $BASE-$ARM --slew-pct $H --cap-pct $H --results results --pdk-root /work/pdk --jobs $JOBS ;;
+    TOV=(); case "$H" in *t) H=${H%t}; TOV=(--override "RUN_POST_GRT_RESIZER_TIMING=true");; esac
+    $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm uniform --tag $BASE-$ARM --slew-pct $H --cap-pct $H "${TOV[@]}" --results results --pdk-root /work/pdk --jobs $JOBS ;;
   lst-*)
     # lst-<name>-<H>: targeted repair on a committed net list farm/lists/<BASE>/<name>.json (signoff-guided loops, cleanup passes)
     NAME=${ARM#lst-}; H=${NAME##*-}; NAME=${NAME%-*}
@@ -116,9 +118,11 @@ case "$ARM" in
   rcal*)
     # rcal<k>-<H>: stock post-GRT repair on every net, router estimate correlated to extraction by a global wire-cap
     # scale k/100 (LAYERS_RC from farm/rc/sky130_cap<k>.json = LEF cap x k/100), margin H% -- the "just calibrate the estimator" control
+    # suffix t (rcal<k>-<H>t): the flow's post-GRT timing repair (setup + hold, RUN_POST_GRT_RESIZER_TIMING) runs after the repair
     K=${ARM#rcal}; K=${K%%-*}; H=${ARM##*-}
+    TOV=(); case "$H" in *t) H=${H%t}; TOV=(--override "RUN_POST_GRT_RESIZER_TIMING=true");; esac
     RC=$(tr -d ' \n' < farm/rc/sky130_cap$K.json)
-    $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm uniform --tag $BASE-$ARM --slew-pct $H --cap-pct $H --override "LAYERS_RC=$RC" --results results --pdk-root /work/pdk --jobs $JOBS ;;
+    $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm uniform --tag $BASE-$ARM --slew-pct $H --cap-pct $H --override "LAYERS_RC=$RC" "${TOV[@]}" --results results --pdk-root /work/pdk --jobs $JOBS ;;
   lsx-*)
     # lsx-<name>: escalation pass of a stalled chain — two-tier repair from a committed tiers file
     # farm/lists/<BASE>/<name>.json ({"tiers": [{"nets": list, 70}, {"nets": residual violators, 90}]})
@@ -156,10 +160,14 @@ case "$ARM" in
     #   c = score features dumped at the checkpoint itself (deployment view),
     #   r = the repair step uses the router's wire cap scaled x2.130 to match extraction (LAYERS_RC = farm/rc/sky130_cap213.json),
     #   d = replicate: no change in behaviour, a repeat run under its own tag (keeps the original arm's results intact),
-    #   q = as d, plus the long equivalence check (struct recipe, 3 h 20 min limit)
+    #   q = as d, plus the long equivalence check (struct recipe, 3 h 20 min limit),
+    #   t = the flow's post-GRT timing repair (setup + hold, RUN_POST_GRT_RESIZER_TIMING) runs after the targeted repair,
+    #   o = the repair step uses OpenROAD-flow-scripts' sky130hd per-layer R and C (farm/rc/sky130_caporfs.json)
     case "$ARM" in tgt*) K=${ARM#tgt}; SEL=frac;; thr*) K=${ARM#thr}; SEL=thr;; esac
-    K=${K%%-*}; REST=${ARM##*-}; H=${REST%%[pfhvcrdq]*}
+    K=${K%%-*}; REST=${ARM##*-}; H=${REST%%[pfhvcrdqto]*}
     RCOV=(); case "$REST" in *r*) RCOV=(--override "LAYERS_RC=$(tr -d ' \n' < farm/rc/sky130_cap213.json)");; esac
+    case "$REST" in *o*) RCOV=(--override "LAYERS_RC=$(tr -d ' \n' < farm/rc/sky130_caporfs.json)");; esac
+    case "$REST" in *t*) RCOV+=(--override "RUN_POST_GRT_RESIZER_TIMING=true");; esac
     case "$REST" in *c*) use_checkpoint_features;; esac
     PASSES=1; case "$REST" in *p2*) PASSES=2;; esac
     RULE=""; case "$REST" in *f*) RULE="--rule-fanout";; esac
@@ -196,6 +204,48 @@ print(','.join(f'{int(x.split(\"-\")[0])/1000}:{x.split(\"-\")[1]}' for x in a.s
     python3 -m pip install -q pandas pyarrow lightgbm scikit-learn
     python3 br/score.py --model $MODEL --run-results results/$BASE --tiers "$SPEC" --out results/$BASE/tiers_$ARM.json
     $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm tiered --tag $BASE-$ARM --tiers /work/results/$BASE/tiers_$ARM.json --results results --pdk-root /work/pdk --jobs $JOBS ;;
+  bst*)
+    # bst<kkk>-<Hf>-<Ha><flags> (Addendum 19, "boost, don't mask"): one repair step, two tiers --
+    #   tier 1 = the model's list (p >= kkk/1000, checkpoint features) at Hf% margin, only those nets touchable;
+    #   tier 2 = every net, no mask (the stock repair) at Ha% margin.
+    #   flags: r = wire cap x2.130 (sky130_cap213), o = ORFS per-layer R and C (sky130_caporfs), t = timing repair afterwards
+    K=${ARM#bst}; K=${K%%-*}; R=${ARM#bst*-}; HF=${R%%-*}; HA=${R#*-}; FL=${HA//[0-9]/}; HA=${HA%%[a-z]*}
+    use_checkpoint_features
+    RCOV=()
+    case "$FL" in *r*) RCOV+=(--override "LAYERS_RC=$(tr -d ' \n' < farm/rc/sky130_cap213.json)");; esac
+    case "$FL" in *o*) RCOV+=(--override "LAYERS_RC=$(tr -d ' \n' < farm/rc/sky130_caporfs.json)");; esac
+    case "$FL" in *t*) RCOV+=(--override "RUN_POST_GRT_RESIZER_TIMING=true");; esac
+    VAL=$(python3 -c "print(int('$K')/1000)")
+    python3 -m pip install -q pandas pyarrow lightgbm scikit-learn
+    python3 br/score.py --model $MODEL --run-results $SRC --threshold $VAL --out results/$BASE/flagged_$ARM.json
+    python3 -c "import json; f=json.load(open('results/$BASE/flagged_$ARM.json')); json.dump({'tiers': [{'nets': f, 'slew_pct': $HF, 'cap_pct': $HF}, {'nets': 'ALL', 'slew_pct': $HA, 'cap_pct': $HA}]}, open('results/$BASE/tiers_$ARM.json', 'w'))"
+    $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm tiered --tag $BASE-$ARM --tiers /work/results/$BASE/tiers_$ARM.json "${RCOV[@]}" --results results --pdk-root /work/pdk --jobs $JOBS ;;
+  rqn*|rnd*|rqt*)
+    # list controls under the combined actuator (Addendum 19); same masked repair as thr...cr, only the list differs:
+    #   rqn-<H><flags>       : top N nets by rule R8 on the checkpoint re-timed with wire cap x2.130, N = |model list (p >= 0.5)|
+    #   rnd<seed>-<H><flags> : N nets drawn at random (seeded), N as above
+    #   rqt<thr>-<H><flags>  : every net whose re-timed R8 >= thr/1000 (the calibrated estimate's own list)
+    #   flags as bst (r, o, t)
+    H=${ARM##*-}; FL=${H//[0-9]/}; H=${H%%[a-z]*}
+    use_checkpoint_features
+    CK=$SRC
+    use_rc_checkpoint_features 213
+    RQ=$SRC
+    RCOV=()
+    case "$FL" in *r*) RCOV+=(--override "LAYERS_RC=$(tr -d ' \n' < farm/rc/sky130_cap213.json)");; esac
+    case "$FL" in *o*) RCOV+=(--override "LAYERS_RC=$(tr -d ' \n' < farm/rc/sky130_caporfs.json)");; esac
+    case "$FL" in *t*) RCOV+=(--override "RUN_POST_GRT_RESIZER_TIMING=true");; esac
+    python3 -m pip install -q pandas pyarrow lightgbm scikit-learn
+    python3 br/score.py --model $MODEL --run-results $CK --threshold 0.5 --out results/$BASE/flagged_${ARM}_modelsize.json
+    N=$(python3 -c "import json; print(len(json.load(open('results/$BASE/flagged_${ARM}_modelsize.json'))))")
+    case "$ARM" in
+      rqn*) python3 br/score.py --model none --rule R8 --run-results $RQ --top-n $N --out results/$BASE/flagged_$ARM.json ;;
+      rnd*) SEED=${ARM#rnd}; SEED=${SEED%%-*}
+            python3 br/score.py --model none --rule RND --seed $SEED --run-results $CK --top-n $N --out results/$BASE/flagged_$ARM.json ;;
+      rqt*) T=${ARM#rqt}; T=${T%%-*}
+            python3 br/score.py --model none --rule R8 --run-results $RQ --threshold "$(python3 -c "print(int('$T')/1000)")" --out results/$BASE/flagged_$ARM.json ;;
+    esac
+    $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm targeted --tag $BASE-$ARM --slew-pct $H --cap-pct $H "${RCOV[@]}" --flagged /work/results/$BASE/flagged_$ARM.json --results results --pdk-root /work/pdk --jobs $JOBS ;;
   *) echo "unknown arm $ARM"; exit 2 ;;
 esac
 sudo chown -R "$(id -u):$(id -g)" results || true
