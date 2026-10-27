@@ -327,48 +327,80 @@ def style(ax):
     ax.set_axisbelow(True)
 
 
-def fig_learning_curve(s: pd.DataFrame, path: str, label: str) -> None:
+def fig_learning_curve(lcr: pd.DataFrame, abr: pd.DataFrame, path: str, label: str) -> None:
+    """Per held-out design: per-run median recall@5% and catch-95 / floor vs number of training runs, for
+    'N runs of other designs' (runs variant) and 'k runs of the same design only' (self variant)."""
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     from matplotlib.lines import Line2D
 
-    v = s[s["variant"] == "runs"].copy()
-    if v.empty:
+    if lcr is None or lcr.empty:
         return
-    designs = [d for d in ["picorv32", "aes_cipher_top", "salsa20", "sha512", "y_huff", "des"] if d in set(v["holdout"])]
-    fig, axes = plt.subplots(2, len(designs), figsize=(2.2 * len(designs) + 0.6, 4.9), sharex=True, facecolor=SURF)
+    r = lcr[(lcr["positives"] > 0) & lcr["variant"].isin(["runs", "self"])].copy()
+    if r.empty:
+        return
+    r["xf"] = r["frac_to_catch_95"] / (0.95 * r["positives"] / r["n_nets"])
+    per = r.groupby(["variant", "holdout", "n", "seed"]).agg(rec=("recall@5%", "median"), rec25=("recall@5%", lambda v: v.quantile(0.25)),
+                                                            rec75=("recall@5%", lambda v: v.quantile(0.75)), xf=("xf", "median"),
+                                                            xf25=("xf", lambda v: v.quantile(0.25)), xf75=("xf", lambda v: v.quantile(0.75)))
+    per = per.groupby(level=[0, 1, 2]).mean().reset_index()
+    # x position = number of training runs (runs: N, or the pool size for 'all'; self: k)
+    if "n_train_runs" in lcr.columns:
+        pass
+    ref = {}
+    if abr is not None and not abr.empty:
+        q = abr[abr["positives"] > 0].copy()
+        q["xf"] = q["frac_to_catch_95"] / (0.95 * q["positives"] / q["n"])
+        ref = q.groupby(["holdout", "rung_name"]).agg(rec=("recall@5%", "median"), xf=("xf", "median")).to_dict("index")
+    designs = [d for d in ["picorv32", "aes_cipher_top", "salsa20", "sha512", "y_huff", "des"] if d in set(per["holdout"])]
+    if not designs:
+        return
+    colors = {"runs": BLUE, "self": "#eb6834"}
+    fig, axes = plt.subplots(2, len(designs), figsize=(2.25 * len(designs) + 0.7, 5.2), sharex=True, facecolor=SURF)
     axes = np.atleast_2d(axes).reshape(2, len(designs))
+    xmax = 2
     for j, d in enumerate(designs):
-        g = v[v["holdout"] == d].copy()
-        x = g["n_train_runs"].values
-        for i, (m, ref, ylab) in enumerate((("recall5", "r8_pooled_recall5", "recall at 5% flagged"),
-                                            ("catch95", "r8_pooled_catch95", "fraction flagged\nto catch 95%"))):
+        for v in ("runs", "self"):
+            g = per[(per["holdout"] == d) & (per["variant"] == v)].copy()
+            if g.empty:
+                continue
+            pool = lcr[(lcr["variant"] == v) & (lcr["holdout"] == d)]
+            allx = float(pool["_pool_runs"].iloc[0]) if "_pool_runs" in pool.columns and len(pool) else 256.0
+            g["x"] = [allx if n == "all" else float(n) for n in g["n"]]
+            g = g.sort_values("x")
+            xmax = max(xmax, g["x"].max())
+            for i, (m, lo, hi) in enumerate((("rec", "rec25", "rec75"), ("xf", "xf25", "xf75"))):
+                ax = axes[i, j]
+                ax.fill_between(g["x"], g[lo], g[hi], color=colors[v], alpha=0.13, linewidth=0)
+                ax.plot(g["x"], g[m], color=colors[v], linewidth=1.6, marker="o", markersize=4, markeredgecolor=SURF, markeredgewidth=1)
+        for i in range(2):
             ax = axes[i, j]
             style(ax)
-            mean, lo, hi = g[f"pooled_{m}"].values, g[f"pooled_{m}_min"].values, g[f"pooled_{m}_max"].values
-            ax.fill_between(x, lo, hi, color=BLUE, alpha=0.15, linewidth=0)
-            ax.plot(x, mean, color=BLUE, linewidth=1.6, marker="o", markersize=4, markeredgecolor=SURF, markeredgewidth=1)
-            if ref in g:
-                ax.axhline(g[ref].mean(), color=RULE_GRAYS["rule_R8"], linewidth=1.2, linestyle=(0, (4, 3)))
             ax.set_xscale("log", base=2)
-            xt = [1, 4, 16, 64]
-            ax.set_xticks(xt)
-            ax.set_xticklabels([str(t) for t in xt])
-            if i == 0:
-                ax.set_title(d, fontsize=9.5, color=INK, pad=6)
-                ax.set_ylim(min(0.5, np.nanmin(lo) - 0.03), 1.005)
+            rr = ref.get((d, "rule_R8"))
+            if rr:
+                ax.axhline(rr["rec" if i == 0 else "xf"], color=RULE_GRAYS["rule_R8"], linewidth=1.2, linestyle=(0, (4, 3)))
+            if i == 1:
+                ax.axhline(2.0, color=INK, linewidth=1.0, linestyle=(0, (1, 1.5)))
+                ax.set_ylim(0.8, max(3.2, min(8.0, ax.get_ylim()[1])))
+                ax.set_xlabel("training runs", fontsize=8, color=INK2)
             else:
-                ax.set_ylim(0, max(0.2, np.nanmax(hi) * 1.1))
-                ax.set_xlabel("training runs (other designs)", fontsize=8, color=INK2)
+                ax.set_ylim(min(0.6, ax.get_ylim()[0]), 1.01)
+                ax.set_title(d, fontsize=9.5, color=INK, pad=6)
             if j == 0:
-                ax.set_ylabel(ylab, fontsize=8.5, color=INK2)
-    handles = [Line2D([], [], color=BLUE, linewidth=1.6, marker="o", markersize=4, label="LightGBM (mean of 3 seeds; band = min-max)"),
-               Line2D([], [], color=RULE_GRAYS["rule_R8"], linewidth=1.2, linestyle=(0, (4, 3)), label="rule R8 (no training)")]
-    fig.legend(handles=handles, loc="upper center", ncol=2, frameon=False, fontsize=8.5, bbox_to_anchor=(0.5, 0.995))
-    fig.suptitle("")
-    fig.text(0.5, 0.005, f"Held-out design (columns); x = last point is all runs of the other designs. {label}",
-             ha="center", fontsize=7.5, color=INK2)
+                ax.set_ylabel("recall at 5% flagged\n(per-run median)" if i == 0 else "catch-95 / floor\n(per-run median)", fontsize=8.5, color=INK2)
+    xt = [t for t in (1, 4, 16, 64, 256) if t <= xmax * 1.01]
+    for ax in axes[1]:
+        ax.set_xticks(xt)
+        ax.set_xticklabels([str(t) for t in xt])
+    handles = [Line2D([], [], color=BLUE, linewidth=1.6, marker="o", markersize=4, label="GBM on N runs of OTHER designs (last point = all)"),
+               Line2D([], [], color=colors["self"], linewidth=1.6, marker="o", markersize=4, label="GBM on k runs of the SAME design only"),
+               Line2D([], [], color=RULE_GRAYS["rule_R8"], linewidth=1.2, linestyle=(0, (4, 3)), label="rule R8 (no training)"),
+               Line2D([], [], color=INK, linewidth=1.0, linestyle=(0, (1, 1.5)), label="2x floor")]
+    fig.legend(handles=handles, loc="upper center", ncol=4, frameon=False, fontsize=8, bbox_to_anchor=(0.5, 0.995))
+    fig.text(0.5, 0.005, "Held-out design per column; lines = seed mean of the per-run median, bands = per-run IQR; "
+             f"floor = 0.95 x the run's violator rate. {label}", ha="center", fontsize=7.2, color=INK2)
     fig.tight_layout(rect=(0, 0.03, 1, 0.93))
     fig.savefig(path, dpi=170, facecolor=SURF)
     plt.close(fig)
@@ -451,7 +483,9 @@ def main() -> int:
         s = summarize_lc(lc)
         s.to_csv(os.path.join(a.out, "lc_summary.csv"), index=False)
         md.append(lc_tables(s))
-        fig_learning_curve(s, os.path.join(a.out, "learning_curve.png"), a.label)
+        pool_runs = lc[lc["n"].astype(str) == "all"].groupby(["variant", "holdout"])["n_train_runs"].max().to_dict()
+        lcr["_pool_runs"] = [pool_runs.get((v, d), 256) for v, d in zip(lcr["variant"], lcr["holdout"])]
+        fig_learning_curve(lcr, load_csv(a.ablation, "ablation_runs.csv"), os.path.join(a.out, "learning_curve.png"), a.label)
     ab = load_csv(a.ablation, "ablation.csv")
     if not ab.empty:
         ab["rung"] = ab["rung"].astype(str)
