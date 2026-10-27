@@ -98,6 +98,10 @@ def main() -> int:
     panels = [("left_pct", "violators left, % of baseline", (0, None)), ("cells", "cells changed (log)", None),
               ("hold_pct", "hold slack kept, %", None)]
     left0, gap, top, bottom = (0.17 if (a.rounds45 or a.all11) else 0.145), 0.035, (0.80 if a.all11 else 0.78), (0.2 if a.all11 else 0.25)
+    if not a.title:
+        top = 0.88
+        if a.all11:
+            bottom = 0.27
     w = (0.985 - left0 - 2 * gap) / 3
     for j, (key, title, _) in enumerate(panels):
         ax = fig.add_axes([left0 + j * (w + gap), bottom, w, top - bottom])
@@ -136,11 +140,12 @@ def main() -> int:
             ax.set_xlim(min(-30, lo - 10), 115)
             ax.axvline(0, color=F.CRIT, lw=1.0, ls=(0, (3, 2)), zorder=1)
             ax.xaxis.set_major_formatter(F.mticker.FuncFormatter(lambda v, _: f"{v:.0f}%"))
-    fig.text(0.012, 0.975, a.title, fontsize=F.FS + 3,
-             fontweight="semibold", color=F.INK, va="top")
+    if a.title:
+        fig.text(0.012, 0.975, a.title, fontsize=F.FS + 3,
+                 fontweight="semibold", color=F.INK, va="top")
     sub = a.subtitle or ("Round 3: six design families the model never saw (baseline violators in brackets); "
                          "one run per arm; left of the dashed line = hold violated")
-    fig.text(0.012, 0.895, sub, fontsize=F.FS - 1, color=F.INK2, va="top")
+    fig.text(0.012, 0.895 if a.title else 0.985, sub, fontsize=F.FS - 1, color=F.INK2, va="top")
     items = [(mk, col, ms, lab, None, filled) for _, lab, mk, col, ms, filled in POL]
     if len(items) <= 4:
         F.key_row(fig, items[:2], 0.012, 0.115, gap=0.03)
