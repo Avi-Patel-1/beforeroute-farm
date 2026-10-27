@@ -39,9 +39,14 @@ def log(msg: str) -> None:
     print(f"[{time.strftime('%H:%M:%S')}] {msg}", flush=True)
 
 
-def load(path: str, all_runs: bool = False) -> pd.DataFrame:
+def load(path: str, all_runs: bool = False, float32: bool = False) -> pd.DataFrame:
+    """float32=True downcasts float64 feature columns (about half the memory; for small machines)."""
     cols = sorted(set(["run", "design", "sigtype", "join_how", "driver_kind", "y"] + FEATURES + LR_FEATURES))
     df = pd.read_parquet(path, columns=cols)
+    if float32:
+        f64 = [c for c in df.columns if df[c].dtype == np.float64]
+        lim = float(np.finfo(np.float32).max)
+        df[f64] = df[f64].clip(-lim, lim).astype(np.float32)
     df = df[(df["join_how"] != "none") & (df["driver_kind"] != "none")]
     if not all_runs:
         df = df[df["run"].str.startswith(DATA_PREFIXES)]
