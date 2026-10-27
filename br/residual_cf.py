@@ -128,6 +128,12 @@ def summarize(path=None):
             "missed_r8_med": med([v["ORFS RC"]["missed_r8_median"] for v in R.values() if v["ORFS RC"].get("missed_r8_median") == v["ORFS RC"].get("missed_r8_median") and v["ORFS RC"].get("missed_r8_median") is not None] or [float("nan")]),
             "blind_cor_min": min(v["ORFS RC"]["blind"] for v in R.values()), "blind_cor_max": max(v["ORFS RC"]["blind"] for v in R.values()),
             "n_blind_half": sum(1 for v in R.values() if v["ORFS RC"]["blind"] >= 0.5),
+            "half_loo_better": sum(1 for v in L.values() if v["ORFS RC"]["blind"] >= 0.5
+                                   and v["ORFS RC, CF-trained LOO"]["c95_gbm"] < 0.9 * v["ORFS RC"]["c95_est"]),
+            "half_loo_n": sum(1 for v in L.values() if v["ORFS RC"]["blind"] >= 0.5),
+            "loo_gain_max": max([1 - v["ORFS RC, CF-trained LOO"]["c95_gbm"] / v["ORFS RC"]["c95_est"] for v in L.values()] or [0]),
+            "loo_gain_min_better": min([1 - v["ORFS RC, CF-trained LOO"]["c95_gbm"] / v["ORFS RC"]["c95_est"] for v in L.values()
+                                        if v["ORFS RC, CF-trained LOO"]["c95_gbm"] < 0.9 * v["ORFS RC"]["c95_est"]] or [0]),
             "loo_better_10": sum(1 for v in L.values() if v["ORFS RC, CF-trained LOO"]["c95_gbm"] < 0.9 * v["ORFS RC"]["c95_est"]),
             "loo_worse_10": sum(1 for v in L.values() if v["ORFS RC, CF-trained LOO"]["c95_gbm"] > 1.1 * v["ORFS RC"]["c95_est"]),
             "designs": sorted(R)}
