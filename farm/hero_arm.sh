@@ -8,12 +8,32 @@ DOCKER="docker run --rm -v $PWD:/work -w /work -e PDK_ROOT=/work/pdk $IMAGE"
 SPEC=farm/jobs/$BASE.json
 DESIGN=$(python3 -c "import json;print(json.load(open('$SPEC'))['design'])")
 mkdir -p results
-# 1. baseline to a kept checkpoint (deterministic; rebuilt per runner)
-$DOCKER python3 br/run_job.py --job-spec $SPEC --design /work/$DESIGN --jobs $JOBS --results results --pdk-root /work/pdk --keep-run --timeout 16000
-sudo chown -R "$(id -u):$(id -g)" results designs || true
+# 1. baseline to a kept checkpoint (deterministic). Restored from the actions cache when available;
+#    otherwise built here and pruned to the steps up to the post-GRT checkpoint so the cache stays small.
+if [ -f results/$BASE/job.json ] && ls $DESIGN/runs/$BASE/*-openroad-checkantennas/state_out.json >/dev/null 2>&1 && [ -f $DESIGN/config.$BASE.json ]; then
+  echo "[hero] baseline checkpoint restored from cache"
+else
+  $DOCKER python3 br/run_job.py --job-spec $SPEC --design /work/$DESIGN --jobs $JOBS --results results --pdk-root /work/pdk --keep-run --timeout 16000
+  sudo chown -R "$(id -u):$(id -g)" results designs || true
+  python3 - "$DESIGN/runs/$BASE" <<'PY'
+import glob, os, re, shutil, sys
+rd = sys.argv[1]
+ck = sorted(glob.glob(os.path.join(rd, "*-openroad-checkantennas")))
+if ck:
+    idx = int(os.path.basename(ck[0]).split("-")[0])
+    for d in os.listdir(rd):
+        m = re.match(r"^(\d+)-", d)
+        p = os.path.join(rd, d)
+        if (m and int(m.group(1)) > idx) or d == "final":
+            shutil.rmtree(p, ignore_errors=True)
+    print(f"[hero] pruned run dir to steps <= {idx}")
+PY
+fi
 test -f results/$BASE/nets.jsonl
 BASE_RUN=/work/$DESIGN/runs/$BASE
 case "$ARM" in
+  seed)
+    echo "[hero] seed: baseline checkpoint only (populates the cache)" ;;
   rerun)
     $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm base --tag $BASE-rerun --results results --pdk-root /work/pdk --jobs $JOBS ;;
   uni*)

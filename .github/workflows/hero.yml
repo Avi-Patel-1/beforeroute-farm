@@ -45,6 +45,17 @@ jobs:
         run: |
           mkdir -p pdk
           docker run --rm -v "$PWD:/work" -w /work -e PDK_ROOT=/work/pdk "$IMAGE" ciel enable --pdk-family sky130 "$PDK_VERSION"
+      - name: Resolve design dir
+        id: spec
+        run: echo "design=$(python3 -c "import json;print(json.load(open('farm/jobs/${{ inputs.base_tag }}.json'))['design'])")" >> "$GITHUB_OUTPUT"
+      - name: Restore baseline checkpoint (pruned to the post-GRT state)
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ steps.spec.outputs.design }}/runs/${{ inputs.base_tag }}
+            ${{ steps.spec.outputs.design }}/config.${{ inputs.base_tag }}.json
+            results/${{ inputs.base_tag }}
+          key: base-${{ inputs.base_tag }}-${{ hashFiles(format('farm/jobs/{0}.json', inputs.base_tag)) }}-v1
       - name: Run arm
         run: bash farm/hero_arm.sh "${{ inputs.base_tag }}" "${{ matrix.arm }}" "${{ inputs.model }}" 4 || true
       - name: Upload results
