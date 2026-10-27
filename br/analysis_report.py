@@ -95,10 +95,11 @@ def lc_tables(s: pd.DataFrame) -> str:
 
 def ablation_tables(ab: pd.DataFrame) -> str:
     out = ["\n### Ablation ladder - leave-one-design-out, signal nets (pooled over the design's runs; per-run median [IQR])\n"]
-    hdr = "| design | rung | R@5% pooled | catch-95 pooled | PR-AUC pooled | R@5% per-run med [IQR] | catch-95 per-run med [IQR] | count calib. err med |"
+    hdr = "| design | viol. rate (catch-95 floor = 0.95x) | rung | R@5% pooled | catch-95 pooled | PR-AUC pooled | R@5% per-run med [IQR] | catch-95 per-run med [IQR] | count calib. err med |"
     out += [hdr, "|" + "---|" * (hdr.count("|") - 1)]
+    nc, pc = ("eval_n", "eval_pos") if "eval_n" in ab.columns else ("n", "pos")
     for _, r in ab.iterrows():
-        out.append(f"| {r['holdout']} ({r['n_eval_runs']:.0f} runs) | {r['rung']} {RUNG_LABEL.get(r['rung_name'], r['rung_name'])} | "
+        out.append(f"| {r['holdout']} ({r['n_eval_runs']:.0f} runs) | {r[pc] / r[nc]:.2%} | {r['rung']} {RUNG_LABEL.get(r['rung_name'], r['rung_name'])} | "
                    f"{fmt(r['pooled_recall5'])} | {fmt(r['pooled_catch95'])} | {fmt(r['pooled_prauc'])} | "
                    f"{iqr(r, 'run_recall5')} | {iqr(r, 'run_catch95')} | {fmt(r.get('run_calerr_med'), 2)} |")
     # compact cross-design views
@@ -113,6 +114,46 @@ def ablation_tables(ab: pd.DataFrame) -> str:
         out.append("|" + "---|" * (len(cols) + 1))
         for idx, row in p.iterrows():
             out.append(f"| {idx} | " + " | ".join(fmt(row[c]) for c in cols) + " |")
+    return "\n".join(out)
+
+
+def paired_table(runs: pd.DataFrame) -> str:
+    """Per-run paired comparison of rungs on the same runs (runs with >= 1 violator)."""
+    if runs.empty:
+        return ""
+    runs = runs[runs["positives"] > 0]
+    pairs = [("lgbm_full", "logreg_calibrated_estimate"), ("lgbm_full", "est_slew"), ("lgbm_full", "rule_R8"),
+             ("lgbm_estimate_only", "logreg_calibrated_estimate"), ("lgbm_full", "lgbm_estimate_only")]
+    out = ["\n### Paired per-run comparison (same runs): median per-run difference in catch-95 (B - A; > 0 means A flags less) "
+           "and share of runs where A needs fewer flags (ties excluded)\n"]
+    hdr = "| design | runs | " + " | ".join(f"{RUNG_LABEL[a]} vs {RUNG_LABEL[b]}" for a, b in pairs) + " |"
+    out += [hdr, "|" + "---|" * (len(pairs) + 2)]
+    piv = runs.pivot_table(index=["holdout", "run"], columns="rung_name", values="frac_to_catch_95", aggfunc="first")
+    tot = {p: [] for p in pairs}
+    for d, g in piv.groupby(level=0):
+        cells = []
+        for a, b in pairs:
+            if a not in g or b not in g:
+                cells.append("-")
+                continue
+            diff = (g[b] - g[a]).dropna()
+            if diff.empty:
+                cells.append("-")
+                continue
+            tot[(a, b)].append(diff)
+            nz = diff[diff != 0]
+            win = (nz > 0).mean() if len(nz) else float("nan")
+            cells.append(f"{diff.median():+.4f} ({win:.0%})")
+        out.append(f"| {d} | {len(g)} | " + " | ".join(cells) + " |")
+    cells = []
+    for p in pairs:
+        if tot[p]:
+            allv = pd.concat(tot[p])
+            nz = allv[allv != 0]
+            cells.append(f"{allv.median():+.4f} ({(nz > 0).mean():.0%})")
+        else:
+            cells.append("-")
+    out.append(f"| ALL runs | {len(piv)} | " + " | ".join(cells) + " |")
     return "\n".join(out)
 
 
@@ -235,6 +276,7 @@ def main() -> int:
         ab = ab.sort_values(["holdout", "rung"])
         ab.to_csv(os.path.join(a.out, "ablation_summary.csv"), index=False)
         md.append(ablation_tables(ab))
+        md.append(paired_table(load_csv(a.ablation, "ablation_runs.csv")))
         fig_ablation(ab, os.path.join(a.out, "ablation_ladder.png"), a.label)
     open(os.path.join(a.out, "tables.md"), "w").write("\n".join(md) + "\n")
     print(f"wrote {a.out}/tables.md" + (" + learning_curve.png" if not lc.empty else "") + (" + ablation_ladder.png" if not ab.empty else ""))
