@@ -95,7 +95,7 @@ def main() -> int:
         ax.axhline(floor, color=F.AXIS, lw=0.8, zorder=1)
     fig.text(0.055, 0.985, "Route + signoff passes until no slew/cap violator is left", fontsize=F.FS + 2, fontweight="semibold",
              color=F.INK, va="top")
-    fig.text(0.055, 0.075, "pass (hollow = still running, drawn at the last known count)", fontsize=F.FS - 1, color=F.INK2, va="top")
+    fig.text(0.055, 0.075, "pass (hollow = running)", fontsize=F.FS - 1, color=F.INK2, va="top")
     fig.text(0.004, 0.48, "violators left", fontsize=F.FS - 1, color=F.INK2, rotation=90, va="center")
     F.key_row(fig, [("*", F.GREEN, 13, "BeforeRoute (top 5%, then clean-up)", None, True),
                     ("o", F.LOOP, 7, "fix what failed (pass 1 = baseline)", None, True)], 0.36, 0.04)
