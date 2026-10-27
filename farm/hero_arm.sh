@@ -47,6 +47,13 @@ case "$ARM" in
     LIST=farm/lists/$BASE/$NAME.json
     test -f $LIST
     $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm targeted --tag $BASE-$ARM --slew-pct $H --cap-pct $H --flagged /work/$LIST --results results --pdk-root /work/pdk --jobs $JOBS ;;
+  est*)
+    # est050-70: top 5% of nets by the timer's own estimated worst-load slew ratio, margin 70 (strongest simple ablation at k=5%)
+    K=${ARM#est}; K=${K%%-*}; H=${ARM##*-}
+    FRAC=$(python3 -c "print(int('$K')/1000)")
+    python3 -m pip install -q pandas pyarrow lightgbm scikit-learn
+    python3 br/score.py --model none --rule EST --run-results results/$BASE --frac $FRAC --out results/$BASE/flagged_$ARM.json
+    $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm targeted --tag $BASE-$ARM --slew-pct $H --cap-pct $H --flagged /work/results/$BASE/flagged_$ARM.json --results results --pdk-root /work/pdk --jobs $JOBS ;;
   det*)
     # det050-70: top 5% of nets by the frozen deterministic rule R8 = max(est load slew, est driver slew, est cap ratio), margin 70 (AI ablation)
     K=${ARM#det}; K=${K%%-*}; H=${ARM##*-}
@@ -95,7 +102,7 @@ print(','.join(f'{int(x.split(\"-\")[0])/1000}:{x.split(\"-\")[1]}' for x in a.s
 esac
 sudo chown -R "$(id -u):$(id -g)" results || true
 # functional equivalence of the repaired netlist vs the baseline (targeted / threshold / rule / list arms)
-case "$ARM" in tgt*|thr*|det*|lst-*|exp*)
+case "$ARM" in tgt*|thr*|det*|lst-*|exp*|est*)
   if [ -f results/$BASE/final.nl.v.gz ] && [ -f results/$BASE-$ARM/final.nl.v.gz ]; then
     TOP=$(python3 -c "import json;print(json.load(open('results/$BASE/resolved.json'))['DESIGN_NAME'])")
     mkdir -p results/$BASE-$ARM/equiv

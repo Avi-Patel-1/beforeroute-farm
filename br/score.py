@@ -43,6 +43,8 @@ def main() -> int:
     if a.rule:
         if a.rule.upper() == "R4":
             df["p"] = df["cap_ratio"].fillna(0).astype(float) * (1 + df["hpwl_um"].fillna(0).astype(float) / 100)
+        elif a.rule.upper() == "EST":
+            df["p"] = df["worst_load_slew_ratio"].fillna(0).astype(float)
         elif a.rule.upper() == "R8":
             df["p"] = df[["worst_load_slew_ratio", "driver_slew_ratio", "cap_ratio"]].fillna(0).astype(float).max(axis=1)
         else:

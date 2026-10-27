@@ -1,11 +1,17 @@
 #!/usr/bin/env python3
-"""Build the seven-slide NVIDIA-template deck from a content JSON and figures.
+"""Build the seven-slide template deck from a content JSON and figures.
 
 Usage: deck.py --content deck/content.json --template deck/template.pptx --out deck/BeforeRoute.pptx
 
 content.json keys: title, name, slides: {2..7: {title, kicker, bullets:[...], image:path|null,
 image_box:[left,top,width,height] inches | null, table: {rows:[[...]]} (slide 5), caption}}
-Bullets may be strings or {"text": str, "level": int, "bold": bool}.
+Bullets may be strings or {"text": str, "level": int, "bold": bool, "size": pt, "color": "RRGGBB"}.
+Optional layout keys (all ignored when absent, so older content files build unchanged):
+  bullets_uniform: true    every level-0 paragraph gets the template's first-paragraph bullet
+  text_box: [l, t, w, h]   reposition the body placeholder (inches)
+  images: [{"path": p, "box": [l, t, w]}, ...]   extra pictures (any slide, incl. 5)
+  slide 5: caption_box [l, t, w, h] (word-wrapped caption), caption_size,
+           table.col_widths [in, ...], table.row_height in, table.body_text_color "RRGGBB"
 """
 from __future__ import annotations
 
@@ -15,11 +21,14 @@ import json
 import os
 
 from pptx import Presentation
+from pptx.dml.color import RGBColor
 from pptx.util import Inches, Pt
 
 
-def set_text(shape, lines, size=None):
+def set_text(shape, lines, size=None, uniform_bullets=False):
     tf = shape.text_frame
+    p0 = tf.paragraphs[0]._p
+    bullet_ppr = copy.deepcopy(p0.pPr) if (uniform_bullets and p0.pPr is not None) else None
     tf.clear()
     first = True
     for item in lines:
@@ -27,14 +36,27 @@ def set_text(shape, lines, size=None):
             item = {"text": item}
         p = tf.paragraphs[0] if first else tf.add_paragraph()
         first = False
-        p.level = int(item.get("level", 0))
+        lvl = int(item.get("level", 0))
+        if bullet_ppr is not None and lvl == 0 and item.get("bullet", True):
+            if p._p.pPr is not None:
+                p._p.remove(p._p.pPr)
+            p._p.insert(0, copy.deepcopy(bullet_ppr))
+        p.level = lvl
         r = p.add_run()
         r.text = item["text"]
         if item.get("bold"):
             r.font.bold = True
+        if item.get("color"):
+            r.font.color.rgb = RGBColor.from_string(item["color"])
         sz = item.get("size", size)
         if sz:
             r.font.size = Pt(sz)
+
+
+def add_images(slide, spec):
+    for im in spec.get("images") or []:
+        l, t, w = im["box"][:3]
+        slide.shapes.add_picture(im["path"], Inches(l), Inches(t), width=Inches(w))
 
 
 def remove_shape(shape):
@@ -96,6 +118,13 @@ def main() -> int:
                     grid.append(copy.deepcopy(grid.gridCol_lst[-1]))
                     for tr in tbl._tbl.tr_lst:
                         tr.append(copy.deepcopy(tr.tc_lst[-1]))
+                for j, w in enumerate(spec["table"].get("col_widths") or []):
+                    if j < len(tbl.columns):
+                        tbl.columns[j].width = Inches(w)
+                if spec["table"].get("row_height"):
+                    for row_ in tbl.rows:  # minimum height; rows still grow to fit their text
+                        row_.height = Inches(spec["table"]["row_height"])
+                body_rgb = spec["table"].get("body_text_color")
                 for i, row in enumerate(rows):
                     for j, val in enumerate(row):
                         cell = tbl.cell(i, j)
@@ -105,6 +134,8 @@ def main() -> int:
                                 r.font.size = Pt(spec["table"].get("font", 11))
                                 if i == 0:
                                     r.font.bold = True
+                                elif body_rgb:
+                                    r.font.color.rgb = RGBColor.from_string(body_rgb)
                 if spec["table"].get("box"):
                     l, t, w, h = spec["table"]["box"]
                     tbl_shape.left, tbl_shape.top, tbl_shape.width, tbl_shape.height = Inches(l), Inches(t), Inches(w), Inches(h)
@@ -116,15 +147,26 @@ def main() -> int:
                 else:
                     remove_shape(chart_shape)
             if cap is not None and spec.get("caption") is not None:
-                set_text(cap, [spec["caption"]], size=11)
+                if spec.get("caption_box"):
+                    l, t, w, h = spec["caption_box"]
+                    cap.left, cap.top, cap.width, cap.height = Inches(l), Inches(t), Inches(w), Inches(h)
+                    cap.text_frame.word_wrap = True
+                set_text(cap, [spec["caption"]], size=spec.get("caption_size", 11))
+            add_images(s, spec)
+            if spec.get("notes"):
+                s.notes_slide.notes_text_frame.text = spec["notes"]
             continue
         if body is not None:
+            if spec.get("text_box"):
+                l, t, w, h = spec["text_box"]
+                body.left, body.top, body.width, body.height = Inches(l), Inches(t), Inches(w), Inches(h)
             if spec.get("image"):
                 l, t, w, h = spec.get("image_box") or [7.0, 2.5, 5.7, 4.3]
                 # shrink the text body to the left column
                 body.width = Inches(spec.get("text_width", 6.2))
                 s.shapes.add_picture(spec["image"], Inches(l), Inches(t), width=Inches(w))
-            set_text(body, spec.get("bullets", []), size=spec.get("font"))
+            set_text(body, spec.get("bullets", []), size=spec.get("font"), uniform_bullets=bool(spec.get("bullets_uniform")))
+        add_images(s, spec)
         if spec.get("notes"):
             s.notes_slide.notes_text_frame.text = spec["notes"]
     prs.save(a.out)
