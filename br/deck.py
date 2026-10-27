@@ -172,6 +172,15 @@ def main() -> int:
         add_images(s, spec)
         if spec.get("notes"):
             s.notes_slide.notes_text_frame.text = spec["notes"]
+    cp = prs.core_properties  # the template carries someone else's title/author; set ours (they show in the PDF too)
+    t = c.get("title", "BeforeRoute")
+    cp.title = t.get("text", "BeforeRoute") if isinstance(t, dict) else str(t)
+    cp.author = c.get("name", "")
+    cp.last_modified_by = c.get("name", "")
+    st = c.get("subtitle", "")
+    cp.subject = st.get("text", "") if isinstance(st, dict) else str(st)
+    cp.comments = ""
+    cp.keywords = ""
     prs.save(a.out)
     print(f"wrote {a.out}")
     return 0
