@@ -57,6 +57,26 @@ def main() -> int:
                      f"{f(b.get('frac_to_catch_95'))} / {f(b.get('recall@5%'))} / {f(b.get('pr_auc'), False)} | "
                      f"{f(r8.get('frac_to_catch_95'))} / {f(r8.get('recall@5%'))} / {f(r8.get('pr_auc'), False)} |")
         L.append("")
+    L.append("### Zero-shot per GF180 run (signal nets)\n")
+    fss = list(S["arms"])
+    L.append("| run | violators / nets | perfect catch 95% | est-slew catch 95% / R@5% | R8 catch 95% / R@5% | "
+             + " | ".join(f"zero-shot [{fs}] catch 95% / R@5% / PR-AUC" for fs in fss) + " |")
+    L.append("|---|---|---|---|---|" + "---|" * len(fss))
+    for d in designs:
+        b = S["baselines"][d]
+        est = {x["run"]: x for x in b["est_load_slew_ratio"].get("per_run", [])}
+        r8 = {x["run"]: x for x in b["R8"].get("per_run", [])}
+        zs = {fs: {x["run"]: x for x in ((S["arms"][fs].get(d, {}).get("zs") or {}).get("0") or [{}])[0].get("per_run", [])} for fs in fss}
+        for run in sorted(est):
+            e, r = est[run], r8.get(run, {})
+            rate = e["positives"] / e["n"] if e.get("n") else None
+            cells = [run, f"{e['positives']} / {e['n']}", f(0.95 * rate if rate else None),
+                     f"{f(e.get('frac_to_catch_95'))} / {f(e.get('recall@5%'))}", f"{f(r.get('frac_to_catch_95'))} / {f(r.get('recall@5%'))}"]
+            for fs in fss:
+                z = zs[fs].get(run, {})
+                cells.append(f"{f(z.get('frac_to_catch_95'))} / {f(z.get('recall@5%'))} / {f(z.get('pr_auc'), False)}")
+            L.append("| " + " | ".join(cells) + " |")
+    L.append("")
     L.append("### Blind spot: violators the pre-route estimate called clean (estimated worst load slew ratio <= 1)\n")
     L.append("| design | GF180 blind spot | GF180 violators | sky130 blind spot (same design) | sky130 violator rate |")
     L.append("|---|---|---|---|---|")
