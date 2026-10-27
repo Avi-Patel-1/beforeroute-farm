@@ -153,9 +153,11 @@ case "$ARM" in
   tgt*|thr*)
     # tgt050-70: top 5% of nets | thr500-70: every net with p >= 0.500 ; suffixes after H:
     #   p2 = two masked passes, f = + fanout rule, h = hold-fix delay cells protected from resizing, v3 = model tag,
-    #   c = score features dumped at the checkpoint itself (deployment view)
+    #   c = score features dumped at the checkpoint itself (deployment view),
+    #   r = the repair step uses the router's wire cap scaled x2.130 to match extraction (LAYERS_RC = farm/rc/sky130_cap213.json)
     case "$ARM" in tgt*) K=${ARM#tgt}; SEL=frac;; thr*) K=${ARM#thr}; SEL=thr;; esac
-    K=${K%%-*}; REST=${ARM##*-}; H=${REST%%[pfhvc]*}
+    K=${K%%-*}; REST=${ARM##*-}; H=${REST%%[pfhvcr]*}
+    RCOV=(); case "$REST" in *r*) RCOV=(--override "LAYERS_RC=$(tr -d ' \n' < farm/rc/sky130_cap213.json)");; esac
     case "$REST" in *c*) use_checkpoint_features;; esac
     PASSES=1; case "$REST" in *p2*) PASSES=2;; esac
     RULE=""; case "$REST" in *f*) RULE="--rule-fanout";; esac
@@ -164,7 +166,7 @@ case "$ARM" in
     [ "$SEL" = frac ] && SELARG="--frac $VAL" || SELARG="--threshold $VAL"
     python3 -m pip install -q pandas pyarrow lightgbm scikit-learn
     python3 br/score.py --model $MODEL --run-results $SRC $SELARG $RULE --out results/$BASE/flagged_$ARM.json
-    $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm targeted --tag $BASE-$ARM --slew-pct $H --cap-pct $H --passes $PASSES $PROT --flagged /work/results/$BASE/flagged_$ARM.json --results results --pdk-root /work/pdk --jobs $JOBS ;;
+    $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm targeted --tag $BASE-$ARM --slew-pct $H --cap-pct $H --passes $PASSES $PROT "${RCOV[@]}" --flagged /work/results/$BASE/flagged_$ARM.json --results results --pdk-root /work/pdk --jobs $JOBS ;;
   rct*)
     # rct213-70: list = signal nets whose RE-TIMED estimate (wire cap x K/100 via LAYERS_RC, at the post-GRT checkpoint)
     # violates: rule R8 >= 1.0; then BeforeRoute's actuator on that list: targeted repair at H% margin (default RC),

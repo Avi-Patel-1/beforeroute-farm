@@ -96,6 +96,13 @@ def c_fewer_cells(rows, arm, other):
     return ("pass" if ca is not None and co is not None and ca < co else "fail"), {"cells": ca, f"{other}_cells": co, "V": V(a), f"{other}_V": V(o)}
 
 
+def c_no_more(rows, arm, other):
+    a, o = rows.get(arm), rows.get(other)
+    if a is None or o is None:
+        return "pending", {}
+    return ("pass" if V(a) <= V(o) else "fail"), {"V": V(a), f"{other}_V": V(o), "cells": cells(a), f"{other}_cells": cells(o)}
+
+
 def c_equiv(results, base, rows, arms):
     out = {}
     for arm in arms:
@@ -180,6 +187,10 @@ def main() -> int:
         "A13": (R4 + R5, [
             ("A13a BeforeRoute (thr500-70 / thr500-70c) fewer violators than rcal213-10", lambda b, r: c_model_vs_rule(r, "thr500-70c" if b.startswith("d5-") else "thr500-70", ["rcal213-10"]), (3, 5)),
             ("A13b BeforeRoute fewer cells than rcal213-10", lambda b, r: c_fewer_cells(r, "thr500-70c" if b.startswith("d5-") else "thr500-70", "rcal213-10"), (3, 5)),
+        ]),
+        "A14": (R3, [
+            ("A14a thr500-10cr no more violators than rcal213-10", lambda b, r: c_no_more(r, "thr500-10cr", "rcal213-10"), (4, 6)),
+            ("A14b thr500-10cr fewer cells than rcal213-10", lambda b, r: c_fewer_cells(r, "thr500-10cr", "rcal213-10"), (4, 6)),
         ]),
         "NV": (["nv1-nvdla_csc-000"], [
             ("A7 (A6.2) tgt050-70c vs uni50", lambda b, r: c_target_vs_uni50(r, "tgt050-70c"), (1, 1)),
