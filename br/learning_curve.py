@@ -3,6 +3,7 @@
 
 Usage (one analyze.yml matrix entry per held-out design x size):
   learning_curve.py --data dataset.parquet --out out/ --holdout picorv32 --variant runs --n 8
+  learning_curve.py ... --variant runs --n 1,2,4,8,16,32,64,all   # several sizes in one job
   learning_curve.py ... --variant designs --n 2      # all runs of n random other designs
   learning_curve.py ... --variant within --n 2       # all other designs + n runs of the held-out design
 
@@ -63,7 +64,7 @@ def main() -> int:
     ap.add_argument("--out", required=True)
     ap.add_argument("--holdout", required=True)
     ap.add_argument("--variant", choices=["runs", "designs", "within"], default="runs")
-    ap.add_argument("--n", default="all", help="training size: runs (runs), designs (designs) or in-design runs k (within); 'all' = whole pool")
+    ap.add_argument("--n", default="all", help="comma list of training sizes: runs (runs), designs (designs) or in-design runs k (within); all = whole pool")
     ap.add_argument("--seeds", type=int, default=3)
     ap.add_argument("--min-pos", type=int, default=20, help="violators required in the first run/design of an order")
     ap.add_argument("--rounds", type=int, default=0, help="num_boost_round override (0 = br/train.fit's)")
