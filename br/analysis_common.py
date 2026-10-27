@@ -195,7 +195,7 @@ def eval_block(ev: pd.DataFrame, score: np.ndarray, prob: np.ndarray | None = No
 def flat(block: dict, prefix: str = "") -> dict:
     """Flatten an eval_block into CSV columns."""
     p = block["pooled"]
-    row = {f"{prefix}n": p.get("n"), f"{prefix}pos": p.get("positives"),
+    row = {f"{prefix}eval_n": p.get("n"), f"{prefix}eval_pos": p.get("positives"),
            f"{prefix}pooled_recall5": p.get("recall@5%"), f"{prefix}pooled_catch95": p.get("frac_to_catch_95"),
            f"{prefix}pooled_prauc": p.get("pr_auc"), f"{prefix}pooled_recall2": p.get("recall@2%"),
            f"{prefix}pooled_catch90": p.get("frac_to_catch_90"), f"{prefix}pooled_rocauc": p.get("roc_auc")}
