@@ -5,3 +5,4 @@
 2026-10-27T05:40:05Z  ae3208cf4191b62f9af931196f89c1a1fa6a0dd0c94bdf4b47468d9851411148  pre-registration with Addendum 10 (corrected calibration control: wire-cap scale 2.130, rcal213-10 / rcal213-0)
 2026-10-27T05:47:07Z  c2a1072bf0282296c3395c6db4a1843f1f5abe569d1880bace4f3cab0828a535  pre-registration with Addendum 11 (learned-calibration lists lst-cal-70 / lst-calt-70)
 2026-10-27T06:31:01Z  007fbfdbec6942a284a45a75a2858b34ba8d9bae4355976e03520fc3494ba213  pre-registration with the Addendum-10 erratum and Addendum 11 withdrawn
+2026-10-27T06:32:40Z  eca195ac0a5d282a33b2a77403d2dabbe49f88fa5fb746531851aae499e9cc23  pre-registration with Addendum 12 (re-timed calibrated list rct213-70 vs thr500-70c)

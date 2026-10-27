@@ -83,6 +83,9 @@ def main() -> int:
                     help="explicit post-GRT state json to dump instead of STAMidPNR-3's state_in, e.g. "
                          "<run>/*-openroad-checkantennas/state_out.json = the decision point the arms resume from "
                          "(before antenna repair)")
+    ap.add_argument("--layers-rc", default=None,
+                    help="JSON file with a LAYERS_RC override (per-corner, per-layer wire res/cap) for the post-GRT dump, "
+                         "e.g. farm/rc/sky130_cap213.json: re-times the estimate with the wire cap scaled to extraction")
     a = ap.parse_args()
     run_dir = os.path.abspath(a.run_dir)
     out = a.out or os.path.join(run_dir, "br-dump-signoff" if a.signoff else "br-dump-postgrt")
@@ -100,7 +103,12 @@ def main() -> int:
         step = DumpNetsSignoff(config=config, state_in=state_in, _no_revalidate_conf=True)
     else:
         state_in_path = os.path.abspath(a.state) if a.state else find_state_in(run_dir)
-        config = load_step_config(run_dir, a.pdk_root)
+        extra = None
+        if a.layers_rc:
+            from decimal import Decimal
+            extra = {"LAYERS_RC": json.loads(open(a.layers_rc).read(), parse_float=Decimal)}
+            print(f"[br] LAYERS_RC override from {a.layers_rc}")
+        config = load_step_config(run_dir, a.pdk_root, extra=extra)
         state_in = State.loads(open(state_in_path).read())
         step = DumpNetsPostGRT(config=config, state_in=state_in, _no_revalidate_conf=True)
     print(f"[br] state_in: {state_in_path}")
