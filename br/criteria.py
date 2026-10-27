@@ -88,6 +88,14 @@ def c_removes(rows, arm, frac, cells_vs_uni50=None):
     return ("pass" if ok else "fail"), info
 
 
+def c_fewer_cells(rows, arm, other):
+    a, o = rows.get(arm), rows.get(other)
+    if a is None or o is None:
+        return "pending", {}
+    ca, co = cells(a), cells(o)
+    return ("pass" if ca is not None and co is not None and ca < co else "fail"), {"cells": ca, f"{other}_cells": co, "V": V(a), f"{other}_V": V(o)}
+
+
 def c_equiv(results, base, rows, arms):
     out = {}
     for arm in arms:
@@ -146,6 +154,10 @@ def main() -> int:
             ("A6.4 thr500-70c removes >= 90%", lambda b, r: c_removes(r, "thr500-70c", 0.90), (2, 3)),
             ("A6.5 exp100-70c removes >= 85% with <= 60% of uni50 cells", lambda b, r: c_removes(r, "exp100-70c", 0.85, 0.6), (2, 3)),
             ("A6.6 equivalence of the targeted arms", lambda b, r: c_equiv(R, b, r, ["est050-70c", "tgt050-70c", "thr500-70c", "exp100-70c"]), (3, 3)),
+        ]),
+        "A9": (R3, [
+            ("A9a thr500-70 fewer violators than rcal146-0 (calibrated estimate, no margin)", lambda b, r: c_model_vs_rule(r, "thr500-70", ["rcal146-0"]), (4, 6)),
+            ("A9b thr500-70 fewer cells than rcal146-20 (calibrated estimate, 20% margin)", lambda b, r: c_fewer_cells(r, "thr500-70", "rcal146-20"), (4, 6)),
         ]),
         "NV": (["nv1-nvdla_csc-000"], [
             ("A7 (A6.2) tgt050-70c vs uni50", lambda b, r: c_target_vs_uni50(r, "tgt050-70c"), (1, 1)),

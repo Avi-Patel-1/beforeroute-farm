@@ -1,3 +1,4 @@
 # SHA-256 commitments of the (private) pre-registration document, appended before new pre-registered dispatches.
 # A later copy of the document can be checked against these hashes; the text itself is not published here.
 2026-10-27T04:09:41Z  b9448624b031911fabc5d5af4960a62f7b5eccc21ca2250ebbb9cc0bd309d74a  pre-registration with Addenda 1-8 and clock correction
+2026-10-27T04:13:31Z  ff473fcf7cdcf15280ef614c3071bea1baec547c887800849a3f6895eeb460e5  pre-registration with Addendum 9 (calibrated-RC control)
