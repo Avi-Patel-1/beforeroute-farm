@@ -69,6 +69,13 @@ OTHER = "#6a6a6a"        # other policies tried (context only)
 GREY_RAMP = LinearSegmentedColormap.from_list("greys_dark", ["#2e2e2e", "#f2f2f2"])
 CRIT_RAMP = LinearSegmentedColormap.from_list("crit_dark", ["#a92f2f", "#ff9a92"])
 HALO = [pe.withStroke(linewidth=4, foreground=SURFACE)]
+if os.environ.get("BR_FIG_THEME") == "light":  # paper figures: white page, darker data colours for contrast on white
+    SURFACE, INK, INK2, MUTED, GRID, AXIS = "#ffffff", "#111111", "#3d3d3d", "#5c5c5c", "#e4e4e4", "#8a8a8a"
+    GREEN, BRAND, ROSE, BLUE, GREY = "#3f7d00", "#3f7d00", "#b8326a", "#1f63c4", "#6e6e6e"
+    CRIT, LOOP, OTHER = "#b52a2a", "#4d4d4d", "#9a9a9a"
+    GREY_RAMP = LinearSegmentedColormap.from_list("greys_light", ["#f2f2f2", "#2e2e2e"])
+    CRIT_RAMP = LinearSegmentedColormap.from_list("crit_light", ["#ffb3ad", "#a92f2f"])
+    HALO = [pe.withStroke(linewidth=4, foreground=SURFACE)]
 DPI = 200
 FS = 14                  # minimum font size on the slide
 

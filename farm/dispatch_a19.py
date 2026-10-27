@@ -79,6 +79,7 @@ def main():
     ap.add_argument("--phase1", action="store_true")
     ap.add_argument("--a20", action="store_true", help="Addendum 20: hold-preserving repair arms on the 14 bases")
     ap.add_argument("--a21", action="store_true", help="Addendum 21: utilization-sweep seeds (arms follow in phase 2)")
+    ap.add_argument("--a22", action="store_true", help="Addendum 22: learned residual on the correlated-flow bases")
     a = ap.parse_args()
     lock = open(os.path.join(ROOT, "results", ".a19_lock"), "w")
     try:
@@ -129,6 +130,21 @@ def main():
                 t = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(time.time() - 5))
                 if dispatch(nb, ["seed"], MODEL[base], "util", a.dry_run):
                     st["seeds"][nb] = {"ref": "util", "after": t, "model": MODEL[base], "arms": U_ARMS}; save()
+    if a.a22:
+        # one run per correlated-flow base whose seed reached signoff, with the model trained on the other correlated bases
+        A22_ARMS = ["thr500-30c", "bst500-30-10", "rqc-30", "uni0", "uni20"]
+        for base in BRANCH:
+            nb = derived(base, "cf")[0]
+            design = base.split("-", 1)[1].rsplit("-", 1)[0]
+            mp = f"models/model_cfloo_{design}.txt"
+            if f"{nb}:a22" in st["phase1"]:
+                continue
+            if not os.path.exists(os.path.join(ROOT, mp)):
+                print(f"[a19] {nb}: no {mp}; not dispatching A22"); continue
+            if st["seeds"].get(nb, {}).get("seed_status") != "completed":
+                print(f"[a19] {nb}: seed status {st['seeds'].get(nb, {}).get('seed_status')}; A22 waits"); continue
+            if dispatch(nb, A22_ARMS, mp, "cf", a.dry_run):
+                st["phase1"][f"{nb}:a22"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()); save()
     # phase 2: follow-up arms once each seed run completed
     pending = [nb for nb, s in st["seeds"].items() if not s.get("arms_dispatched") and not s.get("run")]
     idx = job_index(st, min(st["seeds"][nb]["after"] for nb in pending)) if pending else {}
