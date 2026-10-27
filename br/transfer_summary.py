@@ -26,10 +26,31 @@ def mean(lst, key):
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("out")
+    ap.add_argument("--results", default=None, help="farm results dir: also print the per-run table (knobs, nets, violators)")
     a = ap.parse_args()
     S = json.load(open(os.path.join(a.out, "summary.json")))
     designs = S["designs"]
     L = []
+    if a.results:
+        import glob
+
+        L.append("### GF180 runs\n")
+        L.append("| run | status | util / density | clock (ns) | max tran (ns) | flow (s) | nets | violating nets | rate | setup WS (ns) | route DRC |")
+        L.append("|---|---|---|---|---|---|---|---|---|---|---|")
+        for jp in sorted(glob.glob(os.path.join(a.results, "g1-*", "job.json"))):
+            rd = os.path.dirname(jp)
+            j = json.load(open(jp))
+            ov = j.get("overrides", {})
+            lab = os.path.join(rd, "labels.json")
+            met = os.path.join(rd, "metrics.json")
+            s = json.load(open(lab))["summary"] if os.path.exists(lab) else {}
+            m = json.load(open(met)) if os.path.exists(met) else {}
+            nt, nv = s.get("nets_total"), s.get("nets_violating")
+            ws = m.get("timing__setup__ws")
+            L.append(f"| {j['tag']} | {j.get('status')} | {ov.get('FP_CORE_UTIL')} / {ov.get('PL_TARGET_DENSITY_PCT')} | {ov.get('CLOCK_PERIOD')} | "
+                     f"{ov.get('MAX_TRANSITION_CONSTRAINT')} | {j.get('flow_seconds')} | {nt} | {nv} | {f(nv / nt if nt else None)} | "
+                     f"{'-' if ws is None else f'{ws:.1f}'} | {m.get('route__drc_errors', '-')} |")
+        L.append("")
     L.append("### Zero-shot: sky130-trained model on GF180 (signal nets; per held-out design, pooled over its runs)\n")
     L.append("| GF180 design | runs | violator rate | perfect ranker: catch 95% at | est-slew: catch 95% / R@5% / PR-AUC | R8: catch 95% / R@5% / PR-AUC | "
              + " | ".join(f"zero-shot [{fs}]: catch 95% / R@5% / PR-AUC" for fs in S["arms"]) + " |")
