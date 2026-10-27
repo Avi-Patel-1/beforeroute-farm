@@ -142,7 +142,7 @@ def fig_learning_curve(out_dir, analysis=ANALYSIS, size=SIZE, name="learning_cur
         return x_all if n == "all" else float(n)
 
     fig = plt.figure(figsize=size)
-    ax = fig.add_axes([0.105, 0.30, 0.865, 0.535])
+    ax = fig.add_axes([0.13, 0.30, 0.84, 0.535])
     ax.set_xscale("log", base=2)
     ax.set_yscale("log", base=2)
     nums = {"metric": "catch-95 / floor, per-run median (seed mean), median and range across held-out designs",
@@ -182,16 +182,17 @@ def fig_learning_curve(out_dir, analysis=ANALYSIS, size=SIZE, name="learning_cur
         handles.append(Line2D([], [], color=SELF, lw=2.0, marker="*", ms=14, mfc=F.SURFACE, mec=SELF, mew=1.7,
                               label=f"Same design only ({nd} designs)"))
         nums["self"] = {n: v["points"][n] for n in v["sizes"]}
-        if "2" in v["points"]:
-            m2 = v["points"]["2"]["median"]
-            ax.annotate(f"{m2:.2f}×", (xpos("2") * SELF_DODGE, m2), xytext=(-10, -2), textcoords="offset points", ha="right",
-                        va="top", fontsize=F.FS, color=SELF, path_effects=F.HALO, zorder=8)
+        if "2" in v["points"]:   # two runs of the same design: value under its range bar
+            p = v["points"]["2"]
+            ax.annotate(f"{p['median']:.2f}×", (xpos("2") * SELF_DODGE, p["min"]), xytext=(0, -4), textcoords="offset points",
+                        ha="center", va="top", fontsize=F.FS, color=SELF, zorder=8,
+                        bbox=dict(boxstyle="square,pad=0.08", fc=F.SURFACE, ec="none"))
     r8 = D["r8"]
     if r8:
         ax.axhline(r8["median"], color=LC_R8, lw=2.0, ls=(0, (5, 3)), zorder=4)
         nums["rule_R8"] = r8
     ax.axhline(2.0, color=FLOOR2, lw=1.5, ls=(0, (1, 2.2)), zorder=4)
-    ylo, yhi = 0.97, max(4.0, top * 1.06)
+    ylo, yhi = 0.91, max(4.0, top * 1.06)   # room under 1x (nothing can sit below it) for the value labels
     ax.set_ylim(ylo, yhi)
     ax.set_xlim(0.8, x_all * 1.25)
     yt = [t for t in (1, 1.25, 1.5, 2, 3, 4, 6, 8) if t <= yhi]
@@ -294,19 +295,19 @@ def fig_ablation(out_dir, analysis=ANALYSIS, size=SIZE, name="ablation"):
     answers = load_answers(analysis)
     st = (((answers.get("b") or {}).get("ALL") or {}).get("paired_vs_R8") or {}).get("catch95")
     fig = plt.figure(figsize=size)
-    ax = fig.add_axes([0.415, 0.255, 0.555, 0.53])
+    ax = fig.add_axes([0.415, 0.30, 0.555, 0.455])
     ny = len(rows)
     ys = np.arange(ny)[::-1]
     fl = A["floor"]["median"]
     xmax = max(r["median"] for r in rows)
     ax.axvline(100 * fl, color=F.INK2, lw=1.5, ls=(0, (1, 2.2)), zorder=1)
     for y, r in zip(ys, rows):
-        big = r["rung"] == "lgbm_full"
-        ms = {"*": 19 if big else 16, "s": 10, "o": 11, "D": 9}[r["marker"]]
-        ax.plot([100 * fl, 100 * r["median"]], [y, y], color=F.AXIS, lw=1.0, zorder=2)
+        gbm = r["rung"].startswith("lgbm")
+        ms = {"*": 19 if r["rung"] == "lgbm_full" else 16, "s": 10, "o": 11, "D": 9}[r["marker"]]
+        ax.plot([100 * fl, 100 * r["median"]], [y, y], color=F.AXIS, lw=1.0, zorder=2)   # excess over the floor
         ax.plot(100 * r["median"], y, r["marker"], ms=ms, color=r["color"], mfc=r["color"] if r["filled"] else F.SURFACE,
                 mec=F.SURFACE if r["filled"] else r["color"], mew=1.4 if r["filled"] else 1.8, zorder=4)
-        ax.text(100 * r["median"] + 0.42, y, f"{100 * r['median']:.1f}%", fontsize=F.FS, color=F.INK if big else F.INK2,
+        ax.text(100 * r["median"] + 0.42, y, f"{100 * r['median']:.1f}%", fontsize=F.FS, color=F.INK if gbm else F.INK2,
                 va="center", ha="left", zorder=5)
     ax.set_yticks(ys)
     ax.set_yticklabels([r["label"] for r in rows])
@@ -314,23 +315,22 @@ def fig_ablation(out_dir, analysis=ANALYSIS, size=SIZE, name="ablation"):
         t.set_color(F.INK if r["rung"].startswith("lgbm") else F.INK2)
     ax.tick_params(axis="y", length=0)
     ax.spines["left"].set_visible(False)
-    xm = 2 * int(np.ceil((100 * xmax + 1.6) / 2))
-    ax.set_xlim(0, xm)
-    ax.set_xticks(range(0, xm + 1, 2))
-    ax.set_xticklabels([f"{t}%" for t in range(0, xm + 1, 2)])
+    xt = list(range(0, 2 * int(np.ceil(100 * xmax / 2)) + 1, 2))
+    ax.set_xlim(0, max(xt[-1], 100 * xmax + 1.9))
+    ax.set_xticks(xt)
+    ax.set_xticklabels([f"{t}%" for t in xt])
     ax.set_ylim(-0.6, ny - 0.4)
     ax.grid(True, axis="x", zorder=0)
     ax.text(100 * fl, ny - 0.45, f"floor {100 * fl:.1f}%", fontsize=F.FS, color=F.INK2, ha="center", va="bottom", zorder=5)
     fig.text(0.012, 0.975, "The gain is a nonlinear model\nof the timer's own numbers", fontsize=F.FS + 1, fontweight="semibold",
              color=F.INK, va="top", linespacing=1.15)
+    fig.text(0.012, 0.848, "Nets flagged to catch 95% of violators", fontsize=F.FS, color=F.INK2, va="top")
     nd = len(A["designs"])
-    ax.set_xlabel(f"Nets flagged to catch 95% (median, {nd} unseen designs)", labelpad=4)
-    lines = []
+    lines = [f"Median of {nd} unseen designs, each pooled over its runs."]
     if st:
         tot = st["W"] + st["T"] + st["L"]
-        lines.append(f"Per run, GBM flags fewer than rule R8 in {st['W']} of {tot}")
-        lines.append(f"runs ({st['L']} worse, {st['T']} tied; sign test p < 1e-30)" if st["p"] < 1e-30 else
-                     f"runs ({st['L']} worse, {st['T']} tied; sign test p = {st['p']:.1g})")
+        lines.append(f"Per run, the full GBM flags fewer than R8 in {st['W']} of {tot}")
+        lines.append(f"runs ({st['L']} worse, {st['T']} tied; sign test p = {st['p']:.0e}).")
     fig.text(0.012, 0.012, "\n".join(lines), fontsize=F.FS, color=F.MUTED, va="bottom", linespacing=1.25)
     nums = {"metric": "pooled catch-95 per held-out design (leave-one-design-out), median across designs",
             "source": os.path.relpath(os.path.join(analysis, "ablation_summary.csv"), F.ROOT),
