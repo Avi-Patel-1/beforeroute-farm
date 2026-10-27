@@ -62,6 +62,27 @@ def main() -> int:
                     out.add(b)
         if len(ids) < 100:
             break
+    # runs still in progress: their finished jobs already have artifacts; collect a base as soon as one of its jobs
+    # finished and is not on disk yet (the run is not marked collected until it completes)
+    r = subprocess.run(["gh", "api", f"repos/{a.repo}/actions/workflows/hero.yml/runs?status=in_progress&per_page=100",
+                        "--jq", "[.workflow_runs[].id]"], capture_output=True, text=True)
+    try:
+        live = json.loads(r.stdout or "[]")
+    except Exception:
+        live = []
+    for rid in live:
+        j = subprocess.run(["gh", "api", f"repos/{a.repo}/actions/runs/{rid}/jobs?per_page=100",
+                            "--jq", "[.jobs[] | select(.status==\"completed\") | .name]"], capture_output=True, text=True)
+        try:
+            names = json.loads(j.stdout or "[]")
+        except Exception:
+            names = []
+        for n in names:
+            if os.path.exists(os.path.join(a.results, n, "job.json")):
+                continue
+            b = next((b for b in bases if n.startswith(b + "-")), None)
+            if b:
+                out.add(b)
     for b in bases:
         if not os.path.exists(os.path.join(a.results, b, "hero_summary.json")) and glob.glob(os.path.join(a.results, b + "-*", "labels.json")):
             out.add(b)
