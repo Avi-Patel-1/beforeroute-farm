@@ -103,6 +103,36 @@ def c_no_more(rows, arm, other):
     return ("pass" if V(a) <= V(o) else "fail"), {"V": V(a), f"{other}_V": V(o), "cells": cells(a), f"{other}_cells": cells(o)}
 
 
+def c_iter(results, base):
+    """Addendum 2 expectation: BeforeRoute + cleanup reaches the signoff-guided loop's final signal slew/cap violator
+    count in at least one fewer route+signoff pass (the loop counts its baseline signoff pass). Chains from
+    br/iterations.py; a chain is final unless its last step is pending."""
+    import iterations
+    ch = iterations.chains(results, [base])
+    if not ch:
+        return "pending", {}
+    loop, br = ch[0]["loop"], ch[0]["beforeroute"]
+    LL = [p for p in loop if "V" in p]
+    LB = [p for p in br if "V" in p]
+    if not LL:
+        return "pending", {}
+    loop_final = not any(p.get("status") == "pending" for p in loop)
+    br_final = not any(p.get("status") == "pending" for p in br)
+    nl, F = LL[-1]["pass_"] + 1, LL[-1]["V"]  # passes the loop used (baseline counts), its final count
+    hit = next((p for p in LB if p["V"] <= F), None)
+    info = {"loop_V": [p["V"] for p in LL], "loop_passes": nl, "loop_final": loop_final, "br_V": [p["V"] for p in LB],
+            "br_pass_reaching_loop_final": hit["pass_"] if hit else None,
+            "cells_br_at_that_pass": hit.get("cells") if hit else None, "cells_loop_final_pass": LL[-1].get("cells")}
+    if not loop_final:
+        z = next((p["pass_"] for p in LB if p["V"] == 0), None)  # 0 can't be beaten: decided if reached within nl passes
+        return ("pass" if z is not None and z <= nl else "pending"), info
+    if hit is not None:
+        return ("pass" if hit["pass_"] <= nl - 1 else "fail"), info
+    if br_final or not LB:
+        return ("fail" if br_final else "pending"), info
+    return ("fail" if LB[-1]["pass_"] + 1 > nl - 1 else "pending"), info
+
+
 WITHDRAWN = {"A11": "WITHDRAWN 06:28Z before any arm ran (its lists carried the output-port bug); no verdict"}
 
 
@@ -136,6 +166,8 @@ def c_equiv(results, base, rows, arms):
 
 def verdict(per_base, need):
     st = [s for s, _ in per_base.values()]
+    if need is None:  # pre-specified but without a count: reported, no verdict
+        return f"reported, no threshold ({st.count('pass')} pass, {st.count('fail')} fail, {st.count('pending')} pending)"
     if "pending" in st or len(st) < need[1]:
         npass, nfail, npend = st.count('pass'), st.count('fail'), st.count('pending') + need[1] - len(st)
         # decided once the pending bases can no longer change the outcome
@@ -211,6 +243,12 @@ def main() -> int:
         "A14": (R3, [
             ("A14a thr500-10cr no more violators than rcal213-10", lambda b, r: c_no_more(r, "thr500-10cr", "rcal213-10"), (4, 6)),
             ("A14b thr500-10cr fewer cells than rcal213-10", lambda b, r: c_fewer_cells(r, "thr500-10cr", "rcal213-10"), (4, 6)),
+        ]),
+        "A2": (R3, [
+            ("A2 BeforeRoute + cleanup reaches the loop's final violator count in >= 1 fewer route+signoff pass", lambda b, r: c_iter(R, b), (4, 6)),
+        ]),
+        "A5.2": (["d1-picorv32-006", "d1-picorv32-016", "d1-aes_cipher-000"], [
+            ("A5.2 same expectation on the Round-1 bases (replication; no count specified)", lambda b, r: c_iter(R, b), None),
         ]),
         "A15": (R4 + R5, [
             ("A15a thr500-30cr no more violators than rcal213-10", lambda b, r: c_no_more(r, "thr500-30cr", "rcal213-10"), (3, 5)),
