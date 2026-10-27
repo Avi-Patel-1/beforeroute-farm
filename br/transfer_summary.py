@@ -27,9 +27,34 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("out")
     ap.add_argument("--results", default=None, help="farm results dir: also print the per-run table (knobs, nets, violators)")
+    ap.add_argument("--from-cache", default=None,
+                    help="rebuild the arm results from <out>/cache for these feature sets (e.g. port), for the run sets in "
+                         "summary.json; prefix 'strict_' entries are reported as separate arms")
     a = ap.parse_args()
     S = json.load(open(os.path.join(a.out, "summary.json")))
     designs = S["designs"]
+    if a.from_cache:
+        import glob
+        import re
+        import zlib
+
+        S["arms"] = {}
+        for d in designs:
+            lp = os.path.join(a.out, "cache", f"sky130_lodo_{d}.json")
+            if os.path.exists(lp):
+                S.setdefault("sky130_lodo", {})[d] = json.load(open(lp))
+        for fs in a.from_cache.split(","):
+            for d in designs:
+                tsig = f"{zlib.crc32('|'.join(S['runs'][d]).encode()):08x}"
+                A = S["arms"].setdefault(fs, {}).setdefault(d, {})
+                for p in sorted(glob.glob(os.path.join(a.out, "cache", f"*{fs}_*_{d}_*{tsig}*.json"))):
+                    key = os.path.basename(p)[:-5]
+                    m = re.match(rf"^(strict_)?{fs}_(zs|gfonly|merge|mergew|ft)_{re.escape(d)}_(?:k(\w+?)_)?(?:r(\d+)_)?{tsig}(?:_[0-9a-f]{{8}})?$", key)
+                    if not m:
+                        continue
+                    strict, arm, k, _r = m.groups()
+                    k = "0" if arm == "zs" else k
+                    A.setdefault(("strict_" if strict else "") + arm, {}).setdefault(k, []).append(json.load(open(p)))
     L = []
     if a.results:
         import glob
@@ -114,7 +139,8 @@ def main() -> int:
             L.append("|---|---|" + "---|" * len(ks))
             for d in designs:
                 A = byd.get(d, {})
-                for arm, lab in (("zs", "zero-shot"), ("gfonly", "GF180-only"), ("merge", "merge"), ("mergew", "merge (re-weighted)"), ("ft", "fine-tune")):
+                for arm, lab in (("zs", "zero-shot"), ("gfonly", "GF180-only"), ("merge", "merge"), ("mergew", "merge (re-weighted)"),
+                                 ("ft", "fine-tune"), ("strict_zs", "zero-shot, strict"), ("strict_ft", "fine-tune, strict")):
                     if arm not in A:
                         continue
                     cells = []
