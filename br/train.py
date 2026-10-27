@@ -190,6 +190,8 @@ def main() -> int:
         imp = sorted(zip(FEATURES, hero.feature_importance("gain")), key=lambda t: -t[1])
         report["feature_importance_gain"] = [(f, float(g)) for f, g in imp]
         try:
+            if a.no_lodo:
+                raise RuntimeError("skipped (--no-lodo)")
             import shap
             import matplotlib
             matplotlib.use("Agg")
@@ -211,7 +213,7 @@ def main() -> int:
                 report["shap_mean_abs"] = sorted([(f, float(v)) for f, v in zip(FEATURES, mean_abs)], key=lambda t: -t[1])
         except Exception as e:  # SHAP is a nice-to-have
             report["shap_error"] = f"{type(e).__name__}: {e}"
-    if df["y"].sum() > 0:
+    if df["y"].sum() > 0 and not a.no_lodo:
         full = fit(df)
         full.save_model(os.path.join(out, "model_all.txt"))
     json.dump(report, open(os.path.join(out, "report.json"), "w"), indent=1)
