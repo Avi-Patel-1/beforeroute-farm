@@ -1,0 +1,75 @@
+name: BeforeRoute farm (gf180mcu)
+
+# Same worker as farm.yml, on the GF180MCU PDK at the version LibreLane 3.0.16 pins
+# (librelane/pdk_hashes.yaml). Job specs select the PDK/SCL in their design config.
+
+on:
+  workflow_dispatch:
+    inputs:
+      tags:
+        description: 'JSON array of job tags (each has farm/jobs/<tag>.json)'
+        required: true
+        type: string
+      max_parallel:
+        description: 'Max concurrent jobs'
+        required: false
+        default: '6'
+        type: string
+
+concurrency:
+  group: farm-gf180-${{ github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  run:
+    name: ${{ matrix.tag }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      max-parallel: ${{ fromJSON(inputs.max_parallel) }}
+      matrix:
+        tag: ${{ fromJSON(inputs.tags) }}
+    env:
+      IMAGE: ghcr.io/librelane/librelane@sha256:4bc9042ba177f73f275b5b39e7d372a07d3f4043f548a0ba7f640097b7205051
+      PDK_FAMILY: gf180mcu
+      PDK_VERSION: 54435919abffb937387ec956209f9cf5fd2dfbee
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Restore PDK cache
+        id: pdk-cache
+        uses: actions/cache@v4
+        with:
+          path: pdk
+          key: gf180mcu-${{ env.PDK_VERSION }}-v1
+
+      - name: Pull toolchain image
+        run: docker pull "$IMAGE"
+
+      - name: Fetch PDK (cache miss only)
+        if: steps.pdk-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p pdk
+          docker run --rm -v "$PWD:/work" -w /work -e PDK_ROOT=/work/pdk "$IMAGE" \
+            ciel enable --pdk-family "$PDK_FAMILY" "$PDK_VERSION"
+          ls -la pdk
+          du -sh pdk || true
+
+      - name: Run job
+        run: |
+          mkdir -p results
+          docker run --rm -v "$PWD:/work" -w /work -e PDK_ROOT=/work/pdk "$IMAGE" \
+            python3 br/run_job.py --job-spec "farm/jobs/${{ matrix.tag }}.json" \
+              --jobs 4 --results results --pdk-root /work/pdk --timeout 16000 || true
+          cat "results/${{ matrix.tag }}/job.json" || echo "no job.json"
+          sudo chown -R "$(id -u):$(id -g)" results || true
+
+      - name: Upload result
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: result-${{ matrix.tag }}
+          path: results/${{ matrix.tag }}
+          retention-days: 30
+          if-no-files-found: warn
