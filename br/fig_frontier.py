@@ -48,8 +48,12 @@ def main() -> int:
     ap.add_argument("--cols", type=int, default=5)
     ap.add_argument("--width", type=float, default=12.1)
     ap.add_argument("--fs", type=int, default=-3)
+    ap.add_argument("--bases", nargs="*", default=None, help="subset of bases (default: all of the experiment)")
+    ap.add_argument("--rowh", type=float, default=2.15)
     a = ap.parse_args()
-    spec = CF if a.cf else DEFAULT
+    spec = dict(CF if a.cf else DEFAULT)
+    if a.bases:
+        spec["bases"] = a.bases
     name = a.name or ("frontier_cf" if a.cf else "frontier14")
     C.RESULTS = os.path.join(F.ROOT, "results")
     F.setup_style()
@@ -57,7 +61,7 @@ def main() -> int:
     col = {"model": F.GREEN, "stock": F.BLUE, "grey": F.GREY}
     bases = spec["bases"]
     rows = (len(bases) + a.cols - 1) // a.cols
-    fig, axes = plt.subplots(rows, a.cols, figsize=(a.width, 2.15 * rows + 0.9), squeeze=False)
+    fig, axes = plt.subplots(rows, a.cols, figsize=(a.width, a.rowh * rows + 0.9), squeeze=False)
     for i, b in enumerate(bases):
         ax = axes[i // a.cols][i % a.cols]
         fr = []
@@ -84,7 +88,8 @@ def main() -> int:
         ax.grid(color=F.GRID, lw=0.6)
     for j in range(len(bases), rows * a.cols):
         axes[j // a.cols][j % a.cols].axis("off")
-    fig.supxlabel("cells changed by the repair (buffers inserted + cells resized)", fontsize=F.FS - 1, color=F.INK2, y=0.095)
+    fig.supxlabel("cells changed by the repair (buffers inserted + cells resized)", fontsize=F.FS - 1, color=F.INK2,
+                  y=(0.095 if a.width >= 10 else 0.2) * (6.0 / max(fig.get_size_inches()[1], 1)))
     fig.supylabel("signal violators left (symlog)", fontsize=F.FS - 1, color=F.INK2)
     handles = [plt.Line2D([], [], color=F.BLUE, marker="o", lw=1.6, ms=4,
                           label=("stock repair, correlated RC, 0–30% margin" if a.cf else "stock repair, corrected wire cap, 0–30% margin"))]
@@ -93,8 +98,11 @@ def main() -> int:
             handles.append(plt.Line2D([], [], color=col[ck], marker=mk, lw=0, ms=6, label=lab))
         else:
             handles.append(plt.Line2D([], [], color=col[ck], marker=mk, lw=0, ms=6, markerfacecolor=F.SURFACE, label=lab))
-    fig.legend(handles=handles, loc="lower center", ncol=3, fontsize=F.FS - 2, frameon=False, bbox_to_anchor=(0.5, 0.0))
-    fig.tight_layout(rect=(0.02, 0.11, 1, 1))
+    ncol = 3 if a.width >= 10 else 2
+    fig.legend(handles=handles, loc="lower center", ncol=ncol, fontsize=F.FS - 2, frameon=False, bbox_to_anchor=(0.5, 0.0))
+    nrow_leg = (len(handles) + ncol - 1) // ncol
+    bottom = (0.11 if ncol == 3 else 0.13 + 0.035 * nrow_leg) * (6.0 / max(fig.get_size_inches()[1], 1))
+    fig.tight_layout(rect=(0.02, min(bottom, 0.3), 1, 1))
     os.makedirs(a.out, exist_ok=True)
     out = os.path.join(a.out, f"{name}.png")
     fig.savefig(out, dpi=200, facecolor=F.SURFACE)
