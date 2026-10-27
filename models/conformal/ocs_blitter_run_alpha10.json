@@ -1,0 +1,22 @@
+{
+ "model": "models/model_holdout_ocs_blitter_v4.txt",
+ "exclude_design": "ocs_blitter",
+ "alpha": 0.1,
+ "lambda": 0.967,
+ "calibration_unit": "run",
+ "calibration_units": 74,
+ "bound_at_lambda": 0.0993585073183275,
+ "calibration_flag_fraction": 0.03868989927272466,
+ "calibration_miss_rate_by_design": {
+  "BM64": 0.09230769230769231,
+  "aes_cipher_top": 0.08687350835322195,
+  "crc_pipe": 0.125,
+  "des": 0.13178294573643412,
+  "ldpcenc": 0.18515604510883818,
+  "md5": 0.016666666666666666,
+  "picorv32": 0.07110257026183041,
+  "salsa20": 0.10832642916321458,
+  "sha512": 0.07286737866702718,
+  "y_huff": 0.11620926243567753
+ }
+}
