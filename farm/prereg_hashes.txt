@@ -8,3 +8,4 @@
 2026-10-27T06:32:40Z  eca195ac0a5d282a33b2a77403d2dabbe49f88fa5fb746531851aae499e9cc23  pre-registration with Addendum 12 (re-timed calibrated list rct213-70 vs thr500-70c)
 2026-10-27T06:57:03Z  efbf8fdb701aa04ee6b93c710f852e99973b99c20a8c1878c751ffa0b7f443e6  pre-registration with Addendum 13 (rcal213-10 on Round-4 and Round-5 bases)
 2026-10-27T08:36:11Z  0513505fc106b9cd0817f90573b7e0dc5b311e694188226f5ae2994a36407f45  pre-registration with Addendum 14 (model list + corrected parasitics in the repair: thr500-10cr / thr500-30cr)
+2026-10-27T09:53:24Z  226b688cba350521bb28f276db631d2e7c6c8fb5a1fbb4dc74bca03cfed16514  pre-registration with Addendum 15 (combined policy thr500-30cr vs rcal213-10 on the five Round-4/5 bases; mechanism control thr500-30c on Round 3)
