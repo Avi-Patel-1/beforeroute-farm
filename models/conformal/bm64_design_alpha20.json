@@ -1,0 +1,22 @@
+{
+ "model": "models/model_holdout_bm64_v4.txt",
+ "exclude_design": "BM64",
+ "alpha": 0.2,
+ "lambda": 0.975,
+ "calibration_unit": "design",
+ "calibration_units": 10,
+ "bound_at_lambda": 0.19495888972566028,
+ "calibration_flag_fraction": 0.03778050979089786,
+ "calibration_miss_rate_by_design": {
+  "aes_cipher_top": 0.11097852028639618,
+  "crc_pipe": 0.171875,
+  "des": 0.15503875968992248,
+  "ldpcenc": 0.21898767374770522,
+  "md5": 0.03333333333333333,
+  "ocs_blitter": 0.06426735218508997,
+  "picorv32": 0.0865561694290976,
+  "salsa20": 0.12986743993371996,
+  "sha512": 0.0903068811680411,
+  "y_huff": 0.1427958833619211
+ }
+}
