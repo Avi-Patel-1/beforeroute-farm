@@ -36,9 +36,50 @@ PY
 fi
 test -f results/$BASE/nets.jsonl
 BASE_RUN=/work/$DESIGN/runs/$BASE
+# Scoring input. Default: the baseline's post-GRT dump (STAMidPNR-3 view, after antenna repair).
+# Arms with suffix "c" score features dumped at the checkpoint itself, with no signoff data in the
+# scoring directory at all: exactly what a deployed flow step would see.
+SRC=results/$BASE
+use_checkpoint_features() {
+  local D=results/$BASE-ckpt
+  if [ ! -f $D/nets.jsonl ]; then
+    local ST
+    ST=$(ls $DESIGN/runs/$BASE/*-openroad-checkantennas/state_out.json | head -1)
+    mkdir -p $D
+    $DOCKER python3 br/run_dump.py $BASE_RUN --state /work/$ST --out /work/$D/dump --pdk-root /work/pdk > $D/dump.log 2>&1 || true
+    sudo chown -R "$(id -u):$(id -g)" results || true
+    if [ ! -f $D/dump/nets.jsonl ]; then echo "[hero] checkpoint feature dump failed"; tail -20 $D/dump.log; exit 3; fi
+    cp $D/dump/nets.jsonl $D/dump/dump_summary.json $D/
+    rm -rf $D/dump
+    cp results/$BASE/resolved.json $D/resolved.json
+    python3 - "$D" "$BASE" <<'PY'
+import json, os, sys
+d, base = sys.argv[1], sys.argv[2]
+json.dump({"tag": base + "-ckpt", "status": "completed", "kind": "checkpoint features only, no signoff data"}, open(os.path.join(d, "job.json"), "w"))
+json.dump({"nets": [], "summary": {"nets_violating": 0, "corner_counts": {}}}, open(os.path.join(d, "labels.json"), "w"))
+json.dump({"nets": {}}, open(os.path.join(d, "final_nets.json"), "w"))
+json.dump({}, open(os.path.join(d, "metrics.json"), "w"))
+PY
+  fi
+  SRC=$D
+  echo "[hero] scoring checkpoint features ($D)"
+}
 case "$ARM" in
   seed)
     echo "[hero] seed: baseline checkpoint only (populates the cache)" ;;
+  dmp)
+    # decision-point dump: per-net features at the post-GRT checkpoint the arms resume from (before antenna
+    # repair), to check that scoring there flags the same nets as scoring the STAMidPNR-3 view
+    ST=$(ls $DESIGN/runs/$BASE/*-openroad-checkantennas/state_out.json | head -1)
+    mkdir -p results/$BASE-dmp
+    $DOCKER python3 br/run_dump.py $BASE_RUN --state /work/$ST --out /work/results/$BASE-dmp/dump --pdk-root /work/pdk > results/$BASE-dmp/dump.log 2>&1 || true
+    sudo chown -R "$(id -u):$(id -g)" results || true
+    cp results/$BASE-dmp/dump/nets.jsonl results/$BASE-dmp/nets.jsonl 2>/dev/null || true
+    cp results/$BASE-dmp/dump/dump_summary.json results/$BASE-dmp/dump_summary.json 2>/dev/null || true
+    rm -rf results/$BASE-dmp/dump
+    if [ -f results/$BASE-dmp/nets.jsonl ]; then st=completed; else st=dump_failed; fi
+    python3 -c "import json;json.dump({'tag':'$BASE-dmp','status':'$st','kind':'decision-point dump','state':'$ST'},open('results/$BASE-dmp/job.json','w'))"
+    gzip -f results/$BASE-dmp/nets.jsonl 2>/dev/null || true ;;
   rerun)
     $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm base --tag $BASE-rerun --results results --pdk-root /work/pdk --jobs $JOBS ;;
   uni*)
@@ -53,36 +94,41 @@ case "$ARM" in
   est*)
     # est050-70: top 5% of nets by the timer's own estimated worst-load slew ratio, margin 70 (strongest simple ablation at k=5%)
     K=${ARM#est}; K=${K%%-*}; H=${ARM##*-}
+    case "$H" in *c) H=${H%c}; use_checkpoint_features;; esac
     FRAC=$(python3 -c "print(int('$K')/1000)")
     python3 -m pip install -q pandas pyarrow lightgbm scikit-learn
-    python3 br/score.py --model none --rule EST --run-results results/$BASE --frac $FRAC --out results/$BASE/flagged_$ARM.json
+    python3 br/score.py --model none --rule EST --run-results $SRC --frac $FRAC --out results/$BASE/flagged_$ARM.json
     $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm targeted --tag $BASE-$ARM --slew-pct $H --cap-pct $H --flagged /work/results/$BASE/flagged_$ARM.json --results results --pdk-root /work/pdk --jobs $JOBS ;;
   det*)
     # det050-70: top 5% of nets by the frozen deterministic rule R8 = max(est load slew, est driver slew, est cap ratio), margin 70 (AI ablation)
     K=${ARM#det}; K=${K%%-*}; H=${ARM##*-}
+    case "$H" in *c) H=${H%c}; use_checkpoint_features;; esac
     FRAC=$(python3 -c "print(int('$K')/1000)")
     python3 -m pip install -q pandas pyarrow lightgbm scikit-learn
-    python3 br/score.py --model none --rule R8 --run-results results/$BASE --frac $FRAC --out results/$BASE/flagged_$ARM.json
+    python3 br/score.py --model none --rule R8 --run-results $SRC --frac $FRAC --out results/$BASE/flagged_$ARM.json
     $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm targeted --tag $BASE-$ARM --slew-pct $H --cap-pct $H --flagged /work/results/$BASE/flagged_$ARM.json --results results --pdk-root /work/pdk --jobs $JOBS ;;
   exp*)
     # exp100-70: auto-budget = top round(1.00 * sum(p)) nets (the model's expected violator count), margin 70
     F=${ARM#exp}; F=${F%%-*}; H=${ARM##*-}
+    case "$H" in *c) H=${H%c}; use_checkpoint_features;; esac
     FAC=$(python3 -c "print(int('$F')/100)")
     python3 -m pip install -q pandas pyarrow lightgbm scikit-learn
-    python3 br/score.py --model $MODEL --run-results results/$BASE --expected-count $FAC --out results/$BASE/flagged_$ARM.json
+    python3 br/score.py --model $MODEL --run-results $SRC --expected-count $FAC --out results/$BASE/flagged_$ARM.json
     $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm targeted --tag $BASE-$ARM --slew-pct $H --cap-pct $H --flagged /work/results/$BASE/flagged_$ARM.json --results results --pdk-root /work/pdk --jobs $JOBS ;;
   tgt*|thr*)
     # tgt050-70: top 5% of nets | thr500-70: every net with p >= 0.500 ; suffixes after H:
-    #   p2 = two masked passes, f = + fanout rule, h = hold-fix delay cells protected from resizing, v3 = model tag
+    #   p2 = two masked passes, f = + fanout rule, h = hold-fix delay cells protected from resizing, v3 = model tag,
+    #   c = score features dumped at the checkpoint itself (deployment view)
     case "$ARM" in tgt*) K=${ARM#tgt}; SEL=frac;; thr*) K=${ARM#thr}; SEL=thr;; esac
-    K=${K%%-*}; REST=${ARM##*-}; H=${REST%%[pfhv]*}
+    K=${K%%-*}; REST=${ARM##*-}; H=${REST%%[pfhvc]*}
+    case "$REST" in *c*) use_checkpoint_features;; esac
     PASSES=1; case "$REST" in *p2*) PASSES=2;; esac
     RULE=""; case "$REST" in *f*) RULE="--rule-fanout";; esac
     PROT=""; case "$REST" in *h*) PROT="--protect-hold";; esac
     VAL=$(python3 -c "print(int('$K')/1000)")
     [ "$SEL" = frac ] && SELARG="--frac $VAL" || SELARG="--threshold $VAL"
     python3 -m pip install -q pandas pyarrow lightgbm scikit-learn
-    python3 br/score.py --model $MODEL --run-results results/$BASE $SELARG $RULE --out results/$BASE/flagged_$ARM.json
+    python3 br/score.py --model $MODEL --run-results $SRC $SELARG $RULE --out results/$BASE/flagged_$ARM.json
     $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm targeted --tag $BASE-$ARM --slew-pct $H --cap-pct $H --passes $PASSES $PROT --flagged /work/results/$BASE/flagged_$ARM.json --results results --pdk-root /work/pdk --jobs $JOBS ;;
   lt*)
     # lt050-80-60-40: top 5% split by predicted signoff ratio (>=1.3 | >=1.1 | rest) at margins 80/60/40

@@ -37,7 +37,7 @@ def dispatched(base, arm, log):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--bases", default="d3-salsa20-000,d3-des-000,d3-y_huff-000,d3-ocs_blitter-000,d3-bm64-000,d3-md5-000,d3b-sha512-000,d3b-ldpcenc-000")
+    ap.add_argument("--bases", default="d3-salsa20-000,d3-des-000,d3-y_huff-000,d3-ocs_blitter-000,d3-bm64-000,d3-md5-000,d3b-sha512-000,d3b-ldpcenc-000,d1-picorv32-006,d1-picorv32-016,d1-aes_cipher-000,d5-chacha-000,d5-point_add-000,d5-blabla-000")
     ap.add_argument("--results", default=os.path.join(ROOT, "results"))
     ap.add_argument("--max-pass", type=int, default=4)
     ap.add_argument("--seed-arm", default="tgt050-70")
@@ -58,8 +58,10 @@ def main():
                 continue
             todo.append((base, nxt, os.path.join(ldir, f"sgl{k+1}.json"), os.path.join(ldir, f"sgl{k}.json"), f"{base}-{arm_k}"))
         # BeforeRoute + cleanup
-        seed = f"{base}-{a.seed_arm}"
-        flagged = os.path.join(a.results, base, f"flagged_{a.seed_arm}.json")
+        # Round-5 bases score the deployment view (features at the checkpoint): seed arm tgt050-70c
+        seed_arm = a.seed_arm + "c" if base.startswith("d5-") else a.seed_arm
+        seed = f"{base}-{seed_arm}"
+        flagged = os.path.join(a.results, base, f"flagged_{seed_arm}.json")
         if landed(a.results, seed) and os.path.exists(flagged):
             prev_arm, prev_list = seed, flagged
             for k in range(1, a.max_pass):

@@ -69,6 +69,9 @@ def main() -> int:
                     src_base = os.path.join(td, a.base)
                     if os.path.exists(src_arm):
                         shutil.copytree(src_arm, dst, dirs_exist_ok=True)
+                    src_ck = os.path.join(td, a.base + "-ckpt")  # checkpoint features scored by "c" arms
+                    if os.path.exists(os.path.join(src_ck, "nets.jsonl")) and not os.path.exists(os.path.join(a.results, a.base + "-ckpt", "nets.jsonl")):
+                        shutil.copytree(src_ck, os.path.join(a.results, a.base + "-ckpt"), dirs_exist_ok=True)
                     if os.path.exists(src_base):
                         # always keep the lists the runner scored/used for this arm (flagged_*.json, tiers_*.json, *.scores.csv)
                         os.makedirs(os.path.join(a.results, a.base), exist_ok=True)
@@ -91,7 +94,8 @@ def main() -> int:
         json.dump(cache, open(cache_path, "w"))
     except Exception:
         pass
-    rows = [arm_summary(a.results, a.base)] + [arm_summary(a.results, t) for t in sorted(set(arms))]
+    # decision-point feature dumps (arm "dmp") carry no signoff outcome: kept on disk, not summarized
+    rows = [arm_summary(a.results, a.base)] + [arm_summary(a.results, t) for t in sorted(set(arms)) if not t.endswith("-dmp")]
     out = os.path.join(a.results, a.base, "hero_summary.json")
     json.dump({"base": a.base, "arms": rows}, open(out, "w"), indent=1)
     base_area = rows[0].get("stdcell_area")
