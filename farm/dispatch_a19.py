@@ -77,6 +77,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--phase1", action="store_true")
+    ap.add_argument("--a20", action="store_true", help="Addendum 20: hold-preserving repair arms on the 14 bases")
     a = ap.parse_args()
     lock = open(os.path.join(ROOT, "results", ".a19_lock"), "w")
     try:
@@ -110,6 +111,12 @@ def main():
             if base in MODEL_V4 and f"{base}:v4" not in st["phase1"]:
                 if dispatch(base, ["thr500-30crv4"], MODEL_V4[base], ref, a.dry_run):
                     st["phase1"][f"{base}:v4"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()); save()
+    if a.a20:
+        for base, ref in BRANCH.items():
+            if f"{base}:a20" in st["phase1"]:
+                continue
+            if dispatch(base, ["rcy213-10", "rcy213-10y", "thr500-30cry", "bst500-30-10ry"], MODEL[base], ref, a.dry_run):
+                st["phase1"][f"{base}:a20"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()); save()
     # phase 2: follow-up arms once each seed run completed
     pending = [nb for nb, s in st["seeds"].items() if not s.get("arms_dispatched") and not s.get("run")]
     idx = job_index(st, min(st["seeds"][nb]["after"] for nb in pending)) if pending else {}
