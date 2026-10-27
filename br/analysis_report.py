@@ -219,36 +219,54 @@ def fig_ablation(ab: pd.DataFrame, path: str, label: str) -> None:
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
+    from matplotlib.lines import Line2D
     from matplotlib.patches import Patch
 
     rungs = [r for r in ["est_slew", "rule_R8", "logreg_calibrated_estimate", "lgbm_estimate_only", "lgbm_no_geometry", "lgbm_full"]
              if r in set(ab["rung_name"])]
     colors = {**RULE_GRAYS, **LEARNED_RAMP}
-    poscol = "eval_pos" if "eval_pos" in ab.columns else "pos"
-    order = (ab[ab["rung_name"] == "lgbm_full"].sort_values(poscol, ascending=False)["holdout"].tolist()
-             or sorted(ab["holdout"].unique()))
-    fig, axes = plt.subplots(2, 1, figsize=(11.5, 5.8), sharex=True, facecolor=SURF)
+    nc, pc = ("eval_n", "eval_pos") if "eval_n" in ab.columns else ("n", "pos")
+    full = ab[ab["rung_name"] == "lgbm_full"]
+    order = full.sort_values(pc, ascending=False)["holdout"].tolist() or sorted(ab["holdout"].unique())
+    rate = {d: float(ab[ab["holdout"] == d][pc].iloc[0] / ab[ab["holdout"] == d][nc].iloc[0]) for d in order}
+    fig, axes = plt.subplots(2, 1, figsize=(11.5, 6.4), sharex=True, facecolor=SURF)
     w = 0.8 / len(rungs)
     xs = np.arange(len(order))
+    vals_c = ab[ab["rung_name"].isin(rungs)]["pooled_catch95"].dropna()
+    med = float(vals_c.median()) if len(vals_c) else 0.1
+    cap = float(max(0.12, 1.25 * vals_c[vals_c <= 3 * med].max())) if len(vals_c) else 1.0
     for i, (m, ylab) in enumerate((("pooled_recall5", "recall at 5% flagged"), ("pooled_catch95", "fraction flagged to catch 95%"))):
         ax = axes[i]
         style(ax)
         for k, r in enumerate(rungs):
-            vals = [ab[(ab["holdout"] == d) & (ab["rung_name"] == r)][m].mean() for d in order]
-            ax.bar(xs - 0.4 + w * (k + 0.5), vals, width=w * 0.86, color=colors[r], linewidth=0)
-        ax.set_ylabel(ylab, fontsize=8.5, color=INK2)
+            vals = np.array([ab[(ab["holdout"] == d) & (ab["rung_name"] == r)][m].mean() for d in order])
+            xk = xs - 0.4 + w * (k + 0.5)
+            shown = np.minimum(vals, cap) if i == 1 else vals
+            ax.bar(xk, shown, width=w * 0.86, color=colors[r], linewidth=0)
+            if i == 1:
+                for x_, v in zip(xk, vals):
+                    if v > cap:
+                        ax.text(x_, cap * 1.01, f"{v:.2f}", rotation=90, ha="center", va="bottom", fontsize=6.5, color=INK, clip_on=False)
         if i == 0:
-            ax.set_ylim(0.5, 1.0)
+            ax.set_ylim(0, 1.0)
         else:
-            ax.set_ylim(0, None)
+            ax.set_ylim(0, cap)
+            for x_, d in zip(xs, order):
+                ax.hlines(0.95 * rate[d], x_ - 0.42, x_ + 0.42, colors=INK, linewidth=1.0, linestyles=(0, (1, 1.5)))
+        ax.set_ylabel(ylab, fontsize=8.5, color=INK2)
     rnd = ab[ab["rung_name"] == "random"]
     note = f" Random ranking: recall@5% ~{rnd['pooled_recall5'].mean():.2f}, catch-95 ~{rnd['pooled_catch95'].mean():.2f}." if len(rnd) else ""
     axes[1].set_xticks(xs)
-    axes[1].set_xticklabels([f"{d}\n({int(ab[ab['holdout'] == d]['n_eval_runs'].iloc[0])} runs)" for d in order], fontsize=8, color=INK2)
-    fig.legend(handles=[Patch(color=colors[r], label=RUNG_LABEL[r]) for r in rungs], loc="upper center", ncol=len(rungs),
-               frameon=False, fontsize=8, bbox_to_anchor=(0.5, 0.995))
-    fig.text(0.5, 0.005, f"Leave-one-design-out, signal nets, pooled over each held-out design's runs.{note} {label}",
-             ha="center", fontsize=7.5, color=INK2)
+    labs = []
+    for d in order:
+        n_runs = int(ab[ab["holdout"] == d]["n_eval_runs"].iloc[0])
+        labs.append(f"{d}\n{n_runs} run{'s' if n_runs != 1 else ''}\n{rate[d]:.1%} viol.")
+    axes[1].set_xticklabels(labs, fontsize=7.5, color=INK2)
+    handles = [Patch(color=colors[r], label=RUNG_LABEL[r]) for r in rungs]
+    handles.append(Line2D([], [], color=INK, linewidth=1.0, linestyle=(0, (1, 1.5)), label="floor (0.95 x violator rate)"))
+    fig.legend(handles=handles, loc="upper center", ncol=len(handles), frameon=False, fontsize=7.5, bbox_to_anchor=(0.5, 0.995))
+    fig.text(0.5, 0.005, f"Leave-one-design-out, signal nets, pooled over each held-out design's runs; bars above the catch-95 axis "
+             f"are clipped and labeled.{note} {label}", ha="center", fontsize=7, color=INK2)
     fig.tight_layout(rect=(0, 0.03, 1, 0.94))
     fig.savefig(path, dpi=170, facecolor=SURF)
     plt.close(fig)
