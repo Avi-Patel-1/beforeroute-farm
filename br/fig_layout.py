@@ -92,6 +92,7 @@ def main() -> int:
     ap.add_argument("--name", default="layout")
     ap.add_argument("--width", type=float, default=12.1)
     ap.add_argument("--title", default="")
+    ap.add_argument("--note", default="", help="one line under the panels")
     a = ap.parse_args()
     F.setup_style()
     panels = []
@@ -108,13 +109,15 @@ def main() -> int:
     x0, y0, x1, y1 = base["die"]
     aspect = (y1 - y0) / (x1 - x0)
     pw = (a.width - 0.2) / n
-    fig = plt.figure(figsize=(a.width, pw * aspect + 0.9))
+    extra = 0.45 if a.note else 0.0
+    fig = plt.figure(figsize=(a.width, pw * aspect + 0.9 + extra))
     nums = {}
     for i, (title, d, col) in enumerate(panels):
         V = violators(d)
         want = V | (flags if i == 0 else set())
         L = parse_def(os.path.join(d, "final.def.gz"), want_nets=want)
-        ax = fig.add_axes([0.01 + i * (0.98 / n), 0.02, 0.98 / n - 0.01, 1 - 0.9 / (pw * aspect + 0.9)])
+        H = pw * aspect + 0.9 + extra
+        ax = fig.add_axes([0.01 + i * (0.98 / n), (0.02 * (pw * aspect + 0.9) + extra) / H, 0.98 / n - 0.01, (pw * aspect) / H * 0.97])
         ax.set_xlim(x0, x1)
         ax.set_ylim(y0, y1)
         ax.set_aspect("equal")
@@ -137,6 +140,8 @@ def main() -> int:
         nums[title] = {"violators": len(V), "inserted_cells": len(new), "cells": len(real), "dir": d}
     if a.title:
         fig.suptitle(a.title, fontsize=F.FS + 1, color=F.INK, x=0.01, ha="left")
+    if a.note:
+        fig.text(0.01, 0.1 * extra / (pw * aspect + 0.9 + extra), a.note, fontsize=F.FS - 2, color=F.MUTED, ha="left", va="bottom")
     F.save(fig, a.out, a.name, nums)
     print(json.dumps(nums, indent=1))
     return 0
