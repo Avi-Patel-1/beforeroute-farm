@@ -85,9 +85,21 @@ def park():
             continue
         st["runs"].append({"id": run["id"], "branch": run["head_branch"], "created_at": run["created_at"],
                            "parked_at": now(), "released_at": None})
+        mark_collected(run["id"])  # a cancelled run has nothing to collect; keeps cycle.sh from re-scanning its base
         n += 1
         save(st)
     print(f"[park] parked {n} queued hero runs ({len(runs)} were queued)")
+
+
+def mark_collected(rid):
+    p = os.path.join(ROOT, "results", ".collected_runs.json")
+    try:
+        done = json.load(open(p))
+    except Exception:
+        done = []
+    if rid not in done:
+        done.append(rid)
+        json.dump(done, open(p, "w"))
 
 
 def unmark_collected(rid):
