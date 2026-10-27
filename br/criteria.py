@@ -116,6 +116,10 @@ def c_iter(results, base):
     LB = [p for p in br if "V" in p]
     if not LL:
         return "pending", {}
+    # a chain that ended before its last pass (4) with violators left was stopped, not finished: e.g. a pass whose flow
+    # ended in deferred hold errors is not "completed", so farm/advance.py never queued the next pass -> undecided
+    if any(p.get("status") == "not dispatched" and p.get("pass_", 9) <= 4 for p in loop + br):
+        return "pending", {"loop_V": [p["V"] for p in LL], "br_V": [p["V"] for p in LB], "note": "chain stopped before pass 4"}
     loop_final = not any(p.get("status") == "pending" for p in loop)
     br_final = not any(p.get("status") == "pending" for p in br)
     nl, F = LL[-1]["pass_"] + 1, LL[-1]["V"]  # passes the loop used (baseline counts), its final count
@@ -133,7 +137,56 @@ def c_iter(results, base):
     return ("fail" if LB[-1]["pass_"] + 1 > nl - 1 else "pending"), info
 
 
+def c_h2(rows):
+    """Original pre-registration, H2: tgt050-70 removes >= 80% of the baseline's signal violators while changing fewer
+    cells and keeping more hold margin (worst hold slack) than uni70."""
+    a, u = rows.get("tgt050-70"), rows.get("uni70")
+    if a is None or u is None:
+        return "pending", {}
+    fa, ca, cu = removed(rows, "tgt050-70"), cells(a), cells(u)
+    ha, hu = a.get("hold_ws"), u.get("hold_ws")
+    ok = fa is not None and fa >= 0.80 and ca is not None and cu is not None and ca < cu and ha is not None and hu is not None and ha > hu
+    return ("pass" if ok else "fail"), {"removed": round(fa, 3) if fa is not None else None, "cells": ca, "uni70_cells": cu,
+                                        "hold": round(ha, 4) if ha is not None else None, "uni70_hold": round(hu, 4) if hu is not None else None}
+
+
+def c_pred_deploy(results, base):
+    """Addendum 6, criterion 1 (deployment view): on the checkpoint-scored signal nets, the model's recall at 5% of the
+    nets >= the timer estimate's, and the model's nets-to-catch-95% <= the estimate's (labels: the baseline's signoff)."""
+    import csv
+    import math
+    pm = os.path.join(results, base, "flagged_tgt050-70c.scores.csv")
+    pe = os.path.join(results, base, "flagged_est050-70c.scores.csv")
+    pl = os.path.join(results, base, "labels.json")
+    if not all(os.path.exists(q) for q in (pm, pe, pl)):
+        return "pending", {}
+    m = {r["net"]: float(r["p"]) for r in csv.DictReader(open(pm))}
+    e = {r["net"]: float(r["p"]) for r in csv.DictReader(open(pe))}
+    viol = {d["net"] for d in json.load(open(pl))["nets"] if d.get("sigtype_s") == "SIGNAL" and d.get("violated")}
+    nets = [n for n in m if n in e]
+    y = {n: n in viol for n in nets}
+    P = sum(y.values())
+    if not P:
+        return "pending", {}
+
+    def rec5(sc):
+        top = sorted(nets, key=lambda n: -sc[n])[:int(round(0.05 * len(nets)))]
+        return sum(y[n] for n in top) / P
+
+    def c95(sc):
+        need, got = math.ceil(0.95 * P), 0
+        for i, n in enumerate(sorted(nets, key=lambda n: -sc[n])):
+            got += y[n]
+            if got >= need:
+                return (i + 1) / len(nets)
+        return 1.0
+    rm, re_, cm, ce = rec5(m), rec5(e), c95(m), c95(e)
+    return ("pass" if rm >= re_ and cm <= ce else "fail"), {"recall5_model": round(rm, 3), "recall5_est": round(re_, 3),
+                                                             "catch95_model": round(cm, 4), "catch95_est": round(ce, 4)}
+
+
 WITHDRAWN = {"A11": "WITHDRAWN 06:28Z before any arm ran (its lists carried the output-port bug); no verdict"}
+VOID = {"A2c": "VOID: the thresholds were calibrated in-sample by a bug (erratum in the pre-registration); no verdict"}
 
 
 def c_hold_no_worse(rows, arm, other):
@@ -199,14 +252,19 @@ def main() -> int:
     a = ap.parse_args()
     R = a.results
     rounds = {
+        "H": (R1, [
+            ("H2 tgt050-70 removes >= 80% with fewer cells and more hold margin than uni70 (each confirmatory base)", lambda b, r: c_h2(r), (3, 3)),
+        ]),
         "R3": (R3, [
             ("A1.1 tgt050-70 vs uni50 (>= removed, <= 60% cells, hold >=)", lambda b, r: c_target_vs_uni50(r, "tgt050-70"), (5, 6)),
+            ("A1.2 tgt050-70 fewer violators than det050-70 (as first registered)", lambda b, r: c_model_vs_rule(r, "tgt050-70", ["det050-70"]), (5, 6)),
             ("A1.2+A4 tgt050-70 fewer violators than best of det050-70/est050-70", lambda b, r: c_model_vs_rule(r, "tgt050-70", ["det050-70", "est050-70"]), (5, 6)),
             ("A1.3 thr500-70 removes >= 90%", lambda b, r: c_removes(r, "thr500-70", 0.90), (4, 6)),
             # (no equivalence criterion: the Round-3 tgt/thr/det arms were dispatched before the runner kept netlists)
         ]),
         "R4": (R4, [
             ("A3 tgt050-70 vs uni50", lambda b, r: c_target_vs_uni50(r, "tgt050-70"), (2, 2)),
+            ("A3 tgt050-70 fewer violators than det050-70 (as first registered)", lambda b, r: c_model_vs_rule(r, "tgt050-70", ["det050-70"]), (2, 2)),
             ("A3+A4 tgt050-70 fewer violators than best of det050-70/est050-70", lambda b, r: c_model_vs_rule(r, "tgt050-70", ["det050-70", "est050-70"]), (2, 2)),
             ("A3 exp100-70 removes >= 85% with <= 60% of uni50 cells", lambda b, r: c_removes(r, "exp100-70", 0.85, 0.6), (2, 2)),
         ]),
@@ -214,11 +272,13 @@ def main() -> int:
             ("A5.1 exp100-70 removes >= 85% with <= 60% of uni50 cells (Round-3 bases)", lambda b, r: c_removes(r, "exp100-70", 0.85, 0.6), (5, 6)),
         ]),
         "R5": (R5, [
+            ("A6.1 deployment-view prediction: model recall at 5% >= the estimate's and catch-95 <= the estimate's", lambda b, r: c_pred_deploy(R, b), (2, 3)),
             ("A6.2 tgt050-70c vs uni50", lambda b, r: c_target_vs_uni50(r, "tgt050-70c"), (2, 3)),
             ("A6.3 tgt050-70c fewer violators than est050-70c", lambda b, r: c_model_vs_rule(r, "tgt050-70c", ["est050-70c"]), (2, 3)),
             ("A6.4 thr500-70c removes >= 90%", lambda b, r: c_removes(r, "thr500-70c", 0.90), (2, 3)),
             ("A6.5 exp100-70c removes >= 85% with <= 60% of uni50 cells", lambda b, r: c_removes(r, "exp100-70c", 0.85, 0.6), (2, 3)),
             ("A6.6 equivalence of the targeted arms", lambda b, r: c_equiv(R, b, r, ["est050-70c", "tgt050-70c", "thr500-70c", "exp100-70c"]), (3, 3)),
+            ("A6.7 BeforeRoute + cleanup reaches the loop's final violator count in >= 1 fewer route+signoff pass", lambda b, r: c_iter(R, b), (2, 3)),
         ]),
         "A9": (R3, [
             ("A9a thr500-70 fewer violators than rcal146-0 (wire cap x1.461 = under-calibrated, no margin)", lambda b, r: c_model_vs_rule(r, "thr500-70", ["rcal146-0"]), (4, 6)),
@@ -247,6 +307,9 @@ def main() -> int:
         "A2": (R3, [
             ("A2 BeforeRoute + cleanup reaches the loop's final violator count in >= 1 fewer route+signoff pass", lambda b, r: c_iter(R, b), (4, 6)),
         ]),
+        "A2c": (R3, [
+            ("A2 conformal threshold: realized miss rate <= alpha on >= 5 of 6 bases", lambda b, r: ("pending", {}), (5, 6)),
+        ]),
         "A5.2": (["d1-picorv32-006", "d1-picorv32-016", "d1-aes_cipher-000"], [
             ("A5.2 same expectation on the Round-1 bases (replication; no count specified)", lambda b, r: c_iter(R, b), None),
         ]),
@@ -274,6 +337,9 @@ def main() -> int:
         if r["round"] in WITHDRAWN:
             for v in r["criteria"].values():
                 v["verdict"] = WITHDRAWN[r["round"]]
+        if r["round"] in VOID:
+            for v in r["criteria"].values():
+                v["verdict"] = VOID[r["round"]]
     for r in res:
         print(f"== {r['round']}")
         for c, v in r["criteria"].items():
