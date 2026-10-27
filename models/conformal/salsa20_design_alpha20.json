@@ -1,0 +1,22 @@
+{
+ "model": "models/model_holdout_salsa20_v4.txt",
+ "exclude_design": "salsa20",
+ "alpha": 0.2,
+ "lambda": 0.973,
+ "calibration_unit": "design",
+ "calibration_units": 10,
+ "bound_at_lambda": 0.19787954603333774,
+ "calibration_flag_fraction": 0.037459521762198356,
+ "calibration_miss_rate_by_design": {
+  "BM64": 0.11153846153846154,
+  "aes_cipher_top": 0.10369928400954653,
+  "crc_pipe": 0.21875,
+  "des": 0.15503875968992248,
+  "ldpcenc": 0.2079727248885392,
+  "md5": 0.03333333333333333,
+  "ocs_blitter": 0.05398457583547558,
+  "picorv32": 0.08311313956281528,
+  "sha512": 0.08787346221441125,
+  "y_huff": 0.13765008576329332
+ }
+}
