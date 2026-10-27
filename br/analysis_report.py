@@ -156,6 +156,115 @@ def paired_table(runs: pd.DataFrame) -> str:
     out.append(f"| ALL runs | {len(piv)} | " + " | ".join(cells) + " |")
     return "\n".join(out)
 
+VARIANT_TEXT = {"runs": "other-design runs", "designs": "other designs (all their runs)",
+                "within": "same-design runs on top of all other designs", "self": "same-design runs only"}
+
+
+def lc_answer(lc: pd.DataFrame) -> tuple:
+    """(a) smallest training size whose pooled catch-95 <= 2 x floor (floor = 0.95 x violator rate of the evaluation runs)."""
+    if lc.empty:
+        return "", {}
+    lc = (lc[lc["skipped"].isna()] if "skipped" in lc.columns else lc).copy()
+    lc["n"] = lc["n"].astype(str)
+    lc["floor2"] = 2 * 0.95 * lc["eval_pos"] / lc["eval_n"]
+    lc["meets"] = lc["pooled_catch95"] <= lc["floor2"]
+    lc["ratio"] = lc["pooled_catch95"] / (0.95 * lc["eval_pos"] / lc["eval_n"])
+    g = lc.groupby(["variant", "holdout", "n"]).agg(c95=("pooled_catch95", "mean"), floor2=("floor2", "mean"), ratio=("ratio", "mean"),
+                                                     ratio_max=("ratio", "max"), all_meet=("meets", "all"), seeds=("meets", "size"),
+                                                     train_runs=("n_train_runs", "mean"), r8=("r8_pooled_catch95", "mean"),
+                                                     est=("est_slew_pooled_catch95", "mean")).reset_index()
+    g["nk"] = g["n"].map(n_key)
+    g = g.sort_values(["variant", "holdout", "nk"])
+    ans = {}
+    for (v, d), x in g.groupby(["variant", "holdout"]):
+        mean_hit = x[x["c95"] <= x["floor2"]]
+        all_hit = x[x["all_meet"]]
+        ans.setdefault(d, {})[v] = {
+            "n_star_mean": None if mean_hit.empty else mean_hit.iloc[0]["n"],
+            "n_star_all_seeds": None if all_hit.empty else all_hit.iloc[0]["n"],
+            "curve": {r["n"]: {"catch95": round(r["c95"], 4), "x_floor": round(r["ratio"], 2), "worst_seed_x_floor": round(r["ratio_max"], 2),
+                               "train_runs": round(r["train_runs"], 1)} for _, r in x.iterrows()},
+            "r8_x_floor": round(float((x["r8"] / (x["floor2"] / 2)).mean()), 2),
+            "est_x_floor": round(float((x["est"] / (x["floor2"] / 2)).mean()), 2),
+        }
+    out = ["\n### (a) Training data needed to reach catch-95 <= 2x floor (floor = 0.95 x violator rate; pooled over evaluation runs)\n",
+           "Entries: smallest size whose seed-mean catch-95 <= 2x floor / smallest size where every seed does; "
+           "'>max' = never reached. x-floor = catch-95 / floor.\n"]
+    hdr = ("| design | rule R8 x-floor | raw estimate x-floor | " + " | ".join(VARIANT_TEXT[v] for v in ("runs", "designs", "within", "self")) +
+           " | GBM all other designs x-floor |")
+    out += [hdr, "|" + "---|" * (hdr.count("|") - 1)]
+    for d in sorted(ans):
+        a = ans[d]
+        cells = []
+        for v in ("runs", "designs", "within", "self"):
+            if v not in a:
+                cells.append("-")
+                continue
+            mx = list(a[v]["curve"])[-1]
+            cells.append(f"{a[v]['n_star_mean'] or '>' + mx} / {a[v]['n_star_all_seeds'] or '>' + mx}")
+        ref = a.get("runs") or a.get("within") or next(iter(a.values()))
+        allx = (a.get("runs", {}).get("curve", {}).get("all") or a.get("within", {}).get("curve", {}).get("0") or {}).get("x_floor")
+        out.append(f"| {d} | {ref['r8_x_floor']} | {ref['est_x_floor']} | " + " | ".join(cells) + f" | {allx if allx is not None else '-'} |")
+    return "\n".join(out), ans
+
+
+def ablation_verdict(ab: pd.DataFrame, runs: pd.DataFrame) -> tuple:
+    """(b) GBM (full) vs raw estimate and rule R8 at the operating budget, pooled and paired per run (sign test)."""
+    from scipy.stats import binomtest
+
+    if ab.empty or runs.empty:
+        return "", {}
+    runs = runs[runs["positives"] > 0]
+    piv = {m: runs.pivot_table(index=["holdout", "run"], columns="rung_name", values=m, aggfunc="first")
+           for m in ("recall@5%", "frac_to_catch_95")}
+
+    def paired(sub_r, sub_c, base):
+        res = {}
+        for m, sub, sign in (("recall5", sub_r, 1), ("catch95", sub_c, -1)):
+            if base not in sub or "lgbm_full" not in sub:
+                continue
+            dlt = (sign * (sub["lgbm_full"] - sub[base])).dropna()
+            w, l_ = int((dlt > 1e-12).sum()), int((dlt < -1e-12).sum())
+            t = int(len(dlt) - w - l_)
+            p = binomtest(w, w + l_, 0.5).pvalue if w + l_ else float("nan")
+            res[m] = {"W": w, "T": t, "L": l_, "p": p, "median_delta": float(dlt.median()) if len(dlt) else float("nan")}
+        return res
+
+    nc, pc = ("eval_n", "eval_pos") if "eval_n" in ab.columns else ("n", "pos")
+    ver = {}
+    out = ["\n### (b) Ablation verdict: GBM (full features) vs raw slew estimate and rule R8 at the operating budget\n",
+           "Pooled over the held-out design's runs; paired = per run (runs with >= 1 violator), W-T-L = GBM better / tie / worse, "
+           "p = two-sided sign test.\n"]
+    hdr = ("| design | runs | viol. rate | R@5% GBM / est / R8 | catch-95 GBM / est / R8 (floor) | paired R@5% vs est | vs R8 | "
+           "paired catch-95 vs est | vs R8 |")
+    out += [hdr, "|" + "---|" * (hdr.count("|") - 1)]
+
+    def cell(r):
+        return f"{r['W']}-{r['T']}-{r['L']} (p={r['p']:.2g})" if r else "-"
+
+    designs = sorted(ab["holdout"].unique())
+    for d in designs + ["ALL"]:
+        if d == "ALL":
+            sr, sc = piv["recall@5%"], piv["frac_to_catch_95"]
+            row = "| ALL designs | " + str(len(sc)) + " | | | |"
+        else:
+            x = ab[ab["holdout"] == d].set_index("rung_name")
+            if "lgbm_full" not in x.index:
+                continue
+            sr = piv["recall@5%"].xs(d, level=0) if d in piv["recall@5%"].index.get_level_values(0) else pd.DataFrame()
+            sc = piv["frac_to_catch_95"].xs(d, level=0) if d in piv["frac_to_catch_95"].index.get_level_values(0) else pd.DataFrame()
+            rate = float(x[pc].iloc[0] / x[nc].iloc[0])
+            g = lambda r, m: x.loc[r, m] if r in x.index else float("nan")
+            row = (f"| {d} | {int(x['n_eval_runs'].iloc[0])} | {rate:.2%} | "
+                   f"{g('lgbm_full', 'pooled_recall5'):.3f} / {g('est_slew', 'pooled_recall5'):.3f} / {g('rule_R8', 'pooled_recall5'):.3f} | "
+                   f"{g('lgbm_full', 'pooled_catch95'):.3f} / {g('est_slew', 'pooled_catch95'):.3f} / {g('rule_R8', 'pooled_catch95'):.3f} ({0.95 * rate:.3f}) |")
+            ver[d] = {"rate": rate, **{f"{r}_{m}": float(g(r, f"pooled_{m}")) for r in ("lgbm_full", "est_slew", "rule_R8", "logreg_calibrated_estimate")
+                                      for m in ("recall5", "catch95")}}
+        pe, pr = paired(sr, sc, "est_slew"), paired(sr, sc, "rule_R8")
+        ver.setdefault(d, {}).update({"paired_vs_est": pe, "paired_vs_R8": pr})
+        out.append(row + f" {cell(pe.get('recall5'))} | {cell(pr.get('recall5'))} | {cell(pe.get('catch95'))} | {cell(pr.get('catch95'))} |")
+    return "\n".join(out), ver
+
 
 def style(ax):
     ax.set_facecolor(SURF)
@@ -274,14 +383,19 @@ def fig_ablation(ab: pd.DataFrame, path: str, label: str) -> None:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--lc", default=None)
+    ap.add_argument("--lc", default=None, help="comma list of learning-curve output dirs (merged)")
     ap.add_argument("--ablation", default=None)
     ap.add_argument("--out", required=True)
     ap.add_argument("--label", default="")
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
     md = [f"# Analysis tables {a.label}\n"]
-    lc = load_csv(a.lc, "learning_curve.csv")
+    answers = {}
+    lc_parts = [load_csv(d, "learning_curve.csv") for d in (a.lc or "").split(",") if d]
+    lc = pd.concat([x for x in lc_parts if not x.empty], ignore_index=True) if any(not x.empty for x in lc_parts) else pd.DataFrame()
+    if not lc.empty:
+        txt, answers["a"] = lc_answer(lc)
+        md.append(txt)
     if not lc.empty:
         s = summarize_lc(lc)
         s.to_csv(os.path.join(a.out, "lc_summary.csv"), index=False)
@@ -293,10 +407,14 @@ def main() -> int:
         ab = ab.drop_duplicates(subset=["holdout", "rung"], keep="last")
         ab = ab.sort_values(["holdout", "rung"])
         ab.to_csv(os.path.join(a.out, "ablation_summary.csv"), index=False)
+        txt, answers["b"] = ablation_verdict(ab, load_csv(a.ablation, "ablation_runs.csv"))
+        md.insert(1, txt)
         md.append(ablation_tables(ab))
         md.append(paired_table(load_csv(a.ablation, "ablation_runs.csv")))
         fig_ablation(ab, os.path.join(a.out, "ablation_ladder.png"), a.label)
     open(os.path.join(a.out, "tables.md"), "w").write("\n".join(md) + "\n")
+    import json
+    json.dump(answers, open(os.path.join(a.out, "answers.json"), "w"), indent=1, default=str)
     print(f"wrote {a.out}/tables.md" + (" + learning_curve.png" if not lc.empty else "") + (" + ablation_ladder.png" if not ab.empty else ""))
     return 0
 
