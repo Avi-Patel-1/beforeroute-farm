@@ -160,6 +160,8 @@ def main() -> int:
     ap.add_argument("--arms", default="zs,gfonly,merge,ft")
     ap.add_argument("--ks", default="1,2,4,all")
     ap.add_argument("--repeats", type=int, default=3)
+    ap.add_argument("--arm-repeats", default="merge=1,mergew=1", help="per-arm cap on draws for k < all, e.g. merge=1 (merge fits are the slow ones)")
+    ap.add_argument("--arm-fsets", default="merge=base,mergew=base", help="per-arm feature sets, e.g. merge=base")
     ap.add_argument("--neg-frac", type=float, default=0.25)
     ap.add_argument("--gf-share", type=float, default=0.2)
     ap.add_argument("--ft-rounds", type=int, default=100)
@@ -167,6 +169,11 @@ def main() -> int:
     a = ap.parse_args()
     arms = a.arms.split(",")
     fsets = a.feature_sets.split(",")
+    arm_rep = {kv.split("=")[0]: int(kv.split("=")[1]) for kv in a.arm_repeats.split(",") if kv}
+    arm_fs = {}
+    for kv in (x for x in a.arm_fsets.split(",") if x):
+        arm, fsl = kv.split("=")
+        arm_fs[arm] = set(fsl.split("+"))
     os.makedirs(os.path.join(a.out, "cache"), exist_ok=True)
     os.makedirs(os.path.join(a.out, "models"), exist_ok=True)
     import lightgbm as lgb
@@ -266,7 +273,7 @@ def main() -> int:
             tsig = f"{zlib.crc32('|'.join(runs_of[d]).encode()):08x}"  # cache keys change when the test runs change
             if "zs" in arms:
                 A.setdefault("zs", {})["0"] = [cached(f"{fs}_zs_{d}_{tsig}", lambda: score_design(te, full.predict(Xte)))]
-            if "merge" in arms:
+            if "merge" in arms and fs in arm_fs.get("merge", {fs}):
                 def m0():
                     return score_design(te, sky_model(sub_name(fs), sky_s, feats, w_s).predict(Xte))
                 A.setdefault("merge", {})["0"] = [cached(f"{fs}_merge_{d}_k0_{tsig}", m0)]
@@ -306,6 +313,10 @@ def main() -> int:
 
                     for arm in arms:
                         if arm == "zs":
+                            continue
+                        if k != "all" and r >= arm_rep.get(arm, a.repeats):
+                            continue
+                        if arm in arm_fs and fs not in arm_fs[arm]:
                             continue
                         psig = f"{zlib.crc32('|'.join(sorted(picked)).encode()):08x}"
                         key = f"{fs}_{arm}_{d}_k{k}_r{r}_{tsig}_{psig}"
