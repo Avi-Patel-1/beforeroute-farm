@@ -19,17 +19,19 @@ if ! pgrep -f "farm/collect_loop" > /dev/null; then
   echo "-- collector loop (re)started"
 fi
 
-# hero bases = any results dir that has a "-rerun" arm or arms on the farm
-BASES=$(gh run list -R $REPO -w hero.yml --limit 20 --json databaseId --jq '.[].databaseId' | while read r; do gh run view $r -R $REPO --json jobs --jq '.jobs[0].name' 2>/dev/null; done | sed -E 's/-(rerun|uni[0-9]+|tgt[0-9]+-[0-9a-z]+|tier.*|lt[0-9].*|thr[0-9]+-[0-9a-z]+|det[0-9]+-[0-9a-z]+|lst-[0-9a-z]+-[0-9]+|exp[0-9]+-[0-9]+|est[0-9]+-[0-9]+|seed|dmp|rcal[0-9a-z]+-[0-9]+t?|rct[0-9]+-[0-9]+|lsx-[0-9a-z]+|bst[0-9]+-[0-9]+-[0-9a-z]+|rqn-[0-9a-z]+|rqc-[0-9a-z]+|rnd[0-9]+-[0-9a-z]+|rqt[0-9]+-[0-9a-z]+|rcy[0-9]+-[0-9a-z]+|uni[0-9]+t)$//' | sort -u)
-BASES=$(printf '%s\n' $BASES d1-aes_cipher-000 d1-picorv32-016 d1-picorv32-006 d3-salsa20-000 d3-des-000 d3-y_huff-000 d3-ocs_blitter-000 d3-bm64-000 d3-md5-000 d3b-sha512-000 d3b-ldpcenc-000 d5-chacha-000 d5-point_add-000 d5-blabla-000 nv1-nvdla_csc-000 \
-  $(ls farm/jobs | sed -n -E 's/^(d[0-9]+b?(cfo|j1|j2|u50|u60)-[a-z0-9_]+-[0-9]{3})\.json$/\1/p') | sort -u)
-SUMMARIES=""
-echo "-- hero bases: $(echo $BASES | wc -w)"
+# hero bases to (re)collect: only those with finished runs not yet collected (farm/bases_to_collect.py keeps the
+# collected run ids in results/.collected_runs.json); a full pass over ~50 bases took longer than the check-in budget
+BASES=$(python3 farm/bases_to_collect.py 2>/dev/null)
+echo "-- hero bases with new finished runs: $(echo $BASES | wc -w)"
 for b in $BASES; do
   out=$(python3 farm/hero_collect.py --repo $REPO --base "$b" --results results 2>&1)
-  n=$(echo "$out" | grep -c " completed ")
-  echo "-- hero $b: $((n-1)) arms collected"
-  [ "$b" != "picorv32-base-v1" ] && [ -f "results/$b/hero_summary.json" ] && [ "$n" -gt 1 ] && SUMMARIES="$SUMMARIES --summary results/$b/hero_summary.json"
+  n=$(echo "$out" | grep -c " completed \| flow_failed")
+  echo "-- hero $b: $n rows"
+done
+python3 farm/bases_to_collect.py --mark
+SUMMARIES=""
+for b in d1-aes_cipher-000 d1-picorv32-016 d1-picorv32-006 d3-salsa20-000 d3-des-000 d3-y_huff-000 d3-ocs_blitter-000 d3-bm64-000 d3-md5-000 d3b-sha512-000 d3b-ldpcenc-000 d5-chacha-000 d5-point_add-000 d5-blabla-000 nv1-nvdla_csc-000; do
+  [ -f "results/$b/hero_summary.json" ] && SUMMARIES="$SUMMARIES --summary results/$b/hero_summary.json"
 done
 if [ -n "$SUMMARIES" ]; then
   mkdir -p figures
