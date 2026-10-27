@@ -147,6 +147,13 @@ def main() -> int:
             ("A6.5 exp100-70c removes >= 85% with <= 60% of uni50 cells", lambda b, r: c_removes(r, "exp100-70c", 0.85, 0.6), (2, 3)),
             ("A6.6 equivalence of the targeted arms", lambda b, r: c_equiv(R, b, r, ["est050-70c", "tgt050-70c", "thr500-70c", "exp100-70c"]), (3, 3)),
         ]),
+        "NV": (["nv1-nvdla_csc-000"], [
+            ("A7 (A6.2) tgt050-70c vs uni50", lambda b, r: c_target_vs_uni50(r, "tgt050-70c"), (1, 1)),
+            ("A7 (A6.3) tgt050-70c fewer violators than est050-70c", lambda b, r: c_model_vs_rule(r, "tgt050-70c", ["est050-70c"]), (1, 1)),
+            ("A7 (A6.4) thr500-70c removes >= 90%", lambda b, r: c_removes(r, "thr500-70c", 0.90), (1, 1)),
+            ("A7 (A6.5) exp100-70c removes >= 85% with <= 60% of uni50 cells", lambda b, r: c_removes(r, "exp100-70c", 0.85, 0.6), (1, 1)),
+            ("A7 (A6.6) equivalence of the targeted arms", lambda b, r: c_equiv(R, b, r, ["est050-70c", "tgt050-70c", "thr500-70c", "exp100-70c"]), (1, 1)),
+        ]),
     }
     sel = list(rounds) if a.round == "all" else [a.round]
     res = [evaluate(R, k, *rounds[k]) for k in sel]
