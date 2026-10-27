@@ -233,7 +233,7 @@ RUNGS = [  # (rung_name in ablation_summary.csv, label, marker, color, filled)
     ("est_slew", "Timer's estimate", "o", F.GREY, True),
     ("rule_R8", "Rule R8", "s", F.BLUE, True),
     ("logreg_r8_inputs", "Logistic on R8's inputs", "D", LINEAR, False),
-    ("logreg_calibrated_estimate", "Linear calibration (LR)", "D", LINEAR, False),
+    ("logreg_calibrated_estimate", "Logistic, 12 features", "D", LINEAR, False),
     ("lgbm_estimate_only", "GBM, estimate only", "*", F.GREEN, True),
     ("lgbm_no_geometry", "GBM, no geometry", "*", F.GREEN, True),
     ("lgbm_full", "GBM, all features", "*", F.GREEN, True),
@@ -260,6 +260,29 @@ def ablation_data(analysis):
                          mean=float(np.mean(list(vals.values())))))
     return {"rows": rows, "floor": dict(_agg(floor), mean=float(np.mean(list(floor.values())))), "designs": designs,
             "runs": {d: int(first.loc[d, "n_eval_runs"]) for d in designs}}
+
+
+def design_level_wins(A, model="lgbm_full", against=("rule_R8", "est_slew")):
+    """Design-level comparison (the held-out design is the independent unit, not the run): on how many designs the
+    model's pooled catch-95 is below every baseline in `against`, with the exact two-sided sign test."""
+    from scipy.stats import binomtest
+
+    rows = {r["rung"]: r["by_design"] for r in A["rows"]}
+    if model not in rows or any(b not in rows for b in against):
+        return None
+    designs = [d for d in rows[model] if all(d in rows[b] for b in against)]
+    wins = sum(1 for d in designs if all(rows[model][d] < rows[b][d] for b in against))
+    losses = sum(1 for d in designs if any(rows[model][d] > rows[b][d] for b in against))
+    n = wins + losses
+    return {"against": list(against), "designs": len(designs), "wins": wins, "losses": losses,
+            "p_two_sided": float(binomtest(wins, n, 0.5).pvalue) if n else None}
+
+
+def _p_text(p):
+    """p rounded to one significant figure, written as 'p ≈ 0.001'."""
+    if p is None:
+        return ""
+    return f"p ≈ {float(f'{p:.1g}'):g}"
 
 
 def ab_crosscheck(answers):
@@ -326,21 +349,23 @@ def fig_ablation(out_dir, analysis=ANALYSIS, size=SIZE, name="ablation"):
     ax.set_ylim(-0.6, ny - 0.4)
     ax.grid(True, axis="x", zorder=0)
     ax.text(100 * fl, ny - 0.45, f"floor {100 * fl:.1f}%", fontsize=F.FS, color=F.INK2, ha="center", va="bottom", zorder=5)
-    fig.text(0.012, 0.975, "The gain is a nonlinear model\nof the timer's own numbers", fontsize=F.FS + 1, fontweight="semibold",
+    fig.text(0.012, 0.975, "The gain is a nonlinear correction\nof the timer's own numbers", fontsize=F.FS + 1, fontweight="semibold",
              color=F.INK, va="top", linespacing=1.15)
     fig.text(0.012, 0.835, "Nets flagged to catch 95% of violators", fontsize=F.FS, color=F.INK2, va="top")
     nd = len(A["designs"])
     lines = [f"Median of {nd} unseen designs, each pooled over its runs."]
-    if st:
-        tot = st["W"] + st["T"] + st["L"]
-        lines.append(f"Per run, the full GBM flags fewer than R8 in {st['W']} of {tot}")
-        lines.append(f"runs ({st['L']} worse, {st['T']} tied; sign test p = {st['p']:.0e}).")
+    # statistics at the design level (designs are the independent units; runs of one design are not)
+    dl = design_level_wins(A)
+    if dl:
+        runs = f"; {st['W']} of {st['W'] + st['T'] + st['L']} runs" if st else ""
+        lines.append(f"The full GBM beats R8 and the estimate on {dl['wins']} of {dl['designs']}")
+        lines.append(f"designs (sign test {_p_text(dl['p_two_sided'])}{runs}).")
     fig.text(0.012, 0.012, "\n".join(lines), fontsize=F.FS, color=F.MUTED, va="bottom", linespacing=1.25)
     nums = {"metric": "pooled catch-95 per held-out design (leave-one-design-out), median across designs",
             "source": os.path.relpath(os.path.join(analysis, "ablation_summary.csv"), F.ROOT),
             "rungs": {r["rung"]: {k: r[k] for k in ("label", "median", "mean", "min", "max", "n", "by_design")} for r in rows},
-            "floor": A["floor"], "eval_runs_by_design": A["runs"], "sign_test_vs_R8_catch95": st,
-            "crosscheck_raw_per_run": ab_crosscheck(answers)}
+            "floor": A["floor"], "eval_runs_by_design": A["runs"], "design_level_vs_R8_and_estimate": dl,
+            "sign_test_vs_R8_catch95_per_run": st, "crosscheck_raw_per_run": ab_crosscheck(answers)}
     return F.save(fig, out_dir, name, nums)
 
 
