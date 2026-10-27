@@ -79,6 +79,10 @@ def main() -> int:
     ap.add_argument("--out", default=None)
     ap.add_argument("--pdk-root", default=os.environ.get("PDK_ROOT", "/home/claude/eda/pdk"))
     ap.add_argument("--signoff", action="store_true", help="dump the signoff view (final ODB + RCX SPEF per corner)")
+    ap.add_argument("--state", default=None,
+                    help="explicit post-GRT state json to dump instead of STAMidPNR-3's state_in, e.g. "
+                         "<run>/*-openroad-checkantennas/state_out.json = the decision point the arms resume from "
+                         "(before antenna repair)")
     a = ap.parse_args()
     run_dir = os.path.abspath(a.run_dir)
     out = a.out or os.path.join(run_dir, "br-dump-signoff" if a.signoff else "br-dump-postgrt")
@@ -95,7 +99,7 @@ def main() -> int:
         state_in = State.loads(open(state_in_path).read())
         step = DumpNetsSignoff(config=config, state_in=state_in, _no_revalidate_conf=True)
     else:
-        state_in_path = find_state_in(run_dir)
+        state_in_path = os.path.abspath(a.state) if a.state else find_state_in(run_dir)
         config = load_step_config(run_dir, a.pdk_root)
         state_in = State.loads(open(state_in_path).read())
         step = DumpNetsPostGRT(config=config, state_in=state_in, _no_revalidate_conf=True)

@@ -91,7 +91,8 @@ def main() -> int:
         json.dump(cache, open(cache_path, "w"))
     except Exception:
         pass
-    rows = [arm_summary(a.results, a.base)] + [arm_summary(a.results, t) for t in sorted(set(arms))]
+    # decision-point feature dumps (arm "dmp") carry no signoff outcome: kept on disk, not summarized
+    rows = [arm_summary(a.results, a.base)] + [arm_summary(a.results, t) for t in sorted(set(arms)) if not t.endswith("-dmp")]
     out = os.path.join(a.results, a.base, "hero_summary.json")
     json.dump({"base": a.base, "arms": rows}, open(out, "w"), indent=1)
     base_area = rows[0].get("stdcell_area")
