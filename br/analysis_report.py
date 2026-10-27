@@ -24,7 +24,8 @@ RULE_GRAYS = {"est_slew": "#b9b8b2", "rule_R8": "#7a7973"}
 LEARNED_RAMP = {"logreg_calibrated_estimate": "#86b6ef", "lgbm_estimate_only": "#5598e7",
                 "lgbm_no_geometry": "#2a78d6", "lgbm_full": "#1c5cab"}
 RUNG_LABEL = {"random": "random", "est_slew": "raw slew estimate", "rule_R8": "rule R8",
-              "logreg_calibrated_estimate": "logistic calib. (linear)", "lgbm_estimate_only": "GBM, estimate only",
+              "logreg_calibrated_estimate": "logistic calib. (linear)", "logreg_r8_inputs": "logistic calib. of R8 inputs",
+              "lgbm_estimate_only": "GBM, estimate only",
               "lgbm_no_geometry": "GBM, no geometry", "lgbm_full": "GBM, full features"}
 
 
@@ -36,6 +37,19 @@ def load_csv(d: str | None, name: str) -> pd.DataFrame:
         return pd.read_csv(top)
     parts = [pd.read_csv(p) for p in sorted(glob.glob(os.path.join(d, "**", name), recursive=True)) if os.path.getsize(p) > 1]
     return pd.concat(parts, ignore_index=True) if parts else pd.DataFrame()
+
+
+def load_multi(dirs: str | None, name: str, key=None) -> pd.DataFrame:
+    """load_csv over a comma list of dirs; with key, rows duplicated across dirs keep the first dir's copy."""
+    parts = [load_csv(d, name) for d in (dirs or "").split(",") if d]
+    parts = [x for x in parts if not x.empty]
+    if not parts:
+        return pd.DataFrame()
+    df = pd.concat(parts, ignore_index=True)
+    if key:
+        df["rung"] = df["rung"].astype(str) if "rung" in df.columns else df.get("rung")
+        df = df.drop_duplicates(subset=[k for k in key if k in df.columns], keep="first")
+    return df
 
 
 def n_key(v) -> float:
@@ -123,7 +137,9 @@ def paired_table(runs: pd.DataFrame) -> str:
         return ""
     runs = runs[runs["positives"] > 0]
     pairs = [("lgbm_full", "logreg_calibrated_estimate"), ("lgbm_full", "est_slew"), ("lgbm_full", "rule_R8"),
-             ("lgbm_estimate_only", "logreg_calibrated_estimate"), ("lgbm_full", "lgbm_estimate_only")]
+             ("lgbm_estimate_only", "logreg_calibrated_estimate"), ("lgbm_full", "lgbm_estimate_only"),
+             ("lgbm_full", "logreg_r8_inputs"), ("lgbm_estimate_only", "logreg_r8_inputs")]
+    pairs = [(x, y) for x, y in pairs if x in set(runs["rung_name"]) and y in set(runs["rung_name"])]
     out = ["\n### Paired per-run comparison (same runs): median per-run difference in catch-95 (B - A; > 0 means A flags less) "
            "and share of runs where A needs fewer flags (ties excluded)\n"]
     hdr = "| design | runs | " + " | ".join(f"{RUNG_LABEL[a]} vs {RUNG_LABEL[b]}" for a, b in pairs) + " |"
@@ -286,7 +302,7 @@ def ablation_verdict(ab: pd.DataFrame, runs: pd.DataFrame) -> tuple:
            "Pooled over the held-out design's runs; paired = per run (runs with >= 1 violator), W-T-L = GBM better / tie / worse, "
            "p = two-sided sign test.\n"]
     hdr = ("| design | runs | viol. rate | R@5% GBM / est / R8 | catch-95 GBM / est / R8 (floor) | paired R@5% vs est | vs R8 | "
-           "paired catch-95 vs est | vs R8 |")
+           "paired catch-95 vs est | vs R8 | paired catch-95 vs logistic calib. of R8 inputs |")
     out += [hdr, "|" + "---|" * (hdr.count("|") - 1)]
 
     def cell(r):
@@ -308,11 +324,12 @@ def ablation_verdict(ab: pd.DataFrame, runs: pd.DataFrame) -> tuple:
             row = (f"| {d} | {int(x['n_eval_runs'].iloc[0])} | {rate:.2%} | "
                    f"{g('lgbm_full', 'pooled_recall5'):.3f} / {g('est_slew', 'pooled_recall5'):.3f} / {g('rule_R8', 'pooled_recall5'):.3f} | "
                    f"{g('lgbm_full', 'pooled_catch95'):.3f} / {g('est_slew', 'pooled_catch95'):.3f} / {g('rule_R8', 'pooled_catch95'):.3f} ({0.95 * rate:.3f}) |")
-            ver[d] = {"rate": rate, **{f"{r}_{m}": float(g(r, f"pooled_{m}")) for r in ("lgbm_full", "est_slew", "rule_R8", "logreg_calibrated_estimate")
+            ver[d] = {"rate": rate, **{f"{r}_{m}": float(g(r, f"pooled_{m}")) for r in ("lgbm_full", "est_slew", "rule_R8", "logreg_calibrated_estimate", "logreg_r8_inputs")
                                       for m in ("recall5", "catch95")}}
-        pe, pr = paired(sr, sc, "est_slew"), paired(sr, sc, "rule_R8")
-        ver.setdefault(d, {}).update({"paired_vs_est": pe, "paired_vs_R8": pr})
-        out.append(row + f" {cell(pe.get('recall5'))} | {cell(pr.get('recall5'))} | {cell(pe.get('catch95'))} | {cell(pr.get('catch95'))} |")
+        pe, pr, pl = paired(sr, sc, "est_slew"), paired(sr, sc, "rule_R8"), paired(sr, sc, "logreg_r8_inputs")
+        ver.setdefault(d, {}).update({"paired_vs_est": pe, "paired_vs_R8": pr, "paired_vs_logreg_r8_inputs": pl})
+        out.append(row + f" {cell(pe.get('recall5'))} | {cell(pr.get('recall5'))} | {cell(pe.get('catch95'))} | {cell(pr.get('catch95'))} |"
+                   f" {cell(pl.get('catch95'))} |")
     return "\n".join(out), ver
 
 
@@ -413,9 +430,10 @@ def fig_ablation(ab: pd.DataFrame, path: str, label: str) -> None:
     from matplotlib.lines import Line2D
     from matplotlib.patches import Patch
 
-    rungs = [r for r in ["est_slew", "rule_R8", "logreg_calibrated_estimate", "lgbm_estimate_only", "lgbm_no_geometry", "lgbm_full"]
+    rungs = [r for r in ["est_slew", "rule_R8", "logreg_r8_inputs", "logreg_calibrated_estimate", "lgbm_estimate_only", "lgbm_no_geometry", "lgbm_full"]
              if r in set(ab["rung_name"])]
-    colors = {**RULE_GRAYS, **LEARNED_RAMP}
+    colors = {**RULE_GRAYS, **LEARNED_RAMP, "logreg_r8_inputs": LEARNED_RAMP["logreg_calibrated_estimate"]}
+    hatch = {"logreg_r8_inputs": "////"}
     nc, pc = ("eval_n", "eval_pos") if "eval_n" in ab.columns else ("n", "pos")
     full = ab[ab["rung_name"] == "lgbm_full"]
     order = full.sort_values(pc, ascending=False)["holdout"].tolist() or sorted(ab["holdout"].unique())
@@ -433,7 +451,7 @@ def fig_ablation(ab: pd.DataFrame, path: str, label: str) -> None:
             vals = np.array([ab[(ab["holdout"] == d) & (ab["rung_name"] == r)][m].mean() for d in order])
             xk = xs - 0.4 + w * (k + 0.5)
             shown = np.minimum(vals, cap) if i == 1 else vals
-            ax.bar(xk, shown, width=w * 0.86, color=colors[r], linewidth=0)
+            ax.bar(xk, shown, width=w * 0.86, color=colors[r], linewidth=0, hatch=hatch.get(r), edgecolor=SURF if r in hatch else None)
             if i == 1:
                 for x_, v in zip(xk, vals):
                     if v > cap:
@@ -453,7 +471,7 @@ def fig_ablation(ab: pd.DataFrame, path: str, label: str) -> None:
         n_runs = int(ab[ab["holdout"] == d]["n_eval_runs"].iloc[0])
         labs.append(f"{d}\n{n_runs} run{'s' if n_runs != 1 else ''}\n{rate[d]:.1%} viol.")
     axes[1].set_xticklabels(labs, fontsize=7.5, color=INK2)
-    handles = [Patch(color=colors[r], label=RUNG_LABEL[r]) for r in rungs]
+    handles = [Patch(facecolor=colors[r], hatch=hatch.get(r), edgecolor=SURF if r in hatch else colors[r], label=RUNG_LABEL[r]) for r in rungs]
     handles.append(Line2D([], [], color=INK, linewidth=1.0, linestyle=(0, (1, 1.5)), label="floor (0.95 x violator rate)"))
     fig.legend(handles=handles, loc="upper center", ncol=len(handles), frameon=False, fontsize=7.5, bbox_to_anchor=(0.5, 0.995))
     fig.text(0.5, 0.004, f"Leave-one-design-out, signal nets, pooled over each held-out design's runs; bars above the catch-95 axis "
@@ -466,7 +484,7 @@ def fig_ablation(ab: pd.DataFrame, path: str, label: str) -> None:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--lc", default=None, help="comma list of learning-curve output dirs (merged)")
-    ap.add_argument("--ablation", default=None)
+    ap.add_argument("--ablation", default=None, help="comma list of ablation output dirs (first wins on duplicates)")
     ap.add_argument("--out", required=True)
     ap.add_argument("--label", default="")
     a = ap.parse_args()
@@ -477,7 +495,7 @@ def main() -> int:
     lc = pd.concat([x for x in lc_parts if not x.empty], ignore_index=True) if any(not x.empty for x in lc_parts) else pd.DataFrame()
     if not lc.empty:
         lcr = load_lc_runs([d for d in (a.lc or "").split(",") if d])
-        abr = load_csv(a.ablation, "ablation_runs.csv")
+        abr = load_multi(a.ablation, "ablation_runs.csv", key=["holdout", "rung", "run"])
         txt, answers["a"] = lc_answer(lc, lcr, abr, thr=2.0)
         md.append(txt)
         txt, answers["a_strict_1.25x"] = lc_answer(lc, lcr, abr, thr=1.25)
@@ -488,17 +506,17 @@ def main() -> int:
         md.append(lc_tables(s))
         pool_runs = lc[lc["n"].astype(str) == "all"].groupby(["variant", "holdout"])["n_train_runs"].max().to_dict()
         lcr["_pool_runs"] = [pool_runs.get((v, d), 256) for v, d in zip(lcr["variant"], lcr["holdout"])]
-        fig_learning_curve(lcr, load_csv(a.ablation, "ablation_runs.csv"), os.path.join(a.out, "learning_curve.png"), a.label)
-    ab = load_csv(a.ablation, "ablation.csv")
+        fig_learning_curve(lcr, load_multi(a.ablation, "ablation_runs.csv", key=["holdout", "rung", "run"]), os.path.join(a.out, "learning_curve.png"), a.label)
+    ab = load_multi(a.ablation, "ablation.csv", key=["holdout", "rung"])
     if not ab.empty:
         ab["rung"] = ab["rung"].astype(str)
         ab = ab.drop_duplicates(subset=["holdout", "rung"], keep="last")
         ab = ab.sort_values(["holdout", "rung"])
         ab.to_csv(os.path.join(a.out, "ablation_summary.csv"), index=False)
-        txt, answers["b"] = ablation_verdict(ab, load_csv(a.ablation, "ablation_runs.csv"))
+        txt, answers["b"] = ablation_verdict(ab, load_multi(a.ablation, "ablation_runs.csv", key=["holdout", "rung", "run"]))
         md.insert(1, txt)
         md.append(ablation_tables(ab))
-        md.append(paired_table(load_csv(a.ablation, "ablation_runs.csv")))
+        md.append(paired_table(load_multi(a.ablation, "ablation_runs.csv", key=["holdout", "rung", "run"])))
         fig_ablation(ab, os.path.join(a.out, "ablation_ladder.png"), a.label)
     open(os.path.join(a.out, "tables.md"), "w").write("\n".join(md) + "\n")
     import json

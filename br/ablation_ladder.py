@@ -15,6 +15,8 @@ Rungs:
   3 logreg_calibrated_estimate     logistic regression (balanced) on standardized log1p of
                                    [worst_load_slew_ratio, driver_slew_ratio, cap_ratio, fanout_ratio, hpwl_um,
                                     guide_len_um, guide_frac_*, fanout, density_mean]
+  3b logreg_r8_inputs              the same logistic calibration on R8's three inputs only (est. load slew ratio,
+                                   est. driver slew ratio, cap_ratio): a learned linear weighting of the rule
   4 lgbm_estimate_only             LightGBM on the timer-estimate features only (analysis_common.ESTIMATE; no geometry,
                                    no cell identity, no design context)
   4b lgbm_no_geometry              LightGBM on train.FEATURES minus geometry (estimate + cell/netlist + design context)
@@ -37,7 +39,7 @@ import pandas as pd
 import analysis_common as C
 
 RUNGS = [
-    ("0", "random"), ("1", "est_slew"), ("2", "rule_R8"), ("3", "logreg_calibrated_estimate"),
+    ("0", "random"), ("1", "est_slew"), ("2", "rule_R8"), ("3", "logreg_calibrated_estimate"), ("3b", "logreg_r8_inputs"),
     ("4", "lgbm_estimate_only"), ("4b", "lgbm_no_geometry"), ("5", "lgbm_full"),
 ]
 
@@ -72,13 +74,13 @@ def run_design(df: pd.DataFrame, D: str, a, threads: int, out_rows: list, run_ro
             blk = C.eval_block(ev, ev["worst_load_slew_ratio"].astype(float).fillna(0).values)
         elif rname == "rule_R8":
             blk = C.eval_block(ev, C.r8(ev))
-        elif rname == "logreg_calibrated_estimate":
-            m = C.fit_lr(tr)
+        elif rname in ("logreg_calibrated_estimate", "logreg_r8_inputs"):
+            m = C.fit_lr(tr, C.LR_FEATURES if rname == "logreg_calibrated_estimate" else C.R8_COLS)
             p = C.predict_lr(m, ev)
             prob = C.prior_correct(p, m._br_spw)
             blk = C.eval_block(ev, p, prob=prob)
             lr = m[-1]
-            extra["coef"] = dict(zip(C.LR_FEATURES, [float(c) for c in lr.coef_[0]]))
+            extra["coef"] = dict(zip(m._br_feats, [float(c) for c in lr.coef_[0]]))
             extra["intercept"] = float(lr.intercept_[0])
         else:
             feats = {"lgbm_estimate_only": C.ESTIMATE, "lgbm_no_geometry": C.NO_GEOMETRY, "lgbm_full": C.FEATURES}[rname]
