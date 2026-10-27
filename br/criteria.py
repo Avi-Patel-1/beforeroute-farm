@@ -103,6 +103,9 @@ def c_no_more(rows, arm, other):
     return ("pass" if V(a) <= V(o) else "fail"), {"V": V(a), f"{other}_V": V(o), "cells": cells(a), f"{other}_cells": cells(o)}
 
 
+WITHDRAWN = {"A11": "WITHDRAWN 06:28Z before any arm ran (its lists carried the output-port bug); no verdict"}
+
+
 def c_hold_no_worse(rows, arm, other):
     a, o = rows.get(arm), rows.get(other)
     if a is None or o is None:
@@ -224,6 +227,10 @@ def main() -> int:
     }
     sel = list(rounds) if a.round == "all" else [a.round]
     res = [evaluate(R, k, *rounds[k]) for k in sel]
+    for r in res:  # withdrawn rounds keep their definitions for the record but carry no verdict
+        if r["round"] in WITHDRAWN:
+            for v in r["criteria"].values():
+                v["verdict"] = WITHDRAWN[r["round"]]
     for r in res:
         print(f"== {r['round']}")
         for c, v in r["criteria"].items():
