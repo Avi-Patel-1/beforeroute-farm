@@ -32,6 +32,9 @@ if [ -n "$SUMMARIES" ]; then
 fi
 [ -f results/picorv32-base-v1/hero_summary.json ] && python3 br/figures.py pareto --summary results/picorv32-base-v1/hero_summary.json --out figures/pareto_picorv32-base-v1.png --title "PicoRV32 exploratory sweep" 2>&1 | tail -1
 
+# iterations-to-closure: advance the signoff-guided loop and BeforeRoute+cleanup chains
+python3 farm/advance.py 2>&1 | tail -8
+
 NEW=$(python3 farm/pack_results.py | wc -l)
 echo "-- packed $NEW new result archives"
 

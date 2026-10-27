@@ -55,6 +55,11 @@ def main() -> int:
                     if os.path.exists(src_arm):
                         shutil.copytree(src_arm, dst, dirs_exist_ok=True)
                     if os.path.exists(src_base):
+                        # always keep the lists the runner scored/used for this arm (flagged_*.json, tiers_*.json, *.scores.csv)
+                        os.makedirs(os.path.join(a.results, a.base), exist_ok=True)
+                        for fn in os.listdir(src_base):
+                            if fn.startswith(("flagged_", "tiers_")):
+                                shutil.copy2(os.path.join(src_base, fn), os.path.join(a.results, a.base, fn))
                         bm = json.load(open(os.path.join(src_base, "metrics.json"))) if os.path.exists(os.path.join(src_base, "metrics.json")) else None
                         if base_metrics is None:
                             base_metrics = bm
