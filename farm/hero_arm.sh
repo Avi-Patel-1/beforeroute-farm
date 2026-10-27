@@ -88,6 +88,13 @@ case "$ARM" in
     LIST=farm/lists/$BASE/$NAME.json
     test -f $LIST
     $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm targeted --tag $BASE-$ARM --slew-pct $H --cap-pct $H --flagged /work/$LIST --results results --pdk-root /work/pdk --jobs $JOBS ;;
+  lsx-*)
+    # lsx-<name>: escalation pass of a stalled chain — two-tier repair from a committed tiers file
+    # farm/lists/<BASE>/<name>.json ({"tiers": [{"nets": list, 70}, {"nets": residual violators, 90}]})
+    NAME=${ARM#lsx-}
+    LIST=farm/lists/$BASE/$NAME.json
+    test -f $LIST
+    $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm tiered --tag $BASE-$ARM --tiers /work/$LIST --results results --pdk-root /work/pdk --jobs $JOBS ;;
   est*)
     # est050-70: top 5% of nets by the timer's own estimated worst-load slew ratio, margin 70 (strongest simple ablation at k=5%)
     K=${ARM#est}; K=${K%%-*}; H=${ARM##*-}
@@ -148,7 +155,7 @@ print(','.join(f'{int(x.split(\"-\")[0])/1000}:{x.split(\"-\")[1]}' for x in a.s
 esac
 sudo chown -R "$(id -u):$(id -g)" results || true
 # functional equivalence of the repaired netlist vs the baseline (targeted / threshold / rule / list arms)
-case "$ARM" in tgt*|thr*|det*|lst-*|exp*|est*)
+case "$ARM" in tgt*|thr*|det*|lst-*|lsx-*|exp*|est*)
   if [ -f results/$BASE/final.nl.v.gz ] && [ -f results/$BASE-$ARM/final.nl.v.gz ]; then
     TOP=$(python3 -c "import json;print(json.load(open('results/$BASE/resolved.json'))['DESIGN_NAME'])")
     mkdir -p results/$BASE-$ARM/equiv
