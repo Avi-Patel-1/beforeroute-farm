@@ -140,7 +140,10 @@ def main():
             with tempfile.TemporaryDirectory() as td:
                 sh(["gh", "run", "download", str(s["run"]), "-R", REPO, "-n", f"hero-{nb}-seed", "-D", td])
                 try:
-                    s["seed_status"] = json.load(open(os.path.join(td, nb, "job.json"))).get("status", "unknown")
+                    st_ = json.load(open(os.path.join(td, nb, "job.json"))).get("status", "unknown")
+                    # a flow that ends in deferred hold/setup errors still reached signoff (labels.json exists): usable
+                    s["seed_status"] = "completed" if (st_ == "completed" or os.path.exists(os.path.join(td, nb, "labels.json"))) else st_
+                    s["seed_status_raw"] = str(st_)[:200]
                 except Exception:
                     s["seed_status"] = "no_artifact"
             save()
