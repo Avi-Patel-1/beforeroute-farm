@@ -69,11 +69,14 @@ def main() -> int:
     ap.add_argument("--title", default="Repair policies on six designs the model never saw")
     ap.add_argument("--a14", action="store_true", help="also draw the Addendum-14 arms")
     ap.add_argument("--rounds45", action="store_true", help="Round-4/5 bases; draws the Addendum-15 arm thr500-30cr")
+    ap.add_argument("--with30cr", action="store_true", help="Round 3 plus the combined policy thr500-30cr (exploratory there)")
     ap.add_argument("--subtitle", default=None)
     a = ap.parse_args()
     global POL, BASES
     if a.a14:
         POL = POL + POL_A14
+    if a.with30cr:
+        POL = POL + [("thr500-30cr", "model list + corrected parasitics, 30%", "^", F.GREEN, 10, False)]
     if a.rounds45:
         BASES = BASES_45
         POL = [p for p in POL if p[0] != "rct213-70"] + [("thr500-30cr", "model list + corrected parasitics, 30% (Addendum 15)", "^", F.GREEN, 10, False)]
