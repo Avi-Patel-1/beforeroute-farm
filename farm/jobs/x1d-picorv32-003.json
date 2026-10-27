@@ -1,0 +1,14 @@
+{
+ "tag": "x1d-picorv32-003",
+ "design": "designs/picorv32",
+ "config": "config_sky130.json",
+ "overrides": {
+  "RUN_MAGIC_DRC": false,
+  "RUN_KLAYOUT_DRC": false,
+  "RUN_LVS": false,
+  "RUN_KLAYOUT_XOR": false,
+  "RUN_IRDROP_REPORT": false,
+  "RUN_LINTER": false,
+  "CLOCK_PERIOD": 17.5
+ }
+}
