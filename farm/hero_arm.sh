@@ -54,6 +54,13 @@ case "$ARM" in
     python3 -m pip install -q pandas pyarrow lightgbm scikit-learn
     python3 br/score.py --model none --rule R8 --run-results results/$BASE --frac $FRAC --out results/$BASE/flagged_$ARM.json
     $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm targeted --tag $BASE-$ARM --slew-pct $H --cap-pct $H --flagged /work/results/$BASE/flagged_$ARM.json --results results --pdk-root /work/pdk --jobs $JOBS ;;
+  exp*)
+    # exp100-70: auto-budget = top round(1.00 * sum(p)) nets (the model's expected violator count), margin 70
+    F=${ARM#exp}; F=${F%%-*}; H=${ARM##*-}
+    FAC=$(python3 -c "print(int('$F')/100)")
+    python3 -m pip install -q pandas pyarrow lightgbm scikit-learn
+    python3 br/score.py --model $MODEL --run-results results/$BASE --expected-count $FAC --out results/$BASE/flagged_$ARM.json
+    $DOCKER python3 br/arms.py --base-run $BASE_RUN --arm targeted --tag $BASE-$ARM --slew-pct $H --cap-pct $H --flagged /work/results/$BASE/flagged_$ARM.json --results results --pdk-root /work/pdk --jobs $JOBS ;;
   tgt*|thr*)
     # tgt050-70: top 5% of nets | thr500-70: every net with p >= 0.500 ; suffixes after H:
     #   p2 = two masked passes, f = + fanout rule, h = hold-fix delay cells protected from resizing, v3 = model tag
@@ -88,7 +95,7 @@ print(','.join(f'{int(x.split(\"-\")[0])/1000}:{x.split(\"-\")[1]}' for x in a.s
 esac
 sudo chown -R "$(id -u):$(id -g)" results || true
 # functional equivalence of the repaired netlist vs the baseline (targeted / threshold / rule / list arms)
-case "$ARM" in tgt*|thr*|det*|lst-*)
+case "$ARM" in tgt*|thr*|det*|lst-*|exp*)
   if [ -f results/$BASE/final.nl.v.gz ] && [ -f results/$BASE-$ARM/final.nl.v.gz ]; then
     TOP=$(python3 -c "import json;print(json.load(open('results/$BASE/resolved.json'))['DESIGN_NAME'])")
     mkdir -p results/$BASE-$ARM/equiv
