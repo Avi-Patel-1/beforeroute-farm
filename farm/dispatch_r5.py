@@ -37,6 +37,13 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true")
     a = ap.parse_args()
+    import fcntl  # one dispatcher at a time (the collector loop and the check-in cycle both call this)
+    lock = open(os.path.join(ROOT, "results", ".r5_lock"), "w")
+    try:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        print("[r5] another dispatcher is running")
+        return 0
     path = os.path.join(ROOT, "results", ".r5_state.json")
     st = json.load(open(path)) if os.path.exists(path) else {}
     for b in BASES:
