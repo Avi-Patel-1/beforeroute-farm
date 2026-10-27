@@ -1,0 +1,1 @@
+{"tag": "d3u60-salsa20-000", "design": "designs/salsa20", "config": "config_sky130.json", "overrides": {"RUN_POST_GRT_DESIGN_REPAIR": false, "RUN_MAGIC_DRC": false, "RUN_KLAYOUT_DRC": false, "RUN_LVS": false, "RUN_KLAYOUT_XOR": false, "RUN_IRDROP_REPORT": false, "RUN_LINTER": false, "FP_CORE_UTIL": 60, "PL_TARGET_DENSITY_PCT": 70}}
