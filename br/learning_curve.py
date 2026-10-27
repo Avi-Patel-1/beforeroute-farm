@@ -70,13 +70,14 @@ def main() -> int:
     ap.add_argument("--rounds", type=int, default=0, help="num_boost_round override (0 = br/train.fit's)")
     ap.add_argument("--threads", type=int, default=0, help="LightGBM threads (0 = all cores)")
     ap.add_argument("--train-sigtype", choices=["all", "SIGNAL"], default="all", help="training nets (br/train.py trains on all)")
+    ap.add_argument("--float32", action="store_true", help="downcast features to float32 at load (lower peak memory)")
     ap.add_argument("--all-runs", action="store_true", help="keep non-data runs (default: d1-/d2-/d3-/d4-/d3b-/d4b- only)")
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
     threads = a.threads or os.cpu_count()
     t_start = time.time()
 
-    df = C.load(a.data, all_runs=a.all_runs)
+    df = C.load(a.data, all_runs=a.all_runs, float32=a.float32)
     rt = C.run_table(df if a.train_sigtype == "all" else df[df["is_signal"]])
     D = a.holdout
     d_runs = sorted(rt.loc[rt["design"] == D, "run"])
