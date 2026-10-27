@@ -5,6 +5,10 @@ violators that already failed at baseline and new ones; plus where the new ones 
 Same dark slide style as br/figs_v2.py.
 
 Usage: python3 br/fig_whackamole.py --out figures/v2/
+       python3 br/fig_whackamole.py --compact --out figures/v2/     (half-slide slot: whackamole_compact.png)
+--compact redraws the hindsight half only, at 5.95 x --height in (default 3.35) with every label >= 14 pt: per base,
+the share of the violators left after one fix-what-failed pass that are new (count of new of left), plus where the new
+ones sat before the fix and the loop-design caveat.
 """
 from __future__ import annotations
 
@@ -33,13 +37,65 @@ def violators(results, tag):
     return {r["net"] for r in json.load(open(p))["nets"] if r.get("violated") and r.get("sigtype_s") == "SIGNAL"}
 
 
+def draw_compact(rows, near, out, name, size):
+    """Half-slide version (>= 14 pt): share of the residual violators of one fix-what-failed pass that are new."""
+    W, H = size
+    fig = plt.figure(figsize=size)
+
+    def fy(inch_from_top):
+        return 1 - inch_from_top / H
+
+    fig.text(0.012, fy(0.05), "Fixing exactly what failed creates new failures", fontsize=F.FS + 1, fontweight="semibold",
+             color=F.INK, va="top")
+    fig.text(0.012, fy(0.40), "violators left after one pass: share that are new", fontsize=F.FS, color=F.INK2, va="top")
+    foot = 0.62                                     # two footer lines (in)
+    top, bottom = 0.86, foot + 0.42                 # plot area (in from top / from bottom, incl. tick labels)
+    left, right = 1.30, 1.10                        # base names / count labels (in)
+    ax = fig.add_axes([left / W, bottom / H, (W - left - right) / W, (H - top - bottom) / H])
+    n = len(rows)
+    y = np.arange(n)[::-1]
+    share = np.array([100.0 * r["hind_new"] / max(1, r["hind_old"] + r["hind_new"]) for r in rows])
+    ax.barh(y, [100] * n, 0.66, color="#1c1c1c", zorder=1)          # 100% track: the rest failed at baseline too
+    ax.barh(y, share, 0.66, color=F.ROSE, zorder=2)
+    for yi, r, s in zip(y, rows, share):
+        tot = r["hind_old"] + r["hind_new"]
+        ax.text(s - 1.5, yi, f"{s:.0f}%", va="center", ha="right", fontsize=F.FS, fontweight="semibold", color=F.INK, zorder=3)
+        ax.text(102, yi, f"{r['hind_new']} of {tot}", va="center", ha="left", fontsize=F.FS, color=F.INK2,
+                zorder=3, clip_on=False)
+    ax.set_yticks(y)
+    ax.set_yticklabels([r["label"] for r in rows], fontsize=F.FS)
+    ax.tick_params(axis="y", length=0)
+    ax.set_xlim(0, 100)
+    ax.set_ylim(-0.6, n - 0.4)
+    ax.set_xticks([0, 50, 100])
+    ax.set_xticklabels(["0", "50%", "100%"])
+    ax.spines["left"].set_visible(False)
+    ax.xaxis.grid(True, zorder=0)
+    ax.set_axisbelow(True)
+    med = float(np.median(near)) if near else None
+    lines = []
+    if med is not None:
+        lines.append(f"New ones sat at a median {med:.2f}× the limit before the fix.")
+    lines.append("Caveat: re-routed from post-GRT, no guard band (not an ECO).")
+    fig.text(0.012, 0.012, "\n".join(lines), fontsize=F.FS, color=F.MUTED, va="bottom", linespacing=1.25)
+    tot_new = sum(r["hind_new"] for r in rows)
+    tot_left = sum(r["hind_old"] + r["hind_new"] for r in rows)
+    nums = dict(rows=rows, share_new_pct=[float(s) for s in share], share_new_range_pct=[float(share.min()), float(share.max())],
+                new_total=tot_new, left_total=tot_left, near_median=med, n_new=len(near))
+    F.save(fig, out, name, nums)
+    return nums
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--results", default=F.RESULTS)
     ap.add_argument("--out", default=os.path.join(F.ROOT, "figures", "v2"))
-    ap.add_argument("--name", default="whackamole")
+    ap.add_argument("--name", default=None, help="output name (default whackamole, or whackamole_compact with --compact)")
     ap.add_argument("--model-arm", default="thr500-70")
+    ap.add_argument("--compact", action="store_true", help="half-slide version (hindsight pass only), >= 14 pt")
+    ap.add_argument("--height", type=float, default=3.35, help="height in inches of the --compact version (width 5.95)")
     a = ap.parse_args()
+    a.name = a.name or ("whackamole_compact" if a.compact else "whackamole")
     F.setup_style()
     rows, near, flagged_new, flagged_on = [], [], [0, 0], []
     for base, label in BASES:
@@ -67,6 +123,11 @@ def main() -> int:
             flagged_on.append(label)
     if not rows:
         print("[whackamole] no bases with a loop pass-1 arm yet")
+        return 0
+    if a.compact:
+        nums = draw_compact(rows, near, a.out, a.name, (5.95, a.height))
+        nums["model_flagged_new"] = flagged_new
+        print(json.dumps(nums, indent=1))
         return 0
     fig = plt.figure(figsize=(12.1, 5.3))
     ax = fig.add_axes([0.07, 0.24, 0.56, 0.55])

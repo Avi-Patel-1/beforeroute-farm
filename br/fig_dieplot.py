@@ -3,8 +3,11 @@
 left after its targeted repair. Same dark slide style and palette as br/figs_v2.py.
 
 Usage: python3 br/fig_dieplot.py --base d1-picorv32-006 --arm tgt050-70 --label PicoRV32 --out figures/v2/
+       python3 br/fig_dieplot.py --compact --out figures/v2/      (half-slide slot: dieplot_compact.png)
 Every net is placed at its driver pin's post-GRT location. Signoff violators that only exist after
 repair (new buffers) are placed at a load instance that existed at post-GRT; the rest are counted.
+--compact redraws the same two panels at 5.95 x --height in (default 4.6) with every label >= 14 pt and
+smaller marks, for a slot beside a table.
 """
 from __future__ import annotations
 
@@ -62,6 +65,54 @@ def violators_xy(results, tag, nets, by_inst):
     return np.array(pts).reshape(-1, 2), names, unplaced
 
 
+def draw_compact(a, nums, allxy, fxy, vxy, caught, rxy, uni, arm, cells, hold_kept):
+    """Half-slide die plot (5.95 x a.height in, labels >= 14 pt): flags + violators before routing, residuals after."""
+    W, H = 5.95, a.height
+    fig = plt.figure(figsize=(W, H))
+    x0, x1 = allxy[:, 0].min(), allxy[:, 0].max()
+    y0, y1 = allxy[:, 1].min(), allxy[:, 1].max()
+    pad = 0.02 * max(x1 - x0, y1 - y0)
+    head, key = 1.64, 0.42                     # inches above the panels (title + 4 header lines) / below (key row)
+    gap = 0.22
+    side = min((W - gap - 0.04) / 2, H - head - key)
+    lefts = [0.02, 0.02 + side + gap]
+    axes = [fig.add_axes([l / W, key / H, side / W, side / H]) for l in lefts]
+    for ax in axes:
+        ax.set_xlim(x0 - pad, x1 + pad)
+        ax.set_ylim(y0 - pad, y1 + pad)
+        ax.set_aspect("equal", adjustable="box")
+        ax.set_xticks([])
+        ax.set_yticks([])
+        for s in ax.spines.values():
+            s.set_visible(True)
+            s.set_color(F.AXIS)
+        ax.scatter(allxy[:, 0], allxy[:, 1], s=0.5, c="#3a3a3a", lw=0, zorder=1, rasterized=True)
+    ax = axes[0]
+    ax.scatter(fxy[:, 0], fxy[:, 1], s=11, facecolors="none", edgecolors=F.GREEN, linewidths=0.9, zorder=3)
+    if len(vxy):
+        ax.scatter(vxy[caught, 0], vxy[caught, 1], s=4, c=F.CRIT, lw=0, zorder=4)
+        ax.scatter(vxy[~caught, 0], vxy[~caught, 1], s=16, c=F.CRIT, marker="x", linewidths=1.2, zorder=5)
+    ax = axes[1]
+    if len(rxy):
+        ax.scatter(rxy[:, 0], rxy[:, 1], s=14, c=F.CRIT, lw=0, zorder=4)
+    fpct = nums["flagged"] / max(1, nums["signal_nets"])
+    fig.text(0.004, 1 - 0.04 / H, f"{a.label} ({a.family_note}): the model's top {fpct:.0%} of nets", fontsize=F.FS + 1,
+             fontweight="semibold", color=F.INK, va="top")
+    ty = 1 - 0.43 / H
+    xl, xr = lefts[0] / W, lefts[1] / W
+    fig.text(xl, ty, "Before routing", fontsize=F.FS, fontweight="semibold", color=F.INK, va="top")
+    fig.text(xl, ty, f"\n{nums['caught']:,} of {nums['violators']:,} inside the flags\ntimer's own top {fpct:.0%}: "
+             f"{nums['timer_topk_caught']:,}\ntimer's over-limit flag: {nums['timer_flagged_violators']:,}",
+             fontsize=F.FS, color=F.INK2, va="top", linespacing=1.2)
+    fig.text(xr, ty, f"After repair: {nums['violators']:,} → {nums['residual']:,}", fontsize=F.FS, fontweight="semibold",
+             color=F.INK, va="top")
+    fig.text(xr, ty, f"\n{cells(arm):,} cells, {hold_kept(arm):.0%} hold kept\nuniform 70%: {nums['uni_residual']} left,\n"
+             f"{cells(uni):,} cells, {hold_kept(uni):.0%} hold kept", fontsize=F.FS, color=F.INK2, va="top", linespacing=1.2)
+    F.key_row(fig, [("o", F.GREEN, 7, "flagged", None, False), ("o", F.CRIT, 5, "violator", None, True),
+                    ("x", F.CRIT, 7, "violator not flagged", None, False)], 0.004, 0.17 / H, gap=0.03)
+    F.save(fig, a.out, a.name, dict(nums, size_in=[W, H]))
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--base", default="d1-picorv32-006")
@@ -70,8 +121,12 @@ def main() -> int:
     ap.add_argument("--label", default="PicoRV32")
     ap.add_argument("--results", default=F.RESULTS)
     ap.add_argument("--out", default=os.path.join(F.ROOT, "figures", "v2"))
-    ap.add_argument("--name", default="dieplot_hero")
+    ap.add_argument("--name", default=None, help="output name (default dieplot_hero, or dieplot_compact with --compact)")
+    ap.add_argument("--compact", action="store_true", help="half-slide version, >= 14 pt")
+    ap.add_argument("--height", type=float, default=4.6, help="height in inches of the --compact version (width 5.95)")
+    ap.add_argument("--family-note", default="tuning family", help="--compact: note after the design label")
     a = ap.parse_args()
+    a.name = a.name or ("dieplot_compact" if a.compact else "dieplot_hero")
     F.setup_style()
     nets, by_inst = load_base(a.results, a.base)
     flagged = set(json.load(open(os.path.join(a.results, a.base, f"flagged_{a.arm}.json"))))
@@ -100,6 +155,16 @@ def main() -> int:
             return float("nan")
 
     n_v = len(vnames) + v_unpl
+    n_r = len(rnames) + r_unpl
+    nums = dict(base=a.base, arm=a.arm, signal_nets=len(nets), flagged=len(flagged), violators=n_v,
+                violators_unplaced=v_unpl, caught=int(caught.sum()), timer_flagged_violators=int(timer.sum()), timer_topk_caught=est_caught,
+                residual=n_r, residual_unplaced=r_unpl, arm_cells=cells(arm), uni_cells=cells(uni),
+                arm_hold_kept=hold_kept(arm), uni_hold_kept=hold_kept(uni),
+                uni_residual=uni.get("signoff_violating_data_nets"))
+    if a.compact:
+        draw_compact(a, nums, allxy, fxy, vxy, caught, rxy, uni, arm, cells, hold_kept)
+        print(json.dumps(nums, indent=1))
+        return 0
     fig = plt.figure(figsize=(12.1, 6.0))
     x0, x1 = allxy[:, 0].min(), allxy[:, 0].max()
     y0, y1 = allxy[:, 1].min(), allxy[:, 1].max()
@@ -129,7 +194,6 @@ def main() -> int:
     ax = axes[1]
     if len(rxy):
         ax.scatter(rxy[:, 0], rxy[:, 1], s=30, c=F.CRIT, lw=0, zorder=4)
-    n_r = len(rnames) + r_unpl
     fig.text(0.512, 0.975, f"After targeted repair: {n_v:,} → {n_r:,} violators", fontsize=F.FS + 2,
              fontweight="semibold", color=F.INK, va="top")
     fig.text(0.512, 0.915, f"{cells(arm):,} cells changed, {hold_kept(arm):.0%} of hold margin kept\n"
@@ -138,11 +202,6 @@ def main() -> int:
     F.key_row(fig, [("o", F.GREEN, 8, "flagged by the model before routing", None, False),
                     ("o", F.CRIT, 6, "signoff violator", None, True),
                     ("x", F.CRIT, 8, "violator the model missed", None, False)], 0.014, 0.038)
-    nums = dict(base=a.base, arm=a.arm, signal_nets=len(nets), flagged=len(flagged), violators=n_v,
-                violators_unplaced=v_unpl, caught=int(caught.sum()), timer_flagged_violators=int(timer.sum()), timer_topk_caught=est_caught,
-                residual=n_r, residual_unplaced=r_unpl, arm_cells=cells(arm), uni_cells=cells(uni),
-                arm_hold_kept=hold_kept(arm), uni_hold_kept=hold_kept(uni),
-                uni_residual=uni.get("signoff_violating_data_nets"))
     F.save(fig, a.out, a.name, nums)
     print(json.dumps(nums, indent=1))
     return 0

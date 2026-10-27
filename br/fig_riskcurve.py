@@ -2,7 +2,9 @@
 """Flag rate vs the hidden signoff margin: share of signal nets the model flags before routing, binned by the
 signoff slew/cap ratio the model never sees (baseline run of each held-out base). Dark slide style (figs_v2).
 
-Usage: python3 br/fig_riskcurve.py --out figures/v2/
+Usage: python3 br/fig_riskcurve.py --out figures/v2/ [--bases d3-des-000,d3-y_huff-000,...] [--name riskcurve]
+--bases restricts the median to the listed bases (default: every listed base whose scores and signoff nets exist);
+the names of the bases used are printed under the plot. All text >= 14 pt at the drawn size (5.95 x 4.5 in).
 """
 from __future__ import annotations
 
@@ -30,14 +32,18 @@ def main() -> int:
     ap.add_argument("--results", default=F.RESULTS)
     ap.add_argument("--out", default=os.path.join(F.ROOT, "figures", "v2"))
     ap.add_argument("--name", default="riskcurve")
+    ap.add_argument("--bases", default=None, help="comma-separated base tags to include (default: all with inputs)")
     a = ap.parse_args()
     F.setup_style()
+    only = set(a.bases.split(",")) if a.bases else None
     fig = plt.figure(figsize=(5.95, 4.5))
-    ax = fig.add_axes([0.13, 0.25, 0.83, 0.55])
+    ax = fig.add_axes([0.13, 0.28, 0.83, 0.52])
     x = np.arange(len(LABELS))
     nums = {}
     drawn, allrates, names = 0, [], []
     for base, label, arm in BASES:
+        if only is not None and base not in only:
+            continue
         sc = os.path.join(a.results, base, f"flagged_{arm}.scores.csv")
         sp = os.path.join(a.results, base, "nets_signoff.jsonl")
         if not (os.path.exists(sc) and os.path.exists(sp)):
@@ -78,7 +84,10 @@ def main() -> int:
     ax.set_axisbelow(True)
     ax.set_xlabel("signoff slew/cap ÷ limit (unknown before routing)", labelpad=4)
     fig.text(0.02, 0.965, "The model sees the signoff margin before routing", fontsize=F.FS + 1, fontweight="semibold", color=F.INK, va="top")
-    fig.text(0.02, 0.89, f"nets flagged (p ≥ 0.5): median of {len(names)} unseen designs (thin: each)", fontsize=F.FS - 1, color=F.INK2, va="top")
+    fig.text(0.02, 0.89, f"nets flagged (p ≥ 0.5): median of {len(names)} designs, thin = each", fontsize=F.FS, color=F.INK2, va="top")
+    tail = " (baseline runs)" if len(names) <= 3 else ""
+    fig.text(0.02, 0.012, f"Held out: {', '.join(names)}{tail}", fontsize=F.FS, color=F.MUTED, va="bottom")
+    nums["bases"] = names
     F.save(fig, a.out, a.name, nums)
     print(json.dumps(nums, indent=1)[:1500])
     return 0
