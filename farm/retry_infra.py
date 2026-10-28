@@ -59,7 +59,7 @@ def main() -> int:
                 for x in js:
                     if not isinstance(x, dict):
                         continue
-                    if x["name"][:2] in ("x1", "x2", "x3", "x4", "x5", "x6"):
+                    if x["name"][:2] in ("x1", "x2", "x3", "x4", "x5", "x6", "x7"):
                         seen.setdefault(x["name"], []).append((x["status"], x["conclusion"]))
                 if len(js) < 100:
                     break

@@ -39,7 +39,7 @@ def main() -> int:
     if f0 >= a.min_gb:
         return 0
     cands = []
-    for d in glob.glob(os.path.join(a.results, "x[123456]*")):
+    for d in glob.glob(os.path.join(a.results, "x[1234567]*")):
         for fn in ("nets.jsonl", "nets_signoff.jsonl", "final_nets.json"):
             p = os.path.join(d, fn)
             if os.path.exists(p):
@@ -67,7 +67,7 @@ def main() -> int:
     # last tier: tuning runs' per-net signoff dumps (no tuning report reads them; the farm keeps every run's artifact for
     # 30 days, so collect.py can fetch them again). Logged in results/.removed_files.txt.
     if free_gb(a.results) < a.target_gb:
-        drop = sorted((os.path.getmtime(p), p) for d in glob.glob(os.path.join(a.results, "x[123456]*"))
+        drop = sorted((os.path.getmtime(p), p) for d in glob.glob(os.path.join(a.results, "x[1234567]*"))
                       for p in [os.path.join(d, "nets_signoff.jsonl.gz")] if os.path.exists(p))
         k = 0
         with open(os.path.join(a.results, ".removed_files.txt"), "a") as log:

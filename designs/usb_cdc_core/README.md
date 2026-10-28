@@ -11,6 +11,8 @@ CLOCK_PERIOD 15.6 ns (OpenLane v0.21 sky130_fd_sc_hd setting), FP_CORE_UTIL 35, 
 VERILOG_INCLUDE_DIRS = src (usbf_defs.v is `include`d, not compiled on its own).
 Held-out design of Addendum 30 (no study had run it before).
 
+ERROR_ON_SYNTH_CHECKS = false (Amendment 30.1): the original RTL trips Yosys's lint check — one undriven wire, ep2_tx_stall_w; the checks are reported as warnings, the RTL is unchanged.
+
 ## Files
 
 - `src/usb_cdc_core.v`  sha256 `c79cb0e5510033caed0d81f9e760ba79757e8170d09298b65c409bd927f5a8a3`

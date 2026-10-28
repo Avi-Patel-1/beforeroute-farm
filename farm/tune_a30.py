@@ -33,6 +33,25 @@ A.NEW = dict(HELD)
 A.TUNED = {}
 A.DESIGNS = {d: {"dir": f"designs/{d}", "config": "config_sky130.json", "period": p} for d, p in HELD.items()}
 SOURCES = os.path.join(T.ROOT, "results", "tune_x4", "sources.json")
+REDO = ("cic_decimator", "usb_cdc_core")  # Amendment 30.1: re-run after the lint-check config fix
+
+
+def ref_drv_a30(d):
+    """Amendment 24.1 / 27.1 reference over the design's live (not superseded) stock runs, in the registered clock order."""
+    st = A.load(A.STATE, {"tags": {}})["tags"]
+    ds = sorted(((v.get("frac", 1.0), t) for t, v in st.items() if v["design"] == d and v["arm"] == "d"
+                 and v.get("status") != "superseded"), key=lambda x: -x[0])
+    for _, t in ds:
+        r = os.path.join(T.ROOT, "results", t)
+        if not os.path.exists(os.path.join(r, "job.json")):
+            return None
+        m = A.load(os.path.join(r, "metrics.json"), {})
+        if m.get("timing__setup__ws") is not None:
+            return T.drv_count(m)
+    return None
+
+
+A.ref_drv = ref_drv_a30
 PRIMARY = "md5"
 SEED = 2030
 MIN_SCORABLE = 4
@@ -73,6 +92,55 @@ def init():
     print(f"[a30] init: {len(jobs)} jobs")
 
 
+def amend301():
+    """Amendment 30.1: (1) cic_decimator and usb_cdc_core stopped at Yosys's lint check (config fixed: ERROR_ON_SYNTH_CHECKS
+    false); their runs are superseded and re-created under new tags, same arms and order; (2) arm f (the expert preset +
+    the ORFS per-layer RC, Addendum 25's arm f) at the 5 clocks on all 7 designs, reported without criterion."""
+    src = json.load(open(SOURCES))
+    st = A.load(A.STATE, None)
+    if st is None or any(v["arm"] == "f" for v in st["tags"].values()):
+        raise SystemExit("not initialised or already amended")
+    per = []
+    for d in REDO:
+        for v in st["tags"].values():
+            if v["design"] == d and v.get("status") != "superseded":
+                v["status_before"] = v["status"]
+                v["status"] = "superseded"
+                v["superseded_by"] = "Amendment 30.1"
+        base = {"d": [], "e": []}
+        for arm, preset in (("d", {}), ("e", T.EXPERT)):
+            for f in T.FRACS:
+                tag = A.next_tag(st, arm, d)
+                A.add(st, tag, d, arm, {**preset, "CLOCK_PERIOD": round(A.DESIGNS[d]["period"] * f, 2)}, frac=f)
+                base[arm].append(tag)
+        s = A.study(d, A.seed_for(d, SEED))
+        z = []
+        for k, sd in enumerate(src["order"]):
+            s.enqueue_trial(src["sources"][sd]["params"])
+            tr = s.ask()
+            tag = A.next_tag(st, "z", d)
+            A.add(st, tag, d, "z", A.suggest(tr, d), trial=tr.number, source=src["sources"][sd]["tag"], source_design=sd, rank=k)
+            z.append(tag)
+        zp = [t for t in z if st["tags"][t]["source_design"] == PRIMARY]
+        zr = [t for t in z if t not in zp]
+        seq = [base["d"][0]] + zp
+        for j in range(max(len(zr), len(base["e"]))):
+            seq += zr[j:j + 1] + base["e"][j:j + 1]
+        per.append(seq + base["d"][1:])
+    for d in HELD:
+        fl = []
+        for f in T.FRACS:
+            tag = A.next_tag(st, "f", d)
+            A.add(st, tag, d, "f", {**T.EXPERT, "LAYERS_RC": A.RC["orfs"], "CLOCK_PERIOD": round(A.DESIGNS[d]["period"] * f, 2)},
+                  frac=f)
+            fl.append(tag)
+        per.append(fl)
+    A.save(st)
+    jobs = T.interleave(per)
+    A.send(st, [(jobs, 20)], f"Addendum 30 (Amendment 30.1): two designs re-run after the lint-check fix; expert + RC arm ({len(jobs)})")
+    print(f"[a30] amendment 30.1: {len(jobs)} jobs")
+
+
 def step():
     st = A.load(A.STATE, None)
     if st is None:
@@ -94,7 +162,7 @@ def confirm():
     covered = {v.get("source") for v in st["tags"].values() if v["arm"] == "c"}
     new = []
     for d in HELD:
-        z = [(t, v) for t, v in st["tags"].items() if v["design"] == d and v["arm"] == "z"]
+        z = [(t, v) for t, v in st["tags"].items() if v["design"] == d and v["arm"] == "z" and v.get("status") != "superseded"]
         if not z or any(v["status"] in ("dispatched", "pending") for _, v in z):
             continue
         ok = [(t, v) for t, v in z if v.get("feasible") and v.get("teff") is not None]
@@ -130,10 +198,12 @@ def report(js):
     rows = st["tags"]
     out, per = {}, {}
     for d in HELD:
-        arm = {a: [dict(v, tag=t) for t, v in rows.items() if v["design"] == d and v["arm"] == a] for a in "dezc"}
+        arm = {a: [dict(v, tag=t) for t, v in rows.items() if v["design"] == d and v["arm"] == a
+                   and v.get("status") != "superseded"] for a in "defzc"}
         n = {a: (sum(map(done, arm[a])), len(arm[a])) for a in arm}
         md5 = next((v for v in arm["z"] if v.get("source_design") == PRIMARY), None)
-        b = {"d": best(arm["d"]), "e": best(arm["e"]), "z": best(arm["z"])}
+        b = {"d": best(arm["d"]), "e": best(arm["e"]), "f": best(arm["f"]), "z": best(arm["z"])}
+        fa = min((v for v in arm["f"] if v.get("teff") is not None), key=lambda v: v["teff"], default=None)
         ea = min((v for v in arm["e"] if v.get("teff") is not None), key=lambda v: v["teff"], default=None)
         ref_ok = any(v["tag"].endswith("-001") and v.get("teff") is not None for v in arm["d"]) or \
             any(v.get("teff") is not None for v in arm["d"])
@@ -163,6 +233,9 @@ def report(js):
                                                    "drv": md5.get("drv"), "drv_ref": md5.get("drv_ref")},
                   "e_any": None if ea is None else {"teff": ea["teff"], "drv": ea.get("drv"), "drv_ref": ea.get("drv_ref"),
                                                     "hold": ea.get("hold")},
+                  "f_any": None if fa is None else {"teff": fa["teff"], "drv": fa.get("drv"), "drv_ref": fa.get("drv_ref"),
+                                                    "hold": fa.get("hold")},
+                  "md5_vs_f": (None if not (m_ok and b["f"]) else b["f"]["teff"] / md5["teff"]),
                   "confirm": conf, **wins, **res}
         f = lambda x: "-" if x is None else f"{x:.2f}"
         print(f"== {d} (default {HELD[d]} ns): stock {f(tv(b['d']))} ({n['d'][0]}/{n['d'][1]}), expert {f(tv(b['e']))} "
@@ -197,6 +270,7 @@ def main() -> int:
     ap.add_argument("--init", action="store_true")
     ap.add_argument("--step", action="store_true")
     ap.add_argument("--confirm", action="store_true")
+    ap.add_argument("--amend301", action="store_true")
     ap.add_argument("--report", action="store_true")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--json", default=None)
@@ -205,6 +279,8 @@ def main() -> int:
     T.DRY["on"] = a.dry_run
     if a.init:
         init()
+    if a.amend301:
+        amend301()
     if a.step:
         step()
     if a.confirm:

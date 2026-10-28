@@ -21,5 +21,6 @@
   "PDN_HWIDTH": 2,
   "PDN_VPITCH": 30,
   "PDN_HPITCH": 30,
-  "PDN_SKIPTRIM": true
+  "PDN_SKIPTRIM": true,
+  "ERROR_ON_SYNTH_CHECKS": false
 }
