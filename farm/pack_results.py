@@ -29,6 +29,8 @@ def main() -> int:
         if not os.path.isdir(rdir) or not os.path.exists(os.path.join(rdir, "job.json")):
             continue
         tag = os.path.basename(rdir)
+        if tag[:2] in ("x1", "x2", "x3"):
+            continue  # tuning runs are summarized in results/tune*/state.json; their raw dumps stay local (compressed)
         dst = os.path.join(a.out, tag + ".tar.gz")
         try:
             status = json.load(open(os.path.join(rdir, "job.json"))).get("status")
