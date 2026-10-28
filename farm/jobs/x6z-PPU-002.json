@@ -1,0 +1,55 @@
+{
+ "tag": "x6z-PPU-002",
+ "design": "designs/PPU",
+ "config": "config_sky130.json",
+ "overrides": {
+  "RUN_MAGIC_DRC": false,
+  "RUN_KLAYOUT_DRC": false,
+  "RUN_LVS": false,
+  "RUN_KLAYOUT_XOR": false,
+  "RUN_IRDROP_REPORT": false,
+  "RUN_LINTER": false,
+  "CLOCK_PERIOD": 8.7,
+  "SYNTH_STRATEGY": "DELAY 4",
+  "SYNTH_ABC_BUFFERING": false,
+  "SYNTH_SIZING": false,
+  "FP_CORE_UTIL": 27,
+  "PL_TARGET_DENSITY_PCT": 46,
+  "PL_TIMING_DRIVEN": false,
+  "PL_ROUTABILITY_DRIVEN": false,
+  "RUN_POST_GRT_RESIZER_TIMING": true,
+  "RUN_POST_GRT_DESIGN_REPAIR": false,
+  "PL_RESIZER_SETUP_SLACK_MARGIN": 0.166,
+  "GRT_RESIZER_SETUP_SLACK_MARGIN": 0.251,
+  "DESIGN_REPAIR_MAX_SLEW_PCT": 25,
+  "DESIGN_REPAIR_MAX_CAP_PCT": 40,
+  "LAYERS_RC": {
+   "*": {
+    "li1": {
+     "res": 0.0752941175,
+     "cap": 0.00018676206809
+    },
+    "met1": {
+     "res": 0.0008928571,
+     "cap": 0.000180502538973
+    },
+    "met2": {
+     "res": 0.0008928571,
+     "cap": 0.000165905533799
+    },
+    "met3": {
+     "res": 0.0001566667,
+     "cap": 0.000182519422998
+    },
+    "met4": {
+     "res": 0.0001566667,
+     "cap": 0.00016161718191
+    },
+    "met5": {
+     "res": 1.78125e-05,
+     "cap": 0.000187045967495
+    }
+   }
+  }
+ }
+}
