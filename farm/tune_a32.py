@@ -589,7 +589,13 @@ def report(js):
         out[d] = {"agent": a, "tpe": b, "start": z, "agent2": a2, "tpe2": b2, "landed": n, **per[d]}
         f = lambda x: f"{x[0]} {x[1]:.2f}" if x[1] is not None else x[0]
         print(f"== {d}: agent {f(a)} | TPE {f(b)} | start best {f(z)} | runs a {n['a'][0]}/{n['a'][1]} b {n['b'][0]}/{n['b'][1]} k {n['k'][0]}/{n['k'][1]} c {n['c'][0]}/{n['c'][1]}  {per[d]}")
-    overall = {k: f"{sum(1 for d in HELD if per[d][k])} of {len(HELD)} (4 needed; decided at 15:30Z Oct 29)" for k in ("A32a", "A32b", "A32c")}
+    import datetime as _dt
+    decided = _dt.datetime.now(_dt.timezone.utc) >= _dt.datetime(2026, 10, 29, 15, 30, tzinfo=_dt.timezone.utc)
+    overall = {}
+    for k in ("A32a", "A32b", "A32c"):
+        w = sum(1 for d in HELD if per[d][k])
+        overall[k] = ((("PASS" if w >= 4 else "FAIL") + f" ({w} of {len(HELD)}; 4 needed; decided at 15:30Z Oct 29)") if decided
+                      else f"pending ({w} of {len(HELD)} so far; 4 needed; decided at 15:30Z Oct 29)")
     overall.update({k: f"{sum(1 for d in HELD if per[d][k])} of {len(HELD)} (Amendment 32.1, reported beside, no criterion)"
                     for k in ("A32a2", "A32b2", "A32c2")})
     for k, v in overall.items():
