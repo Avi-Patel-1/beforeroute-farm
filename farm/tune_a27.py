@@ -290,12 +290,25 @@ def init():
 
 
 def ref_drv(d):
-    pre = PARENT.get(d, PREFIX)
-    try:
-        m = json.load(open(os.path.join(ROOT, "results", f"{pre}d-{d}-001", "metrics.json")))
-    except Exception:
-        return None
-    return T.drv_count(m) if m.get("timing__setup__ws") is not None else None
+    """Amendment 24.1 reference; Amendment 27.1 (1): for an unseen design whose stock run at the default clock did not
+    reach signoff, the first stock run in the registered order (1.0, 0.85, 0.7, 0.6, 0.5 x default) that did."""
+    if d in PARENT:
+        try:
+            m = json.load(open(os.path.join(ROOT, "results", f"{PARENT[d]}d-{d}-001", "metrics.json")))
+        except Exception:
+            return None
+        return T.drv_count(m) if m.get("timing__setup__ws") is not None else None
+    for k in range(1, len(T.FRACS) + 1):
+        r = os.path.join(ROOT, "results", f"{PREFIX}d-{d}-{k:03d}")
+        if not os.path.exists(os.path.join(r, "job.json")):
+            return None  # this one has not landed yet: wait for it
+        try:
+            m = json.load(open(os.path.join(r, "metrics.json")))
+        except Exception:
+            m = {}
+        if m.get("timing__setup__ws") is not None:
+            return T.drv_count(m)
+    return None  # no stock run reached signoff: not scorable
 
 
 def tell_finished(st, dry):
@@ -343,6 +356,15 @@ def step():
     save(st)
     retry = [t for t, v in st["tags"].items() if v["status"] == "pending"]
     new = []
+    # Amendment 27.1 (2): a confirmation run stopped by a tool error before signoff is re-run once (same spec, new tag)
+    for tag, v in list(st["tags"].items()):
+        if v["arm"] != "c" or v["status"] != "failed" or v.get("rerun_of") or v.get("rerun_tag"):
+            continue
+        t2 = next_tag(st, "c", v["design"])
+        add(st, t2, v["design"], "c", dict(v["overrides"]), source=v.get("source"), rerun_of=tag)
+        v["rerun_tag"] = t2
+        new.append(t2)
+        print(f"[a27] {tag} stopped before signoff -> re-run once as {t2} (Amendment 27.1)")
     for d in NEW:
         z = [v for v in st["tags"].values() if v["design"] == d and v["arm"] == "z"]
         w = [v for v in st["tags"].values() if v["design"] == d and v["arm"] == "w"]
@@ -430,10 +452,11 @@ def report(js):
               f"stock {f(bd)}, own tuned best {f(tb)}; share of tuning gain {f(rec)}  A27d={v}")
     for tag, v in rows.items():
         if v["arm"] == "c":
-            out["confirm"][v["design"]] = {"tag": tag, "source": v.get("source"), "status": v["status"], "clock": v["overrides"]["CLOCK_PERIOD"],
-                                           "wns": v.get("wns"), "teff": v.get("teff"), "feasible": v.get("feasible")}
-            print(f"== confirm {v['design']}: {tag} ({v.get('source')}) clock {v['overrides']['CLOCK_PERIOD']} status {v['status']} "
-                  f"WS {v.get('wns')} T_eff {v.get('teff')} feasible {v.get('feasible')}")
+            out["confirm"][tag] = {"design": v["design"], "source": v.get("source"), "status": v["status"],
+                                   "clock": v["overrides"]["CLOCK_PERIOD"], "wns": v.get("wns"), "teff": v.get("teff"),
+                                   "feasible": v.get("feasible"), "rerun_of": v.get("rerun_of")}
+            print(f"== confirm {v['design']}: {tag} ({v.get('source')}{', re-run of ' + v['rerun_of'] if v.get('rerun_of') else ''}) "
+                  f"clock {v['overrides']['CLOCK_PERIOD']} status {v['status']} WS {v.get('wns')} T_eff {v.get('teff')} feasible {v.get('feasible')}")
     overall = {}
     for k in ("A27a", "A27b", "A27c"):
         vals = [per[d][k] for d in per]
