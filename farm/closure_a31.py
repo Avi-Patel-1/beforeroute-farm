@@ -198,34 +198,42 @@ def step():
 
 
 def report(js):
+    """Per point: the closed clock of its configuration = the smallest clock at which any run of exactly that configuration
+    (same design, same overrides apart from the clock; the flow is deterministic) met setup and the feasibility rule.
+    Status: closed at (or below) the quoted point's own clock; closed only at a looser clock; or not closed / pending."""
     pts = json.load(open(POINTS))["points"] if os.path.exists(POINTS) else []
     st = A.load(A.STATE, {"tags": {}})
     A.tell_finished(st, dry=True)
-    by_src = {v["source"]: dict(v, tag=t) for t, v in st["tags"].items()}
     R = records()
+    R.update(st["tags"])
+    by_cfg = {}
+    for t, v in R.items():
+        if v.get("overrides") and v.get("design") and v.get("teff") is not None and v.get("status") not in ("dispatched", "pending", "superseded"):
+            key = (v["design"], json.dumps(A.strip(v["overrides"]), sort_keys=True, default=str))
+            by_cfg.setdefault(key, []).append(dict(v, tag=t))
+    pend_src = {v.get("source") for t, v in st["tags"].items() if v["status"] in ("dispatched", "pending")}
     out = []
     for p in pts:
-        k = by_src.get(p["tag"])
-        if k is None and p.get("closure_existing"):
-            k = dict(R.get(p["closure_existing"], {}), tag=p["closure_existing"])
-        checked = []
-        if p["feasible"] and p["wns"] is not None and p["wns"] >= 0:
-            checked.append((p["clock"], p.get("area"), p["tag"]))
-        status = "closed at its own clock" if not (p["needs_run"] or p.get("closure_existing")) else "pending"
-        if k is not None and k["status"] not in ("dispatched", "pending"):
-            ok = bool(k.get("feasible") and k.get("wns") is not None and k["wns"] >= 0)
-            if ok:
-                checked.append((k["overrides"]["CLOCK_PERIOD"], k.get("area"), k["tag"]))
-            status = "closed at the quoted clock" if ok else ("missed setup at the quoted clock" if k.get("feasible")
-                                                               else "failed the feasibility rule at the quoted clock")
-        cc = min(checked) if checked else None
-        out.append({**p, "closure_tag": None if k is None else k["tag"], "closure_teff": None if k is None else k.get("teff"),
-                    "closure_wns": None if k is None else k.get("wns"), "closure_feasible": None if k is None else k.get("feasible"),
-                    "status": status, "closed_clock": None if cc is None else cc[0], "closed_area": None if cc is None else cc[1],
-                    "closed_tag": None if cc is None else cc[2]})
+        src = R.get(p["tag"], {})
+        key = (p["design"], json.dumps(A.strip(src.get("overrides") or {}), sort_keys=True, default=str))
+        runs = by_cfg.get(key, [])
+        ok = sorted((r["overrides"]["CLOCK_PERIOD"], r.get("area"), r["tag"], r.get("wns")) for r in runs
+                    if r.get("feasible") and r.get("wns") is not None and r["wns"] >= 0)
+        cc = ok[0] if ok else None
+        if cc is not None and cc[0] <= p["own_clock"] + 1e-6:
+            status = "closed at its own clock"
+        elif p["tag"] in pend_src:
+            status = "pending"
+        elif cc is not None:
+            status = "closed only at a looser clock"
+        else:
+            status = "not closed"
+        out.append({**p, "status": status, "runs_checked": len(runs), "closed_clock": None if cc is None else cc[0],
+                    "closed_area": None if cc is None else cc[1], "closed_tag": None if cc is None else cc[2],
+                    "closed_wns": None if cc is None else cc[3]})
         f = lambda x: "-" if x is None else f"{x:.2f}"
-        print(f"{p['design']:20s} {p['point']:10s} quoted {p['teff']:7.3f} @ {p['clock']:6.2f} -> {status:42s} closed clock "
-              f"{f(out[-1]['closed_clock'])}")
+        print(f"{p['design']:20s} {p['point']:10s} quoted {p['teff']:7.3f} (own clock {p['own_clock']:6.2f}) -> {status:30s} "
+              f"closed clock {f(out[-1]['closed_clock'])}  ({len(runs)} runs of this setting)")
     if js:
         json.dump({"points": out}, open(js, "w"), indent=1, default=str)
     return out
