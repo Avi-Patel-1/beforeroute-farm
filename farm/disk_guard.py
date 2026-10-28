@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Keep the workspace under its fixed disk allowance during long unattended runs.
 
-When free space is below --min-gb: gzip nets.jsonl / nets_signoff.jsonl / final_nets.json in tuning runs (x1*/x2*/x3*;
+When free space is below --min-gb: gzip nets.jsonl / nets_signoff.jsonl / final_nets.json in tuning runs (x1*..x8*;
 tune*.py read the .gz forms), then nets_signoff.jsonl in hero-arm results (tags with an arm suffix, e.g.
 d3-des-000-thr500-30cr; the criteria read labels.json/metrics.json, not this file), oldest first, until --target-gb is
 free; then, if still short, removes tuning runs' nets_signoff.jsonl.gz (oldest first; the farm keeps every run's artifact
@@ -39,7 +39,7 @@ def main() -> int:
     if f0 >= a.min_gb:
         return 0
     cands = []
-    for d in glob.glob(os.path.join(a.results, "x[1234567]*")):
+    for d in glob.glob(os.path.join(a.results, "x[12345678]*")):
         for fn in ("nets.jsonl", "nets_signoff.jsonl", "final_nets.json"):
             p = os.path.join(d, fn)
             if os.path.exists(p):
@@ -67,7 +67,7 @@ def main() -> int:
     # last tier: tuning runs' per-net signoff dumps (no tuning report reads them; the farm keeps every run's artifact for
     # 30 days, so collect.py can fetch them again). Logged in results/.removed_files.txt.
     if free_gb(a.results) < a.target_gb:
-        drop = sorted((os.path.getmtime(p), p) for d in glob.glob(os.path.join(a.results, "x[1234567]*"))
+        drop = sorted((os.path.getmtime(p), p) for d in glob.glob(os.path.join(a.results, "x[12345678]*"))
                       for p in [os.path.join(d, "nets_signoff.jsonl.gz")] if os.path.exists(p))
         k = 0
         with open(os.path.join(a.results, ".removed_files.txt"), "a") as log:
