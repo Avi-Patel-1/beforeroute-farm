@@ -1,0 +1,11 @@
+{
+  "copied_at": "2026-10-28T16:29:09.235072+00:00",
+  "origin": "https://github.com/The-OpenROAD-Project/OpenLane designs/xtea (tag v0.21 (a6ac8cf836df4d776136a9d71b86bfa8e89aa695))",
+  "license": "LGPL-2.1-or-later (per source header)",
+  "top": "xtea",
+  "clock_port": "clock",
+  "files_sha256": {
+    "xtea.v": "27e302c760660bad28d0e72533e65a2af1a482cd39313ca174b00f1fd7ab4ece"
+  },
+  "local_modifications": "None to copied RTL; local config_sky130.json only"
+}

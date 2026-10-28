@@ -1,0 +1,11 @@
+{
+  "copied_at": "2026-10-28T16:29:09.235474+00:00",
+  "origin": "https://github.com/The-OpenROAD-Project/OpenLane designs/zipdiv (tag v0.21 (a6ac8cf836df4d776136a9d71b86bfa8e89aa695))",
+  "license": "GPL-3.0-or-later (per source header, Gisselquist Technology)",
+  "top": "zipdiv",
+  "clock_port": "i_clk",
+  "files_sha256": {
+    "zipdiv.v": "58775b1ff9abf5d66876f65072a5d5d0199de3832d7850b6926fc35ac1bb6f61"
+  },
+  "local_modifications": "None to copied RTL; local config_sky130.json only"
+}

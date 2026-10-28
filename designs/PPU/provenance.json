@@ -1,0 +1,11 @@
+{
+  "copied_at": "2026-10-28T16:35:22.928155+00:00",
+  "origin": "https://github.com/The-OpenROAD-Project/OpenLane designs/PPU (tag v0.21 (a6ac8cf836df4d776136a9d71b86bfa8e89aa695))",
+  "license": "GPL (per source header, Ludvig Strigeus)",
+  "top": "PPU",
+  "clock_port": "clk",
+  "files_sha256": {
+    "PPU.v": "0c43cc5ca0f0236bd6d12845cd2351e308bf6f42bed35c451c5077611062a784"
+  },
+  "local_modifications": "None to copied RTL; local config_sky130.json only"
+}

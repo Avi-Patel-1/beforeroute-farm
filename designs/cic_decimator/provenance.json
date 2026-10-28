@@ -1,0 +1,11 @@
+{
+  "copied_at": "2026-10-28T16:33:12.935721+00:00",
+  "origin": "https://github.com/The-OpenROAD-Project/OpenLane designs/cic_decimator (tag v0.21 (a6ac8cf836df4d776136a9d71b86bfa8e89aa695))",
+  "license": "MIT (per source header, Alex Forencich)",
+  "top": "cic_decimator",
+  "clock_port": "clk",
+  "files_sha256": {
+    "cic_decimator.v": "17d1e2d1c5dc89ba5a4d1b93f2c2b27c1021181fb9412c2ef4201c6b5816d26d"
+  },
+  "local_modifications": "None to copied RTL; local config_sky130.json only"
+}

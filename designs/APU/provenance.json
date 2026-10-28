@@ -1,0 +1,11 @@
+{
+  "copied_at": "2026-10-28T16:29:09.238745+00:00",
+  "origin": "https://github.com/The-OpenROAD-Project/OpenLane designs/APU (tag v0.21 (a6ac8cf836df4d776136a9d71b86bfa8e89aa695))",
+  "license": "GPL (per source header, Ludvig Strigeus)",
+  "top": "APU",
+  "clock_port": "clk",
+  "files_sha256": {
+    "APU.v": "cf43298615a95558c2b594938dc05a05c6a85428434111ba9e158a7fa8f53fbf"
+  },
+  "local_modifications": "None to copied RTL; local config_sky130.json only"
+}

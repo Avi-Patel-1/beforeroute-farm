@@ -1,0 +1,25 @@
+{
+  "DESIGN_NAME": "usb_cdc_core",
+  "VERILOG_FILES": [
+    "dir::src/usb_cdc_core.v",
+    "dir::src/usb_desc_rom.v",
+    "dir::src/usbf_crc16.v",
+    "dir::src/usbf_device_core.v",
+    "dir::src/usbf_sie_rx.v",
+    "dir::src/usbf_sie_tx.v"
+  ],
+  "VERILOG_INCLUDE_DIRS": [
+    "dir::src"
+  ],
+  "CLOCK_PORT": "clk_i",
+  "CLOCK_PERIOD": 15.6,
+  "FP_CORE_UTIL": 35,
+  "PL_TARGET_DENSITY_PCT": 45,
+  "PDN_VOFFSET": 5,
+  "PDN_HOFFSET": 5,
+  "PDN_VWIDTH": 2,
+  "PDN_HWIDTH": 2,
+  "PDN_VPITCH": 30,
+  "PDN_HPITCH": 30,
+  "PDN_SKIPTRIM": true
+}
