@@ -474,7 +474,12 @@ def report(js):
                "A27c": beats(b["zw"], b["e"], 0.10) if (e_done and z_done and w_done) else None}
         per[d] = res
         win = min((v for v in arm["z"] if v.get("feasible")), key=lambda v: v["teff"], default=None)
-        out["unseen"][d] = {"best": b, "landed": n, "best_z_source": win.get("source_design") if win else None, **res}
+        # reported without criterion: the expert arm's fastest run whatever its feasibility (for arms with no feasible run)
+        ea = min((v for v in arm["e"] if v.get("teff") is not None), key=lambda v: v["teff"], default=None)
+        e_any = None if ea is None else {"teff": ea["teff"], "drv": ea.get("drv"), "drv_ref": ea.get("drv_ref"),
+                                         "hold": ea.get("hold"), "feasible": bool(ea.get("feasible"))}
+        out["unseen"][d] = {"best": b, "landed": n, "best_z_source": win.get("source_design") if win else None,
+                            "e_any": e_any, **res}
         f = lambda x: f"{x:.2f}" if x is not None else "-"
         print(f"== {d} (default {DESIGNS[d]['period']} ns): stock {f(b['d'])} ({n['d'][0]}/{n['d'][1]}), expert {f(b['e'])} "
               f"({n['e'][0]}/{n['e'][1]}), transfer {f(b['z'])} ({n['z'][0]}/{n['z'][1]}; first 5: {f(b['z5'])}; best from "

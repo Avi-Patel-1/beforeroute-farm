@@ -154,7 +154,7 @@ def main() -> int:
                     l, t, w, h = spec["caption_box"]
                     cap.left, cap.top, cap.width, cap.height = Inches(l), Inches(t), Inches(w), Inches(h)
                     cap.text_frame.word_wrap = True
-                set_text(cap, [spec["caption"]], size=spec.get("caption_size", 11))
+                set_text(cap, spec["caption"] if isinstance(spec["caption"], list) else [spec["caption"]], size=spec.get("caption_size", 11))
             add_images(s, spec)
             if spec.get("notes"):
                 s.notes_slide.notes_text_frame.text = spec["notes"]
