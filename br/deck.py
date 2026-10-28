@@ -25,7 +25,7 @@ from pptx.dml.color import RGBColor
 from pptx.util import Inches, Pt
 
 
-def set_text(shape, lines, size=None, uniform_bullets=False):
+def set_text(shape, lines, size=None, uniform_bullets=False, space=None):
     tf = shape.text_frame
     p0 = tf.paragraphs[0]._p
     bullet_ppr = copy.deepcopy(p0.pPr) if (uniform_bullets and p0.pPr is not None) else None
@@ -42,6 +42,9 @@ def set_text(shape, lines, size=None, uniform_bullets=False):
                 p._p.remove(p._p.pPr)
             p._p.insert(0, copy.deepcopy(bullet_ppr))
         p.level = lvl
+        if space is not None:                        # optional tighter paragraph spacing (points before; none after)
+            p.space_before = Pt(space)
+            p.space_after = Pt(0)
         r = p.add_run()
         r.text = item["text"]
         if item.get("bold"):
@@ -168,7 +171,8 @@ def main() -> int:
                 # shrink the text body to the left column
                 body.width = Inches(spec.get("text_width", 6.2))
                 s.shapes.add_picture(spec["image"], Inches(l), Inches(t), width=Inches(w))
-            set_text(body, spec.get("bullets", []), size=spec.get("font"), uniform_bullets=bool(spec.get("bullets_uniform")))
+            set_text(body, spec.get("bullets", []), size=spec.get("font"), uniform_bullets=bool(spec.get("bullets_uniform")),
+                     space=spec.get("para_space"))
         add_images(s, spec)
         if spec.get("notes"):
             s.notes_slide.notes_text_frame.text = spec["notes"]
