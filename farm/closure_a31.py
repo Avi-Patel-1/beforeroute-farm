@@ -11,7 +11,7 @@ A point is already closed at its own clock when it was run at ceil(T_eff / 0.05)
 while feasible. Every other point gets one run with the same configuration at ceil(T_eff / 0.05) * 0.05 ns
 (tags x7k-<design>-<nnn>). Reported per point: its closed clock, the smallest clock among its checked runs at which the
 run is feasible (Amendment 24.1, the design's own stock reference) and meets setup; area at that run.
-Usage: closure_a31.py --freeze | --init | --step | --report [--json f] [--dry-run]
+Usage: closure_a31.py --freeze | --init | --amend311 | --amend312 | --step | --report [--json f] [--dry-run]
 """
 from __future__ import annotations
 
@@ -45,9 +45,36 @@ def ref_tag(d):
     return None
 
 
+HELD30 = {"xtea": 26.03, "zipdiv": 19.09, "usb_cdc_core": 15.6, "wbqspiflash": 18.86, "cic_decimator": 10.0, "APU": 17.0,
+          "PPU": 18.0}
+NEVER27 = ("chacha", "ldpcenc", "point_add", "salsa20", "sha512")
+A.DESIGNS = {**A.DESIGNS, **{d: {"dir": f"designs/{d}", "config": "config_sky130.json", "period": p} for d, p in HELD30.items()}}
+X6STATE = os.path.join(T.ROOT, "results", "tune_x6", "state.json")
+X4STATE = os.path.join(T.ROOT, "results", "tune_x4", "state.json")
+
+
+def ref_drv_x6(d):
+    """Addendum 30's reference (Amendments 24.1 / 27.1 / 30.1): the design's first live stock run in registered clock order
+    that reached signoff."""
+    st = A.load(X6STATE, {"tags": {}})["tags"]
+    ds = sorted(((v.get("frac", 1.0), t) for t, v in st.items() if v["design"] == d and v["arm"] == "d"
+                 and v.get("status") != "superseded"), key=lambda x: -x[0])
+    for _, t in ds:
+        r = os.path.join(T.ROOT, "results", t)
+        if not os.path.exists(os.path.join(r, "job.json")):
+            return None
+        m = A.load(os.path.join(r, "metrics.json"), {})
+        if m.get("timing__setup__ws") is not None:
+            return T.drv_count(m)
+    return None
+
+
 def ref_drv_a31(d):
-    """The design's own electrical reference (its stock run at the default clock; Amendment 27.1's fallback for Salsa20)."""
-    if d == "salsa20":
+    """The design's own electrical reference (its stock run at the default clock; Amendment 27.1's fallback for the
+    never-tuned designs; Addendum 30's reference for the held-out designs)."""
+    if d in HELD30:
+        return ref_drv_x6(d)
+    if d in NEVER27:
         for k in range(1, 6):
             m = A.load(os.path.join(T.ROOT, "results", f"x4d-{d}-{k:03d}", "metrics.json"), {})
             if m.get("timing__setup__ws") is not None:
@@ -165,6 +192,83 @@ def amend311():
     print(f"[a31] amendment 31.1: {len(new_pts)} points, {len(jobs)} jobs")
 
 
+def amend312():
+    """Amendment 31.2: the new-design points the slides quote, frozen per design (by rule) once every stock, expert, expert + RC
+    and borrowed run of that design and its re-runs have landed, then closed like the others.
+      held-out designs (Addendum 30): the stock flow's best, the expert preset's best, the expert + RC best, MD5's setting
+        (its feasible re-run, else its feasible run) and the best borrowed setting (best feasible re-run, else best run) when
+        that is a different setting;
+      never-tuned designs (Addendum 27): the stock flow's best and the best borrowed setting (as above; Salsa20's is already
+        a point).
+    A point already run at ceil(T_eff/0.05)*0.05 ns with setup met and feasible is closed; an existing run of the same
+    configuration at that clock is its closure run; every other point gets one run there (tags x7k-<design>-<nnn>).
+    Idempotent: designs already frozen are skipped; designs still running wait for a later call."""
+    data = json.load(open(POINTS))
+    have = {(p["design"], p["point"]) for p in data["points"]}
+    done_d = {p["design"] for p in data["points"] if p.get("amendment") == "31.2"}
+    R = records()
+    st = A.load(A.STATE, None)
+    tv = lambda v: v["teff"]
+    new_pts, jobs = [], []
+    for d, path, arms_needed in [(d, X6STATE, "defz") for d in HELD30] + [(d, X4STATE, "dz") for d in NEVER27]:
+        if d in done_d:
+            continue
+        live = {t: v for t, v in A.load(path, {"tags": {}})["tags"].items() if v["design"] == d and v.get("status") != "superseded"}
+        arms = {a: [dict(v, tag=t) for t, v in live.items() if v["arm"] == a] for a in "defzc"}
+        if not all(arms[a] for a in arms_needed) or any(v["status"] in ("dispatched", "pending")
+                                                         for a in arms_needed + "c" for v in arms[a]):
+            continue
+        okz = [v for v in arms["z"] if v.get("feasible") and v.get("teff") is not None]
+        md5z = next((v for v in okz if v.get("source_design") == "md5"), None) if d in HELD30 else None
+        bz = min(okz, key=tv) if okz else None
+        asked = {v.get("source") for v in arms["c"]}
+        # the design's own re-runs (Addendum 30 --confirm / Addendum 27 --confirm-new) must have been asked and landed first
+        if (md5z and md5z["tag"] not in asked) or (bz and bz["tag"] not in asked and d in HELD30):
+            continue
+        if d in NEVER27 and bz and not arms["c"]:
+            continue
+        cok = [v for v in arms["c"] if v.get("feasible") and v.get("teff") is not None]
+        md5 = min((v for v in cok if md5z and v.get("source") == md5z["tag"]), key=tv, default=None) or md5z
+        bor = min(cok, key=tv, default=None) or bz
+        picks = [("stock", best(arms["d"]))]
+        if d in HELD30:
+            picks += [("expert", best(arms["e"])), ("expert_rc", best(arms["f"])), ("md5", md5)]
+        if bor and not (md5 and A.strip(bor["overrides"]) == A.strip(md5["overrides"])):
+            picks.append(("borrowed", bor))
+        for name, b in picks:
+            if not b or (d, name) in have:
+                continue
+            p = {"design": d, "point": name, "tag": b["tag"], "amendment": "31.2", "clock": b["overrides"]["CLOCK_PERIOD"],
+                 "teff": b["teff"], "wns": b.get("wns"), "feasible": b.get("feasible"), "area": b.get("area"), "own_clock": own_clock(b)}
+            p["needs_run"] = not (p["feasible"] and p["wns"] is not None and p["wns"] >= 0 and abs(p["clock"] - p["own_clock"]) < 1e-6)
+            if p["needs_run"]:
+                same = [t for t, v in R.items() if v.get("design") == d and v.get("overrides") and v.get("status") != "superseded"
+                        and A.strip(v["overrides"]) == A.strip(b["overrides"])
+                        and abs(v["overrides"].get("CLOCK_PERIOD", -1) - p["own_clock"]) < 1e-6 and v.get("teff") is not None]
+                if same:
+                    p["needs_run"] = False
+                    p["closure_existing"] = same[0]
+            new_pts.append(p)
+            if p["needs_run"]:
+                ov = dict(b["overrides"])
+                ov["CLOCK_PERIOD"] = p["own_clock"]
+                t = A.next_tag(st, "k", d)
+                A.add(st, t, d, "k", ov, source=b["tag"], point=name)
+                jobs.append(t)
+            print(f"  {d:14s} {name:9s} {b['tag']:24s} clock {p['clock']:7.2f} T_eff {p['teff']:7.3f} -> "
+                  f"{'run at ' + str(p['own_clock']) if p['needs_run'] else ('existing run ' + p['closure_existing'] if p.get('closure_existing') else 'closed at its clock')}")
+    if not new_pts:
+        print("[a31] amendment 31.2: no design ready")
+        return
+    if not A.DRY["on"]:
+        data["points"] += new_pts
+        data.setdefault("amended_31_2_at", []).append(A.now())
+        json.dump(data, open(POINTS, "w"), indent=1)
+    A.save(st)
+    A.send(st, [(jobs, 20)], f"Addendum 31 (Amendment 31.2): closure runs of new-design points ({len(jobs)})")
+    print(f"[a31] amendment 31.2: {len(new_pts)} points, {len(jobs)} jobs")
+
+
 def init():
     pts = json.load(open(POINTS))["points"] if os.path.exists(POINTS) else freeze()
     R = records()
@@ -212,6 +316,9 @@ def report(js):
             key = (v["design"], json.dumps(A.strip(v["overrides"]), sort_keys=True, default=str))
             by_cfg.setdefault(key, []).append(dict(v, tag=t))
     pend_src = {v.get("source") for t, v in st["tags"].items() if v["status"] in ("dispatched", "pending")}
+    # a closure run still in flight for the same configuration (e.g. the ring and the 24-run tuner's best share a setting)
+    pend_cfg = {(v["design"], json.dumps(A.strip(v.get("overrides") or {}), sort_keys=True, default=str))
+                for t, v in st["tags"].items() if v["status"] in ("dispatched", "pending")}
     out = []
     for p in pts:
         src = R.get(p["tag"], {})
@@ -222,7 +329,7 @@ def report(js):
         cc = ok[0] if ok else None
         if cc is not None and cc[0] <= p["own_clock"] + 1e-6:
             status = "closed at its own clock"
-        elif p["tag"] in pend_src:
+        elif p["tag"] in pend_src or key in pend_cfg:
             status = "pending"
         elif cc is not None:
             status = "closed only at a looser clock"
@@ -244,6 +351,7 @@ def main() -> int:
     ap.add_argument("--freeze", action="store_true")
     ap.add_argument("--init", action="store_true")
     ap.add_argument("--amend311", action="store_true")
+    ap.add_argument("--amend312", action="store_true")
     ap.add_argument("--step", action="store_true")
     ap.add_argument("--report", action="store_true")
     ap.add_argument("--dry-run", action="store_true")
@@ -257,6 +365,8 @@ def main() -> int:
         init()
     if a.amend311:
         amend311()
+    if a.amend312:
+        amend312()
     if a.step:
         step()
     if a.report:
