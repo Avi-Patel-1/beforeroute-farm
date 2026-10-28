@@ -93,15 +93,73 @@ def main() -> int:
     t0 = time.time()
     flow_log = os.path.join(results, "flow.log")
     cmd = ["librelane", "--pdk-root", a.pdk_root, "--manual-pdk", "--run-tag", a.tag, "-j", str(a.jobs), overlay]
+    # Optional early stop at global route (spec "prune": {"above": <ns>}): once the mid-PnR STA after global routing
+    # (step *-openroad-stamidpnr-3) has written its state, the global-route proxy is CLOCK_PERIOD - its setup WS; if the
+    # proxy is above the threshold the flow is stopped before detailed routing. Without "prune" nothing changes.
+    prune = spec.get("prune") or None
+    pruned = None
     with open(flow_log, "w") as lf:
-        try:
-            r = subprocess.run(cmd, cwd=design, stdout=lf, stderr=subprocess.STDOUT, timeout=a.timeout)
-            rc = r.returncode
-        except subprocess.TimeoutExpired:
-            rc = -9
-            lf.write("\n[br] TIMEOUT\n")
+        if not prune:
+            try:
+                r = subprocess.run(cmd, cwd=design, stdout=lf, stderr=subprocess.STDOUT, timeout=a.timeout)
+                rc = r.returncode
+            except subprocess.TimeoutExpired:
+                rc = -9
+                lf.write("\n[br] TIMEOUT\n")
+        else:
+            import glob as _glob
+            p = subprocess.Popen(cmd, cwd=design, stdout=lf, stderr=subprocess.STDOUT)
+            checked = False
+            while True:
+                try:
+                    rc = p.wait(timeout=5)
+                    break
+                except subprocess.TimeoutExpired:
+                    pass
+                if time.time() - t0 > a.timeout:
+                    p.kill()
+                    p.wait()
+                    rc = -9
+                    lf.write("\n[br] TIMEOUT\n")
+                    break
+                if checked:
+                    continue
+                so = sorted(_glob.glob(os.path.join(run_dir, "*-openroad-stamidpnr-3", "state_out.json")))
+                if not so:
+                    continue
+                try:
+                    ws = json.load(open(so[0])).get("metrics", {}).get("timing__setup__ws")
+                except Exception:
+                    continue  # still being written
+                checked = True
+                period = float(cfg.get("CLOCK_PERIOD"))
+                proxy = None if ws is None else period - float(ws)
+                manifest["gr_proxy"] = proxy
+                manifest["gr_proxy_seconds"] = round(time.time() - t0, 1)
+                manifest["prune_above"] = prune.get("above")
+                if proxy is not None and prune.get("above") is not None and proxy > float(prune["above"]):
+                    pruned = proxy
+                    p.terminate()
+                    try:
+                        p.wait(timeout=60)
+                    except subprocess.TimeoutExpired:
+                        p.kill()
+                        p.wait()
+                    rc = -15
+                    lf.write(f"\n[br] PRUNED at global route: proxy {proxy:.3f} ns > {prune['above']} ns\n")
+                    break
     manifest["flow_exit"] = rc
     manifest["flow_seconds"] = round(time.time() - t0, 1)
+    if pruned is not None:
+        manifest["status"] = "pruned"
+        with open(flow_log, "rb") as fi, gzip.open(flow_log + ".gz", "wb") as fo:
+            shutil.copyfileobj(fi, fo)
+        os.remove(flow_log)
+        json.dump(manifest, open(os.path.join(results, "job.json"), "w"), indent=1)
+        if not a.keep_run:
+            shutil.rmtree(run_dir, ignore_errors=True)
+        print(json.dumps(manifest, indent=1))
+        return 0
 
     def copy_if(src, dst_name):
         if os.path.exists(src):
