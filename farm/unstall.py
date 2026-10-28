@@ -69,7 +69,7 @@ def main() -> int:
     n_fixed = 0
     for run in runs:
         js = run["_jobs"]
-        if not js or not all(j["name"][:2] in ("x1", "x2", "x3", "x4", "x5") for j in js):
+        if not js or not all(j["name"][:2] in ("x1", "x2", "x3", "x4", "x5", "x6") for j in js):
             continue
         queued = [j for j in js if j["status"] in ("queued", "waiting", "pending")]
         running = [j for j in js if j["status"] == "in_progress"]

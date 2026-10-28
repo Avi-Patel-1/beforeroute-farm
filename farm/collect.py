@@ -109,7 +109,7 @@ def main() -> int:
                     print(f"[collect] {tag}: artifact has no job.json (partial run) - skipped")
                     continue
                 shutil.copytree(td, dst, dirs_exist_ok=True)
-            if tag[:2] in ("x1", "x2", "x3", "x4", "x5"):
+            if tag[:2] in ("x1", "x2", "x3", "x4", "x5", "x6"):
                 # tuning runs: keep the per-net dumps compressed (~40 MB -> ~6 MB per run; the disk allowance is fixed)
                 import gzip as _gz
                 for fn in ("nets.jsonl", "nets_signoff.jsonl", "final_nets.json"):
