@@ -1,0 +1,30 @@
+{
+ "tag": "x3p-picorv32-023",
+ "design": "designs/picorv32",
+ "config": "config_sky130.json",
+ "overrides": {
+  "RUN_MAGIC_DRC": false,
+  "RUN_KLAYOUT_DRC": false,
+  "RUN_LVS": false,
+  "RUN_KLAYOUT_XOR": false,
+  "RUN_IRDROP_REPORT": false,
+  "RUN_LINTER": false,
+  "CLOCK_PERIOD": 12.64,
+  "SYNTH_STRATEGY": "DELAY 4",
+  "SYNTH_ABC_BUFFERING": true,
+  "SYNTH_SIZING": true,
+  "FP_CORE_UTIL": 46,
+  "PL_TARGET_DENSITY_PCT": 51,
+  "PL_TIMING_DRIVEN": true,
+  "PL_ROUTABILITY_DRIVEN": false,
+  "RUN_POST_GRT_RESIZER_TIMING": false,
+  "RUN_POST_GRT_DESIGN_REPAIR": true,
+  "PL_RESIZER_SETUP_SLACK_MARGIN": 0.305,
+  "GRT_RESIZER_SETUP_SLACK_MARGIN": 0.005,
+  "DESIGN_REPAIR_MAX_SLEW_PCT": 33,
+  "DESIGN_REPAIR_MAX_CAP_PCT": 13
+ },
+ "prune": {
+  "above": 9.7894
+ }
+}
