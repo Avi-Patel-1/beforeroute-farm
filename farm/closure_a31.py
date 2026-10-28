@@ -121,6 +121,50 @@ def freeze():
     return pts
 
 
+def amend311():
+    """Amendment 31.1: add the budget-matched pair per tuned design, the 24-run AI tuner's best (arm t) and random search's
+    best (arm r), as quoted points; closure runs as for the others."""
+    data = json.load(open(POINTS))
+    if any(p.get("amendment") == "31.1" for p in data["points"]):
+        raise SystemExit("already amended")
+    R = records()
+    st = A.load(A.STATE, None)
+    new_pts, jobs = [], []
+    for d, pre in PARENT.items():
+        for name, a in (("tuner24", "t"), ("random24", "r")):
+            b = best([dict(v, tag=t) for t, v in R.items() if t.startswith(f"{pre}{a}-{d}-")])
+            if not b:
+                continue
+            p = {"design": d, "point": name, "tag": b["tag"], "amendment": "31.1", "clock": b["overrides"]["CLOCK_PERIOD"],
+                 "teff": b["teff"], "wns": b.get("wns"), "feasible": b.get("feasible"), "area": b.get("area"), "own_clock": own_clock(b)}
+            p["needs_run"] = not (p["feasible"] and p["wns"] is not None and p["wns"] >= 0 and abs(p["clock"] - p["own_clock"]) < 1e-6)
+            if p["needs_run"]:
+                # an earlier run of the same configuration at this clock (e.g. the Addendum 24/25 confirmation of the tuner's
+                # best) is that closure run already: the flow is deterministic, so it is not run twice
+                same = [t for t, v in R.items() if v.get("design") == d and v.get("overrides")
+                        and A.strip(v["overrides"]) == A.strip(b["overrides"])
+                        and abs(v["overrides"].get("CLOCK_PERIOD", -1) - p["own_clock"]) < 1e-6 and v.get("teff") is not None]
+                if same:
+                    p["needs_run"] = False
+                    p["closure_existing"] = same[0]
+            new_pts.append(p)
+            if p["needs_run"]:
+                ov = dict(b["overrides"])
+                ov["CLOCK_PERIOD"] = p["own_clock"]
+                t = A.next_tag(st, "k", d)
+                A.add(st, t, d, "k", ov, source=b["tag"], point=name)
+                jobs.append(t)
+            print(f"  {d:12s} {name:9s} {b['tag']:24s} clock {p['clock']:7.2f} T_eff {p['teff']:7.3f} -> "
+                  f"{'run at ' + str(p['own_clock']) if p['needs_run'] else ('existing run ' + p['closure_existing'] if p.get('closure_existing') else 'closed at its clock')}")
+    if not A.DRY["on"]:
+        data["points"] += new_pts
+        data["amended_31_1_at"] = A.now()
+        json.dump(data, open(POINTS, "w"), indent=1)
+    A.save(st)
+    A.send(st, [(jobs, 20)], f"Addendum 31 (Amendment 31.1): closure runs of the 24-run tuner's and random search's bests ({len(jobs)})")
+    print(f"[a31] amendment 31.1: {len(new_pts)} points, {len(jobs)} jobs")
+
+
 def init():
     pts = json.load(open(POINTS))["points"] if os.path.exists(POINTS) else freeze()
     R = records()
@@ -158,13 +202,16 @@ def report(js):
     st = A.load(A.STATE, {"tags": {}})
     A.tell_finished(st, dry=True)
     by_src = {v["source"]: dict(v, tag=t) for t, v in st["tags"].items()}
+    R = records()
     out = []
     for p in pts:
         k = by_src.get(p["tag"])
+        if k is None and p.get("closure_existing"):
+            k = dict(R.get(p["closure_existing"], {}), tag=p["closure_existing"])
         checked = []
         if p["feasible"] and p["wns"] is not None and p["wns"] >= 0:
             checked.append((p["clock"], p.get("area"), p["tag"]))
-        status = "closed at its own clock" if not p["needs_run"] else "pending"
+        status = "closed at its own clock" if not (p["needs_run"] or p.get("closure_existing")) else "pending"
         if k is not None and k["status"] not in ("dispatched", "pending"):
             ok = bool(k.get("feasible") and k.get("wns") is not None and k["wns"] >= 0)
             if ok:
@@ -188,6 +235,7 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--freeze", action="store_true")
     ap.add_argument("--init", action="store_true")
+    ap.add_argument("--amend311", action="store_true")
     ap.add_argument("--step", action="store_true")
     ap.add_argument("--report", action="store_true")
     ap.add_argument("--dry-run", action="store_true")
@@ -199,6 +247,8 @@ def main() -> int:
         freeze()
     if a.init:
         init()
+    if a.amend311:
+        amend311()
     if a.step:
         step()
     if a.report:
