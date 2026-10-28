@@ -1,0 +1,30 @@
+{
+ "tag": "x3p-y_huff-038",
+ "design": "designs/y_huff",
+ "config": "config_sky130.json",
+ "overrides": {
+  "RUN_MAGIC_DRC": false,
+  "RUN_KLAYOUT_DRC": false,
+  "RUN_LVS": false,
+  "RUN_KLAYOUT_XOR": false,
+  "RUN_IRDROP_REPORT": false,
+  "RUN_LINTER": false,
+  "CLOCK_PERIOD": 10.39,
+  "SYNTH_STRATEGY": "AREA 3",
+  "SYNTH_ABC_BUFFERING": true,
+  "SYNTH_SIZING": true,
+  "FP_CORE_UTIL": 42,
+  "PL_TARGET_DENSITY_PCT": 64,
+  "PL_TIMING_DRIVEN": false,
+  "PL_ROUTABILITY_DRIVEN": true,
+  "RUN_POST_GRT_RESIZER_TIMING": true,
+  "RUN_POST_GRT_DESIGN_REPAIR": true,
+  "PL_RESIZER_SETUP_SLACK_MARGIN": 0.047,
+  "GRT_RESIZER_SETUP_SLACK_MARGIN": 0.042,
+  "DESIGN_REPAIR_MAX_SLEW_PCT": 18,
+  "DESIGN_REPAIR_MAX_CAP_PCT": 21
+ },
+ "prune": {
+  "above": 4.9752
+ }
+}
