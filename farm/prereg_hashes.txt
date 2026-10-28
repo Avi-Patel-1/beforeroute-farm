@@ -31,3 +31,4 @@
 2026-10-28T17:11:23Z  acc276ebda474255b49c002f021a92f566e1b9767237f027128412a6984e69d2  pre-registration with Amendment 31.1 (closure points for the 24-run tuner's and random search's bests; 7 new runs)
 2026-10-28T17:25:33Z  34511202dff86998f9f8e5212503612e1c502a8643cf6d81c5138fabd4ae5d92  pre-registration with Amendment 31.2 (closure points for the held-out and never-tuned designs, frozen per design by rule)
 2026-10-28T17:36:24Z  885f7787de2b7a130581dc9891f3d62ca6a5990f58d8a034e62cb6ba928bf1fa  pre-registration with Amendment 31.3 (closure refinement: up to 2 more runs per non-closed point, all arms alike)
+2026-10-28T22:28:05Z  c782ca98d212f474f0db1e2122a9c662ab528eb658b208ccbd0fd72e04a825dc  pre-registration with Addendum 32 (LLM agent reading the signoff reports vs TPE warm-started from the same 8 runs, 8 runs each on the 7 held-out designs; A32a-c)
