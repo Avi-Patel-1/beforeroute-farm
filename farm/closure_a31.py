@@ -399,9 +399,23 @@ def report(js):
             status = "closed only at a looser clock"
         else:
             status = "not closed"
+        # bounds on the clock this configuration can meet (no run in our data passed at a tighter clock after failing at a
+        # looser one): hi = smallest passing clock, lo = largest failing clock below it; kind says what may be quoted
+        okt = {r[2] for r in ok}
+        hi = None if cc is None else cc[0]
+        fails = [r["overrides"]["CLOCK_PERIOD"] for r in runs if r["tag"] not in okt
+                 and (hi is None or r["overrides"]["CLOCK_PERIOD"] < hi - 1e-9)]
+        lo = max(fails) if fails else None
+        refining = p["tag"] in pend_src or key in pend_cfg
+        if hi is not None:
+            kind = "checked"
+        elif lo is not None and lo >= p["own_clock"] - 1e-6:
+            kind = "lower bound"
+        else:
+            kind = "not yet checked"
         out.append({**p, "status": status, "runs_checked": len(runs), "closed_clock": None if cc is None else cc[0],
                     "closed_area": None if cc is None else cc[1], "closed_tag": None if cc is None else cc[2],
-                    "closed_wns": None if cc is None else cc[3]})
+                    "closed_wns": None if cc is None else cc[3], "hi": hi, "lo": lo, "kind": kind, "refining": refining})
         f = lambda x: "-" if x is None else f"{x:.2f}"
         print(f"{p['design']:20s} {p['point']:10s} quoted {p['teff']:7.3f} (own clock {p['own_clock']:6.2f}) -> {status:30s} "
               f"closed clock {f(out[-1]['closed_clock'])}  ({len(runs)} runs of this setting)")
