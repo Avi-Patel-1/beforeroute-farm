@@ -11,7 +11,7 @@ A point is already closed at its own clock when it was run at ceil(T_eff / 0.05)
 while feasible. Every other point gets one run with the same configuration at ceil(T_eff / 0.05) * 0.05 ns
 (tags x7k-<design>-<nnn>). Reported per point: its closed clock, the smallest clock among its checked runs at which the
 run is feasible (Amendment 24.1, the design's own stock reference) and meets setup; area at that run.
-Usage: closure_a31.py --freeze | --init | --amend311 | --amend312 | --step | --report [--json f] [--dry-run]
+Usage: closure_a31.py --freeze | --init | --amend311 | --amend312 | --step | --refine | --report [--json f] [--dry-run]
 """
 from __future__ import annotations
 
@@ -301,6 +301,70 @@ def step():
     print(f"[a31] step: told {told}, re-sent {len(retry)}")
 
 
+MAX_REFINE = 2
+
+
+def cfg_key(d, ov):
+    return (d, json.dumps(A.strip(ov or {}), sort_keys=True, default=str))
+
+
+def refine():
+    """Amendment 31.3 (all arms alike): a point not closed at its own clock gets up to two more runs of its configuration,
+    one at a time, at c = max(ceil(T*/0.05)*0.05, f + 0.05), where T* is the largest T_eff among the configuration's runs that
+    missed (setup or feasibility) at clocks below its current closed clock and f the largest such clock; only if c is below
+    the current closed clock (or none closed yet). A configuration shared by several points is refined once."""
+    pts = json.load(open(POINTS))["points"] if os.path.exists(POINTS) else []
+    st = A.load(A.STATE, None)
+    if st is None:
+        return
+    R = records()
+    R.update(st["tags"])
+    by_cfg = {}
+    for t, v in R.items():
+        if v.get("overrides") and v.get("design") and v.get("status") != "superseded":
+            by_cfg.setdefault(cfg_key(v["design"], v["overrides"]), []).append(dict(v, tag=t))
+    jobs, seen = [], set()
+    for p in pts:
+        src = R.get(p["tag"], {})
+        key = cfg_key(p["design"], src.get("overrides"))
+        if key in seen:
+            continue
+        seen.add(key)
+        runs = by_cfg.get(key, [])
+        if any(r.get("status") in ("dispatched", "pending") for r in runs):
+            continue
+        clk = lambda r: r["overrides"]["CLOCK_PERIOD"]
+        ran = [r for r in runs if r.get("teff") is not None]
+        if p.get("needs_run") and not p.get("closure_existing") and not any(
+                r["tag"].startswith("x7k-") and abs(clk(r) - p["own_clock"]) < 1e-6 for r in runs):
+            continue  # its first closure run has not been asked yet
+        good = [r for r in ran if r.get("feasible") and r.get("wns") is not None and r["wns"] >= 0]
+        cc = min((clk(r) for r in good), default=math.inf)
+        if cc <= p["own_clock"] + 1e-6:
+            continue
+        nref = sum(1 for r in runs if r.get("refine"))
+        if nref >= MAX_REFINE:
+            continue
+        gtags = {r["tag"] for r in good}
+        missed = [r for r in ran if r["tag"] not in gtags and clk(r) < cc - 1e-6]
+        if not missed:
+            continue
+        c = max(round(math.ceil(round(max(r["teff"] for r in missed) / 0.05, 6)) * 0.05, 2),
+                round(max(clk(r) for r in missed) + 0.05, 2))
+        if c >= cc - 1e-6 or any(abs(clk(r) - c) < 1e-6 for r in runs):
+            continue
+        ov = dict(src["overrides"])
+        ov["CLOCK_PERIOD"] = c
+        t = A.next_tag(st, "k", p["design"])
+        A.add(st, t, p["design"], "k", ov, source=p["tag"], point=p["point"], refine=nref + 1)
+        jobs.append(t)
+        print(f"  {p['design']:14s} {p['point']:9s} refine {nref + 1}: closed clock {cc if cc < math.inf else '-'}, "
+              f"largest missed T_eff {max(r['teff'] for r in missed):.3f} -> run at {c}")
+    A.save(st)
+    A.send(st, [(jobs, 20)], f"Addendum 31 (Amendment 31.3): closure refinement runs ({len(jobs)})")
+    print(f"[a31] amendment 31.3: {len(jobs)} refinement runs")
+
+
 def report(js):
     """Per point: the closed clock of its configuration = the smallest clock at which any run of exactly that configuration
     (same design, same overrides apart from the clock; the flow is deterministic) met setup and the feasibility rule.
@@ -352,6 +416,7 @@ def main() -> int:
     ap.add_argument("--init", action="store_true")
     ap.add_argument("--amend311", action="store_true")
     ap.add_argument("--amend312", action="store_true")
+    ap.add_argument("--refine", action="store_true")
     ap.add_argument("--step", action="store_true")
     ap.add_argument("--report", action="store_true")
     ap.add_argument("--dry-run", action="store_true")
@@ -369,6 +434,8 @@ def main() -> int:
         amend312()
     if a.step:
         step()
+    if a.refine:
+        refine()
     if a.report:
         report(a.json)
     return 0

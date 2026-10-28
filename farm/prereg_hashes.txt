@@ -30,3 +30,4 @@
 2026-10-28T17:09:23Z  ff3939127e051cc3feb34fa126ae78bf3c27d7199516b661e462a4a48b4ad9b9  pre-registration with Amendment 30.1 (two held-out designs re-run after a lint-check config fix; expert + RC arm on all 7) and Addendum 31 (closure runs: every quoted point checked at its own clock, 42 points)
 2026-10-28T17:11:23Z  acc276ebda474255b49c002f021a92f566e1b9767237f027128412a6984e69d2  pre-registration with Amendment 31.1 (closure points for the 24-run tuner's and random search's bests; 7 new runs)
 2026-10-28T17:25:33Z  34511202dff86998f9f8e5212503612e1c502a8643cf6d81c5138fabd4ae5d92  pre-registration with Amendment 31.2 (closure points for the held-out and never-tuned designs, frozen per design by rule)
+2026-10-28T17:36:24Z  885f7787de2b7a130581dc9891f3d62ca6a5990f58d8a034e62cb6ba928bf1fa  pre-registration with Amendment 31.3 (closure refinement: up to 2 more runs per non-closed point, all arms alike)
