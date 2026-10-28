@@ -46,6 +46,10 @@ def main() -> int:
         p = os.path.join(d, "nets_signoff.jsonl")
         if os.path.exists(p):
             cands.append((1, os.path.getmtime(p), p))
+    # final_nets.json (per-net signoff detail of every hero arm, ~3 MB each): the check-in criteria read labels.json and
+    # metrics.json only; the farm-side tools that read final_nets.json run on the farm's own copies
+    for p in glob.glob(os.path.join(a.results, "*", "final_nets.json")):
+        cands.append((2, os.path.getmtime(p), p))
     cands.sort()
     n = 0
     for _, _, p in cands:
