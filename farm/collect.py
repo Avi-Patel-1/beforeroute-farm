@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Collect farm artifacts into results/<tag>/ as individual jobs complete.
 
-Usage: collect.py --repo owner/name [--results results] [--limit 20]
-For every farm workflow run (completed or still in progress), downloads the
-result-<tag> artifact of each completed job that is not yet present locally.
+Usage: collect.py --repo owner/name [--results results] [--hours 48] [--limit 20]
+For every farm workflow run of the last --hours hours (completed or still in progress), downloads the result-<tag>
+artifact of each completed job that is not yet present locally. Runs whose jobs are all collected are remembered in
+results/.farm_runs_done.json and skipped.
 """
 from __future__ import annotations
 
@@ -23,17 +24,49 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--repo", required=True)
     ap.add_argument("--results", default="results")
-    ap.add_argument("--limit", type=int, default=20)
+    ap.add_argument("--limit", type=int, default=20, help="fallback only: newest runs if the paged listing fails")
+    ap.add_argument("--hours", type=float, default=48.0, help="look at every farm.yml run created in the last N hours")
     a = ap.parse_args()
     os.makedirs(a.results, exist_ok=True)
-    r = sh(["gh", "run", "list", "-R", a.repo, "-w", "farm.yml", "--limit", str(a.limit), "--json", "databaseId,status"])
-    if r.returncode != 0:
-        print(r.stderr.strip()[:300])
-        return 1
+    # every farm.yml run of the last --hours hours (explicit repos/{owner}/{repo} pages: the proxy rejects the numeric-ID
+    # URLs `gh run list` uses beyond 100), minus runs already known to be fully collected. A fixed window of the newest
+    # --limit runs silently dropped older runs once many small runs were dispatched (Oct 28: Addendum 27's runs).
+    done_path = os.path.join(a.results, ".farm_runs_done.json")
+    try:
+        done = set(json.load(open(done_path)))
+    except Exception:
+        done = set()
+    import datetime as _dt
+    since = _dt.datetime.now(_dt.timezone.utc) - _dt.timedelta(hours=a.hours)
+    runs = []
+    for page in range(1, 11):
+        r = sh(["gh", "api", f"repos/{a.repo}/actions/workflows/farm.yml/runs?per_page=100&page={page}", "--jq",
+                "[.workflow_runs[] | {databaseId: .id, status, created_at}]"])
+        if r.returncode != 0:
+            print(r.stderr.strip()[:300])
+            break
+        got = json.loads(r.stdout or "[]")
+        if not isinstance(got, list):
+            break
+        old = False
+        for x in got:
+            t = _dt.datetime.strptime(x["created_at"], "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=_dt.timezone.utc)
+            if t < since:
+                old = True
+                continue
+            runs.append(x)
+        if old or len(got) < 100:
+            break
+    if not runs and a.limit:
+        r = sh(["gh", "run", "list", "-R", a.repo, "-w", "farm.yml", "--limit", str(a.limit), "--json", "databaseId,status"])
+        runs = json.loads(r.stdout or "[]") if r.returncode == 0 else []
     n_new = n_fail = 0
     pending = 0
-    for run in json.loads(r.stdout):
+    for run in runs:
         rid = run["databaseId"]
+        if rid in done:
+            continue
+        run_open = run.get("status") != "completed"
         # explicit pages on the repos/{owner}/{repo} endpoint: `gh run view --json jobs` pages a run with > 100 jobs
         # through a numeric-ID URL that the network proxy rejects (the 102-job tuning run was silently skipped)
         lines, ok = [], True
@@ -50,6 +83,7 @@ def main() -> int:
         if not ok and not lines:
             print(f"[collect] run {rid}: job list failed")
             continue
+        all_done = ok and not run_open
         for line in lines:
             if not line.strip():
                 continue
@@ -61,9 +95,11 @@ def main() -> int:
                 continue
             if status != "completed":
                 pending += 1
+                all_done = False
                 continue
             if concl in ("cancelled", "skipped"):
                 continue  # a cancelled job uploads only a partial dir; its tag is re-dispatched later
+            all_done = False  # re-checked next time once this job's artifact is in
             with tempfile.TemporaryDirectory() as td:
                 d = sh(["gh", "run", "download", str(rid), "-R", a.repo, "-n", f"result-{tag}", "-D", td])
                 if d.returncode != 0:
@@ -90,7 +126,11 @@ def main() -> int:
             if st != "completed":
                 n_fail += 1
             print(f"[collect] {tag}: {st}")
-    print(f"[collect] {n_new} new ({n_fail} failed), {pending} still running/queued")
+        if all_done:
+            done.add(rid)
+    json.dump(sorted(done), open(done_path + ".tmp", "w"))
+    os.replace(done_path + ".tmp", done_path)
+    print(f"[collect] {n_new} new ({n_fail} failed), {pending} still running/queued; {len(runs)} runs in the last {a.hours:g} h")
     return 0
 
 
