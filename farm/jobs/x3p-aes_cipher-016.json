@@ -1,0 +1,30 @@
+{
+ "tag": "x3p-aes_cipher-016",
+ "design": "designs/aes_cipher",
+ "config": "config_sky130.json",
+ "overrides": {
+  "RUN_MAGIC_DRC": false,
+  "RUN_KLAYOUT_DRC": false,
+  "RUN_LVS": false,
+  "RUN_KLAYOUT_XOR": false,
+  "RUN_IRDROP_REPORT": false,
+  "RUN_LINTER": false,
+  "CLOCK_PERIOD": 30.01,
+  "SYNTH_STRATEGY": "AREA 2",
+  "SYNTH_ABC_BUFFERING": true,
+  "SYNTH_SIZING": false,
+  "FP_CORE_UTIL": 50,
+  "PL_TARGET_DENSITY_PCT": 55,
+  "PL_TIMING_DRIVEN": true,
+  "PL_ROUTABILITY_DRIVEN": false,
+  "RUN_POST_GRT_RESIZER_TIMING": true,
+  "RUN_POST_GRT_DESIGN_REPAIR": true,
+  "PL_RESIZER_SETUP_SLACK_MARGIN": 0.323,
+  "GRT_RESIZER_SETUP_SLACK_MARGIN": 0.226,
+  "DESIGN_REPAIR_MAX_SLEW_PCT": 40,
+  "DESIGN_REPAIR_MAX_CAP_PCT": 30
+ },
+ "prune": {
+  "above": null
+ }
+}
