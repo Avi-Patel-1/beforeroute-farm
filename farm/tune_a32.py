@@ -294,6 +294,11 @@ def agent_prompt():
                              knobs=knob_text(), n=len(rows), history="\n".join(hist), round=k, rounds=ROUNDS, k=PER_ROUND)
         p = os.path.join(AGENT_DIR, d, f"round{k}_prompt.md")
         os.makedirs(os.path.dirname(p), exist_ok=True)
+        if os.path.exists(p):                      # a written prompt is part of the record: never rewrite it
+            same = open(p).read() == text
+            print(f"[a32] {d}: agent round {k} prompt already written ({'unchanged' if same else 'kept; history has changed since'}) -> {p}")
+            out.append(p)
+            continue
         open(p, "w").write(text)
         out.append(p)
         print(f"[a32] {d}: agent round {k} prompt -> {p} ({len(text)} chars)")
