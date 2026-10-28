@@ -1,0 +1,27 @@
+{
+ "tag": "x1t-y_huff-023",
+ "design": "designs/y_huff",
+ "config": "config_sky130.json",
+ "overrides": {
+  "RUN_MAGIC_DRC": false,
+  "RUN_KLAYOUT_DRC": false,
+  "RUN_LVS": false,
+  "RUN_KLAYOUT_XOR": false,
+  "RUN_IRDROP_REPORT": false,
+  "RUN_LINTER": false,
+  "CLOCK_PERIOD": 10.04,
+  "SYNTH_STRATEGY": "DELAY 1",
+  "SYNTH_ABC_BUFFERING": false,
+  "SYNTH_SIZING": true,
+  "FP_CORE_UTIL": 23,
+  "PL_TARGET_DENSITY_PCT": 52,
+  "PL_TIMING_DRIVEN": true,
+  "PL_ROUTABILITY_DRIVEN": true,
+  "RUN_POST_GRT_RESIZER_TIMING": false,
+  "RUN_POST_GRT_DESIGN_REPAIR": true,
+  "PL_RESIZER_SETUP_SLACK_MARGIN": 0.386,
+  "GRT_RESIZER_SETUP_SLACK_MARGIN": 0.067,
+  "DESIGN_REPAIR_MAX_SLEW_PCT": 29,
+  "DESIGN_REPAIR_MAX_CAP_PCT": 32
+ }
+}
