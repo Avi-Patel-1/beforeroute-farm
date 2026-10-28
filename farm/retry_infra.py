@@ -73,6 +73,8 @@ def main() -> int:
             continue
         if not all(c in ("failure", "cancelled", "timed_out") for _, c in lst):
             continue
+        if not any(c in ("failure", "timed_out") for _, c in lst):
+            continue  # only cancelled: a deliberate cancel (unstall/park), whose jobs are re-dispatched by that tool
         n = st.get(tag, {}).get("retries", 0)
         if n == 0:
             retry.append(tag)

@@ -60,9 +60,15 @@ def main() -> int:
             runs += json.loads(r.stdout or "[]")
         except Exception:
             pass
-    n_fixed = 0
+    # starts of jobs in every active run, to tell starvation (newer runs served first) from a plain first-come queue
+    starts_by_run = {}
     for run in runs:
         js = jobs(run["id"])
+        run["_jobs"] = js
+        starts_by_run[run["id"]] = [ts(j["started_at"]) for j in js if j.get("started_at")]
+    n_fixed = 0
+    for run in runs:
+        js = run["_jobs"]
         if not js or not all(j["name"][:2] in ("x1", "x2", "x3") for j in js):
             continue
         queued = [j for j in js if j["status"] in ("queued", "waiting", "pending")]
@@ -74,6 +80,11 @@ def main() -> int:
         idle = (now - last).total_seconds() / 60
         if idle < a.stall_min:
             continue
+        created = ts(run["created_at"])
+        newer_served = any(ts(o["created_at"]) > created and any(t > last for t in starts_by_run.get(o["id"], []))
+                           for o in runs if o["id"] != run["id"])
+        if not newer_served:
+            continue  # an ordinary queue (older runs still ahead of it), not starvation
         tags = [j["name"] for j in queued if not os.path.exists(os.path.join(ROOT, "results", j["name"], "job.json"))]
         print(f"[unstall] run {run['id']}: {len(queued)} queued, none running, idle {idle:.0f} min -> re-dispatch {len(tags)}")
         if a.dry_run:
@@ -87,9 +98,8 @@ def main() -> int:
             if v.stdout.strip() == "completed":
                 break
             time.sleep(5)
-        # a job that slipped into running before the cancel landed is now cancelled; re-dispatch everything not on disk
-        tags = [j["name"] for j in jobs(run["id"]) if j.get("conclusion") == "cancelled"
-                and not os.path.exists(os.path.join(ROOT, "results", j["name"], "job.json"))]
+        # re-dispatch every job that was queued before the cancel and has no result (none had started)
+        tags = [j["name"] for j in queued if not os.path.exists(os.path.join(ROOT, "results", j["name"], "job.json"))]
         for i in range(0, len(tags), a.chunk):
             chunk = tags[i:i + a.chunk]
             r = sh(["gh", "workflow", "run", "farm.yml", "-R", REPO, "--ref", "main", "-f", f"tags={json.dumps(chunk)}",
