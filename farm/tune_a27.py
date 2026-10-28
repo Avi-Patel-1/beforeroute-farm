@@ -216,6 +216,49 @@ def confirm_transfer():
     send(st, [(new, max(1, len(new)))], f"Addendum 27 (Amendment 27.2): confirmation runs of transferred settings ({len(new)})")
 
 
+def own_confirmed(d, st):
+    """Best feasible confirmation of a tuned design's own AI settings (Addenda 24/25 arm c, Addendum 27 arm c without
+    transfer), or None."""
+    pst = load(os.path.join(PARENT_DIR[PARENT[d]], "state.json"), {"tags": {}})["tags"]
+    vals = [x["teff"] for x in pst.values() if x["design"] == d and x["arm"] == "c" and x.get("feasible")
+            and x.get("teff") is not None]
+    vals += [x["teff"] for x in st["tags"].values() if x["design"] == d and x["arm"] == "c" and not x.get("transfer")
+             and x.get("feasible") and x.get("teff") is not None]
+    return min(vals) if vals else None
+
+
+def confirm_loo_own():
+    """Amendment 27.3 (Addendum 29): one re-run (clock = T_eff rounded up to 0.05 ns) of a tuned design's best feasible
+    leave-one-out run when it is faster than the design's best feasible confirmation of its own AI settings and has not
+    been re-run yet. Reported without criterion."""
+    st = load(STATE, None)
+    if st is None:
+        return
+    covered = {v.get("source") for v in st["tags"].values() if v["arm"] == "c"}
+    new = []
+    for d in TUNED:
+        l = [(t, v) for t, v in st["tags"].items() if v["design"] == d and v["arm"] == "l" and v.get("feasible")
+             and v.get("teff") is not None]
+        if not l:
+            continue
+        tag, v = min(l, key=lambda tv: tv[1]["teff"])
+        if tag in covered:
+            continue
+        own = own_confirmed(d, st)
+        if own is not None and v["teff"] >= own:
+            continue
+        ov = dict(v["overrides"])
+        ov["CLOCK_PERIOD"] = round(math.ceil(round(v["teff"] / 0.05, 6)) * 0.05, 2)
+        t = next_tag(st, "c", d)
+        add(st, t, d, "c", ov, source=tag, transfer=True, source_design=v.get("source_design"), rule="27.3")
+        new.append(t)
+        covered.add(tag)
+        print(f"[a27] {d}: Amendment 27.3: leave-one-out best {tag} (T_eff {v['teff']:.3f}, from {v.get('source_design')}) "
+              f"is faster than the own confirmed best ({own}) -> confirmation {t} at {ov['CLOCK_PERIOD']} ns")
+    save(st)
+    send(st, [(new, max(1, len(new)))], f"Addendum 29 (Amendment 27.3): re-runs of leave-one-out bests ({len(new)})")
+
+
 def freeze():
     if os.path.exists(SOURCES) and not DRY["on"]:
         raise SystemExit(f"{SOURCES} exists (sources are frozen once)")
@@ -547,6 +590,7 @@ def main() -> int:
         confirm_new()
     if a.confirm_transfer:
         confirm_transfer()
+        confirm_loo_own()
     if a.report:
         report(a.json)
     return 0

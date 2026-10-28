@@ -7,7 +7,7 @@ arm e (the expert preset) at 1.0, 0.85, 0.7, 0.6, 0.5 x the 10 ns default clock;
 Addendum 27 (results/tune_x4/sources.json), applied with no search; arm w = 16 TPE trials warm-started from z (two
 batches of 8, each asked once everything before it has been told). Objective and feasibility as Addendum 24 with
 Amendment 24.1 (electrical reference: the version's stock run at 10 ns, x5d-<design>-001, with Amendment 27.1's fallback).
-Tags x5<arm>-<design>-<nnn>. Usage: tune_a28.py --init | --step | --report [--json f] [--dry-run]
+Tags x5<arm>-<design>-<nnn>. Usage: tune_a28.py --init | --step | --confirm | --report [--json f] [--dry-run]
 """
 from __future__ import annotations
 
@@ -94,6 +94,37 @@ def step():
     print(f"[a28] step: told {told}, asked {len(new)}, re-sent {len(retry)}")
 
 
+def confirm():
+    """Addendum 29 (1): one re-run (clock = T_eff rounded up to 0.05 ns) of each version's best feasible AI-flow run (arms
+    z and w) and best feasible expert run (arm e), once that arm has fully landed. Reported without criterion."""
+    st = A.load(A.STATE, None)
+    if st is None:
+        print("[a28] not initialised")
+        return
+    covered = {v.get("source") for v in st["tags"].values() if v["arm"] == "c"}
+    new = []
+    for d in RTL:
+        for arms, label in (("zw", "AI flow"), ("e", "expert")):
+            mine = [(t, v) for t, v in st["tags"].items() if v["design"] == d and v["arm"] in arms]
+            if not mine or any(v["status"] in ("dispatched", "pending") for _, v in mine):
+                continue
+            ok = [(t, v) for t, v in mine if v.get("feasible") and v.get("teff") is not None]
+            if not ok:
+                continue
+            tag, v = min(ok, key=lambda tv: tv[1]["teff"])
+            if tag in covered:
+                continue
+            ov = dict(v["overrides"])
+            ov["CLOCK_PERIOD"] = round(math.ceil(round(v["teff"] / 0.05, 6)) * 0.05, 2)
+            t = A.next_tag(st, "c", d)
+            A.add(st, t, d, "c", ov, source=tag, of=label)
+            new.append(t)
+            covered.add(tag)
+            print(f"[a28] {d}: {label} best {tag} (T_eff {v['teff']:.3f}) -> confirmation {t} at {ov['CLOCK_PERIOD']} ns")
+    A.save(st)
+    A.send(st, [(new, 10)], f"Addendum 29: confirmation re-runs of the RTL study's bests ({len(new)})")
+
+
 def best(vs):
     ok = [v for v in vs if v.get("feasible") and v.get("teff") is not None]
     return min(ok, key=lambda v: v["teff"]) if ok else None
@@ -113,9 +144,14 @@ def report(js):
         b = {a: best(arm[a]) for a in arm}
         b["zw"] = best(arm["z"] + arm["w"])
         n = {a: (sum(map(done, arm[a])), len(arm[a])) for a in arm}
+        conf = {}
+        for t, v in rows.items():
+            if v["design"] == d and v["arm"] == "c":
+                conf[t] = {"source": v.get("source"), "of": v.get("of"), "status": v["status"], "clock": v["overrides"].get("CLOCK_PERIOD"),
+                           "teff": v.get("teff"), "wns": v.get("wns"), "feasible": v.get("feasible"), "area": v.get("area")}
         out[d] = {"kind": RTL[d], "best": {k: (None if v is None else {"tag": v["tag"], "teff": v["teff"], "area": v.get("area"),
                                                                        "power": v.get("power")}) for k, v in b.items()},
-                  "landed": n}
+                  "landed": n, "confirm": conf}
         f = lambda v: "-" if v is None else f"{v['teff']:.2f} ns / {v.get('area') or 0:.0f} um2"
         print(f"== {d} ({RTL[d]}): stock {f(b['d'])} ({n['d'][0]}/{n['d'][1]}), expert {f(b['e'])} ({n['e'][0]}/{n['e'][1]}), "
               f"transfer {f(b['z'])} ({n['z'][0]}/{n['z'][1]}), AI flow {f(b['zw'])} (w {n['w'][0]}/{n['w'][1]})")
@@ -164,6 +200,7 @@ def main() -> int:
     ap.add_argument("--init", action="store_true")
     ap.add_argument("--step", action="store_true")
     ap.add_argument("--report", action="store_true")
+    ap.add_argument("--confirm", action="store_true")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--json", default=None)
     a = ap.parse_args()
@@ -173,6 +210,8 @@ def main() -> int:
         init()
     if a.step:
         step()
+    if a.confirm:
+        confirm()
     if a.report:
         report(a.json)
     return 0
