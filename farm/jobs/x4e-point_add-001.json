@@ -1,0 +1,18 @@
+{
+ "tag": "x4e-point_add-001",
+ "design": "designs/point_add",
+ "config": "config_sky130.json",
+ "overrides": {
+  "RUN_MAGIC_DRC": false,
+  "RUN_KLAYOUT_DRC": false,
+  "RUN_LVS": false,
+  "RUN_KLAYOUT_XOR": false,
+  "RUN_IRDROP_REPORT": false,
+  "RUN_LINTER": false,
+  "SYNTH_STRATEGY": "DELAY 0",
+  "PL_TIMING_DRIVEN": true,
+  "RUN_POST_GRT_RESIZER_TIMING": true,
+  "RUN_POST_GRT_DESIGN_REPAIR": true,
+  "CLOCK_PERIOD": 10.0
+ }
+}
