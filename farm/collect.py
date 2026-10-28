@@ -20,6 +20,45 @@ def sh(cmd):
     return subprocess.run(cmd, capture_output=True, text=True)
 
 
+def download_artifact(repo, rid, name, dest, cache):
+    """Download one artifact of a run into dest. `gh run download` pages a run's artifact list through a numeric-ID URL that
+    the network proxy rejects, so artifacts beyond the first 100 of a large run were never collected (Oct 28: 24 of the
+    126-job Addendum-30 run). This lists the artifacts with explicit repos/{owner}/{repo} pages and fetches the zip by id.
+    Returns True or an error string."""
+    import zipfile
+    if rid not in cache:
+        arts = {}
+        for page in range(1, 6):
+            r = sh(["gh", "api", f"repos/{repo}/actions/runs/{rid}/artifacts?per_page=100&page={page}", "--jq",
+                    ".artifacts[] | \"\\(.name)\\t\\(.id)\\t\\(.expired)\""])
+            if r.returncode != 0:
+                return f"artifact list failed: {r.stderr.strip()[:100]}"
+            got = [l.split("\t") for l in r.stdout.strip().splitlines() if l.strip()]
+            for n, i, exp in got:
+                arts[n] = (i, exp == "true")
+            if len(got) < 100:
+                break
+        cache[rid] = arts
+    hit = cache[rid].get(name)
+    if not hit:
+        return "no such artifact"
+    if hit[1]:
+        return "artifact expired"
+    zp = os.path.join(dest, "_a.zip")
+    with open(zp, "wb") as fo:
+        r = subprocess.run(["gh", "api", f"repos/{repo}/actions/artifacts/{hit[0]}/zip"], stdout=fo, stderr=subprocess.PIPE)
+    if r.returncode != 0:
+        return f"zip download failed: {r.stderr.decode(errors='replace').strip()[:100]}"
+    try:
+        with zipfile.ZipFile(zp) as z:
+            z.extractall(dest)
+    except Exception as e:
+        return f"bad zip: {e}"
+    finally:
+        os.remove(zp)
+    return True
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--repo", required=True)
@@ -62,6 +101,7 @@ def main() -> int:
         runs = json.loads(r.stdout or "[]") if r.returncode == 0 else []
     n_new = n_fail = 0
     pending = 0
+    art_cache = {}
     for run in runs:
         rid = run["databaseId"]
         if rid in done:
@@ -101,9 +141,9 @@ def main() -> int:
                 continue  # a cancelled job uploads only a partial dir; its tag is re-dispatched later
             all_done = False  # re-checked next time once this job's artifact is in
             with tempfile.TemporaryDirectory() as td:
-                d = sh(["gh", "run", "download", str(rid), "-R", a.repo, "-n", f"result-{tag}", "-D", td])
-                if d.returncode != 0:
-                    print(f"[collect] {tag}: no artifact ({d.stderr.strip()[:120]})")
+                d = download_artifact(a.repo, rid, f"result-{tag}", td, art_cache)
+                if d is not True:
+                    print(f"[collect] {tag}: no artifact ({str(d)[:120]})")
                     continue
                 if not os.path.exists(os.path.join(td, "job.json")):
                     print(f"[collect] {tag}: artifact has no job.json (partial run) - skipped")
