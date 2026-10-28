@@ -4,7 +4,9 @@
 When free space is below --min-gb: gzip nets.jsonl / nets_signoff.jsonl / final_nets.json in tuning runs (x1*/x2*/x3*;
 tune*.py read the .gz forms), then nets_signoff.jsonl in hero-arm results (tags with an arm suffix, e.g.
 d3-des-000-thr500-30cr; the criteria read labels.json/metrics.json, not this file), oldest first, until --target-gb is
-free. Prints what it did. Usage: disk_guard.py [--min-gb 3] [--target-gb 6] [--results results]
+free; then, if still short, removes tuning runs' nets_signoff.jsonl.gz (oldest first; the farm keeps every run's artifact
+for 30 days; logged in results/.removed_files.txt). Prints what it did.
+Usage: disk_guard.py [--min-gb 3] [--target-gb 6] [--results results]
 """
 from __future__ import annotations
 
@@ -62,6 +64,20 @@ def main() -> int:
             print(f"[disk] {p}: {e}")
             break
     print(f"[disk] gzipped {n} files; free {free_gb(a.results):.1f} GB")
+    # last tier: tuning runs' per-net signoff dumps (no tuning report reads them; the farm keeps every run's artifact for
+    # 30 days, so collect.py can fetch them again). Logged in results/.removed_files.txt.
+    if free_gb(a.results) < a.target_gb:
+        drop = sorted((os.path.getmtime(p), p) for d in glob.glob(os.path.join(a.results, "x[1234]*"))
+                      for p in [os.path.join(d, "nets_signoff.jsonl.gz")] if os.path.exists(p))
+        k = 0
+        with open(os.path.join(a.results, ".removed_files.txt"), "a") as log:
+            for _, p in drop:
+                if free_gb(a.results) >= a.target_gb:
+                    break
+                os.remove(p)
+                log.write(p + "\n")
+                k += 1
+        print(f"[disk] removed {k} tuning-run signoff dumps (re-fetchable from the farm for 30 days); free {free_gb(a.results):.1f} GB")
     return 0
 
 
