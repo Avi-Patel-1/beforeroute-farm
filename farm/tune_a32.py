@@ -495,6 +495,31 @@ def closure():
             A.add(st, tag, d, "k", ov, source=b["tag"], source_arm=arm, params=b.get("params"))
             new.append(tag)
             print(f"[a32] {d} arm {arm}: best {b['tag']} T_eff {b['teff']:.3f} -> closure {tag} at {clk} ns")
+    # Amendment 32.1: once an arm's closure passes, re-run the passing run once at ceil(its T_eff) when that is lower
+    # (the start set's checked point had two re-runs); reported beside A32a-c as A32a2-c2, no criterion
+    for d in HELD:
+        for arm in ("a", "b"):
+            b, done = arm_best(st, d, arm)
+            if not done or b is None:
+                continue
+            ks = [dict(v, tag=t) for t, v in st["tags"].items() if v["arm"] == "k" and v.get("source") == b["tag"]
+                  and v["status"] not in ("dispatched", "pending")]
+            ok = [v for v in ks if v.get("feasible") and (v.get("wns") or -1) >= 0 and v.get("teff") is not None]
+            if not ok:
+                continue
+            first = min(ok, key=lambda v: v["overrides"]["CLOCK_PERIOD"])
+            if any(v["arm"] == "c" and v.get("source") == first["tag"] for v in st["tags"].values()):
+                continue
+            clk = ceil05(first["teff"])
+            if clk >= first["overrides"]["CLOCK_PERIOD"]:
+                continue
+            ov = dict(first["overrides"])
+            ov["CLOCK_PERIOD"] = clk
+            tag = A.next_tag(st, "c", d)
+            A.add(st, tag, d, "c", ov, source=first["tag"], source_arm=arm, params=b.get("params"))
+            new.append(tag)
+            print(f"[a32] {d} arm {arm}: closure {first['tag']} passed at {first['overrides']['CLOCK_PERIOD']} (T_eff "
+                  f"{first['teff']:.3f}) -> second re-run {tag} at {clk} ns")
     A.save(st)
     A.send(st, [(new, 20)], f"Addendum 32: closure runs ({len(new)})")
 
@@ -512,6 +537,18 @@ def checked(st, d, arm):
     if len(runs) > MAX_REFINE:
         return ("lower bound", max(v["overrides"]["CLOCK_PERIOD"] for v in runs), b["tag"])
     return ("single", b["teff"], b["tag"])
+
+
+def checked2(st, d, arm):
+    """Amendment 32.1: the smaller passing clock of the arm's closure and its second re-run (closure value while the
+    second re-run is missing, running or failed)."""
+    k = checked(st, d, arm)
+    if k[0] != "checked":
+        return k
+    ks = {t for t, v in st["tags"].items() if v["arm"] == "k" and v.get("source") == k[2]}
+    ok = [v["overrides"]["CLOCK_PERIOD"] for v in st["tags"].values() if v["arm"] == "c" and v.get("source") in ks
+          and v["status"] not in ("dispatched", "pending") and v.get("feasible") and (v.get("wns") or -1) >= 0]
+    return ("checked", min([k[1]] + ok), k[2])
 
 
 def start_checked(d):
@@ -544,13 +581,17 @@ def report(js):
     out, per = {}, {}
     for d in HELD:
         a, b, z = checked(st, d, "a"), checked(st, d, "b"), start_checked(d)
+        a2, b2 = checked2(st, d, "a"), checked2(st, d, "b")
         n = {arm: (sum(1 for v in st["tags"].values() if v["design"] == d and v["arm"] == arm and v["status"] not in ("dispatched", "pending")),
-                   sum(1 for v in st["tags"].values() if v["design"] == d and v["arm"] == arm)) for arm in ("a", "b", "k")}
-        per[d] = {"A32a": wins(a, b), "A32b": wins(a, z), "A32c": wins(b, z)}
-        out[d] = {"agent": a, "tpe": b, "start": z, "landed": n, **per[d]}
+                   sum(1 for v in st["tags"].values() if v["design"] == d and v["arm"] == arm)) for arm in ("a", "b", "k", "c")}
+        per[d] = {"A32a": wins(a, b), "A32b": wins(a, z), "A32c": wins(b, z),
+                  "A32a2": wins(a2, b2), "A32b2": wins(a2, z), "A32c2": wins(b2, z)}
+        out[d] = {"agent": a, "tpe": b, "start": z, "agent2": a2, "tpe2": b2, "landed": n, **per[d]}
         f = lambda x: f"{x[0]} {x[1]:.2f}" if x[1] is not None else x[0]
-        print(f"== {d}: agent {f(a)} | TPE {f(b)} | start best {f(z)} | runs a {n['a'][0]}/{n['a'][1]} b {n['b'][0]}/{n['b'][1]} k {n['k'][0]}/{n['k'][1]}  {per[d]}")
+        print(f"== {d}: agent {f(a)} | TPE {f(b)} | start best {f(z)} | runs a {n['a'][0]}/{n['a'][1]} b {n['b'][0]}/{n['b'][1]} k {n['k'][0]}/{n['k'][1]} c {n['c'][0]}/{n['c'][1]}  {per[d]}")
     overall = {k: f"{sum(1 for d in HELD if per[d][k])} of {len(HELD)} (4 needed; decided at 15:30Z Oct 29)" for k in ("A32a", "A32b", "A32c")}
+    overall.update({k: f"{sum(1 for d in HELD if per[d][k])} of {len(HELD)} (Amendment 32.1, reported beside, no criterion)"
+                    for k in ("A32a2", "A32b2", "A32c2")})
     for k, v in overall.items():
         print(f"  {k}: {v}")
     if js:
