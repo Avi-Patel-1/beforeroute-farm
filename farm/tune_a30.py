@@ -169,23 +169,22 @@ def report(js):
               f"({n['e'][0]}/{n['e'][1]}), MD5's setting {f(tv(md5) if m_ok else None)}, best of 8 {f(tv(b['z']))} "
               f"({n['z'][0]}/{n['z'][1]}; from {wins.get('best_source')})  {res}")
     overall = {}
+    allin = all(out[d]["landed"][a][0] == out[d]["landed"][a][1] > 0 for d in HELD for a in ("d", "e", "z"))
     for key, pool in (("A30a", lambda d: out[d]["best"]["e"] is not None), ("A30b", lambda d: True),
                       ("A30c", lambda d: out[d]["best"]["e"] is not None)):
+        # decided only once every stock, expert and borrowed run of every design has landed (the pool of designs with a
+        # feasible expert run is known only then)
         ds = [d for d in HELD if out[d]["scorable"] and pool(d)]
         dec = [d for d in ds if per[d][key] is not None]
         p = sum(1 for d in dec if per[d][key])
-        pend = len(ds) - len(dec)
+        pend = sum(1 for d in HELD if per[d][key] is None)
         need = math.ceil(2 * len(ds) / 3)
-        allin = all(out[d]["landed"]["d"][0] == out[d]["landed"]["d"][1] and out[d]["landed"]["e"][0] == out[d]["landed"]["e"][1]
-                    for d in HELD)
-        if allin and len(ds) < MIN_SCORABLE:
-            v = "not scorable"
-        elif p >= need and pend == 0:
-            v = "PASS"
-        elif p + pend < need:
-            v = "FAIL"
-        else:
+        if not allin:
             v = "pending"
+        elif len(ds) < MIN_SCORABLE:
+            v = "not scorable"
+        else:
+            v = "PASS" if p >= need else "FAIL"
         overall[key] = f"{v} ({p} pass, {len(dec) - p} fail, {pend} pending; {need} of {len(ds)} needed)"
         print(f"  {key}: {overall[key]}")
     if js:
