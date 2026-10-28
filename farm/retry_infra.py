@@ -2,7 +2,7 @@
 """Retry tuning jobs lost to runner failures, once; a second loss counts as a flow that did not finish.
 
 A GitHub-hosted runner can die mid-job ("The runner has received a shutdown signal"), leaving no result: the tuner then
-waits for a trial that never lands. For tuning tags (x1*/x2*/x3*) whose every job across recent farm.yml runs ended in
+waits for a trial that never lands. For tuning tags (x1*/x2*/x3*/x4*) whose every job across recent farm.yml runs ended in
 failure / cancelled / timed_out (none queued, running or successful) and that have no results/<tag>/job.json:
 first time -> re-dispatch the same committed spec; second time -> write results/<tag>/job.json with status
 "runner_failed" and no metrics, so the tuner scores it like any flow that did not finish (registered rule).
@@ -59,7 +59,7 @@ def main() -> int:
                 for x in js:
                     if not isinstance(x, dict):
                         continue
-                    if x["name"][:2] in ("x1", "x2", "x3"):
+                    if x["name"][:2] in ("x1", "x2", "x3", "x4"):
                         seen.setdefault(x["name"], []).append((x["status"], x["conclusion"]))
                 if len(js) < 100:
                     break

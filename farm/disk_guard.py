@@ -37,7 +37,7 @@ def main() -> int:
     if f0 >= a.min_gb:
         return 0
     cands = []
-    for d in glob.glob(os.path.join(a.results, "x[123]*")):
+    for d in glob.glob(os.path.join(a.results, "x[1234]*")):
         for fn in ("nets.jsonl", "nets_signoff.jsonl", "final_nets.json"):
             p = os.path.join(d, fn)
             if os.path.exists(p):

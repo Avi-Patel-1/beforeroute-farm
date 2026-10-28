@@ -6,7 +6,7 @@ with every remaining job queued and none running while newer runs take all slots
 nothing for 3 h). For each farm.yml run with queued jobs, none running, and no job started in the last --stall-min minutes
 (or created that long ago without any start): cancel it, wait until it is cancelled, then re-dispatch its queued tags whose
 results are not on disk as runs of <= --chunk jobs. Specs are unchanged (farm/jobs/<tag>.json, already committed).
-Only runs whose jobs are all tuning tags (x1*/x2*/x3*) are touched.
+Only runs whose jobs are all tuning tags (x1*/x2*/x3*/x4*) are touched.
 Usage: unstall.py [--stall-min 60] [--chunk 8] [--dry-run]
 """
 from __future__ import annotations
@@ -69,7 +69,7 @@ def main() -> int:
     n_fixed = 0
     for run in runs:
         js = run["_jobs"]
-        if not js or not all(j["name"][:2] in ("x1", "x2", "x3") for j in js):
+        if not js or not all(j["name"][:2] in ("x1", "x2", "x3", "x4") for j in js):
             continue
         queued = [j for j in js if j["status"] in ("queued", "waiting", "pending")]
         running = [j for j in js if j["status"] == "in_progress"]
