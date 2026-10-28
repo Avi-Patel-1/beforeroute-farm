@@ -12,7 +12,7 @@ together with the pre-registered order (largest gain over the design's own best 
  3. Arm c: one confirmation run (clock = T_eff rounded up to 0.05 ns) of each tuned design's pooled best when no earlier
     confirmation run covers that configuration.
 Objective and feasibility as Addendum 24 with Amendment 24.1. Tags x4<arm>-<design>-<nnn>.
-Usage: tune_a27.py --freeze | --init | --step | --confirm-new | --report [--json f] [--dry-run]
+Usage: tune_a27.py --freeze | --init | --step | --confirm-new | --confirm-transfer | --report [--json f] [--dry-run]
 """
 from __future__ import annotations
 
@@ -167,6 +167,53 @@ def confirm_new():
         print(f"[a27] {d}: new pooled best {tag} (T_eff {teff:.3f}) -> confirmation {t} at {ov['CLOCK_PERIOD']} ns")
     save(st)
     send(st, [(new, max(1, len(new)))], f"Addendum 27: confirmation runs of new pooled bests ({len(new)})")
+
+
+def confirm_transfer():
+    """Amendment 27.2: one confirmation run (clock = T_eff rounded up to 0.05 ns) of (1) a tuned design's best feasible
+    leave-one-out result when it beats the design's pooled AI best, (2) an unseen design's best transfer result once all
+    its z runs have landed (and the best of z and w once all w runs have landed, if a different setting)."""
+    st = load(STATE, None)
+    if st is None:
+        print("[a27] not initialised")
+        return
+    covered = {v.get("source") for v in st["tags"].values() if v["arm"] == "c"}
+    new = []
+
+    def add_conf(d, tag, v, why):
+        ov = dict(v["overrides"])
+        ov["CLOCK_PERIOD"] = round(math.ceil(round(v["teff"] / 0.05, 6)) * 0.05, 2)
+        t = next_tag(st, "c", d)
+        add(st, t, d, "c", ov, source=tag, transfer=True, source_design=v.get("source_design"))
+        new.append(t)
+        covered.add(tag)
+        print(f"[a27] {d}: {why} {tag} (T_eff {v['teff']:.3f}, from {v.get('source_design')}) -> confirmation {t} at {ov['CLOCK_PERIOD']} ns")
+
+    for d in TUNED:
+        l = [(t, v) for t, v in st["tags"].items() if v["design"] == d and v["arm"] == "l" and v.get("feasible")
+             and v.get("teff") is not None]
+        if not l:
+            continue
+        tag, v = min(l, key=lambda tv: tv[1]["teff"])
+        if tag in covered:
+            continue
+        pooled = pooled_best(d)[0]
+        if v["teff"] < pooled:
+            add_conf(d, tag, v, f"leave-one-out beats the pooled best ({pooled:.3f}):")
+    for d in NEW:
+        z = [(t, v) for t, v in st["tags"].items() if v["design"] == d and v["arm"] == "z"]
+        w = [(t, v) for t, v in st["tags"].items() if v["design"] == d and v["arm"] == "w"]
+        if len(z) < N_Z or any(v["status"] in ("dispatched", "pending") for _, v in z):
+            continue
+        pool = z + (w if (len(w) == N_W and not any(v["status"] in ("dispatched", "pending") for _, v in w)) else [])
+        ok = [(t, v) for t, v in pool if v.get("feasible") and v.get("teff") is not None]
+        if not ok:
+            continue
+        tag, v = min(ok, key=lambda tv: tv[1]["teff"])
+        if tag not in covered:
+            add_conf(d, tag, v, "best transfer result")
+    save(st)
+    send(st, [(new, max(1, len(new)))], f"Addendum 27 (Amendment 27.2): confirmation runs of transferred settings ({len(new)})")
 
 
 def freeze():
@@ -479,6 +526,7 @@ def main() -> int:
     ap.add_argument("--step", action="store_true")
     ap.add_argument("--report", action="store_true")
     ap.add_argument("--confirm-new", action="store_true")
+    ap.add_argument("--confirm-transfer", action="store_true")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--json", default=None)
     a = ap.parse_args()
@@ -492,6 +540,8 @@ def main() -> int:
         step()
     if a.confirm_new:
         confirm_new()
+    if a.confirm_transfer:
+        confirm_transfer()
     if a.report:
         report(a.json)
     return 0
