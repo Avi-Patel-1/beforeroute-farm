@@ -46,6 +46,19 @@ EXPERT = {"SYNTH_STRATEGY": "DELAY 0", "PL_TIMING_DRIVEN": True, "RUN_POST_GRT_R
           "RUN_POST_GRT_DESIGN_REPAIR": True}
 N_TRIALS, N_STARTUP, IN_FLIGHT, SEED = 24, 8, 8, 2024
 DRV_MAX = 10
+# study identity (Addendum 24 defaults; farm/tune_a25.py overrides these for Addendum 25)
+PREFIX = "x1"
+ADDENDUM = "Addendum 24"
+INIT_CAPS = (24, 10)
+FIXED_ARMS = [("d", {}), ("e", EXPERT)]   # arms run at the FRACS clock periods
+REPORT_ARMS = ("t", "r", "d", "e", "c")
+NEED = 2                                    # designs needed for an overall PASS (and failures for FAIL)
+ARM_NAMES = {"t": "tuner", "r": "random", "d": "defaults", "e": "expert", "f": "expert+RC", "c": "confirm"}
+
+
+def seed_for(d, base):
+    """Sampler seed for design d. Addendum 24 uses the same seed on every design (recorded limitation)."""
+    return base
 
 
 def suggest(trial, d):
@@ -91,7 +104,7 @@ def save_state(st):
 
 def next_tag(st, arm, d):
     n = sum(1 for v in st["tags"].values() if v["arm"] == arm and v["design"] == d) + 1
-    return f"x1{arm}-{d}-{n:03d}"
+    return f"{PREFIX}{arm}-{d}-{n:03d}"
 
 
 DRY = {"on": False}
@@ -199,7 +212,7 @@ def drv_ref(d):
     """Amendment 24.1: the electrical bar is the design's LibreLane-defaults run at its default clock period
     (x1d-<design>-001): a configuration may not leave more max-slew + max-cap pins (nine corners) than the stock flow.
     None until that run has landed (trials are then told later)."""
-    r = os.path.join(ROOT, "results", f"x1d-{d}-001")
+    r = os.path.join(ROOT, "results", f"{PREFIX}d-{d}-001")
     try:
         m = json.load(open(os.path.join(r, "metrics.json")))
     except Exception:
@@ -254,7 +267,7 @@ def init(dry):
     tuner, rest = [], []
     for d in DESIGNS:
         if not any(v["arm"] == "t" and v["design"] == d for v in st["tags"].values()):
-            s = study(d, "t", SEED)
+            s = study(d, "t", seed_for(d, SEED))
             for _ in range(N_STARTUP):
                 tr = s.ask()
                 tag = next_tag(st, "t", d)
@@ -262,15 +275,15 @@ def init(dry):
                 tuner.append(tag)
     per_design = []
     for d in DESIGNS:
-        r_tags, base = [], {"d": [], "e": []}
+        r_tags, base = [], {a: [] for a, _ in FIXED_ARMS}
         if not any(v["arm"] == "r" and v["design"] == d for v in st["tags"].values()):
-            s = study(d, "r", SEED + 1)
+            s = study(d, "r", seed_for(d, SEED + 1))
             for _ in range(N_TRIALS):
                 tr = s.ask()
                 tag = next_tag(st, "r", d)
                 add(st, tag, d, "r", tr.number, suggest(tr, d))
                 r_tags.append(tag)
-        for arm, preset in (("d", {}), ("e", EXPERT)):
+        for arm, preset in FIXED_ARMS:
             if any(v["arm"] == arm and v["design"] == d for v in st["tags"].values()):
                 continue
             for f in FRACS:
@@ -279,15 +292,17 @@ def init(dry):
                 base[arm].append(tag)
         # per design: a defaults and an expert run, then five random trials, and so on
         seq = []
-        for j in range(max(len(base["d"]), len(base["e"]), math.ceil(len(r_tags) / 5))):
-            seq += base["d"][j:j + 1] + base["e"][j:j + 1] + r_tags[5 * j:5 * j + 5]
+        for j in range(max(max(len(x) for x in base.values()), math.ceil(len(r_tags) / 5))):
+            for a, _ in FIXED_ARMS:
+                seq += base[a][j:j + 1]
+            seq += r_tags[5 * j:5 * j + 5]
         per_design.append(seq)
     rest = interleave(per_design)
     if not dry:
         save_state(st)
     # tuner start-up trials go first, in their own run, so they queue ahead; the rest run at most 10 at a time so
     # that later tuner trials (sequential by design) always find free runners
-    send(st, [(tuner, 24), (rest, 10)], f"Addendum 24: tuning and early-stopping job specs ({len(tuner) + len(rest)})", dry)
+    send(st, [(tuner, INIT_CAPS[0]), (rest, INIT_CAPS[1])], f"{ADDENDUM}: tuning and early-stopping job specs ({len(tuner) + len(rest)})", dry)
     print(f"[tune] init: {len(tuner)} tuner start-up + {len(rest)} random/defaults/expert jobs")
 
 
@@ -348,7 +363,7 @@ def step(dry):
         room = min(IN_FLIGHT - inflight, N_TRIALS - len(mine))
         if room <= 0:
             continue
-        s = study(d, "t", SEED + 7 * len(mine))  # a fresh RNG stream per call (TPE keeps no other state)
+        s = study(d, "t", seed_for(d, SEED + 7 * len(mine)))  # a fresh RNG stream per call (TPE keeps no other state)
         for _ in range(room):
             tr = s.ask()
             tag = next_tag(st, "t", d)
@@ -356,7 +371,7 @@ def step(dry):
             new.append(tag)
     if not dry:
         save_state(st)
-    send(st, [(retry + new, 24)], f"Addendum 24: tuner trials ({len(new)})" + (f", {len(retry)} re-sent" if retry else ""), dry)
+    send(st, [(retry + new, 24)], f"{ADDENDUM}: tuner trials ({len(new)})" + (f", {len(retry)} re-sent" if retry else ""), dry)
     print(f"[tune] step: told {told}, asked {len(new)}, re-sent {len(retry)}")
 
 
@@ -407,7 +422,7 @@ def report(js):
     out = {}
     for d in DESIGNS:
         row = {}
-        for arm in ("t", "r", "d", "e", "c"):
+        for arm in REPORT_ARMS:
             vs = [v for v in st["tags"].values() if v["arm"] == arm and v["design"] == d]
             ok = [v for v in vs if v.get("feasible")]
             best = min(ok, key=lambda v: v["teff"]) if ok else None
@@ -436,7 +451,8 @@ def report(js):
                              "skipped_share": ((1 - k / len(prox)) * sorted(shares)[len(shares) // 2]) if (shares and prox) else None}
         out[d] = row
         print(f"== {d} (default period {DESIGNS[d]['period']} ns)")
-        for arm, name in (("t", "tuner"), ("r", "random"), ("d", "defaults"), ("e", "expert")):
+        for arm in [x for x in REPORT_ARMS if x != "c"]:
+            name = ARM_NAMES.get(arm, arm)
             x = row[arm]
             print(f"  {name:8s} {x['landed']:2d}/{x['n']:2d} landed, {x['feasible']:2d} feasible, best T_eff "
                   f"{x['best_teff']:.2f} ns" if x["best_teff"] is not None else f"  {name:8s} {x['landed']:2d}/{x['n']:2d} landed, {x['feasible']:2d} feasible, best T_eff -")
@@ -472,7 +488,7 @@ def confirm(dry):
         new.append(tag)
     if not dry:
         save_state(st)
-    send(st, [(new, 3)], f"Addendum 24: confirmation runs ({len(new)})", dry)
+    send(st, [(new, max(3, len(new)))], f"{ADDENDUM}: confirmation runs ({len(new)})", dry)
 
 
 def verdicts(out):
@@ -502,7 +518,7 @@ def verdicts(out):
     for k in ("A24a", "A24b", "A24c", "A24d"):
         vals = [res[d][k] for d in res]
         p, f = sum(1 for v in vals if v is True), sum(1 for v in vals if v is False)
-        overall[k] = "PASS" if p >= 2 else ("FAIL" if f >= 2 else "pending")
+        overall[k] = "PASS" if p >= NEED else ("FAIL" if f > len(vals) - NEED else "pending")
         overall[k] += f" ({p} pass, {f} fail, {len(vals) - p - f} pending)"
     return res, overall
 
