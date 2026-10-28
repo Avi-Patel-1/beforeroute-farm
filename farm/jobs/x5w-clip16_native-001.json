@@ -1,0 +1,55 @@
+{
+ "tag": "x5w-clip16_native-001",
+ "design": "designs/clip16_native",
+ "config": "config_sky130.json",
+ "overrides": {
+  "RUN_MAGIC_DRC": false,
+  "RUN_KLAYOUT_DRC": false,
+  "RUN_LVS": false,
+  "RUN_KLAYOUT_XOR": false,
+  "RUN_IRDROP_REPORT": false,
+  "RUN_LINTER": false,
+  "CLOCK_PERIOD": 7.25,
+  "SYNTH_STRATEGY": "AREA 1",
+  "SYNTH_ABC_BUFFERING": false,
+  "SYNTH_SIZING": true,
+  "FP_CORE_UTIL": 40,
+  "PL_TARGET_DENSITY_PCT": 50,
+  "PL_TIMING_DRIVEN": true,
+  "PL_ROUTABILITY_DRIVEN": false,
+  "RUN_POST_GRT_RESIZER_TIMING": false,
+  "RUN_POST_GRT_DESIGN_REPAIR": true,
+  "PL_RESIZER_SETUP_SLACK_MARGIN": 0.101,
+  "GRT_RESIZER_SETUP_SLACK_MARGIN": 0.278,
+  "DESIGN_REPAIR_MAX_SLEW_PCT": 33,
+  "DESIGN_REPAIR_MAX_CAP_PCT": 27,
+  "LAYERS_RC": {
+   "*": {
+    "li1": {
+     "res": 0.07176,
+     "cap": 0.0001499
+    },
+    "met1": {
+     "res": 0.00120565,
+     "cap": 0.000172375
+    },
+    "met2": {
+     "res": 0.00122132,
+     "cap": 0.000136233
+    },
+    "met3": {
+     "res": 0.000166281,
+     "cap": 0.000214962
+    },
+    "met4": {
+     "res": 0.000168093,
+     "cap": 0.000148128
+    },
+    "met5": {
+     "res": 1.83558e-05,
+     "cap": 0.000154087
+    }
+   }
+  }
+ }
+}
