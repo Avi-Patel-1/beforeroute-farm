@@ -43,6 +43,8 @@ def main() -> int:
             runs = json.loads(r.stdout or "[]")
         except Exception:
             runs = []
+        if not isinstance(runs, list):
+            runs = []
         for run in runs:
             for jp in range(1, 4):
                 j = sh(["gh", "api", f"repos/{REPO}/actions/runs/{run['id']}/jobs?per_page=100&page={jp}", "--jq",
@@ -51,7 +53,12 @@ def main() -> int:
                     js = json.loads(j.stdout or "[]")
                 except Exception:
                     js = []
+                if not isinstance(js, list):  # an API error object instead of a job list
+                    print(f"[retry] run {run['id']}: job list unavailable ({str(js)[:80]})")
+                    js = []
                 for x in js:
+                    if not isinstance(x, dict):
+                        continue
                     if x["name"][:2] in ("x1", "x2", "x3"):
                         seen.setdefault(x["name"], []).append((x["status"], x["conclusion"]))
                 if len(js) < 100:
