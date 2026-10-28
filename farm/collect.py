@@ -34,10 +34,23 @@ def main() -> int:
     pending = 0
     for run in json.loads(r.stdout):
         rid = run["databaseId"]
-        j = sh(["gh", "run", "view", str(rid), "-R", a.repo, "--json", "jobs", "--jq", ".jobs[] | \"\\(.name)\\t\\(.status)\\t\\(.conclusion // \"-\")\""])
-        if j.returncode != 0:
+        # explicit pages on the repos/{owner}/{repo} endpoint: `gh run view --json jobs` pages a run with > 100 jobs
+        # through a numeric-ID URL that the network proxy rejects (the 102-job tuning run was silently skipped)
+        lines, ok = [], True
+        for page in range(1, 4):
+            j = sh(["gh", "api", f"repos/{a.repo}/actions/runs/{rid}/jobs?per_page=100&page={page}", "--jq",
+                    ".jobs[] | \"\\(.name)\\t\\(.status)\\t\\(.conclusion // \"-\")\""])
+            if j.returncode != 0:
+                ok = False
+                break
+            got = [l for l in j.stdout.strip().splitlines() if l.strip()]
+            lines += got
+            if len(got) < 100:
+                break
+        if not ok and not lines:
+            print(f"[collect] run {rid}: job list failed")
             continue
-        for line in j.stdout.strip().splitlines():
+        for line in lines:
             if not line.strip():
                 continue
             parts = line.split("\t")
