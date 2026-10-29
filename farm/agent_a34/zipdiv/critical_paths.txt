@@ -1,0 +1,87 @@
+ZipCPU divider baseline run x8a-zipdiv-005 (the setting of run x6z-zipdiv-001, clock target 8.59 ns): signoff static
+timing at nine corners after detailed routing and parasitic extraction.
+Limiting corner: max_ss_100C_1v60 (slow-slow, 100 C, 1.60 V, maximum RC). Worst setup slack +1.831 ns. The worst
+path is register-to-register.
+Clock 8.59 ns; clock uncertainty 0.25 ns; endpoint library setup time 0.276 ns; the launching flop's clock pin
+is reached at 1.03 ns (clock tree), so the data path runs from 1.77 ns to 7.22 ns.
+
+WORST SETUP PATH at the limiting corner (signoff report_checks, one path per corner is reported):
+  startpoint: flop _2304_, output net net83
+  endpoint:   flop _2325_, D input net net176
+  arrival 7.216 ns, required 9.047 ns, slack +1.831 ns
+  14 cells from the launching flop to the endpoint (arrival at the cell output in ns, cell, output net,
+  fanout):
+      1.773  dfxtp_2      net83  (fanout 4)
+      2.011  nor2_4       _1019_  (fanout 2)
+      2.204  nand2_2      _1030_  (fanout 3)
+      2.386  nor2_2       _1031_  (fanout 1)
+      2.501  inv_2        _1032_  (fanout 3)
+      2.986  or2_4        _1034_  (fanout 3)
+      3.534  or2_4        _1036_  (fanout 3)
+      3.804  nor2_8       _1039_  (fanout 6)
+      4.152  nand2_2      _1065_  (fanout 5)
+      4.520  nor2_2       _1074_  (fanout 2)
+      4.791  nand2_2      _1081_  (fanout 3)
+      5.566  or2_2        _1082_  (fanout 2)
+      6.053  a32o_2       _0025_  (fanout 1)
+      7.216  dlygate4sd3_1 net176  (fanout 1)
+
+WORST SETUP ENDPOINTS: the nets feeding flop D inputs with the lowest signoff slack (ns), worst corner. Names are the RTL
+signal names where synthesis kept them:
+   1.831  net176
+   1.938  net191
+   1.972  _0117_
+   1.973  _0115_
+   2.190  _0101_
+   2.196  _0139_
+   2.205  _0110_
+   2.223  _0105_
+   2.244  _0121_
+   2.257  _0122_
+   2.258  _0099_
+   2.261  _0109_
+   2.265  _0127_
+   2.266  _0119_
+   2.272  _0123_
+   2.276  _0118_
+   2.287  _0107_
+   2.294  _0104_
+   2.302  _0102_
+   2.338  _0100_
+   2.339  net226
+   2.348  _0108_
+   2.354  _0111_
+   2.355  _0106_
+   2.381  _0113_
+   2.388  _0114_
+   2.423  _0125_
+   2.485  _0002_
+   2.587  _0128_
+   2.610  _0112_
+
+WORST STARTPOINTS: flop output nets with the lowest signoff slack (ns), with cell type and fanout:
+   1.972  r_dividend[6]  (dfxtp_2, fanout 2)
+   1.992  r_dividend[1]  (dfxtp_2, fanout 3)
+   2.054  r_dividend[9]  (dfxtp_2, fanout 5)
+   2.055  r_dividend[0]  (dfxtp_2, fanout 3)
+   2.076  r_dividend[29]  (dfxtp_2, fanout 3)
+   2.091  r_divisor[1]  (dfxtp_2, fanout 3)
+   2.099  r_dividend[7]  (dfxtp_2, fanout 1)
+   2.103  r_divisor[2]  (dfxtp_2, fanout 5)
+   2.131  r_divisor[9]  (dfxtp_2, fanout 2)
+   2.195  r_dividend[3]  (dfxtp_2, fanout 4)
+   2.208  r_dividend[2]  (dfxtp_2, fanout 2)
+   2.241  r_divisor[7]  (dfxtp_2, fanout 3)
+   2.248  r_divisor[29]  (dfxtp_2, fanout 3)
+   2.273  r_divisor[4]  (dfxtp_2, fanout 3)
+   2.276  r_divisor[6]  (dfxtp_2, fanout 4)
+   2.283  r_divisor[0]  (dfxtp_2, fanout 3)
+   2.289  r_dividend[5]  (dfxtp_2, fanout 4)
+   2.313  r_divisor[25]  (dfxtp_2, fanout 3)
+   2.331  r_divisor[24]  (dfxtp_2, fanout 4)
+   2.332  r_divisor[3]  (dfxtp_2, fanout 3)
+
+On this path the last cell before the endpoint (dlygate4sd3) is a hold-fixing delay buffer the flow inserted; it is
+not RTL logic, and at a tighter clock the flow resizes or removes such buffers as hold allows.
+The endpoint and startpoint lists come from the run's per-net signoff dump: each net's slack is the worst slack of any
+path through it. Unnamed nets (_NNNNN_, netNNN) were created by synthesis or by the flow's buffering and repair.

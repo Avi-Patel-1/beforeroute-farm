@@ -1,0 +1,85 @@
+{
+ "design": "zipdiv",
+ "default_clock_ns": 19.09,
+ "source_rtl": "designs/zipdiv/src/zipdiv.v",
+ "setting_tag": "x6z-zipdiv-001",
+ "setting_source": "x2t-blabla-021",
+ "overrides": {
+  "SYNTH_STRATEGY": "AREA 3",
+  "SYNTH_ABC_BUFFERING": true,
+  "SYNTH_SIZING": true,
+  "FP_CORE_UTIL": 27,
+  "PL_TARGET_DENSITY_PCT": 52,
+  "PL_TIMING_DRIVEN": false,
+  "PL_ROUTABILITY_DRIVEN": true,
+  "RUN_POST_GRT_RESIZER_TIMING": true,
+  "RUN_POST_GRT_DESIGN_REPAIR": false,
+  "PL_RESIZER_SETUP_SLACK_MARGIN": 0.373,
+  "GRT_RESIZER_SETUP_SLACK_MARGIN": 0.165,
+  "DESIGN_REPAIR_MAX_SLEW_PCT": 39,
+  "DESIGN_REPAIR_MAX_CAP_PCT": 18,
+  "LAYERS_RC": {
+   "*": {
+    "li1": {
+     "res": 0.07176,
+     "cap": 0.0001499
+    },
+    "met1": {
+     "res": 0.00120565,
+     "cap": 0.000172375
+    },
+    "met2": {
+     "res": 0.00122132,
+     "cap": 0.000136233
+    },
+    "met3": {
+     "res": 0.000166281,
+     "cap": 0.000214962
+    },
+    "met4": {
+     "res": 0.000168093,
+     "cap": 0.000148128
+    },
+    "met5": {
+     "res": 1.83558e-05,
+     "cap": 0.000154087
+    }
+   }
+  }
+ },
+ "electrical_bar_slew_cap_pins": 295,
+ "runs": [
+  {
+   "tag": "x6z-zipdiv-001",
+   "clock_ns": 17.72,
+   "wns_ns": 9.474398422861535,
+   "r2r_wns_ns": 11.097239,
+   "teff_ns": 8.2456,
+   "limiting_corner": "max_ss_100C_1v60",
+   "hold_ws_ns": 0.09447892735577397,
+   "router_drc": 0,
+   "slew_cap_pins": 0,
+   "stdcell_area_um2": 15264.6,
+   "stdcell_count": 2222,
+   "flow_seconds": 139.0,
+   "feasible": true
+  },
+  {
+   "tag": "x8a-zipdiv-005",
+   "clock_ns": 8.59,
+   "wns_ns": 1.830589509568957,
+   "r2r_wns_ns": 1.83059,
+   "teff_ns": 6.7594,
+   "limiting_corner": "max_ss_100C_1v60",
+   "hold_ws_ns": 0.09446771410290813,
+   "router_drc": 0,
+   "slew_cap_pins": 0,
+   "stdcell_area_um2": 15264.6,
+   "stdcell_count": 2222,
+   "flow_seconds": 134.4,
+   "feasible": true
+  }
+ ],
+ "checked_clock_ns": 8.59,
+ "note": "Addendum 34's second design (registered: run only if MD5's loop finished by 12:00 UTC Oct 29; it finished 06:37 UTC). Setting: x6z-zipdiv-001's overrides, as named in the registration (the first source of Addendum 27's transfer start set: BlaBla's AI setting, x2t-blabla-021). On zipdiv it was the start set's fourth-best single run (T_eff 8.246 ns; the best was x6z-zipdiv-004 at 7.548 ns); the registration's identifier is followed as written (decision recorded 07:17 UTC Oct 29, before any rewrite existed). Its runs: 17.72 ns (T_eff 8.246) and, in Addendum 32's agent arm with identical overrides, x8a-zipdiv-005 at 8.59 ns, which passed (slack +1.831 ns): the setting's checked clock. Both RTL chains start at 8.59 ns under these overrides; the original's run there already exists (x8a-zipdiv-005)."
+}

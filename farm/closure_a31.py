@@ -87,7 +87,7 @@ def ref_drv_a31(d):
 A.ref_drv = ref_drv_a31
 
 
-LATER = ("tune_x8", "tune_x9")   # Addenda 32-34 run their own re-run chains, reported separately; they must not move
+LATER = ("tune_x8", "tune_x9", "tune_x9z")   # Addenda 32-34 run their own re-run chains, reported separately; they must not move
                                  # Addendum 31's points (every arm here got only this addendum's closure procedure)
 
 
