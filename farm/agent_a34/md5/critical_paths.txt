@@ -1,0 +1,131 @@
+MD5 baseline run x7k-md5-004 (the setting of run x4c-md5-003, clock target 16.05 ns): signoff static timing at nine
+corners after detailed routing and parasitic extraction.
+Limiting corner: max_ss_100C_1v60 (slow-slow, 100 C, 1.60 V, maximum RC). Worst setup slack +0.616 ns. The worst
+path is register-to-register.
+Clock 16.05 ns; clock uncertainty 0.25 ns; endpoint library setup time 0.128 ns; the launching flop's clock pin
+is reached at 2.06 ns (clock tree), so the data path runs from 2.94 ns to 16.96 ns.
+
+WORST SETUP PATH at the limiting corner (signoff report_checks, one path per corner is reported):
+  startpoint: flop _14578_, output net round64[1]
+  endpoint:   flop _14540_, D input net next_data_o[94]
+  arrival 16.960 ns, required 17.576 ns, slack +0.616 ns
+  60 cells from the launching flop to the endpoint (arrival at the cell output in ns, cell, output net,
+  fanout):
+      2.943  dfrtp_2      round64[1]  (fanout 2)
+      3.209  buf_6        net920  (fanout 3)
+      3.474  buf_12       net1551  (fanout 5)
+      3.593  nand2_8      _00663_  (fanout 2)
+      3.831  buf_12       net884  (fanout 5)
+      4.006  nand2_8      _01267_  (fanout 4)
+      4.327  o21ai_4      _01284_  (fanout 1)
+      4.637  buf_8        net1499  (fanout 3)
+      4.745  inv_16       _01319_  (fanout 6)
+      5.145  nor2_4       _01320_  (fanout 4)
+      5.576  nand3_4      _01321_  (fanout 3)
+      5.910  buf_8        net658  (fanout 2)
+      6.186  buf_12       net1443  (fanout 8)
+      6.499  buf_6        net657  (fanout 4)
+      6.725  nor2_2       _02891_  (fanout 1)
+      6.859  nor2_4       _02892_  (fanout 1)
+      6.961  nand3_4      _02895_  (fanout 1)
+      7.071  nor2_4       _02903_  (fanout 1)
+      7.250  nand2_8      _02904_  (fanout 2)
+      7.560  nand3_4      _02916_  (fanout 3)
+      7.795  nand2_8      _02918_  (fanout 4)
+      7.895  inv_2        _02919_  (fanout 1)
+      8.033  nand2_4      _02920_  (fanout 1)
+      8.176  nand2_8      _02922_  (fanout 3)
+      8.323  nand2_8      _02944_  (fanout 2)
+      8.412  nor2_4       _02951_  (fanout 1)
+      8.742  a21oi_4      _02959_  (fanout 1)
+      8.991  nand2_8      _02960_  (fanout 5)
+      9.504  a21o_4       _04158_  (fanout 2)
+     10.060  or2_4        _04166_  (fanout 1)
+     10.219  nand2_8      _04167_  (fanout 2)
+     10.358  nand2_4      _04303_  (fanout 3)
+     10.487  nand2_2      _05033_  (fanout 1)
+     10.582  inv_2        _05034_  (fanout 2)
+     11.164  mux2_4       _05035_  (fanout 2)
+     11.462  o21ai_4      _05037_  (fanout 2)
+     11.814  a21o_4       _05039_  (fanout 1)
+     11.987  nand2_4      _05041_  (fanout 2)
+     12.477  or2_4        _05042_  (fanout 1)
+     12.680  nand2_2      _05044_  (fanout 3)
+     12.857  inv_2        _05045_  (fanout 2)
+     13.010  nand2_4      _05066_  (fanout 2)
+     13.111  nor2_4       _05070_  (fanout 2)
+     13.383  o21ai_2      _05197_  (fanout 1)
+     13.752  nand3_4      _05200_  (fanout 4)
+     13.956  nand2_4      _05202_  (fanout 2)
+     14.079  nand2_2      _05232_  (fanout 2)
+     14.580  or2_4        _05233_  (fanout 2)
+     14.740  nand3_4      _05237_  (fanout 2)
+     14.888  nand2_8      _05238_  (fanout 3)
+     15.370  or2_4        _05314_  (fanout 1)
+     15.542  nor2_4       _05316_  (fanout 1)
+     15.661  nand2_4      _05317_  (fanout 1)
+     15.804  nand2_4      _05323_  (fanout 3)
+     15.921  nand2_2      _05368_  (fanout 1)
+     16.045  nand2_2      _05370_  (fanout 2)
+     16.264  or2_4        _05371_  (fanout 1)
+     16.385  nand2_2      _05373_  (fanout 2)
+     16.877  or2_4        _05748_  (fanout 1)
+     16.960  inv_4        next_data_o[94]  (fanout 1)
+
+WORST SETUP ENDPOINTS: the nets feeding flop D inputs with the lowest signoff slack (ns), worst corner. Names are the RTL
+signal names where synthesis kept them:
+   0.616  next_data_o[94]
+   0.676  next_B[28]
+   0.706  next_B[24]
+   0.728  next_data_o[91]
+   0.743  next_B[26]
+   0.780  next_data_o[95]
+   0.781  next_data_o[89]
+   0.781  next_B[18]
+   0.784  next_data_o[90]
+   0.810  next_B[30]
+   0.824  next_B[31]
+   0.843  next_B[20]
+   0.850  next_B[22]
+   0.858  next_data_o[86]
+   0.863  next_B[27]
+   0.885  next_data_o[83]
+   0.891  next_data_o[82]
+   0.897  next_data_o[92]
+   0.927  next_data_o[93]
+   0.939  next_B[19]
+   0.949  next_data_o[88]
+   0.961  next_B[29]
+   1.006  next_B[14]
+   1.050  next_B[25]
+   1.064  next_data_o[84]
+   1.065  next_B[16]
+   1.097  next_B[10]
+   1.119  next_B[21]
+   1.121  next_data_o[75]
+   1.172  next_B[23]
+
+WORST STARTPOINTS: flop output nets with the lowest signoff slack (ns), with cell type and fanout:
+   0.616  round64[1]  (dfrtp_2, fanout 2)
+   0.645  round64[4]  (dfrtp_2, fanout 2)
+   0.650  round64[2]  (dfrtp_2, fanout 7)
+   0.656  round64[0]  (dfrtp_2, fanout 4)
+   0.671  round64[3]  (dfrtp_2, fanout 3)
+   0.694  round64[5]  (dfrtp_2, fanout 3)
+   0.719  round[0]  (dfrtp_2, fanout 5)
+   0.756  round[2]  (dfrtp_2, fanout 5)
+   0.781  br[25]  (dfstp_2, fanout 3)
+   0.792  br[13]  (dfstp_2, fanout 4)
+   0.798  round[1]  (dfrtp_2, fanout 4)
+   0.817  cr[10]  (dfstp_2, fanout 5)
+   0.930  br[20]  (dfrtp_2, fanout 4)
+   0.948  br[15]  (dfstp_2, fanout 6)
+   0.949  br[24]  (dfstp_2, fanout 6)
+   0.949  br[10]  (dfrtp_2, fanout 4)
+   0.960  br[22]  (dfstp_2, fanout 3)
+   0.980  cr[14]  (dfstp_2, fanout 5)
+   1.007  br[17]  (dfrtp_2, fanout 4)
+   1.017  br[21]  (dfrtp_2, fanout 4)
+
+The endpoint and startpoint lists come from the run's per-net signoff dump: each net's slack is the worst slack of any
+path through it. Unnamed nets (_NNNNN_, netNNN) were created by synthesis or by the flow's buffering and repair.

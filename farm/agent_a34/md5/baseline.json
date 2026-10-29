@@ -1,0 +1,85 @@
+{
+ "design": "md5",
+ "default_clock_ns": 37.05,
+ "source_rtl": "designs/md5/src/md5.v",
+ "setting_tag": "x4c-md5-003",
+ "setting_source": "x3p-md5-043",
+ "overrides": {
+  "SYNTH_STRATEGY": "AREA 3",
+  "SYNTH_ABC_BUFFERING": true,
+  "SYNTH_SIZING": true,
+  "FP_CORE_UTIL": 29,
+  "PL_TARGET_DENSITY_PCT": 41,
+  "PL_TIMING_DRIVEN": true,
+  "PL_ROUTABILITY_DRIVEN": false,
+  "RUN_POST_GRT_RESIZER_TIMING": true,
+  "RUN_POST_GRT_DESIGN_REPAIR": true,
+  "PL_RESIZER_SETUP_SLACK_MARGIN": 0.202,
+  "GRT_RESIZER_SETUP_SLACK_MARGIN": 0.115,
+  "DESIGN_REPAIR_MAX_SLEW_PCT": 33,
+  "DESIGN_REPAIR_MAX_CAP_PCT": 14,
+  "LAYERS_RC": {
+   "*": {
+    "li1": {
+     "res": 0.0752941175,
+     "cap": 0.00018676206809
+    },
+    "met1": {
+     "res": 0.0008928571,
+     "cap": 0.000180502538973
+    },
+    "met2": {
+     "res": 0.0008928571,
+     "cap": 0.000165905533799
+    },
+    "met3": {
+     "res": 0.0001566667,
+     "cap": 0.000182519422998
+    },
+    "met4": {
+     "res": 0.0001566667,
+     "cap": 0.00016161718191
+    },
+    "met5": {
+     "res": 1.78125e-05,
+     "cap": 0.000187045967495
+    }
+   }
+  }
+ },
+ "electrical_bar_slew_cap_pins": 1629,
+ "runs": [
+  {
+   "tag": "x4c-md5-003",
+   "clock_ns": 16.8,
+   "wns_ns": 0.798555910666568,
+   "r2r_wns_ns": 0.798556,
+   "teff_ns": 16.0014,
+   "limiting_corner": "max_ss_100C_1v60",
+   "hold_ws_ns": 0.09342554772021802,
+   "router_drc": 0,
+   "slew_cap_pins": 0,
+   "stdcell_area_um2": 94018.9,
+   "stdcell_count": 12728,
+   "flow_seconds": 1576.4,
+   "feasible": true
+  },
+  {
+   "tag": "x7k-md5-004",
+   "clock_ns": 16.05,
+   "wns_ns": 0.6157936557191642,
+   "r2r_wns_ns": 0.615794,
+   "teff_ns": 15.4342,
+   "limiting_corner": "max_ss_100C_1v60",
+   "hold_ws_ns": 0.07394218779889286,
+   "router_drc": 0,
+   "slew_cap_pins": 0,
+   "stdcell_area_um2": 97461,
+   "stdcell_count": 12809,
+   "flow_seconds": 2712.8,
+   "feasible": true
+  }
+ ],
+ "checked_clock_ns": 16.05,
+ "note": "Addendum 31 ai_ring point: x4c-md5-003 (16.8 ns target) re-run at ceil(T_eff)=16.05 ns as x7k-md5-004, which passed. Addendum 34 starts both RTL chains at 16.05 ns under these overrides."
+}
