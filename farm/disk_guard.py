@@ -78,6 +78,18 @@ def main() -> int:
                 log.write(p + "\n")
                 k += 1
         print(f"[disk] removed {k} tuning-run signoff dumps (re-fetchable from the farm for 30 days); free {free_gb(a.results):.1f} GB")
+    # A30-A34 runs (x6-x9): no report reads their per-net dumps (the studies use metrics.json only); remove them next
+    if free_gb(a.results) < a.target_gb:
+        k = 0
+        with open(os.path.join(a.results, ".removed_files.txt"), "a") as log:
+            for p in sorted(glob.glob(os.path.join(a.results, "x[6789]*", "nets.jsonl.gz")) +
+                            glob.glob(os.path.join(a.results, "x[6789]*", "final_nets.json.gz"))):
+                if free_gb(a.results) >= a.target_gb:
+                    break
+                os.remove(p)
+                log.write(p + "\n")
+                k += 1
+        print(f"[disk] removed {k} per-net dumps of x6-x9 runs; free {free_gb(a.results):.1f} GB")
     return 0
 
 
