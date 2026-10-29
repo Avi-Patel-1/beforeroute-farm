@@ -90,6 +90,10 @@ def main() -> int:
     s1 = slides[0]
     set_text(find(s1, ph_idx=0), [c["title"]])
     set_text(find(s1, ph_idx=1), [c.get("subtitle", ""), c["name"]])
+    for key, idx in (("title_box", 0), ("subtitle_box", 1)):   # optional [left, top, width, height] in inches
+        if c.get(key):
+            sh = find(s1, ph_idx=idx)
+            sh.left, sh.top, sh.width, sh.height = (Inches(v) for v in c[key])
 
     for n in range(2, 8):
         spec = c["slides"].get(str(n))
