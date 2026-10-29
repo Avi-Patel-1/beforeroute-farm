@@ -8,7 +8,8 @@ before the first instance started) through a one-line wrapper. Times are UTC, Oc
 |---|---|---|---|---|
 | 1 | 07:26:31 | 08:48:30 | registered wrapper (below) | No reply. After its one Read it spent four responses at the 128,000-token output limit on private reasoning, and the harness ended it. |
 | 2 | 08:49:10 | 10:11:50 | identical to instance 1 | No reply. Same as instance 1 (512,222 output tokens). |
-| 3 | 10:12:22 | 10:43:23 | registered wrapper + one sentence (below) | Replied after one response at the limit (266,678 output tokens): `round1_reply.md`, RTL `round1_zipdiv.v`. |
+| 3 | 10:12:22 | 10:43:23 | registered wrapper + one sentence (below) | Replied after one response at the limit (266,678 output tokens): `round1_reply.md`, RTL `round1_zipdiv.v`. It passed the gate; its first run (x9r-zipdiv-001, 8.59 ns) stopped inside OpenROAD's repair_design. |
+| revision | 11:41:44 | 12:12:22 | instance 3's wrapper, with `round2_prompt.md` | Replied after one response at the limit (263,166 output tokens): `round2_reply.md`, RTL `round2_zipdiv.v`. |
 
 Registered wrapper (the one MD5's instances got):
 
