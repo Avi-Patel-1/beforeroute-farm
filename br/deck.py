@@ -15,6 +15,8 @@ Optional layout keys (all ignored when absent, so older content files build unch
                              title_textboxes for slide 1)
   tiles: [{"box": [l, t, w, h], "lines": [...], "fill", "line"}]  native rounded tiles (big number + label)
   remove_body: true         drop the body placeholder (figure-only slides); slide 5: remove_caption, remove_table
+  title_box / kicker_box    reposition a content slide's title or kicker placeholder (inches)
+  title_slide: "template"   leave slide 1 exactly as the template has it;  font_name: font for added text boxes/tiles
   slide 5: caption_box [l, t, w, h] (word-wrapped caption), caption_size,
            table.col_widths [in, ...], table.row_height in, table.body_text_color "RRGGBB"
 """
@@ -28,6 +30,9 @@ import os
 from pptx import Presentation
 from pptx.dml.color import RGBColor
 from pptx.util import Inches, Pt
+
+
+FONT_NAME = None  # set from content["font_name"]: font for text boxes and tiles this script adds
 
 
 def set_text(shape, lines, size=None, uniform_bullets=False, space=None):
@@ -87,6 +92,8 @@ def add_textboxes(slide, spec):
             r.font.bold = bool(ln.get("bold"))
             if ln.get("color"):
                 r.font.color.rgb = RGBColor.from_string(ln["color"])
+            if ln.get("font") or FONT_NAME:
+                r.font.name = ln.get("font") or FONT_NAME
 
 
 def add_tiles(slide, spec):
@@ -122,6 +129,8 @@ def add_tiles(slide, spec):
             r.font.size = Pt(ln.get("size", 12))
             r.font.bold = bool(ln.get("bold"))
             r.font.color.rgb = RGBColor.from_string(ln.get("color", "FFFFFF"))
+            if ln.get("font") or FONT_NAME:
+                r.font.name = ln.get("font") or FONT_NAME
 
 
 def remove_shape(shape):
@@ -158,15 +167,18 @@ def main() -> int:
     prs = Presentation(a.template)
     slides = list(prs.slides)
 
-    # slide 1
+    # slide 1 (title_slide: "template" leaves it exactly as the template has it)
+    global FONT_NAME
+    FONT_NAME = c.get("font_name")
     s1 = slides[0]
-    set_text(find(s1, ph_idx=0), [c["title"]])
-    set_text(find(s1, ph_idx=1), [c.get("subtitle", ""), c["name"]])
-    for key, idx in (("title_box", 0), ("subtitle_box", 1)):   # optional [left, top, width, height] in inches
-        if c.get(key):
-            sh = find(s1, ph_idx=idx)
-            sh.left, sh.top, sh.width, sh.height = (Inches(v) for v in c[key])
-    add_textboxes(s1, {"textboxes": c.get("title_textboxes")})  # optional callouts on the title slide
+    if c.get("title_slide") != "template":
+        set_text(find(s1, ph_idx=0), [c["title"]])
+        set_text(find(s1, ph_idx=1), [c.get("subtitle", ""), c["name"]])
+        for key, idx in (("title_box", 0), ("subtitle_box", 1)):   # optional [left, top, width, height] in inches
+            if c.get(key):
+                sh = find(s1, ph_idx=idx)
+                sh.left, sh.top, sh.width, sh.height = (Inches(v) for v in c[key])
+        add_textboxes(s1, {"textboxes": c.get("title_textboxes")})  # optional callouts on the title slide
     nsz = c.get("notes_size")  # optional speaker-notes font size (pt) for every slide
     if c.get("title_notes"):  # optional speaker notes for the title slide
         set_notes(s1, c["title_notes"], nsz)
@@ -180,6 +192,10 @@ def main() -> int:
             set_text(find(s, ph_idx=0), [spec["title"]])
         if spec.get("kicker") is not None and find(s, ph_idx=10) is not None:
             set_text(find(s, ph_idx=10), [spec["kicker"]])
+        for key, idx in (("title_box", 0), ("kicker_box", 10)):   # optional [left, top, width, height] in inches
+            if spec.get(key) and find(s, ph_idx=idx) is not None:
+                sh = find(s, ph_idx=idx)
+                sh.left, sh.top, sh.width, sh.height = (Inches(v) for v in spec[key])
         body = find(s, ph_idx=1)
         if n == 5:
             # table placeholder is ph 1 on slide 5; chart is a separate shape
