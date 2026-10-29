@@ -14,7 +14,9 @@ Objective and feasibility as Addendum 30 (T_eff = clock - worst setup slack over
 more slew/cap pins than the design's stock reference run). Closure as Addendum 31: each arm's best new run (lowest T_eff,
 feasible) is re-run at ceil(T_eff/0.05)*0.05 ns, and up to twice more at max(ceil(largest missed T_eff/0.05)*0.05,
 f+0.05). Tags x8<arm>-<design>-<nnn> (k = closure).
-Usage: tune_a32.py --init-b | --agent-prompt | --agent-ingest DIR | --step | --closure | --report [--json f] [--dry-run]
+Addendum 33: arm f = arm b with period_frac fixed at 0.45 (--init-f). Amendment 32.2: fixed-point re-run chains (arm c,
+start set: arm s) in --closure; A32a3-c3, A33a-b in --report.
+Usage: tune_a32.py --init-b | --init-f | --agent-prompt | --agent-ingest DIR | --step | --closure | --report [--json f] [--dry-run]
 """
 from __future__ import annotations
 
@@ -122,16 +124,21 @@ def seed(d):
     return SEED + zlib.crc32(d.encode()) % 100000
 
 
-def tpe_study(d):
+FLOOR = 0.45          # Addendum 33: arm f fixes period_frac at the floor of the space
+
+
+def tpe_study(d, arm="b"):
     import optuna
     optuna.logging.set_verbosity(optuna.logging.WARNING)
     sampler = optuna.samplers.TPESampler(multivariate=True, group=True, constant_liar=True, n_startup_trials=A.N_Z,
                                          seed=seed(d),
                                          constraints_func=lambda t: t.user_attrs.get("constraints", [1.0, 1.0, 1.0]))
+    if arm == "f":
+        sampler = optuna.samplers.PartialFixedSampler(fixed_params={"period_frac": FLOOR}, base_sampler=sampler)
     os.makedirs(A.TUNE, exist_ok=True)
-    path = os.path.join(A.TUNE, "dry" if A.DRY["on"] else "", f"{d}-b.db")
+    path = os.path.join(A.TUNE, "dry" if A.DRY["on"] else "", f"{d}-{arm}.db")
     os.makedirs(os.path.dirname(path), exist_ok=True)
-    return optuna.create_study(study_name=f"{d}-b", storage=f"sqlite:///{path}", sampler=sampler, direction="minimize",
+    return optuna.create_study(study_name=f"{d}-{arm}", storage=f"sqlite:///{path}", sampler=sampler, direction="minimize",
                                load_if_exists=True)
 
 
@@ -365,15 +372,16 @@ def agent_ingest(src_dir):
     return new
 
 
-def init_b():
-    """Warm-start each design's TPE study with the start set, then ask round 1 (2 trials per design)."""
+def init_b(arm="b"):
+    """Warm-start each design's TPE study with the start set, then ask round 1 (2 trials per design). arm f (Addendum 33):
+    the same, with period_frac fixed at FLOOR for every new trial."""
     import optuna
     st = A.load(A.STATE, {"tags": {}})
-    if any(v["arm"] == "b" for v in st["tags"].values()):
-        raise SystemExit("arm b already initialised")
+    if any(v["arm"] == arm for v in st["tags"].values()):
+        raise SystemExit(f"arm {arm} already initialised")
     new = []
     for d in HELD:
-        s = tpe_study(d)
+        s = tpe_study(d, arm)
         if len(s.trials) == 0:
             for t, v, p in start_set(d):
                 s.enqueue_trial(p)
@@ -387,12 +395,15 @@ def init_b():
         for i in range(PER_ROUND):
             tr = s.ask()
             ov = A.suggest(tr, d)
-            tag = A.next_tag(st, "b", d)
-            A.add(st, tag, d, "b", ov, params=dict(tr.params), trial=tr.number, round=1, slot=i)
+            if arm == "f":
+                assert abs(tr.params["period_frac"] - FLOOR) < 1e-12, tr.params
+            tag = A.next_tag(st, arm, d)
+            A.add(st, tag, d, arm, ov, params=dict(tr.params), trial=tr.number, round=1, slot=i)
             new.append(tag)
     A.save(st)
-    A.send(st, [(new, 20)], f"Addendum 32: TPE warm-start runs, round 1 ({len(new)})")
-    print(f"[a32] arm b: {len(new)} round-1 jobs")
+    what = "Addendum 32: TPE" if arm == "b" else "Addendum 33: TPE with period_frac fixed at the floor"
+    A.send(st, [(new, 20)], f"{what}, warm-start runs, round 1 ({len(new)})")
+    print(f"[a32] arm {arm}: {len(new)} round-1 jobs")
 
 
 def tell(st):
@@ -411,8 +422,8 @@ def tell(st):
                   "area": m.get("design__instance__area__stdcell"), "hold": m.get("timing__hold__ws"),
                   "wns": m.get("timing__setup__ws"), "drc": m.get("route__drc_errors"), "drv": T.drv_count(m) if m else None,
                   "drv_ref": ref, "flow_seconds": j.get("flow_seconds")})
-        if v["arm"] == "b" and not A.DRY["on"]:
-            s = tpe_study(v["design"])
+        if v["arm"] in ("b", "f") and not A.DRY["on"]:
+            s = tpe_study(v["design"], v["arm"])
             try:
                 tid = s._storage.get_trial_id_from_study_id_trial_number(s._study_id, v["trial"])
                 s._storage.set_trial_user_attr(tid, "constraints", cons)
@@ -431,20 +442,23 @@ def step():
     told = tell(st)
     A.save(st)
     new = []
-    for d in HELD:
-        mine = [v for v in st["tags"].values() if v["design"] == d and v["arm"] == "b"]
-        if not mine or any(v["status"] in ("dispatched", "pending") for v in mine):
-            continue
-        k = max(v.get("round", 0) for v in mine) + 1
-        if k > ROUNDS:
-            continue
-        s = tpe_study(d)
-        for i in range(PER_ROUND):
-            tr = s.ask()
-            ov = A.suggest(tr, d)
-            tag = A.next_tag(st, "b", d)
-            A.add(st, tag, d, "b", ov, params=dict(tr.params), trial=tr.number, round=k, slot=i)
-            new.append(tag)
+    for arm in ("b", "f"):
+        for d in HELD:
+            mine = [v for v in st["tags"].values() if v["design"] == d and v["arm"] == arm]
+            if not mine or any(v["status"] in ("dispatched", "pending") for v in mine):
+                continue
+            k = max(v.get("round", 0) for v in mine) + 1
+            if k > ROUNDS:
+                continue
+            s = tpe_study(d, arm)
+            for i in range(PER_ROUND):
+                tr = s.ask()
+                ov = A.suggest(tr, d)
+                if arm == "f":
+                    assert abs(tr.params["period_frac"] - FLOOR) < 1e-12, tr.params
+                tag = A.next_tag(st, arm, d)
+                A.add(st, tag, d, arm, ov, params=dict(tr.params), trial=tr.number, round=k, slot=i)
+                new.append(tag)
     retry = [t for t, v in st["tags"].items() if v["status"] == "pending" and t not in new]
     A.save(st)
     A.send(st, [(retry + new, 20)], f"Addendum 32: TPE runs ({len(new)})" + (f", {len(retry)} re-sent" if retry else ""))
@@ -471,7 +485,7 @@ def closure():
     tell(st)
     new = []
     for d in HELD:
-        for arm in ("a", "b"):
+        for arm in ("a", "b", "f"):
             b, done = arm_best(st, d, arm)
             if not done or b is None:
                 continue
@@ -495,33 +509,108 @@ def closure():
             A.add(st, tag, d, "k", ov, source=b["tag"], source_arm=arm, params=b.get("params"))
             new.append(tag)
             print(f"[a32] {d} arm {arm}: best {b['tag']} T_eff {b['teff']:.3f} -> closure {tag} at {clk} ns")
-    # Amendment 32.1: once an arm's closure passes, re-run the passing run once at ceil(its T_eff) when that is lower
-    # (the start set's checked point had two re-runs); reported beside A32a-c as A32a2-c2, no criterion
+    # Amendments 32.1/32.2: once an arm's closure passes, keep re-running the last passing run at ceil(its T_eff) while
+    # that is lower, until a miss, no decrease, or 4 re-runs in the chain (closure included); start set: tags x8s
     for d in HELD:
-        for arm in ("a", "b"):
+        for arm in ("a", "b", "f"):
             b, done = arm_best(st, d, arm)
             if not done or b is None:
                 continue
-            ks = [dict(v, tag=t) for t, v in st["tags"].items() if v["arm"] == "k" and v.get("source") == b["tag"]
-                  and v["status"] not in ("dispatched", "pending")]
-            ok = [v for v in ks if v.get("feasible") and (v.get("wns") or -1) >= 0 and v.get("teff") is not None]
-            if not ok:
+            nxt = chain_next(st, chain_runs(st, b["tag"]), MAX_CHAIN)
+            if nxt is None:
                 continue
-            first = min(ok, key=lambda v: v["overrides"]["CLOCK_PERIOD"])
-            if any(v["arm"] == "c" and v.get("source") == first["tag"] for v in st["tags"].values()):
-                continue
-            clk = ceil05(first["teff"])
-            if clk >= first["overrides"]["CLOCK_PERIOD"]:
-                continue
-            ov = dict(first["overrides"])
+            last, clk = nxt
+            ov = dict(last["overrides"])
             ov["CLOCK_PERIOD"] = clk
             tag = A.next_tag(st, "c", d)
-            A.add(st, tag, d, "c", ov, source=first["tag"], source_arm=arm, params=b.get("params"))
+            A.add(st, tag, d, "c", ov, source=last["tag"], root=b["tag"], source_arm=arm, params=b.get("params"))
             new.append(tag)
-            print(f"[a32] {d} arm {arm}: closure {first['tag']} passed at {first['overrides']['CLOCK_PERIOD']} (T_eff "
-                  f"{first['teff']:.3f}) -> second re-run {tag} at {clk} ns")
+            print(f"[a32] {d} arm {arm}: {last['tag']} passed at {last['overrides']['CLOCK_PERIOD']} (T_eff {last['teff']:.3f}) "
+                  f"-> re-run {tag} at {clk} ns")
+        # the start set's checked point, continued from its passing closure run (Amendment 32.2)
+        sp = start_point(d)
+        if sp and sp.get("closed_tag"):
+            root = sp["closed_tag"]
+            rec = find_run(root)
+            if rec and rec.get("teff") is not None:
+                chain = [dict(rec, tag=root)] + [dict(v, tag=t) for t, v in st["tags"].items() if v["arm"] == "s" and v.get("root") == root]
+                nxt = chain_next(st, chain, 1 + MAX_START_EXTRA)
+                if nxt is not None:
+                    last, clk = nxt
+                    ov = dict(last["overrides"])
+                    ov["CLOCK_PERIOD"] = clk
+                    tag = A.next_tag(st, "s", d)
+                    A.add(st, tag, d, "s", ov, source=last["tag"], root=root, source_arm="start")
+                    new.append(tag)
+                    print(f"[a32] {d} start: {last['tag']} passed at {last['overrides']['CLOCK_PERIOD']} (T_eff "
+                          f"{last['teff']:.3f}) -> re-run {tag} at {clk} ns")
     A.save(st)
     A.send(st, [(new, 20)], f"Addendum 32: closure runs ({len(new)})")
+
+
+MAX_CHAIN = 4          # Amendment 32.2: re-runs per arm's best, closure included
+MAX_START_EXTRA = 2    # the start set's point already had two re-runs (Addendum 30's re-run arm + closure)
+
+
+def passed(v):
+    return v.get("feasible") and v.get("wns") is not None and v["wns"] >= 0 and v.get("teff") is not None
+
+
+def chain_runs(st, best_tag):
+    """Closure runs of an arm's best plus its Amendment 32.1/32.2 re-runs (arm c rooted at it)."""
+    ks = [dict(v, tag=t) for t, v in st["tags"].items() if v["arm"] == "k" and v.get("source") == best_tag]
+    kt = {v["tag"] for v in ks}
+    cs = [dict(v, tag=t) for t, v in st["tags"].items() if v["arm"] == "c" and (v.get("root") == best_tag or v.get("source") in kt)]
+    return ks + cs
+
+
+def chain_next(st, chain, cap):
+    """(last passing run, next clock) or None: the next fixed-point re-run if one is due."""
+    if not chain or any(v.get("status") in ("dispatched", "pending") for v in chain):
+        return None
+    ok = [v for v in chain if passed(v)]
+    if not ok or len(chain) >= cap:
+        return None
+    last = min(ok, key=lambda v: v["overrides"]["CLOCK_PERIOD"])
+    clk = ceil05(last["teff"])
+    lastclk = last["overrides"]["CLOCK_PERIOD"]
+    failed = [v["overrides"]["CLOCK_PERIOD"] for v in chain if v.get("status") not in ("dispatched", "pending") and not passed(v)]
+    if clk >= lastclk - 1e-9 or any(f >= clk - 1e-9 and f < lastclk for f in failed):
+        return None
+    return last, clk
+
+
+def find_run(tag):
+    for path in (X6_STATE, os.path.join(T.ROOT, "results", "tune_x7", "state.json"), A.STATE):
+        r = A.load(path, {"tags": {}})["tags"].get(tag)
+        if r:
+            return r
+    return None
+
+
+def start_point(d):
+    rep = A.load(os.path.join(T.ROOT, "agents", "analysis", "closure_a31_report.json"), {})
+    pts = {p.get("point"): p for p in rep.get("points") or [] if p.get("design") == d}
+    return pts.get("borrowed") or pts.get("md5")
+
+
+def fixed_point(st, d, arm):
+    """Amendment 32.2: (kind, smallest passing clock in the chain of the arm's best, best tag)."""
+    k = checked(st, d, arm)
+    if k[0] != "checked":
+        return k
+    ok = [v["overrides"]["CLOCK_PERIOD"] for v in chain_runs(st, k[2]) if passed(v) and v.get("status") not in ("dispatched", "pending")]
+    return ("checked", min([k[1]] + ok), k[2])
+
+
+def start_fixed(st, d):
+    z = start_checked(d)
+    sp = start_point(d)
+    if z[0] != "checked" or not sp or not sp.get("closed_tag"):
+        return z
+    ok = [v["overrides"]["CLOCK_PERIOD"] for v in st["tags"].values() if v["arm"] == "s" and v.get("root") == sp["closed_tag"]
+          and v.get("status") not in ("dispatched", "pending") and passed(v)]
+    return ("checked", min([z[1]] + ok))
 
 
 def checked(st, d, arm):
@@ -585,13 +674,19 @@ def report(js):
     for d in HELD:
         a, b, z = checked(st, d, "a"), checked(st, d, "b"), start_checked(d)
         a2, b2 = checked2(st, d, "a"), checked2(st, d, "b")
+        a3, b3, f3, z3 = fixed_point(st, d, "a"), fixed_point(st, d, "b"), fixed_point(st, d, "f"), start_fixed(st, d)
+        f1 = checked(st, d, "f")
         n = {arm: (sum(1 for v in st["tags"].values() if v["design"] == d and v["arm"] == arm and v["status"] not in ("dispatched", "pending")),
-                   sum(1 for v in st["tags"].values() if v["design"] == d and v["arm"] == arm)) for arm in ("a", "b", "k", "c")}
+                   sum(1 for v in st["tags"].values() if v["design"] == d and v["arm"] == arm)) for arm in ("a", "b", "f", "k", "c", "s")}
         per[d] = {"A32a": wins(a, b), "A32b": wins(a, z), "A32c": wins(b, z),
-                  "A32a2": wins(a2, b2), "A32b2": wins(a2, z), "A32c2": wins(b2, z)}
-        out[d] = {"agent": a, "tpe": b, "start": z, "agent2": a2, "tpe2": b2, "landed": n, **per[d]}
+                  "A32a2": wins(a2, b2), "A32b2": wins(a2, z), "A32c2": wins(b2, z),
+                  "A32a3": wins(a3, b3), "A32b3": wins(a3, z3), "A32c3": wins(b3, z3),
+                  "A33a": wins(f3, b3), "A33b": wins(a3, f3)}
+        out[d] = {"agent": a, "tpe": b, "start": z, "agent2": a2, "tpe2": b2, "agent3": a3, "tpe3": b3, "floor3": f3,
+                  "floor": f1, "start3": z3, "landed": n, **per[d]}
         f = lambda x: f"{x[0]} {x[1]:.2f}" if x[1] is not None else x[0]
-        print(f"== {d}: agent {f(a)} | TPE {f(b)} | start best {f(z)} | runs a {n['a'][0]}/{n['a'][1]} b {n['b'][0]}/{n['b'][1]} k {n['k'][0]}/{n['k'][1]} c {n['c'][0]}/{n['c'][1]}  {per[d]}")
+        print(f"== {d}: agent {f(a)} | TPE {f(b)} | TPE@floor {f(f1)} | start {f(z)} || fixed point: agent {f(a3)} TPE {f(b3)} "
+              f"floor {f(f3)} start {f(z3)} | runs " + " ".join(f"{k} {n[k][0]}/{n[k][1]}" for k in n))
     import datetime as _dt
     decided = _dt.datetime.now(_dt.timezone.utc) >= _dt.datetime(2026, 10, 29, 15, 30, tzinfo=_dt.timezone.utc)
     overall = {}
@@ -601,6 +696,13 @@ def report(js):
                       else f"pending ({w} of {len(HELD)} so far; 4 needed; decided at 15:30Z Oct 29)")
     overall.update({k: f"{sum(1 for d in HELD if per[d][k])} of {len(HELD)} (Amendment 32.1, reported beside, no criterion)"
                     for k in ("A32a2", "A32b2", "A32c2")})
+    overall.update({k: f"{sum(1 for d in HELD if per[d][k])} of {len(HELD)} (Amendment 32.2, fixed point, reported beside, no criterion)"
+                    for k in ("A32a3", "A32b3", "A32c3")})
+    d33 = _dt.datetime.now(_dt.timezone.utc) >= _dt.datetime(2026, 10, 29, 20, 30, tzinfo=_dt.timezone.utc)
+    for k in ("A33a", "A33b"):
+        w = sum(1 for d in HELD if per[d][k])
+        overall[k] = ((("PASS" if w >= 4 else "FAIL") + f" ({w} of {len(HELD)}; 4 needed; decided at 20:30Z Oct 29)") if d33
+                      else f"pending ({w} of {len(HELD)} so far; 4 needed; decided at 20:30Z Oct 29)")
     for k, v in overall.items():
         print(f"  {k}: {v}")
     if js:
@@ -610,6 +712,7 @@ def report(js):
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--init-b", action="store_true")
+    ap.add_argument("--init-f", action="store_true")
     ap.add_argument("--agent-prompt", action="store_true")
     ap.add_argument("--agent-ingest", default=None)
     ap.add_argument("--step", action="store_true")
@@ -623,6 +726,8 @@ def main() -> int:
     check_space()
     if a.init_b:
         init_b()
+    if a.init_f:
+        init_b("f")
     if a.step:
         step()
     if a.agent_prompt:
