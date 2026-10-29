@@ -10,6 +10,7 @@ Optional layout keys (all ignored when absent, so older content files build unch
   bullets_uniform: true    every level-0 paragraph gets the template's first-paragraph bullet
   text_box: [l, t, w, h]   reposition the body placeholder (inches)
   images: [{"path": p, "box": [l, t, w]}, ...]   extra pictures (any slide, incl. 5)
+  title_notes: str          speaker notes for slide 1;  notes_size: pt   font size for all speaker notes
   slide 5: caption_box [l, t, w, h] (word-wrapped caption), caption_size,
            table.col_widths [in, ...], table.row_height in, table.body_text_color "RRGGBB"
 """
@@ -67,6 +68,16 @@ def remove_shape(shape):
     el.getparent().remove(el)
 
 
+def set_notes(slide, text, size=None):
+    """Speaker notes; each newline starts a paragraph. size (pt) is optional: the default is the template's."""
+    tf = slide.notes_slide.notes_text_frame
+    tf.text = text
+    if size:
+        for p in tf.paragraphs:
+            for r in p.runs:
+                r.font.size = Pt(size)
+
+
 def find(slide, name_prefix=None, ph_idx=None):
     for sh in slide.shapes:
         if ph_idx is not None and sh.is_placeholder and sh.placeholder_format.idx == ph_idx:
@@ -94,8 +105,9 @@ def main() -> int:
         if c.get(key):
             sh = find(s1, ph_idx=idx)
             sh.left, sh.top, sh.width, sh.height = (Inches(v) for v in c[key])
+    nsz = c.get("notes_size")  # optional speaker-notes font size (pt) for every slide
     if c.get("title_notes"):  # optional speaker notes for the title slide
-        s1.notes_slide.notes_text_frame.text = c["title_notes"]
+        set_notes(s1, c["title_notes"], nsz)
 
     for n in range(2, 8):
         spec = c["slides"].get(str(n))
@@ -166,7 +178,7 @@ def main() -> int:
                 set_text(cap, spec["caption"] if isinstance(spec["caption"], list) else [spec["caption"]], size=spec.get("caption_size", 11))
             add_images(s, spec)
             if spec.get("notes"):
-                s.notes_slide.notes_text_frame.text = spec["notes"]
+                set_notes(s, spec["notes"], nsz)
             continue
         if body is not None:
             if spec.get("text_box"):
@@ -181,7 +193,7 @@ def main() -> int:
                      space=spec.get("para_space"))
         add_images(s, spec)
         if spec.get("notes"):
-            s.notes_slide.notes_text_frame.text = spec["notes"]
+            set_notes(s, spec["notes"], nsz)
     cp = prs.core_properties  # the template carries someone else's title/author; set ours (they show in the PDF too)
     t = c.get("title", "BeforeRoute")
     cp.title = t.get("text", "BeforeRoute") if isinstance(t, dict) else str(t)
