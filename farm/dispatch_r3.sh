@@ -17,10 +17,7 @@ while [ $(date +%s) -lt $end ]; do
     L1=$(python3 -c "import json;print(int(round(json.load(open('models/conformal/${d}_run_alpha10.json'))['lambda']*1000)))" 2>/dev/null || echo 500)
     L2=$(python3 -c "import json;print(int(round(json.load(open('models/conformal/${d}_design_alpha20.json'))['lambda']*1000)))" 2>/dev/null || echo 500)
     git add "$m" models/reg_holdout_${d}_v4.txt models/conformal 2>/dev/null
-    git commit -qm "Round 3: held-out model + conformal thresholds for $d (run a=0.10: $L1, design a=0.20: $L2)
-
-Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
-Claude-Session: https://claude.ai/code/session_016XcZ7Zp4en4cWPeoAqbHJG" && push
+    git commit -qm "Round 3: held-out model + conformal thresholds for $d (run a=0.10: $L1, design a=0.20: $L2)" && push
     ARMS="\"tgt050-70\",\"thr500-70\""
     [ "$L1" != "500" ] && ARMS="$ARMS,\"thr$(printf %03d $L1)-70\""
     [ "$L2" != "$L1" ] && [ "$L2" != "500" ] && ARMS="$ARMS,\"thr$(printf %03d $L2)-70\""

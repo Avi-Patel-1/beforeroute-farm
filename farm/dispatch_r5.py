@@ -17,7 +17,6 @@ MODEL = "models/model_all_v5.txt"
 # Round 5 runs on its own branch: the runner pool serves queued jobs of different refs side by side, so a
 # separate ref is not stuck behind the long main-branch queue. The branch only ever fast-forwards to main.
 REF = "r5"
-ATTR = "\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_016XcZ7Zp4en4cWPeoAqbHJG"
 
 
 def sh(cmd, **kw):
@@ -92,7 +91,7 @@ def main():
         if a.dry_run:
             print(f"[r5] {b}: would dispatch {ARMS}"); continue
         sh(["git", "add", lst])
-        sh(["git", "commit", "-qm", f"Round 5: signoff-guided loop pass-1 list for {b}" + ATTR])
+        sh(["git", "commit", "-qm", f"Round 5: signoff-guided loop pass-1 list for {b}"])
         for _ in range(5):
             if sh(["git", "push", "-q", "origin", "main"]).returncode == 0:
                 break

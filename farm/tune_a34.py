@@ -204,8 +204,7 @@ def variant(name, src, gate):
     if r.returncode:
         raise SystemExit(r.stderr)
     r = sh(["git", "commit", "-q", "-m", f"Addendum 34 ({DESIGN}): RTL variant {name} (gate PASS) with its prompt, reply and gate log, "
-                                         f"committed before its runs\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n"
-                                         f"Claude-Session: https://claude.ai/code/session_016XcZ7Zp4en4cWPeoAqbHJG"])
+                                         f"committed before its runs"])
     print(r.stdout + r.stderr)
     sh(["git", "pull", "-q", "--rebase", "origin", "main"])
     print(sh(["git", "push", "-q", "origin", "HEAD:main"]).stderr or f"[a34] variant {name} committed and pushed")

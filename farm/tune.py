@@ -147,8 +147,7 @@ def commit_specs(tags, msg, dry):
         print(f"[tune] dry run: would commit {len(paths)} specs")
         return True
     sh(["git", "add"] + paths, check=True)
-    r = sh(["git", "commit", "-q", "-m", msg + "\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n"
-            "Claude-Session: https://claude.ai/code/session_016XcZ7Zp4en4cWPeoAqbHJG"])
+    r = sh(["git", "commit", "-q", "-m", msg])
     if r.returncode != 0 and "nothing to commit" not in (r.stdout + r.stderr):
         print(f"[tune] commit failed: {r.stderr[-300:]}")
         return False

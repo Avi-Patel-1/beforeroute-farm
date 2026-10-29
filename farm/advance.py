@@ -147,7 +147,7 @@ def main():
     if a.dry_run or not made:
         return 0
     sh(["git", "add"] + [m[2] for m in made])
-    msg = "Advance iterations-to-closure: " + ", ".join(f"{b} {arm}" for b, arm, _ in made) + "\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_016XcZ7Zp4en4cWPeoAqbHJG"
+    msg = "Advance iterations-to-closure: " + ", ".join(f"{b} {arm}" for b, arm, _ in made)
     sh(["git", "commit", "-qm", msg])
     for i in range(5):
         if sh(["git", "push", "-q", "origin", "main"]).returncode == 0:
