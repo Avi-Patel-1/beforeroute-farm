@@ -278,22 +278,18 @@ endmodule
 
 
 def formal(work, depth, timeout):
+    """One SymbiYosys BMC run to --formal-depth under --formal-timeout; ABC bmc3 reports each frame it clears, so the
+    deepest cleared frame is the depth proven even when the run is stopped by the timeout."""
     fdir = os.path.join(work, "formal")
     os.makedirs(fdir, exist_ok=True)
     open(os.path.join(fdir, "miter.sv"), "w").write(MITER_V)
     shutil.copy(os.path.join(work, "md5_orig.v"), fdir)
     shutil.copy(os.path.join(work, "md5_cand.v"), fdir)
-    sby = tool("sby")
     env = dict(os.environ)
     env["PATH"] = os.path.dirname(tool("yosys")) + os.pathsep + env.get("PATH", "")
-    best, t0, out = 0, time.time(), ""
-    for d in [k for k in (4, 8, 12, 16, 24, 32, 48, 64, 80) if k <= depth]:
-        left = timeout - (time.time() - t0)
-        if left < 30:
-            break
-        cfg = f"""[options]
+    cfg = f"""[options]
 mode bmc
-depth {d}
+depth {depth}
 multiclock off
 
 [engines]
@@ -311,16 +307,20 @@ md5_orig.v
 md5_cand.v
 miter.sv
 """
-        open(os.path.join(fdir, f"d{d}.sby"), "w").write(cfg)
-        rc, o, e, sec = run([sby, "-f", f"d{d}.sby"], fdir, timeout=left, env=env)
-        st = "timeout" if rc is None else ("PASS" if rc == 0 else "FAIL")
-        log(f"  formal bmc depth {d}: {st} ({sec:.0f} s)")
-        if st != "PASS":
-            if st == "FAIL":
-                return f"FAIL at depth <= {d} (see {fdir}/d{d})"
-            break
-        best = d
-    return f"no mismatch up to depth {best} (cycles from reset)" if best else "not completed"
+    open(os.path.join(fdir, "bmc.sby"), "w").write(cfg)
+    rc, o, e, sec = run([tool("sby"), "-f", "bmc.sby"], fdir, timeout=timeout, env=env)
+    txt = ""
+    lf = os.path.join(fdir, "bmc", "logfile.txt")
+    if os.path.exists(lf):
+        txt = open(lf).read()
+    frames = [int(m.group(1)) for m in re.finditer(r"engine_0:\s+(\d+)\s+\+\s+:", txt)]
+    deep = max(frames) if frames else None
+    if rc is not None and rc != 0 and "FAIL" in txt:
+        return f"FAIL: counterexample within {depth} cycles of reset (see {fdir}/bmc)"
+    if rc == 0:
+        return f"PASS: outputs equal for every input sequence up to {depth} cycles after reset ({sec:.0f} s)"
+    return (f"no counterexample in frames 0..{deep} (cycles after reset); stopped after {sec:.0f} s" if deep is not None
+            else f"not completed in {sec:.0f} s")
 
 
 # ------------------------------------------------------------------------------------------------ main
@@ -374,7 +374,7 @@ def main() -> int:
             log("(b) " + (out.strip() or err.strip())[-3000:] + f"  [{sec:.0f} s]")
             verdict["digests"] = rc == 0
             if not a.no_formal and verdict["lockstep"] and verdict["digests"]:
-                log("(c) bounded formal equivalence (reported, not required):")
+                log("(c) bounded formal equivalence (reported, not required) ...")
                 verdict["formal"] = formal(work, a.formal_depth, a.formal_timeout)
                 log("(c) " + verdict["formal"])
     ok = verdict["interface"] and verdict["lockstep"] and verdict["digests"]
