@@ -698,11 +698,14 @@ def report(js):
                     for k in ("A32a2", "A32b2", "A32c2")})
     overall.update({k: f"{sum(1 for d in HELD if per[d][k])} of {len(HELD)} (Amendment 32.2, fixed point, reported beside, no criterion)"
                     for k in ("A32a3", "A32b3", "A32c3")})
-    d33 = _dt.datetime.now(_dt.timezone.utc) >= _dt.datetime(2026, 10, 29, 20, 30, tzinfo=_dt.timezone.utc)
+    # Deviation (logged 15:50Z Oct 29): registered for 20:30Z, decided at 15:50Z at the author's direction. Every arm-f
+    # run, closure and fixed-point re-run had landed by 08:45Z, so no count could change between the two times.
+    d33 = _dt.datetime.now(_dt.timezone.utc) >= _dt.datetime(2026, 10, 29, 15, 50, tzinfo=_dt.timezone.utc)
     for k in ("A33a", "A33b"):
         w = sum(1 for d in HELD if per[d][k])
-        overall[k] = ((("PASS" if w >= 4 else "FAIL") + f" ({w} of {len(HELD)}; 4 needed; decided at 20:30Z Oct 29)") if d33
-                      else f"pending ({w} of {len(HELD)} so far; 4 needed; decided at 20:30Z Oct 29)")
+        overall[k] = ((("PASS" if w >= 4 else "FAIL") + f" ({w} of {len(HELD)}; 4 needed; decided at 15:50Z Oct 29, "
+                       "registered for 20:30Z; all runs had landed)") if d33
+                      else f"pending ({w} of {len(HELD)} so far; 4 needed; decided at 15:50Z Oct 29)")
     for k, v in overall.items():
         print(f"  {k}: {v}")
     if js:
