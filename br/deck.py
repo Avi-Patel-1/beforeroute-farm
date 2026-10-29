@@ -11,6 +11,8 @@ Optional layout keys (all ignored when absent, so older content files build unch
   text_box: [l, t, w, h]   reposition the body placeholder (inches)
   images: [{"path": p, "box": [l, t, w]}, ...]   extra pictures (any slide, incl. 5)
   title_notes: str          speaker notes for slide 1;  notes_size: pt   font size for all speaker notes
+  textboxes: [{"box": [l, t, w, h], "lines": [{"text", "size", "color", "bold", "align"}]}]  free text (any slide;
+                             title_textboxes for slide 1)
   slide 5: caption_box [l, t, w, h] (word-wrapped caption), caption_size,
            table.col_widths [in, ...], table.row_height in, table.body_text_color "RRGGBB"
 """
@@ -63,6 +65,28 @@ def add_images(slide, spec):
         slide.shapes.add_picture(im["path"], Inches(l), Inches(t), width=Inches(w))
 
 
+def add_textboxes(slide, spec):
+    """Free text boxes (e.g. large callout numbers): {"box": [l, t, w, h], "lines": [{"text", "size", "color", "bold",
+    "align": "l"|"c"|"r"}, ...]}; editable in PowerPoint like any text."""
+    from pptx.enum.text import PP_ALIGN
+    for tb in spec.get("textboxes") or []:
+        l, t, w, h = tb["box"]
+        shp = slide.shapes.add_textbox(Inches(l), Inches(t), Inches(w), Inches(h))
+        tf = shp.text_frame
+        tf.word_wrap = True
+        for i, ln in enumerate(tb["lines"]):
+            p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
+            p.alignment = {"c": PP_ALIGN.CENTER, "r": PP_ALIGN.RIGHT}.get(ln.get("align", "l"), PP_ALIGN.LEFT)
+            if ln.get("space") is not None:
+                p.space_before = Pt(ln["space"])
+            r = p.add_run()
+            r.text = ln["text"]
+            r.font.size = Pt(ln.get("size", 14))
+            r.font.bold = bool(ln.get("bold"))
+            if ln.get("color"):
+                r.font.color.rgb = RGBColor.from_string(ln["color"])
+
+
 def remove_shape(shape):
     el = shape._element
     el.getparent().remove(el)
@@ -105,6 +129,7 @@ def main() -> int:
         if c.get(key):
             sh = find(s1, ph_idx=idx)
             sh.left, sh.top, sh.width, sh.height = (Inches(v) for v in c[key])
+    add_textboxes(s1, {"textboxes": c.get("title_textboxes")})  # optional callouts on the title slide
     nsz = c.get("notes_size")  # optional speaker-notes font size (pt) for every slide
     if c.get("title_notes"):  # optional speaker notes for the title slide
         set_notes(s1, c["title_notes"], nsz)
@@ -177,6 +202,7 @@ def main() -> int:
                     cap.text_frame.word_wrap = True
                 set_text(cap, spec["caption"] if isinstance(spec["caption"], list) else [spec["caption"]], size=spec.get("caption_size", 11))
             add_images(s, spec)
+            add_textboxes(s, spec)
             if spec.get("notes"):
                 set_notes(s, spec["notes"], nsz)
             continue
@@ -192,6 +218,7 @@ def main() -> int:
             set_text(body, spec.get("bullets", []), size=spec.get("font"), uniform_bullets=bool(spec.get("bullets_uniform")),
                      space=spec.get("para_space"))
         add_images(s, spec)
+        add_textboxes(s, spec)
         if spec.get("notes"):
             set_notes(s, spec["notes"], nsz)
     cp = prs.core_properties  # the template carries someone else's title/author; set ours (they show in the PDF too)
@@ -200,7 +227,7 @@ def main() -> int:
     cp.author = c.get("name", "")
     cp.last_modified_by = c.get("name", "")
     st = c.get("subtitle", "")
-    cp.subject = st.get("text", "") if isinstance(st, dict) else str(st)
+    cp.subject = (st.get("text", "") if isinstance(st, dict) else str(st))[:255]  # the core property's limit
     cp.comments = ""
     cp.keywords = ""
     prs.save(a.out)
