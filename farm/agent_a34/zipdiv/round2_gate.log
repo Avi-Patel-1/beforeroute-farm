@@ -1,0 +1,11 @@
+Addendum 34 gate (zipdiv): orig=designs/zipdiv/src/zipdiv.v cand=farm/agent_a34/zipdiv/round2_zipdiv.v work=/tmp/claude-0/-home-claude/c02d7ebd-8bb0-5505-8b03-15b8c04cac12/scratchpad/gz_r2_gate time=2026-10-29T12:13:01Z
+  orig sha256 58775b1ff9abf5d66876f65072a5d5d0199de3832d7850b6926fc35ac1bb6f61
+  cand sha256 2e10634b46c25c8e21067637480b9c11b03a4163174261a27ea4d4c3d8880546
+  gate sha256 fbcf4490223efc437fec1a997b3796419ed4b04d42a7289399ffea1795413569 (farm/rtl34/verify_zipdiv.py)
+(0) PASS: Verilog-2005, elaborates, same ports ['i_clk', 'i_denominator', 'i_numerator', 'i_reset', 'i_signed', 'i_wr', 'o_busy', 'o_err', 'o_flags', 'o_quotient', 'o_valid'] and parameters {'BW': 32, 'LGBW': 5}
+  Verilator build 6 s
+(a) LOCKSTEP PASS: 250000 cycles compared (outputs after every edge and every input change), 805 resets, 29857 requests (22993 while busy), 37084 o_valid pulses, 1512 o_err cycles (orig)
+REFERENCE PASS: 4750 clean divisions matched the C reference in both modules (1576 signed with a negative operand, 581 zero divisors, 478 with -2^31 or -1 operands)  [0 s]
+(c) bounded formal equivalence (a counterexample fails the gate; none found within the budget is reported only) ...
+(c) no counterexample in frames 0..13 (cycles after reset); stopped after 1800 s
+VERDICT: PASS {"interface": true, "lockstep": true, "formal": "no counterexample in frames 0..13 (cycles after reset); stopped after 1800 s"}  (1806 s)
