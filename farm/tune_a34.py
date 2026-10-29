@@ -198,8 +198,14 @@ def fixed_point(st, name):
     if good:
         b = min(good, key=lambda v: v["overrides"]["CLOCK_PERIOD"])
         return {"kind": "checked", "clock": b["overrides"]["CLOCK_PERIOD"], "area": b.get("area"), "done": done}
-    miss = [v["overrides"]["CLOCK_PERIOD"] for _, v in runs if v.get("status") == "done" or v.get("status") == "failed"]
-    return {"kind": "lower bound" if miss else "open", "clock": max(miss) if miss else None, "area": None, "done": done}
+    # a run that missed timing bounds the clock from below; a run the flow stopped (status "failed", no timing) does not
+    miss = [v["overrides"]["CLOCK_PERIOD"] for _, v in runs if v.get("status") == "done"]
+    stopped = [v["overrides"]["CLOCK_PERIOD"] for _, v in runs if v.get("status") == "failed"]
+    if miss:
+        return {"kind": "lower bound", "clock": max(miss), "area": None, "done": done}
+    if stopped:
+        return {"kind": "flow stopped", "clock": max(stopped), "area": None, "done": done}
+    return {"kind": "open", "clock": None, "area": None, "done": done}
 
 
 def report(js):
