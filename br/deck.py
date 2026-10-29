@@ -13,6 +13,8 @@ Optional layout keys (all ignored when absent, so older content files build unch
   title_notes: str          speaker notes for slide 1;  notes_size: pt   font size for all speaker notes
   textboxes: [{"box": [l, t, w, h], "lines": [{"text", "size", "color", "bold", "align"}]}]  free text (any slide;
                              title_textboxes for slide 1)
+  tiles: [{"box": [l, t, w, h], "lines": [...], "fill", "line"}]  native rounded tiles (big number + label)
+  remove_body: true         drop the body placeholder (figure-only slides); slide 5: remove_caption, remove_table
   slide 5: caption_box [l, t, w, h] (word-wrapped caption), caption_size,
            table.col_widths [in, ...], table.row_height in, table.body_text_color "RRGGBB"
 """
@@ -85,6 +87,41 @@ def add_textboxes(slide, spec):
             r.font.bold = bool(ln.get("bold"))
             if ln.get("color"):
                 r.font.color.rgb = RGBColor.from_string(ln["color"])
+
+
+def add_tiles(slide, spec):
+    """Native rounded tiles (e.g. a big number over a short label): {"box": [l, t, w, h], "lines": [{"text", "size",
+    "color", "bold", "align", "space"}], "fill": "RRGGBB", "line": "RRGGBB" | None, "anchor": "t"|"m"|"b"}."""
+    from pptx.enum.shapes import MSO_SHAPE
+    from pptx.enum.text import MSO_ANCHOR, PP_ALIGN
+    for tl in spec.get("tiles") or []:
+        l, t, w, h = tl["box"]
+        shp = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(l), Inches(t), Inches(w), Inches(h))
+        shp.adjustments[0] = tl.get("radius", 0.07)
+        shp.fill.solid()
+        shp.fill.fore_color.rgb = RGBColor.from_string(tl.get("fill", "141414"))
+        if tl.get("line"):
+            shp.line.color.rgb = RGBColor.from_string(tl["line"])
+            shp.line.width = Pt(tl.get("line_w", 1.0))
+        else:
+            shp.line.fill.background()
+        shp.shadow.inherit = False
+        tf = shp.text_frame
+        tf.word_wrap = True
+        tf.margin_left = tf.margin_right = Inches(tl.get("pad", 0.12))
+        tf.margin_top = tf.margin_bottom = Inches(tl.get("pad_v", 0.05))
+        tf.vertical_anchor = {"t": MSO_ANCHOR.TOP, "m": MSO_ANCHOR.MIDDLE, "b": MSO_ANCHOR.BOTTOM}[tl.get("anchor", "m")]
+        for i, ln in enumerate(tl["lines"]):
+            p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
+            p.alignment = {"c": PP_ALIGN.CENTER, "r": PP_ALIGN.RIGHT}.get(ln.get("align", tl.get("align", "l")),
+                                                                         PP_ALIGN.LEFT)
+            if ln.get("space") is not None:
+                p.space_before = Pt(ln["space"])
+            r = p.add_run()
+            r.text = ln["text"]
+            r.font.size = Pt(ln.get("size", 12))
+            r.font.bold = bool(ln.get("bold"))
+            r.font.color.rgb = RGBColor.from_string(ln.get("color", "FFFFFF"))
 
 
 def remove_shape(shape):
@@ -201,11 +238,17 @@ def main() -> int:
                     cap.left, cap.top, cap.width, cap.height = Inches(l), Inches(t), Inches(w), Inches(h)
                     cap.text_frame.word_wrap = True
                 set_text(cap, spec["caption"] if isinstance(spec["caption"], list) else [spec["caption"]], size=spec.get("caption_size", 11))
+            if cap is not None and spec.get("remove_caption"):
+                remove_shape(cap)
             add_images(s, spec)
+            add_tiles(s, spec)
             add_textboxes(s, spec)
             if spec.get("notes"):
                 set_notes(s, spec["notes"], nsz)
             continue
+        if body is not None and spec.get("remove_body"):     # a slide built only from figures and tiles
+            remove_shape(body)
+            body = None
         if body is not None:
             if spec.get("text_box"):
                 l, t, w, h = spec["text_box"]
@@ -218,6 +261,7 @@ def main() -> int:
             set_text(body, spec.get("bullets", []), size=spec.get("font"), uniform_bullets=bool(spec.get("bullets_uniform")),
                      space=spec.get("para_space"))
         add_images(s, spec)
+        add_tiles(s, spec)
         add_textboxes(s, spec)
         if spec.get("notes"):
             set_notes(s, spec["notes"], nsz)
