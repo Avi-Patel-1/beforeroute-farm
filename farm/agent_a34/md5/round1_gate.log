@@ -1,0 +1,10 @@
+Addendum 34 gate: orig=designs/md5/src/md5.v cand=farm/agent_a34/md5/round1_md5.v work=/tmp/rtl34_enazfc5j time=2026-10-29T02:43:32Z
+  orig sha256 dcf8dcd545883ee175a63bf032f1e9a26882cb021f78ed23e7968e66319b03e3
+  cand sha256 1fc48654f6924fdca9b1f513354007c48a9de5e6c3561f253e68a5705cc54c63
+(0) PASS: Verilog-2005, elaborates, same ports ['clk', 'data_i', 'data_o', 'load_i', 'newtext_i', 'ready_o', 'reset']
+  Verilator build 19 s
+(a) LOCKSTEP PASS: 250000 cycles compared, 132 resets, 6735 newtext cycles, 2357 ready pulses (orig)  [0 s]
+(b) DIGEST PASS: 1200 of 1200 messages (orig 1200, cand 1200)  [0 s]
+(c) bounded formal equivalence (reported, not required) ...
+(c) no counterexample in frames 0..6 (cycles after reset); stopped after 900 s
+VERDICT: PASS {"interface": true, "lockstep": true, "digests": true, "formal": "no counterexample in frames 0..6 (cycles after reset); stopped after 900 s"}  (927 s)

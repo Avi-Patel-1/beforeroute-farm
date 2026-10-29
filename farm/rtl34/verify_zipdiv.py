@@ -13,8 +13,10 @@
       compared, when o_valid rises, with a C reference (quotient; o_err for a zero divisor), for both modules; the run must
       complete enough divisions of each kind, or the stimulus is judged too weak.
   (c) bounded formal equivalence (SymbiYosys, ABC bmc3): outputs equal for every input sequence after a reset, up to the
-      deepest depth that finishes within --formal-timeout. Reported, not required.
-Exit status 0 only if (0) and (a) pass (the registered gate (i); the digest test (ii) is MD5's). Usage:
+      deepest depth that finishes within --formal-timeout. A counterexample fails the gate (it proves rule 2 is broken);
+      finding none within the budget is reported, not required.
+Exit status 0 only if (0) and (a) pass and (c) found no counterexample (the registered gate (i); the digest test (ii) is
+MD5's). At least 200,000 lockstep cycles. Usage:
   python3 farm/rtl34/verify_zipdiv.py --orig designs/zipdiv/src/zipdiv.v --cand <file> --out <log> [--cycles N]
                                       [--formal-depth N] [--formal-timeout S] [--no-formal] [--work DIR]
 """
@@ -56,7 +58,8 @@ def interface(vfile, work, name):
         return None, None, f"no module named zipdiv after elaboration (got {sorted(mods)})"
     ports = {k: (v["direction"], len(v["bits"])) for k, v in m["ports"].items()}
     params = {k: int(v, 2) if re.fullmatch(r"[01]+", str(v)) else v for k, v in (m.get("parameter_default_values") or {}).items()}
-    return ports, params, ""
+    inits = sorted(k for k, v in (m.get("netnames") or {}).items() if "init" in (v.get("attributes") or {}))
+    return ports, params, inits
 
 
 # ------------------------------------------------------------------------------------------------ Verilator harness
@@ -336,9 +339,13 @@ def main() -> int:
         f"time={time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())}")
     log(f"  orig sha256 {hashlib.sha256(open(a.orig, 'rb').read()).hexdigest()}")
     log(f"  cand sha256 {hashlib.sha256(open(a.cand, 'rb').read()).hexdigest()}")
+    log(f"  gate sha256 {hashlib.sha256(open(os.path.abspath(__file__), 'rb').read()).hexdigest()} (farm/rtl34/verify_zipdiv.py)")
     verdict = {"interface": False, "lockstep": False, "formal": "not run"}
-    if re.search(r"^\s*initial\b", open(a.cand).read(), re.M):
-        log("(0) FAIL: the candidate has an initial block")
+    if a.cycles < 200000:
+        raise SystemExit("the registered gate needs at least 200,000 lockstep cycles")
+    src_nc = re.sub(r"//[^\n]*|/\*.*?\*/", " ", open(a.cand).read(), flags=re.S)      # comments removed
+    if re.search(r"\binitial\b", src_nc) or re.search(r"\breg\b[^;]*?[^<>!=]=[^=]", src_nc):
+        log("(0) FAIL: the candidate has an initial block or a register declared with an initial value")
     else:
         po, pa_o, eo = interface(a.orig, work, "orig")
         pc, pa_c, ec = interface(a.cand, work, "cand")
@@ -346,6 +353,8 @@ def main() -> int:
             log("(0) harness error: the original does not elaborate:\n" + eo)
         elif pc is None:
             log("(0) FAIL: Yosys could not elaborate the candidate as Verilog-2005:\n" + ec)
+        elif ec:
+            log(f"(0) FAIL: the candidate gives these signals initial values (not allowed): {ec}")
         elif po != pc:
             log(f"(0) FAIL: ports differ: orig {po} cand {pc}")
         elif pa_o != pa_c:
@@ -367,10 +376,12 @@ def main() -> int:
             if rc == 3:
                 log("(a) harness error: the original disagrees with the C reference")
             if not a.no_formal and verdict["lockstep"]:
-                log("(c) bounded formal equivalence (reported, not required) ...")
+                log("(c) bounded formal equivalence (a counterexample fails the gate; none found within the budget is reported only) ...")
                 verdict["formal"] = formal(work, a.formal_depth, a.formal_timeout)
                 log("(c) " + verdict["formal"])
-    ok = verdict["interface"] and verdict["lockstep"]
+    # a bounded-formal counterexample proves the outputs differ for some input sequence, so it fails the gate (rule 2);
+    # a formal run that finds none within its budget is reported only, as registered
+    ok = verdict["interface"] and verdict["lockstep"] and not str(verdict["formal"]).startswith("FAIL")
     log(f"VERDICT: {'PASS' if ok else 'FAIL'} {json.dumps(verdict)}  ({time.time() - t0:.0f} s)")
     open(a.out, "w").write("\n".join(LOG) + "\n")
     return 0 if ok else 1

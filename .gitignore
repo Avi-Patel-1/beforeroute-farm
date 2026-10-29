@@ -34,3 +34,6 @@ paper/
 results-layout/
 results-backup/
 site/
+
+# Addendum 34: gate logs are part of the registered record and must be committed
+!farm/agent_a34/**/*.log

@@ -1,0 +1,43 @@
+Self-test of farm/rtl34/verify_zipdiv.py, run before any LLM rewrite of zipdiv existed (2026-10-29T10:00:22Z; supersedes the 07:26Z self-test).
+gate sha256 fbcf4490223efc437fec1a997b3796419ed4b04d42a7289399ffea1795413569 (every control below was run with this exact file; each control log prints it)
+orig sha256 58775b1ff9abf5d66876f65072a5d5d0199de3832d7850b6926fc35ac1bb6f61 (designs/zipdiv/src/zipdiv.v)
+Changes since 07:26Z, from an independent static review of the gate source: a bounded-formal counterexample now fails
+the gate (it proves the outputs differ for some input sequence; a formal run that finds none is still reported only);
+fewer than 200,000 lockstep cycles is refused; initial values are rejected in any form (an `initial` keyword anywhere
+outside comments, a `reg` declared with a value, or any signal Yosys marks with an init attribute).
+Positive control: the original with its `initial` lines removed (every register is reset synchronously). Negative
+controls: five one-line logic mutants, two initial-value forms, and a rare-case mutant that random simulation cannot
+reach but formal can; each must FAIL. Each control's sha256 is listed.
+
+== positive control noinit.v (sha256 2d3b1410907a3b3cb160bda6a6a812e263849a07d4546bf283836a787014affe), 250,000 cycles + bounded formal (240 s budget)
+  (0) PASS: Verilog-2005, elaborates, same ports ['i_clk', 'i_denominator', 'i_numerator', 'i_reset', 'i_signed', 'i_wr', 'o_busy', 'o_err', 'o_flags', 'o_quotient', 'o_valid'] and parameters {'BW': 32, 'LGBW': 5}
+  (a) LOCKSTEP PASS: 250000 cycles compared (outputs after every edge and every input change), 805 resets, 29857 requests (22993 while busy), 37084 o_valid pulses, 1512 o_err cycles (orig)
+  REFERENCE PASS: 4750 clean divisions matched the C reference in both modules (1576 signed with a negative operand, 581 zero divisors, 478 with -2^31 or -1 operands)  [0 s]
+  (c) no counterexample in frames 0..11 (cycles after reset); stopped after 240 s
+  VERDICT: PASS {"interface": true, "lockstep": true, "formal": "no counterexample in frames 0..11 (cycles after reset); stopped after 240 s"}  (270 s)
+== negative control m1_valid_on_zero (sha256 f1ff3e2f5466b4c88406b239f3249580b93ef2f5dae1fa1be8ea4718a0b8be2f): o_valid on a zero divisor: (zero_divisor)||(!r_sign) -> (!r_sign)
+  MISMATCH (after the edge) at cycle 6074
+  VERDICT: FAIL
+== negative control m2_negate (sha256 db304aa9def8d3c8182871139f0dea0846d7ad8b122518ce2d7316cb5c914e2e): signed result negation: -o_quotient -> ~o_quotient
+  MISMATCH (after the edge) at cycle 38
+  VERDICT: FAIL
+== negative control m3_carry_flag (sha256 cca2ebcc1bcf1213a27889c490422ea89acb9fa7fa01aad9a2cb11d3c9505dbf): carry flag: (diff == 0)||(r_dividend == 0) -> (diff == 0)
+  MISMATCH (after the edge) at cycle 644
+  VERDICT: FAIL
+== negative control m4_busy_wr_while_busy (sha256 4087a6b73535166d46d1e69f50845f58578ce341b6c77f008f16ba4371d0727c): r_busy set only on a request while idle (differs only when i_wr arrives during a division)
+  MISMATCH (after the edge) at cycle 4363
+  VERDICT: FAIL
+== negative control m6_rz_wr_while_busy (sha256 edd7496313f3ff7bf52ec0381f188511cf050302c3ef3a3145b3a2b43fad734a): r_z set only on a request while idle (differs only when i_wr arrives during a division)
+  MISMATCH (after the edge) at cycle 4380
+  VERDICT: FAIL
+== negative control n1_decl_init (sha256 5e420858edc3a6ff70b8cf9b06e4420b2de1ab19cca0d3857b2d2bd8f0cf2dd1): `reg r_busy = 1'b0;` (declaration initializer)
+  (0) FAIL: the candidate has an initial block or a register declared with an initial value
+  VERDICT: FAIL
+== negative control n2_inline_initial (sha256 c66f13736171ab1c8cfea941afafba6bf3a7bda1de8e57abfc86bcf674718d5f): `reg zero_divisor; initial zero_divisor = 1'b0;` on one line
+  (0) FAIL: the candidate has an initial block or a register declared with an initial value
+  VERDICT: FAIL
+== negative control n3_rare_case (sha256 3b5f623fa6c4febca53a671393ad88f79875aeb096090e6fd6ea75082cb11585): zero_divisor also set when the denominator is 32'h12345678 (random stimulus never hits it)
+  (a) LOCKSTEP PASS: 250000 cycles compared (outputs after every edge and every input change), 805 resets, 29857 requests (22993 while busy), 37084 o_valid pulses, 1512 o_err cycles (orig)
+  (c) FAIL: counterexample within 60 cycles of reset
+  VERDICT: FAIL
+== --cycles 100000 on the positive control: refused before running (the registered gate needs at least 200,000 lockstep cycles)
