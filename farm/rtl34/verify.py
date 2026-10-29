@@ -364,13 +364,14 @@ def main() -> int:
             log("Verilator build failed:\n" + msg)
         else:
             log(f"  Verilator build {sec:.0f} s")
-            rc, out, err, sec = run([os.path.join(work, "obj_dir", "sim"), "lockstep", str(a.cycles), str(a.seed)], work,
+            xr = ["+verilator+rand+reset+2", f"+verilator+seed+{a.seed}"]      # uninitialised state starts random
+            rc, out, err, sec = run([os.path.join(work, "obj_dir", "sim"), "lockstep", str(a.cycles), str(a.seed)] + xr, work,
                                     timeout=3600)
             log("(a) " + (out.strip() or err.strip())[-3000:] + f"  [{sec:.0f} s]")
             verdict["lockstep"] = rc == 0
             stim = os.path.join(work, "digests.txt")
             stimulus(stim, a.messages, a.seed)
-            rc, out, err, sec = run([os.path.join(work, "obj_dir", "sim"), "digests", stim], work, timeout=3600)
+            rc, out, err, sec = run([os.path.join(work, "obj_dir", "sim"), "digests", stim, str(a.seed)] + xr, work, timeout=3600)
             log("(b) " + (out.strip() or err.strip())[-3000:] + f"  [{sec:.0f} s]")
             verdict["digests"] = rc == 0
             if not a.no_formal and verdict["lockstep"] and verdict["digests"]:
