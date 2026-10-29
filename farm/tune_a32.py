@@ -554,10 +554,13 @@ def checked2(st, d, arm):
 def start_checked(d):
     """The start set's best, checked (Addendum 31.2's 'borrowed' point for d), from the closure report."""
     rep = A.load(os.path.join(T.ROOT, "agents", "analysis", "closure_a31_report.json"), {})
-    for p in rep.get("points") or []:
-        if p.get("design") == d and p.get("point") == "borrowed":
-            k = p.get("kind")
-            return (k, p.get("hi") if k == "checked" else p.get("lo") if k == "lower bound" else p.get("teff"))
+    pts = {p.get("point"): p for p in rep.get("points") or [] if p.get("design") == d}
+    # Amendment 31.2 lists a separate "borrowed" point only when the best borrowed setting differs from MD5's; when it is
+    # MD5's setting (same overrides), the "md5" point is that setting's closure
+    p = pts.get("borrowed") or pts.get("md5")
+    if p:
+        k = p.get("kind")
+        return (k, p.get("hi") if k == "checked" else p.get("lo") if k == "lower bound" else p.get("teff"))
     return ("open", None)
 
 
