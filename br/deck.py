@@ -94,6 +94,8 @@ def main() -> int:
         if c.get(key):
             sh = find(s1, ph_idx=idx)
             sh.left, sh.top, sh.width, sh.height = (Inches(v) for v in c[key])
+    if c.get("title_notes"):  # optional speaker notes for the title slide
+        s1.notes_slide.notes_text_frame.text = c["title_notes"]
 
     for n in range(2, 8):
         spec = c["slides"].get(str(n))
