@@ -38,3 +38,4 @@
 2026-10-30T01:56:50Z  5067cce18270421b894af810b5644aa7ab7c29fde04c9b0bd32396c9e44def75  pre-registration with Amendment 35.1 (prompt delivered as one file the instance reads; before any A35 reply or run)
 2026-10-30T02:03:03Z  51d641206ae5d937afe4c24d41f43738fd5ee75452fa49c08e0fd1c70f47804b  pre-registration with Amendment 35.2 (matched allowance for the original MD5; one chain rule for all A35 MD5 chains; before any A35m result)
 2026-10-30T02:07:06Z  db8cec04529f6545d0ce5dacafaa200eb353ca2e6fedd2752c34e203d0d8e6c1  pre-registration with Erratum 35.E1 (three time labels corrected to the date -u record; no rule changed)
+2026-10-30T03:28:36Z  fac0e68f434d913cd2c46132de6b2310fbc87c949862d143f6048e2632144630  pre-registration with Amendment 35.3 (A35r: one re-ask after an instance ended without a reply on an API output-limit error)
