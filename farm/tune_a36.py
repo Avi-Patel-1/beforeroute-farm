@@ -275,7 +275,7 @@ def report(js):
     a36q = cnt["q>b"] >= 5 and cnt["b>q"] <= 2
     print(f"A36q {'PASS' if a36q else 'FAIL'}: q beat b in {cnt['q>b']} of {n}, lost {cnt['b>q']}, "
           f"tied {n - cnt['q>b'] - cnt['b>q']}; vs g {cnt['q>g']}/{cnt['g>q']}; vs f {cnt['q>f']}/{cnt['f>q']}")
-    pend = [t for t, v in st["tags"].items() if v["status"] in ("dispatched", "pending")]
+    pend = [t for t, v in st["tags"].items() if v["status"] in ("dispatched", "pending") and v["arm"][0] == "q"]
     if js:
         json.dump({"races": rows, "counts": cnt, "A36q": a36q, "pending": pend}, open(js, "w"), indent=1, default=str)
 
