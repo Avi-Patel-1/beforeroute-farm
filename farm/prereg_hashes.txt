@@ -40,3 +40,4 @@
 2026-10-30T02:07:06Z  db8cec04529f6545d0ce5dacafaa200eb353ca2e6fedd2752c34e203d0d8e6c1  pre-registration with Erratum 35.E1 (three time labels corrected to the date -u record; no rule changed)
 2026-10-30T03:28:36Z  fac0e68f434d913cd2c46132de6b2310fbc87c949862d143f6048e2632144630  pre-registration with Amendment 35.3 (A35r: one re-ask after an instance ended without a reply on an API output-limit error)
 2026-10-30T03:31:15Z  13f6ad6389eeee2968d81799cd2f9a8f8f2b6a7f942f8b46582b639f54fdbb0e  pre-registration with Erratum 35.E2 (electrical-bar wording: worst-corner aggregates, not a nine-corner sum; rule unchanged)
+2026-10-30T09:32:01Z  6b36200270ad69950948d6bf3951c1e9fa9042be4a812b8bc397f76c488e97d7  pre-registration with Decision record 35.D (A35a FAIL, A35b FAIL, A35r FAIL on area; A35e 10/10; MD5 15.50 vs 8.85 ns; judged on what had landed at 09:30 UTC)
