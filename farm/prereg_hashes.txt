@@ -37,3 +37,4 @@
 2026-10-30T01:55:46Z  07a6ffd66e230dfaa5d15135980dfcd650e1e34a7fc930323a7e4f75d1cd8c31  pre-registration with Addendum 35 (post-freeze overnight tests: one-time vs repeated LLM guidance of TPE on 10 races, A35a/b; MD5 r2 chain continued; second RTL rewrite A35r; simulated-activity power; RTL x flow cross)
 2026-10-30T01:56:50Z  5067cce18270421b894af810b5644aa7ab7c29fde04c9b0bd32396c9e44def75  pre-registration with Amendment 35.1 (prompt delivered as one file the instance reads; before any A35 reply or run)
 2026-10-30T02:03:03Z  51d641206ae5d937afe4c24d41f43738fd5ee75452fa49c08e0fd1c70f47804b  pre-registration with Amendment 35.2 (matched allowance for the original MD5; one chain rule for all A35 MD5 chains; before any A35m result)
+2026-10-30T02:07:06Z  db8cec04529f6545d0ce5dacafaa200eb353ca2e6fedd2752c34e203d0d8e6c1  pre-registration with Erratum 35.E1 (three time labels corrected to the date -u record; no rule changed)
