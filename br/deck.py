@@ -72,6 +72,21 @@ def add_images(slide, spec):
         slide.shapes.add_picture(im["path"], Inches(l), Inches(t), width=Inches(w))
 
 
+def add_runs(p, ln, size, color):
+    """One paragraph's text: ln["text"] as a single run, or ln["runs"] = [{"text", "size", "bold", "color"}, ...] for mixed
+    styling within the line (each run falls back to the line's size, bold and colour)."""
+    for rs in ln.get("runs") or [ln]:
+        r = p.add_run()
+        r.text = rs["text"]
+        r.font.size = Pt(rs.get("size", ln.get("size", size)))
+        r.font.bold = bool(rs.get("bold", ln.get("bold")))
+        c = rs.get("color", ln.get("color", color))
+        if c:
+            r.font.color.rgb = RGBColor.from_string(c)
+        if rs.get("font") or ln.get("font") or FONT_NAME:
+            r.font.name = rs.get("font") or ln.get("font") or FONT_NAME
+
+
 def add_textboxes(slide, spec):
     """Free text boxes (e.g. large callout numbers): {"box": [l, t, w, h], "lines": [{"text", "size", "color", "bold",
     "align": "l"|"c"|"r"}, ...]}; editable in PowerPoint like any text."""
@@ -86,14 +101,7 @@ def add_textboxes(slide, spec):
             p.alignment = {"c": PP_ALIGN.CENTER, "r": PP_ALIGN.RIGHT}.get(ln.get("align", "l"), PP_ALIGN.LEFT)
             if ln.get("space") is not None:
                 p.space_before = Pt(ln["space"])
-            r = p.add_run()
-            r.text = ln["text"]
-            r.font.size = Pt(ln.get("size", 14))
-            r.font.bold = bool(ln.get("bold"))
-            if ln.get("color"):
-                r.font.color.rgb = RGBColor.from_string(ln["color"])
-            if ln.get("font") or FONT_NAME:
-                r.font.name = ln.get("font") or FONT_NAME
+            add_runs(p, ln, 14, None)
 
 
 def add_tiles(slide, spec):
@@ -124,13 +132,7 @@ def add_tiles(slide, spec):
                                                                          PP_ALIGN.LEFT)
             if ln.get("space") is not None:
                 p.space_before = Pt(ln["space"])
-            r = p.add_run()
-            r.text = ln["text"]
-            r.font.size = Pt(ln.get("size", 12))
-            r.font.bold = bool(ln.get("bold"))
-            r.font.color.rgb = RGBColor.from_string(ln.get("color", "FFFFFF"))
-            if ln.get("font") or FONT_NAME:
-                r.font.name = ln.get("font") or FONT_NAME
+            add_runs(p, ln, 12, "FFFFFF")
 
 
 def remove_shape(shape):
