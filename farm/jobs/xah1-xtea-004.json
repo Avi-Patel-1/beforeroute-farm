@@ -1,0 +1,27 @@
+{
+ "tag": "xah1-xtea-004",
+ "design": "designs/xtea",
+ "config": "config_sky130.json",
+ "overrides": {
+  "RUN_MAGIC_DRC": false,
+  "RUN_KLAYOUT_DRC": false,
+  "RUN_LVS": false,
+  "RUN_KLAYOUT_XOR": false,
+  "RUN_IRDROP_REPORT": false,
+  "RUN_LINTER": false,
+  "CLOCK_PERIOD": 11.71,
+  "SYNTH_STRATEGY": "DELAY 3",
+  "SYNTH_ABC_BUFFERING": false,
+  "SYNTH_SIZING": true,
+  "FP_CORE_UTIL": 21,
+  "PL_TARGET_DENSITY_PCT": 35,
+  "PL_TIMING_DRIVEN": true,
+  "PL_ROUTABILITY_DRIVEN": false,
+  "RUN_POST_GRT_RESIZER_TIMING": false,
+  "RUN_POST_GRT_DESIGN_REPAIR": true,
+  "PL_RESIZER_SETUP_SLACK_MARGIN": 0.211,
+  "GRT_RESIZER_SETUP_SLACK_MARGIN": 0.385,
+  "DESIGN_REPAIR_MAX_SLEW_PCT": 30,
+  "DESIGN_REPAIR_MAX_CAP_PCT": 10
+ }
+}
