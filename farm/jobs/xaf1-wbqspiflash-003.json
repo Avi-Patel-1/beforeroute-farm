@@ -1,0 +1,27 @@
+{
+ "tag": "xaf1-wbqspiflash-003",
+ "design": "designs/wbqspiflash",
+ "config": "config_sky130.json",
+ "overrides": {
+  "RUN_MAGIC_DRC": false,
+  "RUN_KLAYOUT_DRC": false,
+  "RUN_LVS": false,
+  "RUN_KLAYOUT_XOR": false,
+  "RUN_IRDROP_REPORT": false,
+  "RUN_LINTER": false,
+  "CLOCK_PERIOD": 8.49,
+  "SYNTH_STRATEGY": "DELAY 4",
+  "SYNTH_ABC_BUFFERING": true,
+  "SYNTH_SIZING": false,
+  "FP_CORE_UTIL": 42,
+  "PL_TARGET_DENSITY_PCT": 68,
+  "PL_TIMING_DRIVEN": false,
+  "PL_ROUTABILITY_DRIVEN": false,
+  "RUN_POST_GRT_RESIZER_TIMING": true,
+  "RUN_POST_GRT_DESIGN_REPAIR": false,
+  "PL_RESIZER_SETUP_SLACK_MARGIN": 0.239,
+  "GRT_RESIZER_SETUP_SLACK_MARGIN": 0.169,
+  "DESIGN_REPAIR_MAX_SLEW_PCT": 29,
+  "DESIGN_REPAIR_MAX_CAP_PCT": 14
+ }
+}
