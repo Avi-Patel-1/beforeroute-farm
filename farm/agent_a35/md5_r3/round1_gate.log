@@ -1,0 +1,20 @@
+Addendum 34 gate: orig=designs/md5/src/md5.v cand=farm/agent_a35/md5_r3/round1_md5.v work=/tmp/rtl34_7p_cr3jc time=2026-10-30T04:06:30Z
+  orig sha256 dcf8dcd545883ee175a63bf032f1e9a26882cb021f78ed23e7968e66319b03e3
+  cand sha256 2ffbc2625abbabfef6f537d6ffa0ee5110425245ae15595e0563c87284079898
+(0) PASS: Verilog-2005, elaborates, same ports ['clk', 'data_i', 'data_o', 'load_i', 'newtext_i', 'ready_o', 'reset']
+  Verilator build 20 s
+(a) MISMATCH (after edge) at cycle 67: orig ready=0 data=777777773258b3dc88888887a8ed3174  cand ready=0 data=777777779cfef3d388888887a8ed3174
+  input[-12]: reset=1 load=0 newtext=0 data=7fa5793ac6b341f93a1a4de20cbb7d18
+  input[-11]: reset=1 load=0 newtext=0 data=3fab96aef5f9b4462a311ab31c213803
+  input[-10]: reset=1 load=0 newtext=0 data=a70230368fef22b3ed1578c2a4110c5a
+  input[-9]: reset=1 load=0 newtext=0 data=1171636d2d1cfe90a2bb8902369af7ad
+  input[-8]: reset=1 load=0 newtext=0 data=c1662a9b46ae1fa45e9fb14621b81f78
+  input[-7]: reset=1 load=0 newtext=0 data=c24ae7d0414a65db509e2a4fa65d624b
+  input[-6]: reset=1 load=0 newtext=0 data=8a6357f37cb24ae64c3afb108b2ebc68
+  input[-5]: reset=1 load=0 newtext=0 data=54b56cc66bb6df786f07cb6ec55cb10c
+  input[-4]: reset=1 load=0 newtext=0 data=57656562cf4bacfb28db67754b09cee8
+  input[-3]: reset=1 load=0 newtext=0 data=3db1123fd52aaf2128a5d74fc22e706f
+  input[-2]: reset=1 load=1 newtext=0 data=47dc4077beb9d41f4248a31956ec494b
+  input[-1]: reset=1 load=0 newtext=0 data=f50a661a2f33441259070b04510d9e38  [0 s]
+(b) DIGEST MISMATCH message 0: expected d98c1dd404b2008f980980e97e42f8ec orig d98c1dd404b2008f980980e97e42f8ec cand 0c406fd11d098c97f7cb65545b70d08e  [0 s]
+VERDICT: FAIL {"interface": true, "lockstep": false, "digests": false, "formal": "not run"}  (22 s)
