@@ -42,3 +42,4 @@
 2026-10-30T03:31:15Z  13f6ad6389eeee2968d81799cd2f9a8f8f2b6a7f942f8b46582b639f54fdbb0e  pre-registration with Erratum 35.E2 (electrical-bar wording: worst-corner aggregates, not a nine-corner sum; rule unchanged)
 2026-10-30T09:32:01Z  6b36200270ad69950948d6bf3951c1e9fa9042be4a812b8bc397f76c488e97d7  pre-registration with Decision record 35.D (A35a FAIL, A35b FAIL, A35r FAIL on area; A35e 10/10; MD5 15.50 vs 8.85 ns; judged on what had landed at 09:30 UTC)
 2026-10-30T18:56:53Z  f5b69511061edc65bbf2b0072844c1e5ac39d8626287b29c2e335458e6d80656  pre-registration with Addendum 36 (A36p: simulated-activity power at the MD5 headline builds, 8.85 and 15.50 ns; descriptive)
+2026-10-30T19:03:05Z  261d8b8f2b36d6d0048a394235c71a045f55a08ee41cb6a3e0328e26117c3b7e  pre-registration with Amendment 36.1 (A36q: one-time rules at a quarter of the search budget vs plain TPE's full budget; decided 21:30 UTC)
