@@ -45,3 +45,4 @@
 2026-10-30T19:03:05Z  261d8b8f2b36d6d0048a394235c71a045f55a08ee41cb6a3e0328e26117c3b7e  pre-registration with Amendment 36.1 (A36q: one-time rules at a quarter of the search budget vs plain TPE's full budget; decided 21:30 UTC)
 2026-10-30T19:42:04Z  c4a5e0b24635b55f612f1e3b83fb32a6a4c35d2e7104b8d5c4eaa69abf2c9427  pre-registration with Amendment 36.2 (A36z: Claude's one-time rules with zero search, one run + rebuilds, vs plain TPE; control y; decided 21:30 UTC)
 2026-10-30T21:32:01Z  1d4bd403ef29773f705cec0599ed4916b4d44261280c11a2470a2f80badcc754  pre-registration with Decision record 36.D (A36q PASS 8/1/1; A36z FAIL 7/3; A36p 8.85 ns build 16/16 digests, +19% energy per hash vs the 16.05 ns original)
+2026-10-30T22:01:55Z  88ab0528767504ac0864a9d2e0130815ac103ab00ba79b65a040ef3a81d173a5  pre-registration with a note to 36.D (A36p: the 15.50 ns original re-run was lost to a full disk; the deck uses the labelled 16.05 ns reference)
