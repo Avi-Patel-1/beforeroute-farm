@@ -232,7 +232,7 @@ def ppath(d, s, k, what):
 
 def policy_prompt():
     st = load()
-    out = []
+    out, new = [], []
     for d, s, k in due_policies(st):
         p = ppath(d, s, k, "prompt.md")
         os.makedirs(os.path.dirname(p), exist_ok=True)
@@ -242,7 +242,15 @@ def policy_prompt():
         else:
             open(p, "w").write(text)
             print(f"[a35] {d} s{s} round {k}: prompt -> {p} ({len(text)} chars)")
+            new.append(os.path.relpath(p, T.ROOT))
         out.append(p)
+    if new and not A.DRY["on"]:          # bookkeeping: each prompt is committed as soon as it is written (before its reply)
+        T.sh(["git", "add"] + new, check=True)
+        if T.sh(["git", "commit", "-q", "-m", f"Addendum 35: policy prompts ({len(new)}), written before their replies"]).returncode == 0:
+            for _ in range(5):
+                T.sh(["git", "pull", "-q", "--rebase", "origin", "main"])
+                if T.sh(["git", "push", "-q", "origin", "HEAD:main"]).returncode == 0:
+                    break
     return out
 
 
