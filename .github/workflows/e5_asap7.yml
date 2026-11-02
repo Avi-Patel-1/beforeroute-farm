@@ -1,0 +1,79 @@
+name: E5 ASAP7 audit (ORFS)
+
+# Addendum 41 (E5): claimed clock vs rebuilt clock on ASAP7 with OpenROAD-flow-scripts.
+# Runs only on pushes to qa-e5-asap7 that change farm/qa/E5/dispatch.json. Each push runs the batch named there:
+# one matrix job per group, each group's runs (or rebuild chains) executed in the pinned ORFS image by
+# farm/qa/E5/run_group.py. Outputs: artifact e5-<batch>-<group> (metrics JSON, gzipped logs, reports; no layouts).
+
+on:
+  push:
+    branches: [qa-e5-asap7]
+    paths: ['farm/qa/E5/dispatch.json']
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      groups: ${{ steps.p.outputs.groups }}
+      batch: ${{ steps.p.outputs.batch }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: p
+        run: |
+          python3 - <<'PY'
+          import json, os
+          d = json.load(open("farm/qa/E5/dispatch.json"))
+          groups = [g["name"] for g in d["groups"]]
+          assert len(groups) <= 8, "at most 8 groups per batch"
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write("groups=" + json.dumps(groups) + "\n")
+              f.write("batch=" + d["batch"] + "\n")
+          print(d["batch"], groups)
+          PY
+
+  run:
+    needs: plan
+    if: needs.plan.outputs.groups != '[]'
+    name: ${{ needs.plan.outputs.batch }} ${{ matrix.group }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        group: ${{ fromJSON(needs.plan.outputs.groups) }}
+    env:
+      # openroad/orfs:26Q4-244-g202c7fccb (ORFS commit 202c7fccb), pinned by digest
+      IMAGE: openroad/orfs@sha256:cba40c1de21f048b545c005210dabe728bf501f4bb7d5ae5f03b33feb52b49fa
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Pull ORFS image
+        run: |
+          for i in 1 2 3 4 5; do
+            docker pull -q "$IMAGE" && break
+            echo "pull failed (attempt $i)"; sleep $((60 * i))
+          done
+          docker image inspect "$IMAGE" --format '{{.Id}} {{.Size}}'
+          df -h / | tail -1
+
+      - name: Run group
+        run: |
+          python3 farm/qa/E5/run_group.py --spec farm/qa/E5/dispatch.json --group "${{ matrix.group }}" \
+            --image "$IMAGE" --results results
+
+      - name: Fix ownership
+        if: always()
+        run: sudo chown -R "$(id -u):$(id -g)" results || true
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e5-${{ needs.plan.outputs.batch }}-${{ matrix.group }}
+          path: results/
+          retention-days: 30
+          if-no-files-found: warn
