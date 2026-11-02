@@ -144,13 +144,16 @@ def versions(out):
 
 # ------------------------------------------------------------------------------------------- (a) formal
 
+# proc -norom: elaborate constant case tables (the original's t ROM, the rewrite's tnf, the miter's K) as logic. With
+# Yosys's default proc_rom they become $mem ROMs, whose contents the SMT model treats as state that is only initialised
+# in the base case, so a k-induction step could pick arbitrary ROM contents (a spurious counterexample to induction).
 SBY_SCRIPT = """[script]
 read_verilog md5_orig.v
 rename md5 md5_orig
 read_verilog md5_cand.v
-proc
-{expose}
 read_verilog -formal miter.sv
+proc -norom
+{expose}
 prep -top miter
 
 [files]
@@ -166,7 +169,18 @@ CONFIGS = {
     "F3_kind_yices": ("oss", "prove", 2, "smtbmc yices", "inv"),
     "F4_pdr_plain": ("image", "prove", None, "abc pdr", "plain"),
     "B_bmc_bitwuzla": ("image", "bmc", 10, "smtbmc bitwuzla", "inv"),
+    # v2 (Nov 2, after the ROM fix): pre invariant stated with the original's own tr_var/nblock
+    "G1_kind_bitwuzla": ("image", "prove", 2, "smtbmc bitwuzla", "inv2"),
+    "G2_pdr": ("image", "prove", None, "abc pdr", "inv2"),
+    "G3_kind_yices": ("oss", "prove", 2, "smtbmc yices", "inv2"),
+    # decomposed proof: D1 lemma (one step from an unconstrained state) + D2 induction step
+    "D1_lemma_bitwuzla": ("image", "bmc", 1, "smtbmc bitwuzla", "lemma"),
+    "D1_lemma_yices": ("oss", "bmc", 1, "smtbmc yices", "lemma"),
+    "D2_step_bitwuzla": ("image", "prove", 2, "smtbmc bitwuzla", "step"),
+    "D2_step_yices": ("oss", "prove", 2, "smtbmc yices", "step"),
 }
+EXPOSE_EXTRA = {"inv": ([], []), "inv2": (["nblock", "tr_var"], []), "lemma": (["nblock", "tr_var", "aux31"], ["aux"]),
+                "step": (["nblock", "tr_var", "aux31"], ["aux"])}
 
 
 def sby_file(cfg, timeout):
@@ -175,9 +189,10 @@ def sby_file(cfg, timeout):
     if depth:
         opts.append(f"depth {depth}")
     expose = ""
-    if miter == "inv":
-        expose = ("expose " + " ".join(f"md5_orig/{w}" for w in EXPOSE_O) + "\n" +
-                  "expose " + " ".join(f"md5/{w}" for w in EXPOSE_C))
+    if miter in EXPOSE_EXTRA:
+        eo, ec = EXPOSE_EXTRA[miter]
+        expose = ("expose " + " ".join(f"md5_orig/{w}" for w in EXPOSE_O + eo) + "\n" +
+                  "expose " + " ".join(f"md5/{w}" for w in EXPOSE_C + ec))
     return "[options]\n" + "\n".join(opts) + f"\n\n[engines]\n{engine}\n\n" + SBY_SCRIPT.format(expose=expose)
 
 
