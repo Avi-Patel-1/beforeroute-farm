@@ -1,9 +1,11 @@
 {
- "batch": "smoke2",
- "registered": false,
- "purpose": "pipeline smoke test before pre-registration; does not count (Addendum 42). smoke1 stopped at CTS: kepler-formal SIGILL",
+ "batch": "sweep",
+ "registered": true,
+ "purpose": "Addendum 42 (E5b) registered sweep and rebuild chain; pre-registration SHA-256 in farm/qa/E5b/PREREG.sha256",
  "jobs": [
-  {"tag": "smoke2-t1000", "runs": [{"name": "t1000", "period_ps": 1000}]}
+  {"tag": "sweep-a", "runs": [{"name": "t0180", "period_ps": 180}, {"name": "t1000", "period_ps": 1000}]},
+  {"tag": "sweep-b", "runs": [{"name": "t0220", "period_ps": 220}, {"name": "t0450", "period_ps": 450}]},
+  {"tag": "sweep-c", "runs": [{"name": "t0270", "period_ps": 270}, {"name": "t0330", "period_ps": 330}]}
  ],
- "chain": null
+ "chain": {"grid_ps": 1, "max_rebuilds": 4}
 }
