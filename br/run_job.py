@@ -171,6 +171,32 @@ def main() -> int:
     manifest["flow_completed"] = copy_if(final_metrics, "metrics.json")
     copy_if(os.path.join(run_dir, "resolved.json"), "resolved.json")
     copy_if(os.path.join(run_dir, "error.log"), "error.log")
+    # Optional (spec "keep_reports": glob patterns relative to the run dir, Addendum 37): copy the matching report files
+    # into <results>/<tag>/reports/ (files over 256 KB gzipped, over 200 MB skipped) before the run dir is deleted.
+    # Read-only on the run dir, after the flow has ended: the flow itself is unchanged. Jobs without the key: unchanged.
+    keep = spec.get("keep_reports") or []
+    if keep:
+        import glob as _kg
+
+        kept, rep_dir = [], os.path.join(results, "reports")
+        for pat in keep:
+            for src in sorted(_kg.glob(os.path.join(run_dir, pat))):
+                if not os.path.isfile(src):
+                    continue
+                size = os.path.getsize(src)
+                if size > 200 * 1024 * 1024:
+                    kept.append({"file": os.path.relpath(src, run_dir), "bytes": size, "skipped": True})
+                    continue
+                os.makedirs(rep_dir, exist_ok=True)
+                name = os.path.relpath(src, run_dir).replace(os.sep, "__")
+                if size > 256 * 1024:
+                    name += ".gz"
+                    with open(src, "rb") as fi, gzip.open(os.path.join(rep_dir, name), "wb") as fo:
+                        shutil.copyfileobj(fi, fo)
+                else:
+                    shutil.copy2(src, os.path.join(rep_dir, name))
+                kept.append({"file": os.path.relpath(src, run_dir), "bytes": size, "kept_as": name})
+        manifest["kept_reports"] = kept
 
     status = "flow_failed"
     if manifest["flow_completed"]:
