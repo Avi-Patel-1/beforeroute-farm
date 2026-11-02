@@ -1,0 +1,127 @@
+{
+ "batch": "g02",
+ "about": "E5 audit batch g02 (Addendum 41, registered; hash commit 6460c1b): the ibex grid, run because its pilot e5s-ibex-001 finished the flow in 1302 s (rule: <= 3600 s); then, on the runner, ibex's top 3 and their chains",
+ "groups": [
+  {
+   "name": "ibex1",
+   "num_cores": 4,
+   "timeout_s": 14400,
+   "runs": [
+    {
+     "tag": "e5g-ibex-001",
+     "design": "ibex",
+     "period": 630,
+     "vars": {},
+     "setting": "S0",
+     "kind": "grid"
+    },
+    {
+     "tag": "e5g-ibex-005",
+     "design": "ibex",
+     "period": 720,
+     "vars": {
+      "CORE_UTILIZATION": 30
+     },
+     "setting": "S1",
+     "kind": "grid"
+    },
+    {
+     "tag": "e5g-ibex-009",
+     "design": "ibex",
+     "period": 1080,
+     "vars": {
+      "PLACE_DENSITY_LB_ADDON": 0.4
+     },
+     "setting": "S2",
+     "kind": "grid"
+    }
+   ]
+  },
+  {
+   "name": "ibex2",
+   "num_cores": 4,
+   "timeout_s": 14400,
+   "runs": [
+    {
+     "tag": "e5g-ibex-002",
+     "design": "ibex",
+     "period": 765,
+     "vars": {},
+     "setting": "S0",
+     "kind": "grid"
+    },
+    {
+     "tag": "e5g-ibex-006",
+     "design": "ibex",
+     "period": 1080,
+     "vars": {
+      "CORE_UTILIZATION": 30
+     },
+     "setting": "S1",
+     "kind": "grid"
+    },
+    {
+     "tag": "e5g-ibex-010",
+     "design": "ibex",
+     "period": 1305,
+     "vars": {
+      "PLACE_DENSITY_LB_ADDON": 0.4
+     },
+     "setting": "S2",
+     "kind": "grid"
+    }
+   ]
+  },
+  {
+   "name": "ibex3",
+   "num_cores": 4,
+   "timeout_s": 14400,
+   "runs": [
+    {
+     "tag": "e5g-ibex-003",
+     "design": "ibex",
+     "period": 900,
+     "vars": {},
+     "setting": "S0",
+     "kind": "grid"
+    },
+    {
+     "tag": "e5g-ibex-007",
+     "design": "ibex",
+     "period": 1305,
+     "vars": {
+      "CORE_UTILIZATION": 30
+     },
+     "setting": "S1",
+     "kind": "grid"
+    }
+   ]
+  },
+  {
+   "name": "ibex4",
+   "num_cores": 4,
+   "timeout_s": 14400,
+   "runs": [
+    {
+     "tag": "e5g-ibex-004",
+     "design": "ibex",
+     "period": 1260,
+     "vars": {},
+     "setting": "S0",
+     "kind": "grid"
+    },
+    {
+     "tag": "e5g-ibex-008",
+     "design": "ibex",
+     "period": 720,
+     "vars": {
+      "PLACE_DENSITY_LB_ADDON": 0.4
+     },
+     "setting": "S2",
+     "kind": "grid"
+    }
+   ]
+  }
+ ],
+ "auto_chains": "ibex"
+}

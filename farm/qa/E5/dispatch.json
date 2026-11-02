@@ -1,100 +1,36 @@
 {
- "batch": "g01",
- "about": "E5 audit batch g01 (Addendum 41, registered; hash commit 6460c1b): the gcd and aes grids; then, on the runner, each design's top 3 by AutoTuner's score and their rebuild chains",
+ "batch": "g02",
+ "about": "E5 audit batch g02 (Addendum 41, registered; hash commit 6460c1b): the ibex grid, run because its pilot e5s-ibex-001 finished the flow in 1302 s (rule: <= 3600 s); then, on the runner, ibex's top 3 and their chains",
  "groups": [
   {
-   "name": "gcd1",
+   "name": "ibex1",
    "num_cores": 4,
-   "timeout_s": 3600,
+   "timeout_s": 14400,
    "runs": [
     {
-     "tag": "e5g-gcd-001",
-     "design": "gcd",
-     "period": 215,
+     "tag": "e5g-ibex-001",
+     "design": "ibex",
+     "period": 630,
      "vars": {},
      "setting": "S0",
      "kind": "grid"
     },
     {
-     "tag": "e5g-gcd-002",
-     "design": "gcd",
-     "period": 265,
-     "vars": {},
-     "setting": "S0",
-     "kind": "grid"
-    },
-    {
-     "tag": "e5g-gcd-003",
-     "design": "gcd",
-     "period": 310,
-     "vars": {},
-     "setting": "S0",
-     "kind": "grid"
-    },
-    {
-     "tag": "e5g-gcd-004",
-     "design": "gcd",
-     "period": 435,
-     "vars": {},
-     "setting": "S0",
-     "kind": "grid"
-    },
-    {
-     "tag": "e5g-gcd-005",
-     "design": "gcd",
-     "period": 250,
+     "tag": "e5g-ibex-005",
+     "design": "ibex",
+     "period": 720,
      "vars": {
-      "CORE_UTILIZATION": 50
+      "CORE_UTILIZATION": 30
      },
      "setting": "S1",
      "kind": "grid"
     },
     {
-     "tag": "e5g-gcd-006",
-     "design": "gcd",
-     "period": 370,
+     "tag": "e5g-ibex-009",
+     "design": "ibex",
+     "period": 1080,
      "vars": {
-      "CORE_UTILIZATION": 50
-     },
-     "setting": "S1",
-     "kind": "grid"
-    },
-    {
-     "tag": "e5g-gcd-007",
-     "design": "gcd",
-     "period": 450,
-     "vars": {
-      "CORE_UTILIZATION": 50
-     },
-     "setting": "S1",
-     "kind": "grid"
-    },
-    {
-     "tag": "e5g-gcd-008",
-     "design": "gcd",
-     "period": 250,
-     "vars": {
-      "PLACE_DENSITY": 0.9
-     },
-     "setting": "S2",
-     "kind": "grid"
-    },
-    {
-     "tag": "e5g-gcd-009",
-     "design": "gcd",
-     "period": 370,
-     "vars": {
-      "PLACE_DENSITY": 0.9
-     },
-     "setting": "S2",
-     "kind": "grid"
-    },
-    {
-     "tag": "e5g-gcd-010",
-     "design": "gcd",
-     "period": 450,
-     "vars": {
-      "PLACE_DENSITY": 0.9
+      "PLACE_DENSITY_LB_ADDON": 0.4
      },
      "setting": "S2",
      "kind": "grid"
@@ -102,42 +38,34 @@
    ]
   },
   {
-   "name": "aes1",
+   "name": "ibex2",
    "num_cores": 4,
-   "timeout_s": 10800,
+   "timeout_s": 14400,
    "runs": [
     {
-     "tag": "e5g-aes-001",
-     "design": "aes",
-     "period": 265,
+     "tag": "e5g-ibex-002",
+     "design": "ibex",
+     "period": 765,
      "vars": {},
      "setting": "S0",
      "kind": "grid"
     },
     {
-     "tag": "e5g-aes-004",
-     "design": "aes",
-     "period": 530,
-     "vars": {},
-     "setting": "S0",
-     "kind": "grid"
-    },
-    {
-     "tag": "e5g-aes-007",
-     "design": "aes",
-     "period": 550,
+     "tag": "e5g-ibex-006",
+     "design": "ibex",
+     "period": 1080,
      "vars": {
-      "CORE_UTILIZATION": 55
+      "CORE_UTILIZATION": 30
      },
      "setting": "S1",
      "kind": "grid"
     },
     {
-     "tag": "e5g-aes-010",
-     "design": "aes",
-     "period": 550,
+     "tag": "e5g-ibex-010",
+     "design": "ibex",
+     "period": 1305,
      "vars": {
-      "PLACE_DENSITY": 0.85
+      "PLACE_DENSITY_LB_ADDON": 0.4
      },
      "setting": "S2",
      "kind": "grid"
@@ -145,69 +73,49 @@
    ]
   },
   {
-   "name": "aes2",
+   "name": "ibex3",
    "num_cores": 4,
-   "timeout_s": 10800,
+   "timeout_s": 14400,
    "runs": [
     {
-     "tag": "e5g-aes-002",
-     "design": "aes",
-     "period": 325,
+     "tag": "e5g-ibex-003",
+     "design": "ibex",
+     "period": 900,
      "vars": {},
      "setting": "S0",
      "kind": "grid"
     },
     {
-     "tag": "e5g-aes-005",
-     "design": "aes",
-     "period": 305,
+     "tag": "e5g-ibex-007",
+     "design": "ibex",
+     "period": 1305,
      "vars": {
-      "CORE_UTILIZATION": 55
+      "CORE_UTILIZATION": 30
      },
      "setting": "S1",
-     "kind": "grid"
-    },
-    {
-     "tag": "e5g-aes-008",
-     "design": "aes",
-     "period": 305,
-     "vars": {
-      "PLACE_DENSITY": 0.85
-     },
-     "setting": "S2",
      "kind": "grid"
     }
    ]
   },
   {
-   "name": "aes3",
+   "name": "ibex4",
    "num_cores": 4,
-   "timeout_s": 10800,
+   "timeout_s": 14400,
    "runs": [
     {
-     "tag": "e5g-aes-003",
-     "design": "aes",
-     "period": 380,
+     "tag": "e5g-ibex-004",
+     "design": "ibex",
+     "period": 1260,
      "vars": {},
      "setting": "S0",
      "kind": "grid"
     },
     {
-     "tag": "e5g-aes-006",
-     "design": "aes",
-     "period": 455,
+     "tag": "e5g-ibex-008",
+     "design": "ibex",
+     "period": 720,
      "vars": {
-      "CORE_UTILIZATION": 55
-     },
-     "setting": "S1",
-     "kind": "grid"
-    },
-    {
-     "tag": "e5g-aes-009",
-     "design": "aes",
-     "period": 455,
-     "vars": {
-      "PLACE_DENSITY": 0.85
+      "PLACE_DENSITY_LB_ADDON": 0.4
      },
      "setting": "S2",
      "kind": "grid"
@@ -215,5 +123,5 @@
    ]
   }
  ],
- "auto_chains": "gcd,aes"
+ "auto_chains": "ibex"
 }
