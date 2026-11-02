@@ -67,7 +67,9 @@ jobs:
 
   chain:
     needs: [plan, runs]
-    if: ${{ always() && needs.plan.outputs.chain == 'true' }}
+    # Only after every sweep job finished (a run the flow stops still finishes its job and writes metrics);
+    # 'skipped' covers a chain-only batch that reads an earlier run's sweep.
+    if: ${{ always() && needs.plan.outputs.chain == 'true' && (needs.runs.result == 'success' || needs.runs.result == 'skipped') }}
     runs-on: ubuntu-latest
     timeout-minutes: 330
     steps:
