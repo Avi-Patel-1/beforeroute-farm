@@ -1,10 +1,11 @@
 name: BeforeRoute analysis
 
-# Rebuild the per-net dataset from farm.yml artifacts on a runner, then run an analysis
-# script as a matrix (one job per entry of args_list):
-#   python3 <script> --data dataset.parquet --out out/ <args>
-# Outputs: artifact "dataset" (dataset.parquet + manifest) and analysis-<name>-<index> (out/).
-# Collect locally with: python3 farm/analysis_collect.py --run-id <id> --out results/analysis/<name>/
+# Branch qa-e3-md5 (Addendum 40 / E3) version: no dataset build. Each matrix entry runs
+#   python3 <script> <args> --out out/
+# on the runner, with the farm's pinned LibreLane image pulled (the script runs yosys/sby/iverilog in it via docker),
+# the farm's PDK cache restored when the args mention "gate", Verilator from apt when they mention "lockstep", and the
+# OSS CAD Suite (latest release; tag and tarball sha256 logged) unpacked at /tmp/oss-cad-suite when they contain "--oss".
+# Output: artifact analysis-<name>-<index> (out/).
 
 on:
   workflow_dispatch:
@@ -25,10 +26,10 @@ on:
       max_parallel:
         description: 'Max concurrent analysis jobs'
         required: false
-        default: '8'
+        default: '4'
         type: string
       dataset_run_id:
-        description: 'Optional: reuse the dataset artifact of this analyze.yml run (waits for its build job)'
+        description: 'Unused on this branch'
         required: false
         default: ''
         type: string
@@ -37,134 +38,78 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    timeout-minutes: 150
-    permissions:
-      actions: read
-      contents: read
-    env:
-      GH_TOKEN: ${{ github.token }}
-      REPO: ${{ github.repository }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.13'
-          cache: pip
-          cache-dependency-path: .github/workflows/analyze.yml
-
-      - name: Install Python deps
-        run: pip install pandas==3.0.5 pyarrow==26.0.0 lightgbm==4.7.0 scikit-learn==1.9.1 matplotlib==3.11.2
-
-      - name: Reuse dataset of another analyze run
-        id: reuse
-        if: inputs.dataset_run_id != ''
-        env:
-          SRC_RUN: ${{ inputs.dataset_run_id }}
-        run: |
-          if python3 farm/analysis_fetch.py wait --repo "$REPO" --run-id "$SRC_RUN" --dest dataset --timeout-min 120; then
-            echo "ok=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "ok=false" >> "$GITHUB_OUTPUT"
-            rm -rf dataset
-          fi
-
-      - name: List farm data artifacts
-        id: manifest
-        if: steps.reuse.outputs.ok != 'true'
-        run: |
-          mkdir -p dataset
-          python3 farm/analysis_fetch.py list --repo "$REPO" --out dataset/manifest.json --github-output
-
-      - name: Restore dataset cache
-        id: cache
-        if: steps.reuse.outputs.ok != 'true'
-        uses: actions/cache@v4
-        with:
-          path: dataset
-          key: br-dataset-v1-${{ steps.manifest.outputs.key }}
-
-      - name: Download artifacts and build dataset (cache miss)
-        if: steps.reuse.outputs.ok != 'true' && steps.cache.outputs.cache-hit != 'true'
-        run: |
-          python3 farm/analysis_fetch.py download --manifest dataset/manifest.json --dest data/results --workers 8
-          mv data/fetched.json dataset/fetched.json
-          df -h . | tail -1
-          python3 br/build_dataset.py --results data/results --out dataset/dataset.parquet > dataset/build_dataset.log 2>&1 || { tail -50 dataset/build_dataset.log; exit 1; }
-          tail -3 dataset/build_dataset.log
-          rm -rf data
-
-      - name: Dataset summary
-        run: |
-          ls -la dataset
-          python3 -c "
-          import pandas as pd
-          d = pd.read_parquet('dataset/dataset.parquet', columns=['run', 'design', 'sigtype', 'y'])
-          print(f'rows={len(d)} runs={d.run.nunique()} positives={int(d.y.sum())}')
-          print(d.groupby('design').agg(runs=('run', 'nunique'), rows=('y', 'size'), pos=('y', 'sum')).to_string())
-          "
-
-      - name: Upload dataset
-        uses: actions/upload-artifact@v4
-        with:
-          name: dataset
-          path: dataset/
-          retention-days: 14
-          compression-level: 0
-
   run:
     name: ${{ inputs.name }} [${{ strategy.job-index }}] ${{ matrix.args }}
-    needs: build
     runs-on: ubuntu-latest
-    timeout-minutes: 240
+    timeout-minutes: 355
     strategy:
       fail-fast: false
       max-parallel: ${{ fromJSON(inputs.max_parallel) }}
       matrix:
         args: ${{ fromJSON(inputs.args_list) }}
+    env:
+      IMAGE: ghcr.io/librelane/librelane@sha256:4bc9042ba177f73f275b5b39e7d372a07d3f4043f548a0ba7f640097b7205051
+      PDK_VERSION: 8afc8346a57fe1ab7934ba5a6056ea8b43078e71
+      GH_TOKEN: ${{ github.token }}
+      OSS_CAD: /tmp/oss-cad-suite
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Runner info
+        run: |
+          nproc; free -g; df -h / /mnt | cat; python3 --version
+
+      - name: Restore PDK cache
+        id: pdk-cache
+        if: contains(matrix.args, 'gate')
+        uses: actions/cache/restore@v4
         with:
-          python-version: '3.13'
-          cache: pip
-          cache-dependency-path: .github/workflows/analyze.yml
+          path: pdk
+          key: sky130-${{ env.PDK_VERSION }}-v1
 
-      - name: Install Python deps
-        run: pip install pandas==3.0.5 pyarrow==26.0.0 lightgbm==4.7.0 scikit-learn==1.9.1 matplotlib==3.11.2
+      - name: Pull toolchain image
+        if: contains(matrix.args, 'formal') || contains(matrix.args, 'controls') || contains(matrix.args, 'gate')
+        run: docker pull "$IMAGE"
 
-      - uses: actions/download-artifact@v4
-        with:
-          name: dataset
-          path: .
+      - name: Fetch PDK (cache miss only)
+        if: contains(matrix.args, 'gate') && steps.pdk-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p pdk
+          docker run --rm -v "$PWD:/work" -w /work -e PDK_ROOT=/work/pdk "$IMAGE" \
+            ciel enable --pdk-family sky130 "$PDK_VERSION"
 
-      - name: Run analysis
+      - name: Verilator (apt)
+        if: contains(matrix.args, 'lockstep')
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq verilator
+          verilator --version
+
+      - name: OSS CAD Suite (latest release)
+        if: contains(matrix.args, '--oss')
+        run: |
+          tag=$(gh release view -R YosysHQ/oss-cad-suite-build --json tagName -q .tagName)
+          echo "OSS_TAG=$tag" >> "$GITHUB_ENV"
+          mkdir -p /tmp/ossdl
+          gh release download "$tag" -R YosysHQ/oss-cad-suite-build --pattern 'oss-cad-suite-linux-x64-*.tgz' -D /tmp/ossdl
+          sha256sum /tmp/ossdl/*.tgz
+          tar -xzf /tmp/ossdl/*.tgz -C /tmp
+          rm -rf /tmp/ossdl
+          "$OSS_CAD/bin/yosys" -V; "$OSS_CAD/bin/yices-smt2" --version | head -1 || true
+
+      - name: Run
         env:
           SCRIPT: ${{ inputs.script }}
           ARGS: ${{ matrix.args }}
-          JOB_INDEX: ${{ strategy.job-index }}
         run: |
           mkdir -p out
-          python3 - <<'PY'
-          import json, os, shlex, subprocess, sys, time
-          args = shlex.split(os.environ.get("ARGS", ""))
-          cmd = [sys.executable, os.environ["SCRIPT"], "--data", "dataset.parquet", "--out", "out/"] + args
-          print("+ " + " ".join(shlex.quote(c) for c in cmd), flush=True)
-          meta = {"script": os.environ["SCRIPT"], "args": os.environ.get("ARGS", ""), "index": int(os.environ["JOB_INDEX"]),
-                  "run_id": os.environ["GITHUB_RUN_ID"], "sha": os.environ["GITHUB_SHA"], "nproc": os.cpu_count()}
-          try:
-              meta["dataset_key"] = json.load(open("manifest.json")).get("key")
-          except Exception:
-              pass
-          t0 = time.time()
-          rc = subprocess.call(cmd)
-          meta.update(exit=rc, seconds=round(time.time() - t0, 1))
-          json.dump(meta, open("out/_meta.json", "w"), indent=1)
-          sys.exit(rc)
-          PY
+          echo "+ python3 $SCRIPT $ARGS --out out"
+          python3 "$SCRIPT" $ARGS --out out
+          echo "exit $?"
+
+      - name: Fix ownership
+        if: always()
+        run: sudo chown -R "$(id -u):$(id -g)" out || true
 
       - name: Upload output
         if: always()
