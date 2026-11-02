@@ -1,9 +1,9 @@
 {
- "batch": "smoke1",
+ "batch": "smoke2",
  "registered": false,
- "purpose": "pipeline smoke test before pre-registration; does not count (Addendum 42)",
+ "purpose": "pipeline smoke test before pre-registration; does not count (Addendum 42). smoke1 stopped at CTS: kepler-formal SIGILL",
  "jobs": [
-  {"tag": "smoke1-t1000", "runs": [{"name": "t1000", "period_ps": 1000}]}
+  {"tag": "smoke2-t1000", "runs": [{"name": "t1000", "period_ps": 1000}]}
  ],
  "chain": null
 }

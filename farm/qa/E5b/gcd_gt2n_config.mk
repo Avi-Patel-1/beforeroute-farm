@@ -11,6 +11,9 @@
 #   - SDC: the kit's constraint.sdc with the design name and clock period substituted, one file per run;
 #   - the kit's PDN stub and pre-final-report hook are referenced in place in the downloaded kit;
 #   - NUM_CORES comes from the runner; the post-GDS BSPDN/DRC/LVS variables are dropped (those steps are not run).
+#   - added: a reporting-only POST_FINAL_REPORT_TCL hook (farm/qa/E5b/post_final_report.tcl, worst slack per path class).
+#   - LEC_CHECK=0: the image's formal-equivalence checker (kepler-formal, a check that changes nothing) dies
+#     with SIGILL (illegal instruction) on GitHub-hosted runner CPUs; pipeline smoke run 41487719368.
 # Every other setting (libraries, router-view tech LEF, tap cell, utilization, density, routing layers, RC and
 # OpenRCX decks) is the kit's value, unchanged.
 
@@ -95,4 +98,7 @@ export PDNSIM_DONT_REQUIRE_TERMINALS ?= 0
 export PDNSIM_SOURCE_TYPE ?= STRAPS
 
 export PRE_FINAL_REPORT_TCL ?= $(GT2N_EXAMPLE_RUN)/pre_final_report_clear_psm.tcl
+export E5B_DIR ?= /work/farm/qa/E5b
+export POST_FINAL_REPORT_TCL ?= $(E5B_DIR)/post_final_report.tcl
 export SAVE_FINAL_IMAGES ?= 0
+export LEC_CHECK = 0

@@ -28,6 +28,6 @@ done
 [ "${ok}" = 1 ] || { echo "could not pull ${IMAGE}" >&2; exit 1; }
 docker image inspect "${IMAGE}" --format '{{json .RepoDigests}} {{.Id}}' | tee kit/provenance/image.txt
 docker run --rm "${IMAGE}" bash -c \
-  'cd /OpenROAD-flow-scripts/flow && . ../env.sh >/dev/null 2>&1; echo "openroad $(openroad -version 2>&1 | tail -1)"; yosys -V; sha256sum /OpenROAD-flow-scripts/flow/designs/src/gcd/gcd.v' \
+  'cd /OpenROAD-flow-scripts/flow && . ../env.sh >/dev/null 2>&1; echo "openroad $(openroad -version 2>&1 | tail -1)"; yosys -V; sha256sum /OpenROAD-flow-scripts/flow/designs/src/gcd/gcd.v; echo "orfs_scripts_sha256 $(cat /OpenROAD-flow-scripts/flow/scripts/*.tcl | sha256sum | cut -c1-64)"; grep -A6 "^LEC_CHECK:" /OpenROAD-flow-scripts/flow/scripts/variables.yaml | grep default' \
   | tee kit/provenance/tools.txt
-{ nproc; free -g | head -2; df -h . | tail -1; } | tee kit/provenance/runner.txt
+{ nproc; free -g | head -2; df -h . | tail -1; lscpu | grep -E 'Model name|^Flags' | cut -c1-2000; } | tee kit/provenance/runner.txt

@@ -179,8 +179,22 @@ def parse_run(rd, period_ps):
     # the worst setup path (start/end points), for the record
     mx = fin.split("report_checks -path_delay max", 1)
     if len(mx) == 2:
-        m["worst_path_start"] = (re.search(r"Startpoint:\s*(\S+)", mx[1]) or [None, None])[1]
-        m["worst_path_end"] = (re.search(r"Endpoint:\s*(\S+)", mx[1]) or [None, None])[1]
+        sp = re.search(r"Startpoint:\s*(\S+)\s*\(([^)]*)\)", mx[1])
+        ep = re.search(r"Endpoint:\s*(\S+)\s*\(([^)]*)\)", mx[1])
+        if sp and ep:
+            m["worst_path_start"], m["worst_path_end"] = sp.group(1), ep.group(1)
+            src = "in" if "input port" in sp.group(2) else "reg"
+            dst = "out" if "output port" in ep.group(2) else "reg"
+            m["worst_path_kind"] = src + "2" + dst
+    pc = {}
+    for line in _read(rep / "6_e5b_path_classes.txt").splitlines():
+        parts = line.split()
+        if len(parts) == 2:
+            try:
+                pc[parts[0]] = float(parts[1])
+            except ValueError:
+                pc[parts[0]] = None
+    m["ws_by_path_class_ps"] = pc
 
     fj = _load_json(logs / "6_report.json")
     m["ws_hold_ps"] = fj.get("finish__timing__hold__ws")
