@@ -183,6 +183,8 @@ def cmd_grid(a):
     for d in grid["designs"]:
         if a.designs and d["design"] not in a.designs.split(","):
             continue
+        if d.get("conditional") and not a.designs:
+            continue   # ibex: only when named explicitly (its registered runtime rule was met)
         rs = [r for r in runs if r["design"] == d["design"]]
         n = int(d["jobs"])
         for j in range(n):
@@ -204,20 +206,37 @@ def top3(R, design, k=3):
 def cmd_chains(a):
     grid = json.load(open(GRID_PATH))
     R = all_runs(a.results, "e5g-")
+    want = {r["tag"]: r for r in grid_runs(grid)}
     groups = []
     for d in grid["designs"]:
         if a.designs and d["design"] not in a.designs.split(","):
             continue
+        tags = [t for t, r in want.items() if r["design"] == d["design"]]
+        missing = [t for t in tags if t not in R or R[t]["status"] in ("missing", "no_run_json")]
+        if missing and a.require_complete:
+            print(f"{d['design']}: grid incomplete ({len(missing)} of {len(tags)} runs missing: {missing}); no chains")
+            continue
+        chs = []
         for i, w in enumerate(top3(R, d["design"]), 1):
             vars_ = (json.load(open(os.path.join(a.results, w["tag"], "job.json"))) or {}).get("vars") or {}
             ch = {"chain_id": f"e5k-{d['design']}-{i}", "design": d["design"], "setting": w["setting"], "vars": vars_,
                   "tag_prefix": f"e5k-{d['design']}-{i}-",
                   "winner": {"tag": w["tag"], "period": w["period"], "claim": w["claim"], "pass": w["pass"]}}
-            groups.append({"name": f"k{d['design']}{i}", "num_cores": d["num_cores"], "timeout_s": d["timeout_s"],
-                           "chains": [ch]})
+            chs.append(ch)
             print(f"{ch['chain_id']}: winner {w['tag']} {w['setting']} T0={w['period']} claim={w['claim']:.2f} "
                   f"pass={w['pass']} -> first rebuild at {e5lib.ceil_grid(w['claim'])} ps")
-    write_dispatch(a.batch, groups, "E5 registered rebuild chains (Addendum 41): top 3 settings per design")
+        n = int(d.get("chain_jobs", len(chs)))      # short flows (gcd) share one job; each chain stays sequential
+        for j in range(n):
+            part = chs[j::n]
+            if part:
+                groups.append({"name": f"k{d['design']}{j + 1}", "num_cores": d["num_cores"],
+                               "timeout_s": d["timeout_s"], "chains": part})
+    about = "E5 registered rebuild chains (Addendum 41): top 3 settings per design"
+    if a.spec_out:   # on the runner: the chain spec of this workflow run, not a new dispatch
+        json.dump({"batch": a.batch, "about": about, "groups": groups}, open(a.spec_out, "w"), indent=1)
+        print(f"wrote {a.spec_out} ({len(groups)} groups)")
+        return
+    write_dispatch(a.batch, groups, about)
 
 
 # ---------------------------------------------------------------- analysis (fixed-point method of agents/analysis/fixedpoint)
@@ -391,6 +410,8 @@ def main():
         p.add_argument("--batch", default=None)
         p.add_argument("--designs", default=None, help="comma list (grid/chains)")
         p.add_argument("--out", default=os.path.join(DEFAULT_RESULTS, "e5_analysis.json"))
+        p.add_argument("--spec-out", default=None, help="chains: write the chain spec here (runner use)")
+        p.add_argument("--require-complete", action="store_true", help="chains: skip a design whose grid is incomplete")
     a = ap.parse_args()
     {"collect": cmd_collect, "table": cmd_table, "status": cmd_status, "grid": cmd_grid, "chains": cmd_chains,
      "analyze": cmd_analyze}[a.cmd](a)

@@ -1,0 +1,23 @@
+{
+ "about": "E5 (Addendum 41) registered grid. Per design: S0 = the ORFS config as shipped; S1 = sparser floorplan (CORE_UTILIZATION lowered); S2 = denser placement (target density raised above what ORFS uses by default). Targets = multipliers of the design's ORFS default period P0, rounded to the 5 ps grid: S0 {0.70, 0.85, 1.00, 1.40}, S1 and S2 {0.80, 1.20, 1.45}. Tags e5g-<design>-<nnn> in listed order. ibex runs only if its pilot e5s-ibex-001 completed the flow within 60 min.",
+ "designs": [
+  {"design": "gcd", "P0": 310, "num_cores": 4, "timeout_s": 3600, "jobs": 1, "chain_jobs": 1,
+   "settings": [
+    {"setting": "S0", "vars": {}, "targets": [215, 265, 310, 435]},
+    {"setting": "S1", "vars": {"CORE_UTILIZATION": 50}, "targets": [250, 370, 450]},
+    {"setting": "S2", "vars": {"PLACE_DENSITY": 0.90}, "targets": [250, 370, 450]}
+   ]},
+  {"design": "aes", "P0": 380, "num_cores": 4, "timeout_s": 10800, "jobs": 3, "chain_jobs": 3,
+   "settings": [
+    {"setting": "S0", "vars": {}, "targets": [265, 325, 380, 530]},
+    {"setting": "S1", "vars": {"CORE_UTILIZATION": 55}, "targets": [305, 455, 550]},
+    {"setting": "S2", "vars": {"PLACE_DENSITY": 0.85}, "targets": [305, 455, 550]}
+   ]},
+  {"design": "ibex", "P0": 900, "num_cores": 4, "timeout_s": 14400, "jobs": 4, "chain_jobs": 3, "conditional": true,
+   "settings": [
+    {"setting": "S0", "vars": {}, "targets": [630, 765, 900, 1260]},
+    {"setting": "S1", "vars": {"CORE_UTILIZATION": 30}, "targets": [720, 1080, 1305]},
+    {"setting": "S2", "vars": {"PLACE_DENSITY_LB_ADDON": 0.40}, "targets": [720, 1080, 1305]}
+   ]}
+ ]
+}

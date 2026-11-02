@@ -33,6 +33,22 @@ def _load(p, default=None):
         return default
 
 
+def r2r_slack_from_report(d: str):
+    """Fallback when the hook gave no number: the first slack in the finish report's 'reg to reg' max section
+    (2 decimals). This is the sky130 record's register-to-register worst slack, from the same STA."""
+    import re
+    for p in (os.path.join(d, "reports", "6_finish.rpt"), os.path.join(d, "reports", "6_finish.rpt.gz")):
+        if not os.path.exists(p):
+            continue
+        txt = gzip.open(p, "rt").read() if p.endswith(".gz") else open(p).read()
+        i = txt.find("finish report_checks -path_delay max reg to reg")
+        if i < 0:
+            return None
+        m = re.search(r"(-?\d+(?:\.\d+)?)\s+slack \((?:MET|VIOLATED)\)", txt[i:])
+        return float(m.group(1)) if m else None
+    return None
+
+
 def load_run(d: str) -> dict:
     """Summarize results/<tag>/ (as written by orfs_run.sh and run_group.py)."""
     run = _load(os.path.join(d, "run.json"), {}) or {}
@@ -43,6 +59,10 @@ def load_run(d: str) -> dict:
         if isinstance(x, dict):
             m.update(x)
     hook = _load(os.path.join(d, "reports", "e5_hook.json"), {}) or {}
+    if hook.get("ws_r2r") is None:
+        v = r2r_slack_from_report(d)
+        if v is not None:
+            hook = dict(hook, ws_r2r=v, r2r_source="6_finish.rpt")
     tag = run.get("tag") or job.get("tag") or os.path.basename(d.rstrip("/"))
     period = run.get("period", job.get("period"))
     ws = m.get("finish__timing__setup__ws")
@@ -75,15 +95,9 @@ def load_run(d: str) -> dict:
         r["pass_hold"] = hs >= 0
         r["pass_drc"] = int(drc) == 0
         r["pass"] = r["pass_setup"] and r["pass_hold"] and r["pass_drc"]
-        # port-limited: the worst setup path starts at an input or ends at an output and is worse than reg-to-reg
-        port = None
-        if r["ws_r2r"] is not None or r["ws_in"] is not None or r["ws_out"] is not None:
-            port_ws = min([v for v in (r["ws_in"], r["ws_out"]) if v is not None], default=None)
-            if port_ws is not None:
-                port = r["ws_r2r"] is None or port_ws < r["ws_r2r"] - 1e-4
-            else:
-                port = False
-        r["port"] = port
+        # port-limited, as in the sky130 record: worst setup slack below the register-to-register worst slack
+        # (tolerance 0.006 ps: the report fallback carries 2 decimals)
+        r["port"] = None if r["ws_r2r"] is None else bool(ws < r["ws_r2r"] - 0.006)
         r["t_r2r"] = (float(period) - r["ws_r2r"]) if r["ws_r2r"] is not None else None
     else:
         r["pass_setup"] = r["pass_hold"] = r["pass_drc"] = r["pass"] = None
