@@ -1,0 +1,4 @@
+gt2n_repo=https://github.com/azadnaeemi/GT2N
+gt2n_commit=5bc689fd70e4f2d7abf3952e17f308072bc2b0f6
+kit_tarball=Openroad_example/gt2n_openroad_runscripts_no_work_20260601.tar.gz
+kit_sha256=54ddd6459df24ce127bcd0cc9a83bef30957d1a16144a4a253f5dabb37b925d1

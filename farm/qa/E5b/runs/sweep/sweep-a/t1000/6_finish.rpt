@@ -1,0 +1,393 @@
+
+==========================================================================
+finish report_tns
+--------------------------------------------------------------------------
+tns max 0.00
+
+==========================================================================
+finish report_wns
+--------------------------------------------------------------------------
+wns max 0.00
+
+==========================================================================
+finish report_worst_slack
+--------------------------------------------------------------------------
+worst slack max 537.91
+
+==========================================================================
+finish report_clock_min_period
+--------------------------------------------------------------------------
+core_clock period_min = 462.09 fmax = 2164.07
+
+==========================================================================
+finish report_clock_skew
+--------------------------------------------------------------------------
+Clock core_clock
+  55.43 source latency dpath.a_reg.out[10]$_DFFE_PP_/CLK ^
+ -51.71 target latency dpath.a_reg.out[4]$_DFFE_PP_/CLK ^
+   0.00 CRPR
+--------------
+   3.72 setup skew
+
+
+==========================================================================
+finish report_checks -path_delay min
+--------------------------------------------------------------------------
+Startpoint: ctrl.state.out[1]$_DFF_P_
+            (rising edge-triggered flip-flop clocked by core_clock)
+Endpoint: ctrl.state.out[1]$_DFF_P_
+          (rising edge-triggered flip-flop clocked by core_clock)
+Path Group: core_clock
+Path Type: min
+
+Fanout     Cap    Slew   Delay    Time   Description
+-----------------------------------------------------------------------------
+                          0.00    0.00   clock core_clock (rise edge)
+                          0.00    0.00   clock source latency
+     1    0.00    0.00    0.00    0.00 ^ clk (in)
+                                         clk (net)
+                  0.24    0.20    0.20 ^ clkbuf_0_clk/A (gt2_6t_buf_x1_w31_svt)
+     4    0.00    8.36   13.21   13.40 ^ clkbuf_0_clk/Y (gt2_6t_buf_x1_w31_svt)
+                                         clknet_0_clk (net)
+                  8.38    0.46   13.86 ^ clkbuf_2_0__f_clk/A (gt2_6t_buf_x1_w31_svt)
+    10    0.01   27.19   37.20   51.06 ^ clkbuf_2_0__f_clk/Y (gt2_6t_buf_x1_w31_svt)
+                                         clknet_2_0__leaf_clk (net)
+                 27.45    2.92   53.98 ^ ctrl.state.out[1]$_DFF_P_/CLK (gt2_6t_dffasync_x1_w31_lvt)
+     3    0.00    7.62   28.71   82.69 ^ ctrl.state.out[1]$_DFF_P_/Q (gt2_6t_dffasync_x1_w31_lvt)
+                                         ctrl.state.out[1] (net)
+                  7.62    0.21   82.89 ^ _635_/A1 (gt2_6t_aoi22_x1_w31_svt)
+     1    0.00    3.35    9.66   92.55 v _635_/Y (gt2_6t_aoi22_x1_w31_svt)
+                                         _204_ (net)
+                  3.35    0.05   92.60 v _636_/B (gt2_6t_nor2_x1_w31_lvt)
+     1    0.00    2.11    4.56   97.16 ^ _636_/Y (gt2_6t_nor2_x1_w31_lvt)
+                                         _001_ (net)
+                  2.11    0.08   97.24 ^ ctrl.state.out[1]$_DFF_P_/D (gt2_6t_dffasync_x1_w31_lvt)
+                                 97.24   data arrival time
+
+                          0.00    0.00   clock core_clock (rise edge)
+                          0.00    0.00   clock source latency
+     1    0.00    0.00    0.00    0.00 ^ clk (in)
+                                         clk (net)
+                  0.24    0.20    0.20 ^ clkbuf_0_clk/A (gt2_6t_buf_x1_w31_svt)
+     4    0.00    8.36   13.21   13.40 ^ clkbuf_0_clk/Y (gt2_6t_buf_x1_w31_svt)
+                                         clknet_0_clk (net)
+                  8.38    0.46   13.86 ^ clkbuf_2_0__f_clk/A (gt2_6t_buf_x1_w31_svt)
+    10    0.01   27.19   37.20   51.06 ^ clkbuf_2_0__f_clk/Y (gt2_6t_buf_x1_w31_svt)
+                                         clknet_2_0__leaf_clk (net)
+                 27.45    2.92   53.98 ^ ctrl.state.out[1]$_DFF_P_/CLK (gt2_6t_dffasync_x1_w31_lvt)
+                          0.00   53.98   clock reconvergence pessimism
+                          6.08   60.06   library hold time
+                                 60.06   data required time
+-----------------------------------------------------------------------------
+                                 60.06   data required time
+                                -97.24   data arrival time
+-----------------------------------------------------------------------------
+                                 37.18   slack (MET)
+
+
+
+==========================================================================
+finish report_checks -path_delay max
+--------------------------------------------------------------------------
+Startpoint: ctrl.state.out[2]$_DFF_P_
+            (rising edge-triggered flip-flop clocked by core_clock)
+Endpoint: resp_val (output port clocked by core_clock)
+Path Group: core_clock
+Path Type: max
+
+Fanout     Cap    Slew   Delay    Time   Description
+-----------------------------------------------------------------------------
+                          0.00    0.00   clock core_clock (rise edge)
+                          0.00    0.00   clock source latency
+     1    0.00    0.00    0.00    0.00 ^ clk (in)
+                                         clk (net)
+                  0.24    0.20    0.20 ^ clkbuf_0_clk/A (gt2_6t_buf_x1_w31_svt)
+     4    0.00    8.36   13.21   13.40 ^ clkbuf_0_clk/Y (gt2_6t_buf_x1_w31_svt)
+                                         clknet_0_clk (net)
+                  8.38    0.46   13.86 ^ clkbuf_2_0__f_clk/A (gt2_6t_buf_x1_w31_svt)
+    10    0.01   27.19   37.20   51.06 ^ clkbuf_2_0__f_clk/Y (gt2_6t_buf_x1_w31_svt)
+                                         clknet_2_0__leaf_clk (net)
+                 27.58    3.67   54.73 ^ ctrl.state.out[2]$_DFF_P_/CLK (gt2_6t_dffasync_x1_w31_lvt)
+    49    0.03  125.74  152.63  207.36 v ctrl.state.out[2]$_DFF_P_/Q (gt2_6t_dffasync_x1_w31_lvt)
+                                         ctrl.state.out[2] (net)
+                125.81    2.36  209.72 v _614_/B (gt2_6t_nor2_x1_w31_svt)
+     2    0.00   18.84   35.10  244.82 ^ _614_/Y (gt2_6t_nor2_x1_w31_svt)
+                                         _185_ (net)
+                 18.84    0.13  244.95 ^ _615_/B (gt2_6t_and2_x1_w31_lvt)
+     1    0.00    2.63   11.13  256.08 ^ _615_/Y (gt2_6t_and2_x1_w31_lvt)
+                                         net122 (net)
+                  2.63    0.11  256.19 ^ output123/A (gt2_6t_buf_x1_w31_lvt)
+     1    0.00    1.71    5.88  262.07 ^ output123/Y (gt2_6t_buf_x1_w31_lvt)
+                                         resp_val (net)
+                  1.71    0.02  262.09 ^ resp_val (out)
+                                262.09   data arrival time
+
+                       1000.00 1000.00   clock core_clock (rise edge)
+                          0.00 1000.00   clock network delay (propagated)
+                          0.00 1000.00   clock reconvergence pessimism
+                       -200.00  800.00   output external delay
+                                800.00   data required time
+-----------------------------------------------------------------------------
+                                800.00   data required time
+                               -262.09   data arrival time
+-----------------------------------------------------------------------------
+                                537.91   slack (MET)
+
+
+
+==========================================================================
+finish report_checks -unconstrained
+--------------------------------------------------------------------------
+Startpoint: ctrl.state.out[2]$_DFF_P_
+            (rising edge-triggered flip-flop clocked by core_clock)
+Endpoint: resp_val (output port clocked by core_clock)
+Path Group: core_clock
+Path Type: max
+
+Fanout     Cap    Slew   Delay    Time   Description
+-----------------------------------------------------------------------------
+                          0.00    0.00   clock core_clock (rise edge)
+                          0.00    0.00   clock source latency
+     1    0.00    0.00    0.00    0.00 ^ clk (in)
+                                         clk (net)
+                  0.24    0.20    0.20 ^ clkbuf_0_clk/A (gt2_6t_buf_x1_w31_svt)
+     4    0.00    8.36   13.21   13.40 ^ clkbuf_0_clk/Y (gt2_6t_buf_x1_w31_svt)
+                                         clknet_0_clk (net)
+                  8.38    0.46   13.86 ^ clkbuf_2_0__f_clk/A (gt2_6t_buf_x1_w31_svt)
+    10    0.01   27.19   37.20   51.06 ^ clkbuf_2_0__f_clk/Y (gt2_6t_buf_x1_w31_svt)
+                                         clknet_2_0__leaf_clk (net)
+                 27.58    3.67   54.73 ^ ctrl.state.out[2]$_DFF_P_/CLK (gt2_6t_dffasync_x1_w31_lvt)
+    49    0.03  125.74  152.63  207.36 v ctrl.state.out[2]$_DFF_P_/Q (gt2_6t_dffasync_x1_w31_lvt)
+                                         ctrl.state.out[2] (net)
+                125.81    2.36  209.72 v _614_/B (gt2_6t_nor2_x1_w31_svt)
+     2    0.00   18.84   35.10  244.82 ^ _614_/Y (gt2_6t_nor2_x1_w31_svt)
+                                         _185_ (net)
+                 18.84    0.13  244.95 ^ _615_/B (gt2_6t_and2_x1_w31_lvt)
+     1    0.00    2.63   11.13  256.08 ^ _615_/Y (gt2_6t_and2_x1_w31_lvt)
+                                         net122 (net)
+                  2.63    0.11  256.19 ^ output123/A (gt2_6t_buf_x1_w31_lvt)
+     1    0.00    1.71    5.88  262.07 ^ output123/Y (gt2_6t_buf_x1_w31_lvt)
+                                         resp_val (net)
+                  1.71    0.02  262.09 ^ resp_val (out)
+                                262.09   data arrival time
+
+                       1000.00 1000.00   clock core_clock (rise edge)
+                          0.00 1000.00   clock network delay (propagated)
+                          0.00 1000.00   clock reconvergence pessimism
+                       -200.00  800.00   output external delay
+                                800.00   data required time
+-----------------------------------------------------------------------------
+                                800.00   data required time
+                               -262.09   data arrival time
+-----------------------------------------------------------------------------
+                                537.91   slack (MET)
+
+
+
+==========================================================================
+finish report_check_types -max_slew -max_cap -max_fanout -violators
+--------------------------------------------------------------------------
+
+==========================================================================
+finish max_slew_check_slack
+--------------------------------------------------------------------------
+874.2594604492188
+
+==========================================================================
+finish max_slew_check_limit
+--------------------------------------------------------------------------
+1000.0
+
+==========================================================================
+finish max_slew_check_slack_limit
+--------------------------------------------------------------------------
+0.8743
+
+==========================================================================
+finish max_fanout_check_slack
+--------------------------------------------------------------------------
+20.0
+
+==========================================================================
+finish max_fanout_check_limit
+--------------------------------------------------------------------------
+20.0
+
+==========================================================================
+finish max_fanout_check_slack_limit
+--------------------------------------------------------------------------
+1.0000
+
+==========================================================================
+finish max_capacitance_check_slack
+--------------------------------------------------------------------------
+0.17459820210933685
+
+==========================================================================
+finish max_capacitance_check_limit
+--------------------------------------------------------------------------
+0.20160000026226044
+
+==========================================================================
+finish max_capacitance_check_slack_limit
+--------------------------------------------------------------------------
+0.8661
+
+==========================================================================
+finish max_slew_violation_count
+--------------------------------------------------------------------------
+max slew violation count 0
+
+==========================================================================
+finish max_fanout_violation_count
+--------------------------------------------------------------------------
+max fanout violation count 0
+
+==========================================================================
+finish max_cap_violation_count
+--------------------------------------------------------------------------
+max cap violation count 0
+
+==========================================================================
+finish setup_violation_count
+--------------------------------------------------------------------------
+setup violation count 0
+
+==========================================================================
+finish hold_violation_count
+--------------------------------------------------------------------------
+hold violation count 0
+
+==========================================================================
+finish report_checks -path_delay max reg to reg
+--------------------------------------------------------------------------
+Startpoint: dpath.b_reg.out[0]$_DFFE_PP_
+            (rising edge-triggered flip-flop clocked by core_clock)
+Endpoint: dpath.a_reg.out[9]$_DFFE_PP_
+          (rising edge-triggered flip-flop clocked by core_clock)
+Path Group: core_clock
+Path Type: max
+
+  Delay    Time   Description
+---------------------------------------------------------
+   0.00    0.00   clock core_clock (rise edge)
+   0.00    0.00   clock source latency
+   0.00    0.00 ^ clk (in)
+  13.40   13.40 ^ clkbuf_0_clk/Y (gt2_6t_buf_x1_w31_svt)
+  38.71   52.12 ^ clkbuf_2_2__f_clk/Y (gt2_6t_buf_x1_w31_svt)
+   1.67   53.78 ^ dpath.b_reg.out[0]$_DFFE_PP_/CLK (gt2_6t_dffasync_x1_w31_lvt)
+  48.83  102.61 v dpath.b_reg.out[0]$_DFFE_PP_/Q (gt2_6t_dffasync_x1_w31_lvt)
+  23.40  126.01 ^ _460_/Y (gt2_6t_aoi21_x1_w31_lvt)
+  17.46  143.47 ^ _465_/Y (gt2_6t_or3_x1_w31_lvt)
+  16.80  160.27 ^ _479_/Y (gt2_6t_ao211_x1_w31_lvt)
+  19.51  179.79 v _486_/Y (gt2_6t_oai211_x1_w31_lvt)
+  18.08  197.87 ^ _510_/Y (gt2_6t_nand3_x1_w31_svt)
+  63.15  261.02 v _643_/Y (gt2_6t_aoi211_x1_w31_lvt)
+  86.68  347.70 ^ _654_/Y (gt2_6t_nor2_x1_w31_svt)
+  32.71  380.41 v _776_/Y (gt2_6t_oai211_x1_w31_svt)
+  16.26  396.67 v _779_/Y (gt2_6t_ao32_x1_w31_svt)
+   0.09  396.75 v dpath.a_reg.out[9]$_DFFE_PP_/D (gt2_6t_dffasync_x1_w31_lvt)
+         396.75   data arrival time
+
+1000.00 1000.00   clock core_clock (rise edge)
+   0.00 1000.00   clock source latency
+   0.00 1000.00 ^ clk (in)
+  13.40 1013.40 ^ clkbuf_0_clk/Y (gt2_6t_buf_x1_w31_svt)
+  37.66 1051.07 ^ clkbuf_2_1__f_clk/Y (gt2_6t_buf_x1_w31_svt)
+   3.18 1054.25 ^ dpath.a_reg.out[9]$_DFFE_PP_/CLK (gt2_6t_dffasync_x1_w31_lvt)
+   0.00 1054.25   clock reconvergence pessimism
+  -6.12 1048.14   library setup time
+        1048.14   data required time
+---------------------------------------------------------
+        1048.14   data required time
+        -396.75   data arrival time
+---------------------------------------------------------
+         651.38   slack (MET)
+
+
+
+==========================================================================
+finish report_checks -path_delay min reg to reg
+--------------------------------------------------------------------------
+Startpoint: ctrl.state.out[1]$_DFF_P_
+            (rising edge-triggered flip-flop clocked by core_clock)
+Endpoint: ctrl.state.out[1]$_DFF_P_
+          (rising edge-triggered flip-flop clocked by core_clock)
+Path Group: core_clock
+Path Type: min
+
+  Delay    Time   Description
+---------------------------------------------------------
+   0.00    0.00   clock core_clock (rise edge)
+   0.00    0.00   clock source latency
+   0.00    0.00 ^ clk (in)
+  13.40   13.40 ^ clkbuf_0_clk/Y (gt2_6t_buf_x1_w31_svt)
+  37.65   51.06 ^ clkbuf_2_0__f_clk/Y (gt2_6t_buf_x1_w31_svt)
+   2.92   53.98 ^ ctrl.state.out[1]$_DFF_P_/CLK (gt2_6t_dffasync_x1_w31_lvt)
+  28.71   82.69 ^ ctrl.state.out[1]$_DFF_P_/Q (gt2_6t_dffasync_x1_w31_lvt)
+   9.86   92.55 v _635_/Y (gt2_6t_aoi22_x1_w31_svt)
+   4.61   97.16 ^ _636_/Y (gt2_6t_nor2_x1_w31_lvt)
+   0.08   97.24 ^ ctrl.state.out[1]$_DFF_P_/D (gt2_6t_dffasync_x1_w31_lvt)
+          97.24   data arrival time
+
+   0.00    0.00   clock core_clock (rise edge)
+   0.00    0.00   clock source latency
+   0.00    0.00 ^ clk (in)
+  13.40   13.40 ^ clkbuf_0_clk/Y (gt2_6t_buf_x1_w31_svt)
+  37.65   51.06 ^ clkbuf_2_0__f_clk/Y (gt2_6t_buf_x1_w31_svt)
+   2.92   53.98 ^ ctrl.state.out[1]$_DFF_P_/CLK (gt2_6t_dffasync_x1_w31_lvt)
+   0.00   53.98   clock reconvergence pessimism
+   6.08   60.06   library hold time
+          60.06   data required time
+---------------------------------------------------------
+          60.06   data required time
+         -97.24   data arrival time
+---------------------------------------------------------
+          37.18   slack (MET)
+
+
+
+==========================================================================
+finish critical path target clock latency max path
+--------------------------------------------------------------------------
+53.9754
+
+==========================================================================
+finish critical path target clock latency min path
+--------------------------------------------------------------------------
+54.4616
+
+==========================================================================
+finish critical path source clock latency min path
+--------------------------------------------------------------------------
+0.0000
+
+==========================================================================
+finish critical path delay
+--------------------------------------------------------------------------
+262.0923
+
+==========================================================================
+finish critical path slack
+--------------------------------------------------------------------------
+537.9076
+
+==========================================================================
+finish slack div critical path delay
+--------------------------------------------------------------------------
+205.235942
+
+==========================================================================
+finish report_power
+--------------------------------------------------------------------------
+Group                  Internal  Switching    Leakage      Total
+                          Power      Power      Power      Power (Watts)
+----------------------------------------------------------------
+Sequential             4.66e-05   9.69e-06   1.14e-06   5.74e-05  39.9%
+Combinational          2.49e-05   3.83e-05   1.97e-06   6.51e-05  45.3%
+Clock                  1.82e-06   1.94e-05   1.48e-08   2.13e-05  14.8%
+Macro                  0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%
+Pad                    0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%
+----------------------------------------------------------------
+Total                  7.32e-05   6.74e-05   3.12e-06   1.44e-04 100.0%
+                          50.9%      46.9%       2.2%
