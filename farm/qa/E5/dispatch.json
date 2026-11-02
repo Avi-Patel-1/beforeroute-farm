@@ -1,16 +1,10 @@
 {
- "batch": "s01",
- "about": "E5 smoke batch (not part of the audit): default ORFS settings for gcd, aes, ibex; an exact replay of the gcd run on another runner; a gcd rebuild chain from an assumed winner to exercise the chain code",
+ "batch": "s02",
+ "about": "E5 smoke batch 2 (not part of the audit): hook fix check (per-group slacks) and the gcd floorplan knob overrides at the default clock",
  "groups": [
   {"name": "gcd", "num_cores": 4, "timeout_s": 3600,
-   "runs": [{"tag": "e5s-gcd-001", "design": "gcd", "period": 310, "vars": {}, "setting": "default", "kind": "smoke"}]},
-  {"name": "gcdx", "num_cores": 4, "timeout_s": 3600,
-   "runs": [{"tag": "e5s-gcd-002", "design": "gcd", "period": 310, "vars": {}, "setting": "default", "kind": "smoke"}],
-   "chains": [{"chain_id": "e5s-gcd-chain", "design": "gcd", "setting": "default", "vars": {}, "tag_prefix": "e5s-gcdk-",
-               "winner": {"tag": "assumed", "period": 250, "claim": 262.3, "pass": false}}]},
-  {"name": "aes", "num_cores": 4, "timeout_s": 10800,
-   "runs": [{"tag": "e5s-aes-001", "design": "aes", "period": 380, "vars": {}, "setting": "default", "kind": "smoke"}]},
-  {"name": "ibex", "num_cores": 4, "timeout_s": 16200,
-   "runs": [{"tag": "e5s-ibex-001", "design": "ibex", "period": 900, "vars": {}, "setting": "default", "kind": "smoke"}]}
+   "runs": [{"tag": "e5s-gcd-003", "design": "gcd", "period": 310, "vars": {}, "setting": "default", "kind": "smoke"},
+            {"tag": "e5s-gcd-004", "design": "gcd", "period": 310, "vars": {"CORE_UTILIZATION": 50}, "setting": "sparse", "kind": "smoke"},
+            {"tag": "e5s-gcd-005", "design": "gcd", "period": 310, "vars": {"PLACE_DENSITY": 0.90}, "setting": "dense", "kind": "smoke"}]}
  ]
 }

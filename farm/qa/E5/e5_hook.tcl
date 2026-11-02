@@ -2,12 +2,31 @@
 # report (after OpenRCX extraction and report_metrics). It does not change the design. It writes the worst setup slack
 # per path group (register-to-register, from inputs, to outputs) and the worst hold slack to
 # $REPORTS_DIR/e5_hook.json, so a run can be classified as port-limited or register-limited like the sky130 record.
+
+# finite number in user time units (ps), or null
+proc e5_num { v } {
+  if { [regexp {^-?[0-9]+(\.[0-9]+)?([eE][-+]?[0-9]+)?$} [string trim $v]] } {
+    return [string trim $v]
+  }
+  return "null"
+}
+
+proc e5_pe_slack { pe } {
+  if { ![catch { set s [$pe slack] }] } {
+    return [e5_num [sta::format_time $s 4]]
+  }
+  if { ![catch { set s [get_property $pe slack] }] } {
+    return [e5_num $s]
+  }
+  return "null"
+}
+
 proc e5_ws { min_max args } {
   set pes [find_timing_paths -path_delay $min_max -sort_by_slack {*}$args]
   if { [llength $pes] == 0 } {
     return "null"
   }
-  return [sta::format_time [[[lindex $pes 0] path] slack] 4]
+  return [e5_pe_slack [lindex $pes 0]]
 }
 
 proc e5_pin_name { pe which } {

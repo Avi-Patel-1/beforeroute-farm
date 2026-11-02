@@ -57,6 +57,7 @@ cp "$LOGD"/*.json "$OUT/logs/" 2>/dev/null || true
 for f in "$LOGD"/*.log; do [ -f "$f" ] && gzip -c "$f" > "$OUT/logs/$(basename "$f").gz"; done
 for f in "$REPD"/*; do
   [ -f "$f" ] || continue
+  case "$f" in *.webp|*.png|*.jpg) continue ;; esac   # layout renderings: not collected
   if [ "$(stat -c %s "$f")" -gt 262144 ]; then gzip -c "$f" > "$OUT/reports/$(basename "$f").gz"; else cp "$f" "$OUT/reports/"; fi
 done
 gzip -f "$OUT/flow.log"
