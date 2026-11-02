@@ -178,6 +178,7 @@ CONFIGS = {
     "D1_lemma_yices": ("oss", "bmc", 1, "smtbmc yices", "lemma"),
     "D2_step_bitwuzla": ("image", "prove", 2, "smtbmc bitwuzla", "step"),
     "D2_step_yices": ("oss", "prove", 2, "smtbmc yices", "step"),
+    "B2_bmc_bitwuzla": ("image", "bmc", 10, "smtbmc bitwuzla", "inv2"),
 }
 EXPOSE_EXTRA = {"inv": ([], []), "inv2": (["nblock", "tr_var"], []), "lemma": (["nblock", "tr_var", "aux31"], ["aux"]),
                 "step": (["nblock", "tr_var", "aux31"], ["aux"])}
