@@ -1,0 +1,102 @@
+name: E5b GT2N 2nm smoke (branch qa-e5-gt2n)
+
+# Addendum 42 / E5b. Runs ORFS's gcd on the GT2N 2 nm kit (github.com/azadnaeemi/GT2N, BSD-3, downloaded at a
+# pinned commit) with the ORFS image the kit names (openroad/orfs:26Q2, pinned by digest). Triggered only by a
+# push to qa-e5-gt2n that changes farm/qa/E5b/jobs.json; that file lists at most 4 jobs (clock targets) and,
+# optionally, the rebuild chain that follows them.
+
+on:
+  push:
+    branches: [qa-e5-gt2n]
+    paths: ['farm/qa/E5b/jobs.json']
+
+permissions:
+  contents: read
+  actions: read
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  IMAGE: docker.io/openroad/orfs@sha256:7832ae885e62933fcbfc486fbd9133f8c3bd1206d15c96e93bfad97432947b61
+  GT2N_COMMIT: 5bc689fd70e4f2d7abf3952e17f308072bc2b0f6
+  KIT_SHA256: 54ddd6459df24ce127bcd0cc9a83bef30957d1a16144a4a253f5dabb37b925d1
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      tags: ${{ steps.p.outputs.tags }}
+      batch: ${{ steps.p.outputs.batch }}
+      chain: ${{ steps.p.outputs.chain }}
+      sweep_batch: ${{ steps.p.outputs.sweep_batch }}
+      sweep_run_id: ${{ steps.p.outputs.sweep_run_id }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: p
+        run: python3 farm/qa/E5b/e5b.py plan | tee -a "$GITHUB_OUTPUT"
+
+  runs:
+    needs: plan
+    if: ${{ needs.plan.outputs.tags != '[]' }}
+    name: ${{ matrix.tag }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        tag: ${{ fromJSON(needs.plan.outputs.tags) }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch the GT2N kit and the ORFS image
+        run: bash farm/qa/E5b/setup_runner.sh
+      - name: Run the listed clock targets
+        run: python3 farm/qa/E5b/e5b.py run-job --tag "${{ matrix.tag }}" --out "out/${{ matrix.tag }}"
+      - name: Upload metrics, reports and logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e5b-${{ matrix.tag }}
+          path: |
+            out/${{ matrix.tag }}
+            kit/provenance
+          retention-days: 30
+          if-no-files-found: warn
+
+  chain:
+    needs: [plan, runs]
+    if: ${{ always() && needs.plan.outputs.chain == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+      - name: Sweep results from this run
+        if: ${{ needs.plan.outputs.sweep_run_id == '' }}
+        uses: actions/download-artifact@v4
+        with:
+          pattern: e5b-${{ needs.plan.outputs.sweep_batch }}-*
+          path: sweep_in
+      - name: Sweep results from an earlier run
+        if: ${{ needs.plan.outputs.sweep_run_id != '' }}
+        uses: actions/download-artifact@v4
+        with:
+          pattern: e5b-${{ needs.plan.outputs.sweep_batch }}-*
+          path: sweep_in
+          run-id: ${{ needs.plan.outputs.sweep_run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Fetch the GT2N kit and the ORFS image
+        run: bash farm/qa/E5b/setup_runner.sh
+      - name: Rebuild chain
+        run: python3 farm/qa/E5b/e5b.py chain --sweep sweep_in --out out/chain
+      - name: Upload chain metrics, reports and logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e5b-${{ needs.plan.outputs.batch }}-chain
+          path: |
+            out/chain
+            kit/provenance
+          retention-days: 30
+          if-no-files-found: warn
