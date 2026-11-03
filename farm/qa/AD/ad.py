@@ -601,6 +601,16 @@ def cmd_analyze(a):
     t2b["abc_d_evidence"] = {r["tag"]: {"log_hits": r.get("abc_d_log_hits"), "synth_sha1": r.get("synth_sha1"),
                                         "synth_cells": r.get("synth_cells"), "synth_area": r.get("synth_area_um2")}
                              for r in b_grid}
+    # registered check: the patch reached ABC (log) and, per design, whether the mapped netlist varied with the target
+    per_design = {}
+    for d in sorted({r["design"] for r in b_grid}):
+        rs = [r for r in b_grid if r["design"] == d]
+        shas = {r.get("synth_sha1") for r in rs if r.get("synth_sha1") not in (None, "none")}
+        per_design[d] = {"runs": len(rs), "log_hits_all": all((r.get("abc_d_log_hits") or 0) >= 1 for r in rs),
+                         "distinct_netlists": len(shas),
+                         "note": ("patch ran but ABC's mapping did not depend on the target"
+                                  if len(shas) == 1 else "netlist varied with the target")}
+    t2b["netlist_check"] = per_design
     out["T2b"] = t2b
     # ---- control (descriptive): ASAP7 gcd/aes through Yosys without the clock
     c_grid = arm_runs(("adc-",))
@@ -704,6 +714,7 @@ def cmd_analyze(a):
     print(f"T2b asap7 -D grid:  s- {f3(out['T2b']['law']['s_minus'])} (n {out['T2b']['law']['n_minus']}), "
           f"s+ {f3(out['T2b']['law']['s_plus'])} (n {out['T2b']['law']['n_plus']}), interpolated settings "
           f"{out['T2b']['interpolated_settings']} -> {out['T2b']['verdict']}")
+    print(f"T2b netlist check: {out['T2b']['netlist_check']}")
     print(f"D: first rebuilds failed {fails}/{n} -> {out['D']['first_rebuild_verdict']}; sky130hd tight bin "
           f"{tight} -> {tv}")
     print(f"T3: {p3}/{n3} pass at the corrected claim; aes S0 (265 ps layout) meets 385 ps: {aes_ok} -> "
