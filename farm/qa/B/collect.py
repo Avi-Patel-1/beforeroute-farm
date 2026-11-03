@@ -26,7 +26,7 @@ import zipfile
 REPO = "Avi-Patel-1/beforeroute-farm"
 KEEP = ["*/metrics.json", "*/job.json", "*/host.json", "*/run.json", "*/resolved.json", "*/checks/*",
         "*/logs/*.json", "*/reports/e5_hook.json", "*/constraint.sdc", "*/constraint.orig.sdc", "*/docker.log",
-        "chains/*.json", "*/make_vars.txt", "*/b_meta.json", "deferred/*.json"]
+        "chains/*.json", "*/make_vars.txt", "*/b_meta.json", "deferred/*.json", "races/*.json"]
 LOGS = ["*/flow.log.gz", "*/reports/6_finish.rpt", "*/reports/6_finish.rpt.gz"]
 
 
