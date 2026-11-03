@@ -1,0 +1,402 @@
+{
+ "about": "F (Addendum 42): the registered published configurations. EDA-env: every ASAP7 timing task whose final submission the authors report as passing its gate (reported_gate 1); claim = their ECP = 1000/reported_reward ps. ORFS-agent: per design/platform, the DRC-clean run with the lowest ECP_final in the 3,116-run database the authors publish with their code; claim = its ECP_final (asked CLK - finish setup WS). Units: ps (asap7), ns (sky130hd).",
+ "sources": {
+  "edaenv": {
+   "zenodo_doi": "10.5281/zenodo.22990248",
+   "url": "https://zenodo.org/api/records/22990248/files/EDA-env-85-tasks.tar.gz/content",
+   "sha256": "3f80927e92be70b4e92deb1e5db7ad6c0009861d43e5c7bb7f8a5026b0a96205",
+   "github": "https://github.com/Ergodex-Labs/eda-env-iccad-26",
+   "paper": "Ghose, Kahng, Kothari, Pandey, Roy, 'Invited: EDA-env: A Reinforcement Learning Environment for RTL-to-GDS Design with Independent Scoring', ICCAD 2026 (https://vlsicad.ucsd.edu/Publications/Conferences/436/c436.pdf)",
+   "image": "openroad/orfs:26Q3-5-gfb65d5b48@sha256:699820f927f1bed72f3673047a5a58007c81d11365ea6fa5cb2cea9f13b61946 (+ evaluator/patched, per the artifact Dockerfile)"
+  },
+  "orfsagent": {
+   "repo": "https://github.com/ABKGroup/ORFS-Agent",
+   "commit": "730f1fa11f9c17c0aaac332412af2b2538f42e9b",
+   "output_json_sha256": "5df91e1c4394129157e329f7ffc6ca2ee6d8fc1473e1c4a2cd97f30f2cafbfbe",
+   "paper": "Ghose, Kahng, Kundu, Wang, 'ORFS-agent: Tool-Using Agents for Chip Design Optimization', arXiv:2506.08332 (MLCAD 2025)",
+   "orfs_commit": "ce8d36a7 (named in the paper and README)",
+   "image": "openroad/orfs:v3.0-1548-gce8d36a7@sha256:6fe655d0d5f33e2f344ec4ce1641b613b7bb90ec4cda279d2407386ed78ff6b3"
+  }
+ },
+ "configs": [
+  {
+   "id": "ee001",
+   "source": "EDA-env",
+   "harness": "edaenv",
+   "platform": "asap7",
+   "design": "aes",
+   "task": "eda-env-001-aes-asap7-ecp",
+   "submission": "submissions/eda-env-001-aes-asap7-ecp/submission.diff",
+   "submission_sha256": "5245c17e35043968c19dab47cac8aa2a0ee8d4cb323ecfd40580c5b5fc421b99",
+   "published": {
+    "T0": 385.5,
+    "working_clock": 380.0,
+    "claim": 291.529,
+    "reported_reward": 3.430191,
+    "reported_gate": 1.0,
+    "where": "EDA-env artifact submissions/index.json (reward = 1000/ECP GHz); paper Table 6 for 001/013/037/075/097"
+   },
+   "edited_files": [
+    "config.mk"
+   ],
+   "grid": 5.0
+  },
+  {
+   "id": "ee008",
+   "source": "EDA-env",
+   "harness": "edaenv",
+   "platform": "asap7",
+   "design": "jpeg",
+   "task": "eda-env-008-jpeg-asap7-ecp",
+   "submission": "submissions/eda-env-008-jpeg-asap7-ecp/submission.diff",
+   "submission_sha256": "dca659895bf42f07447c927c21da8b6f6efbf202075565f8ed2ddfd21d4e1e08",
+   "published": {
+    "T0": 400.0,
+    "working_clock": 400.0,
+    "claim": 530.6895,
+    "reported_reward": 1.884341,
+    "reported_gate": 1.0,
+    "where": "EDA-env artifact submissions/index.json (reward = 1000/ECP GHz); paper Table 6 for 001/013/037/075/097"
+   },
+   "edited_files": [
+    "config.mk",
+    "flow/scripts/resize.tcl"
+   ],
+   "grid": 5.0
+  },
+  {
+   "id": "ee011",
+   "source": "EDA-env",
+   "harness": "edaenv",
+   "platform": "asap7",
+   "design": "ibex",
+   "task": "eda-env-011-ibex-asap7-ecp",
+   "submission": "submissions/eda-env-011-ibex-asap7-ecp/submission.diff",
+   "submission_sha256": "e9f2fd48809dab3cdbd8a8463ce5fec94b08ba0a8ffc246da4c46b3d3280f749",
+   "published": {
+    "T0": 1000.0,
+    "working_clock": 1000.0,
+    "claim": 953.6807,
+    "reported_reward": 1.048569,
+    "reported_gate": 1.0,
+    "where": "EDA-env artifact submissions/index.json (reward = 1000/ECP GHz); paper Table 6 for 001/013/037/075/097"
+   },
+   "edited_files": [
+    "config.mk"
+   ],
+   "grid": 5.0
+  },
+  {
+   "id": "ee013",
+   "source": "EDA-env",
+   "harness": "edaenv",
+   "platform": "asap7",
+   "design": "aes",
+   "task": "eda-env-013-aes-asap7-close5",
+   "submission": "submissions/eda-env-013-aes-asap7-close5/submission.diff",
+   "submission_sha256": "6ba4316c230efd3e7ec323b3059b13201d30dd477d9418cba803463b8b5d1a70",
+   "published": {
+    "T0": 368.2,
+    "working_clock": 380.0,
+    "claim": 354.2474,
+    "reported_reward": 2.822886,
+    "reported_gate": 1.0,
+    "where": "EDA-env artifact submissions/index.json (reward = 1000/ECP GHz); paper Table 6 for 001/013/037/075/097"
+   },
+   "edited_files": [
+    "config.mk"
+   ],
+   "grid": 5.0
+  },
+  {
+   "id": "ee016",
+   "source": "EDA-env",
+   "harness": "edaenv",
+   "platform": "asap7",
+   "design": "jpeg",
+   "task": "eda-env-016-jpeg-asap7-close5",
+   "submission": "submissions/eda-env-016-jpeg-asap7-close5/submission.diff",
+   "submission_sha256": "c8b34359be035781b013beb314a29e4c035f775f12226ade49827248c2040892",
+   "published": {
+    "T0": 560.5,
+    "working_clock": 400.0,
+    "claim": 508.9273,
+    "reported_reward": 1.964917,
+    "reported_gate": 1.0,
+    "where": "EDA-env artifact submissions/index.json (reward = 1000/ECP GHz); paper Table 6 for 001/013/037/075/097"
+   },
+   "edited_files": [
+    "config.mk"
+   ],
+   "grid": 5.0
+  },
+  {
+   "id": "ee037",
+   "source": "EDA-env",
+   "harness": "edaenv",
+   "platform": "asap7",
+   "design": "sboxpipe",
+   "task": "eda-env-037-sboxpipe-asap7-depth",
+   "submission": "submissions/eda-env-037-sboxpipe-asap7-depth/submission.diff",
+   "submission_sha256": "8c3822a0a58f5d7ad933dad39b2ace89b1212878cbd54e900faa32712ec36a9e",
+   "published": {
+    "T0": 312.0,
+    "working_clock": 400.0,
+    "claim": 176.5101,
+    "reported_reward": 5.665398,
+    "reported_gate": 1.0,
+    "where": "EDA-env artifact submissions/index.json (reward = 1000/ECP GHz); paper Table 6 for 001/013/037/075/097"
+   },
+   "edited_files": [
+    "config.mk"
+   ],
+   "grid": 5.0
+  },
+  {
+   "id": "ee054",
+   "source": "EDA-env",
+   "harness": "edaenv",
+   "platform": "asap7",
+   "design": "aes",
+   "task": "eda-env-054-aes-asap7-perfarea",
+   "submission": "submissions/eda-env-054-aes-asap7-perfarea/submission.diff",
+   "submission_sha256": "8fd21636870bf84fa6d57fb668f15d1401af7275637ecd136f692191a5bd2833",
+   "published": {
+    "T0": 340.0,
+    "working_clock": 380.0,
+    "claim": 309.9458,
+    "reported_reward": 3.226371,
+    "reported_gate": 1.0,
+    "where": "EDA-env artifact submissions/index.json (reward = 1000/ECP GHz); paper Table 6 for 001/013/037/075/097"
+   },
+   "edited_files": [
+    "config.mk"
+   ],
+   "grid": 5.0
+  },
+  {
+   "id": "ee074",
+   "source": "EDA-env",
+   "harness": "edaenv",
+   "platform": "asap7",
+   "design": "mult16",
+   "task": "eda-env-074-mult16-asap7-depth",
+   "submission": "submissions/eda-env-074-mult16-asap7-depth/submission.diff",
+   "submission_sha256": "7e7ff07a8ac99931b8f07832fb45eee22c0efbdd6666553e49384ae892392aaf",
+   "published": {
+    "T0": 653.0,
+    "working_clock": 900.0,
+    "claim": 401.5266,
+    "reported_reward": 2.490495,
+    "reported_gate": 1.0,
+    "where": "EDA-env artifact submissions/index.json (reward = 1000/ECP GHz); paper Table 6 for 001/013/037/075/097"
+   },
+   "edited_files": [
+    "config.mk"
+   ],
+   "grid": 5.0
+  },
+  {
+   "id": "ee075",
+   "source": "EDA-env",
+   "harness": "edaenv",
+   "platform": "asap7",
+   "design": "adder64",
+   "task": "eda-env-075-adder64-asap7-depth",
+   "submission": "submissions/eda-env-075-adder64-asap7-depth/submission.diff",
+   "submission_sha256": "1e3a832302d8c898755fee6834c7bbf5361cd8b2c3a04f05c7ace8845469c421",
+   "published": {
+    "T0": 360.0,
+    "working_clock": 400.0,
+    "claim": 222.7427,
+    "reported_reward": 4.489485,
+    "reported_gate": 1.0,
+    "where": "EDA-env artifact submissions/index.json (reward = 1000/ECP GHz); paper Table 6 for 001/013/037/075/097"
+   },
+   "edited_files": [
+    "config.mk"
+   ],
+   "grid": 5.0
+  },
+  {
+   "id": "ee087",
+   "source": "EDA-env",
+   "harness": "edaenv",
+   "platform": "asap7",
+   "design": "mult16",
+   "task": "eda-env-087-mult16-asap7-close3",
+   "submission": "submissions/eda-env-087-mult16-asap7-close3/submission.diff",
+   "submission_sha256": "10c0d1f8f2b28827768b124fcc15cbd1d819ee209bb647bc41b94664e7c07f57",
+   "published": {
+    "T0": 615.0,
+    "working_clock": 900.0,
+    "claim": 462.7267,
+    "reported_reward": 2.161103,
+    "reported_gate": 1.0,
+    "where": "EDA-env artifact submissions/index.json (reward = 1000/ECP GHz); paper Table 6 for 001/013/037/075/097"
+   },
+   "edited_files": [
+    "config.mk"
+   ],
+   "grid": 5.0
+  },
+  {
+   "id": "ee097",
+   "source": "EDA-env",
+   "harness": "edaenv",
+   "platform": "asap7",
+   "design": "aes",
+   "task": "eda-env-097-aes-asap7-3d",
+   "submission": "submissions/eda-env-097-aes-asap7-3d/submission.diff",
+   "submission_sha256": "7328e34b7cda1b37c6c0b63b890505767c56f7b759db1859c91f4042122d4afa",
+   "published": {
+    "T0": 340.0,
+    "working_clock": 380.0,
+    "claim": 327.6952,
+    "reported_reward": 3.051616,
+    "reported_gate": 1.0,
+    "where": "EDA-env artifact submissions/index.json (reward = 1000/ECP GHz); paper Table 6 for 001/013/037/075/097"
+   },
+   "edited_files": [
+    "config.mk"
+   ],
+   "grid": 5.0
+  },
+  {
+   "id": "oa-aes-a7",
+   "source": "ORFS-agent",
+   "harness": "orfsagent",
+   "platform": "asap7",
+   "design": "aes",
+   "knobs": {
+    "CLK": 140.237,
+    "UTIL": 55.053,
+    "LB_ADDON": 0.489,
+    "TNS_End_Percent": 27,
+    "HIER_SYNTH": 1,
+    "GP_PAD": 2,
+    "DP_PAD": 0,
+    "DPO": 1,
+    "CTS_CSIZE": 29,
+    "CTS_CDIA": 82,
+    "PIN_ADJ": 0.64,
+    "UP_ADJ": 0.283,
+    "AR": 1,
+    "POWER_EFFORT": 0,
+    "RD": 1,
+    "TD": 1
+   },
+   "published": {
+    "T0": 140.237,
+    "claim": 427.663,
+    "ws": -287.426,
+    "drc": 0,
+    "hold_violation_count": 17,
+    "where": "ORFS-Agent repo @730f1fa AutoTuner-integration/ORFS-with-AutoTuner/output.json row 744 (lowest DRC-clean ECP_final of its design/platform)"
+   },
+   "grid": 5.0
+  },
+  {
+   "id": "oa-ibex-a7",
+   "source": "ORFS-agent",
+   "harness": "orfsagent",
+   "platform": "asap7",
+   "design": "ibex",
+   "knobs": {
+    "CLK": 604.088,
+    "UTIL": 47.612,
+    "LB_ADDON": 0.782,
+    "TNS_End_Percent": 16,
+    "HIER_SYNTH": 0,
+    "GP_PAD": 1,
+    "DP_PAD": 0,
+    "DPO": 1,
+    "CTS_CSIZE": 19,
+    "CTS_CDIA": 111,
+    "PIN_ADJ": 0.438,
+    "UP_ADJ": 0.394,
+    "AR": 1,
+    "POWER_EFFORT": 0,
+    "RD": 1,
+    "TD": 1
+   },
+   "published": {
+    "T0": 604.088,
+    "claim": 1254.219,
+    "ws": -650.131,
+    "drc": 0,
+    "hold_violation_count": 173,
+    "where": "ORFS-Agent repo @730f1fa AutoTuner-integration/ORFS-with-AutoTuner/output.json row 1876 (lowest DRC-clean ECP_final of its design/platform)"
+   },
+   "grid": 5.0
+  },
+  {
+   "id": "oa-aes-s130",
+   "source": "ORFS-agent",
+   "harness": "orfsagent",
+   "platform": "sky130hd",
+   "design": "aes",
+   "knobs": {
+    "CLK": 3.3,
+    "UTIL": 37.589,
+    "LB_ADDON": 0.022,
+    "TNS_End_Percent": 26,
+    "HIER_SYNTH": 1,
+    "GP_PAD": 0,
+    "DP_PAD": 0,
+    "DPO": 1,
+    "CTS_CSIZE": 28,
+    "CTS_CDIA": 104,
+    "PIN_ADJ": 0.191,
+    "UP_ADJ": 0.347,
+    "AR": 1,
+    "POWER_EFFORT": 0,
+    "RD": 1,
+    "TD": 1
+   },
+   "published": {
+    "T0": 3.3,
+    "claim": 3.80126,
+    "ws": -0.50126,
+    "drc": 0,
+    "hold_violation_count": 0,
+    "where": "ORFS-Agent repo @730f1fa AutoTuner-integration/ORFS-with-AutoTuner/output.json row 2551 (lowest DRC-clean ECP_final of its design/platform)"
+   },
+   "grid": 0.05
+  },
+  {
+   "id": "oa-ibex-s130",
+   "source": "ORFS-agent",
+   "harness": "orfsagent",
+   "platform": "sky130hd",
+   "design": "ibex",
+   "knobs": {
+    "CLK": 3.634,
+    "UTIL": 45.514,
+    "LB_ADDON": 0.075,
+    "TNS_End_Percent": 18,
+    "HIER_SYNTH": 0,
+    "GP_PAD": 2,
+    "DP_PAD": 0,
+    "DPO": 1,
+    "CTS_CSIZE": 20,
+    "CTS_CDIA": 115,
+    "PIN_ADJ": 0.22,
+    "UP_ADJ": 0.491,
+    "AR": 1,
+    "POWER_EFFORT": 0,
+    "RD": 1,
+    "TD": 1
+   },
+   "published": {
+    "T0": 3.634,
+    "claim": 10.23111,
+    "ws": -6.59711,
+    "drc": 0,
+    "hold_violation_count": 171,
+    "where": "ORFS-Agent repo @730f1fa AutoTuner-integration/ORFS-with-AutoTuner/output.json row 2717 (lowest DRC-clean ECP_final of its design/platform)"
+   },
+   "grid": 0.05
+  }
+ ]
+}

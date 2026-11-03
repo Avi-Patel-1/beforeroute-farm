@@ -1,0 +1,49 @@
+{
+ "about": "F smoke configs (plumbing only; never analyzed). smk-ee004: EDA-env task 004 (aes/asap7 area task, not a registered timing winner). smk-oa-aes-a7-2: the second-best aes/asap7 row (1564) of ORFS-agent's output.json, not registered.",
+ "configs": [
+  {
+   "id": "smk-ee004",
+   "source": "EDA-env",
+   "harness": "edaenv",
+   "platform": "asap7",
+   "design": "aes",
+   "task": "eda-env-004-aes-asap7-area",
+   "submission": "submissions/eda-env-004-aes-asap7-area/submission.diff",
+   "published": {
+    "T0": 400.0
+   },
+   "grid": 5.0
+  },
+  {
+   "id": "smk-oa-aes-a7-2",
+   "source": "ORFS-agent",
+   "harness": "orfsagent",
+   "platform": "asap7",
+   "design": "aes",
+   "knobs": {
+    "CLK": 263.597,
+    "UTIL": 43.319,
+    "LB_ADDON": 0.352,
+    "TNS_End_Percent": 18,
+    "HIER_SYNTH": 0,
+    "GP_PAD": 1,
+    "DP_PAD": 0,
+    "DPO": 1,
+    "CTS_CSIZE": 22,
+    "CTS_CDIA": 1,
+    "PIN_ADJ": 0.642,
+    "UP_ADJ": 0.484,
+    "AR": 1,
+    "POWER_EFFORT": 0,
+    "RD": 1,
+    "TD": 1
+   },
+   "published": {
+    "T0": 263.597,
+    "claim": 430.004,
+    "ws": -166.407
+   },
+   "grid": 5.0
+  }
+ ]
+}

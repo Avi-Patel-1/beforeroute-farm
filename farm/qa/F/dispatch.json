@@ -1,0 +1,39 @@
+{
+ "batch": "smoke-s01",
+ "about": "F smoke batch s01 (plumbing only; not part of any analysis): EDA-env evaluator path (task 004, an area task, not a registered winner) as a replay at its eval clock (400 ps) and in rebuild mode at 420 ps (tests the SDC edit and the bind mount); ORFS-agent harness (image ce8d36a7) on the second-best aes/asap7 row of output.json (not registered) at its own target 263.597 ps.",
+ "groups": [
+  {
+   "name": "smk-ee",
+   "harness": "edaenv",
+   "timeout_s": 14400,
+   "budget_s": 12000,
+   "items": [
+    {
+     "config": "smk-ee004",
+     "tag_prefix": "smoke-f-ee004-",
+     "mode": "single",
+     "periods": [
+      400,
+      420
+     ]
+    }
+   ]
+  },
+  {
+   "name": "smk-oa",
+   "harness": "orfsagent",
+   "timeout_s": 14400,
+   "budget_s": 12000,
+   "items": [
+    {
+     "config": "smk-oa-aes-a7-2",
+     "tag_prefix": "smoke-f-oa2-",
+     "mode": "single",
+     "periods": [
+      263.597
+     ]
+    }
+   ]
+  }
+ ]
+}

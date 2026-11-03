@@ -1,0 +1,101 @@
+name: F field winners rebuilt (ORFS)
+
+# Addendum 42 (F): the field's own published ORFS winners (ORFS-agent, EDA-env) rebuilt at the clocks they claimed.
+# Runs only on pushes to qa-f-field that change farm/qa/F/dispatch.json. One matrix job per group, at most 2 at once
+# (this workstream's share of the farm). Each group fetches the published materials (pinned, hash-checked), prepares
+# its harness's pinned image, and runs its items with farm/qa/F/run_f.py: the replay of each published configuration
+# at its published target, then its rebuild chain, stepped on the runner. Artifact f-<batch>-<group>: metrics JSON,
+# reports, gzipped logs; no layouts.
+
+on:
+  push:
+    branches: [qa-f-field]
+    paths: ['farm/qa/F/dispatch.json']
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      groups: ${{ steps.p.outputs.groups }}
+      batch: ${{ steps.p.outputs.batch }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: p
+        run: |
+          python3 - <<'PY'
+          import json, os
+          d = json.load(open("farm/qa/F/dispatch.json"))
+          groups = [g["name"] for g in d["groups"]]
+          assert len(groups) <= 16, "at most 16 groups per batch"
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write("groups=" + json.dumps(groups) + "\n")
+              f.write("batch=" + d["batch"] + "\n")
+          print(d["batch"], groups)
+          PY
+
+  run:
+    needs: plan
+    if: needs.plan.outputs.groups != '[]'
+    name: ${{ needs.plan.outputs.batch }} ${{ matrix.group }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        group: ${{ fromJSON(needs.plan.outputs.groups) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Free disk
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL || true
+          df -h / | tail -1
+
+      - name: Harness of this group
+        id: h
+        run: |
+          python3 -c "import json; d=json.load(open('farm/qa/F/dispatch.json')); g=next(x for x in d['groups'] if x['name']=='${{ matrix.group }}'); print('harness='+g['harness'])" >> "$GITHUB_OUTPUT"
+          cat "$GITHUB_OUTPUT"
+
+      - name: Fetch published materials (pinned, sha256-checked)
+        run: bash farm/qa/F/fetch_sources.sh "$RUNNER_TEMP/src" ${{ steps.h.outputs.harness }}
+
+      - name: Prepare image (orfsagent)
+        if: steps.h.outputs.harness == 'orfsagent'
+        run: |
+          IMG=openroad/orfs@sha256:6fe655d0d5f33e2f344ec4ce1641b613b7bb90ec4cda279d2407386ed78ff6b3
+          for i in 1 2 3 4 5; do docker pull -q "$IMG" && break; echo "pull failed ($i)"; sleep $((60 * i)); done
+          docker image inspect "$IMG" --format '{{.Id}} {{.Size}}'
+          df -h / | tail -1
+
+      - name: Prepare image (edaenv; the artifact's own Dockerfile, base pinned by digest)
+        if: steps.h.outputs.harness == 'edaenv'
+        run: |
+          cd "$RUNNER_TEMP/src/EDA-env"
+          for i in 1 2 3 4; do docker build -q --platform linux/amd64 -t eda-env-evaluator:iccad26 . && break; echo "build failed ($i)"; sleep $((60 * i)); done
+          docker image inspect eda-env-evaluator:iccad26 --format '{{.Id}} {{.Size}}'
+          df -h / | tail -1
+
+      - name: Run group
+        run: |
+          python3 farm/qa/F/run_f.py --spec farm/qa/F/dispatch.json --group "${{ matrix.group }}" \
+            --src "$RUNNER_TEMP/src" --results results
+
+      - name: Fix ownership
+        if: always()
+        run: sudo chown -R "$(id -u):$(id -g)" results || true
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: f-${{ needs.plan.outputs.batch }}-${{ matrix.group }}
+          path: |
+            results/
+            !results/.work/
+          retention-days: 30
+          if-no-files-found: warn
