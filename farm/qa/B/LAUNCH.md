@@ -31,3 +31,10 @@ C1, S and C2b: not launched yet (they wait for free share; see docs/qa_week/B_PR
   (sha256 8897fa72…); outbox/code/B/MANIFEST.txt still listed the 3dba6ea version (647e1fbb…) because the file was
   re-copied without regenerating the manifest. The registered-test code is the same in both (117e483 added only the
   setup-only sensitivity). The manifest is now generated from git (path, commit, sha256) and checked after copying.
+
+## Lane 2 (qa-b-asap7, after C3 finished)
+- C2b plumbing smoke s02: run 41593244553 (commit d996b8d), passed: Optuna 5.0.0 on the runner, seed35 64643,
+  2 start + 2 TPE runs with frozen I/O, winner rebuilt (smoke-b2b-xtea-s1-*; not part of any analysis).
+- **C1 chunk A** (batch c1a: 33 settings, 170 replays, 9 jobs, max-parallel 2), code at 4943a2c (merge of
+  qa-b-frozen-io: run_group.py, blib.py with the fail-closed judge, resume.py with the registered top-up rule;
+  scoring farm/qa/B/c1.py). Dispatched 2026-11-03T07:05Z.
