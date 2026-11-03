@@ -1,0 +1,22 @@
+{
+ "tag": "erk-cic_decimator-01",
+ "design": "designs/cic_decimator",
+ "config": "config_sky130.json",
+ "overrides": {
+  "RUN_MAGIC_DRC": false,
+  "RUN_KLAYOUT_DRC": false,
+  "RUN_LVS": false,
+  "RUN_KLAYOUT_XOR": false,
+  "RUN_IRDROP_REPORT": false,
+  "RUN_LINTER": false,
+  "CLOCK_PERIOD": 7.0
+ },
+ "chain": {
+  "source_tag": "ers-cic_decimator-01",
+  "T0": 7.0,
+  "C0": 8.005497935595738,
+  "source_pass": false,
+  "drv_bar": 89,
+  "max_rebuilds": 4
+ }
+}

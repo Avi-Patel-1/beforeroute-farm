@@ -1,0 +1,54 @@
+{
+ "tag": "erk-cic_decimator-07",
+ "design": "designs/cic_decimator",
+ "config": "config_sky130.json",
+ "overrides": {
+  "RUN_MAGIC_DRC": false,
+  "RUN_KLAYOUT_DRC": false,
+  "RUN_LVS": false,
+  "RUN_KLAYOUT_XOR": false,
+  "RUN_IRDROP_REPORT": false,
+  "RUN_LINTER": false,
+  "SYNTH_STRATEGY": "DELAY 0",
+  "PL_TIMING_DRIVEN": true,
+  "RUN_POST_GRT_RESIZER_TIMING": true,
+  "RUN_POST_GRT_DESIGN_REPAIR": true,
+  "LAYERS_RC": {
+   "*": {
+    "li1": {
+     "res": 0.07176,
+     "cap": 0.0001499
+    },
+    "met1": {
+     "res": 0.00120565,
+     "cap": 0.000172375
+    },
+    "met2": {
+     "res": 0.00122132,
+     "cap": 0.000136233
+    },
+    "met3": {
+     "res": 0.000166281,
+     "cap": 0.000214962
+    },
+    "met4": {
+     "res": 0.000168093,
+     "cap": 0.000148128
+    },
+    "met5": {
+     "res": 1.83558e-05,
+     "cap": 0.000154087
+    }
+   }
+  },
+  "CLOCK_PERIOD": 10.0
+ },
+ "chain": {
+  "source_tag": "ers-cic_decimator-07",
+  "T0": 10.0,
+  "C0": 8.846669647245498,
+  "source_pass": true,
+  "drv_bar": 89,
+  "max_rebuilds": 4
+ }
+}

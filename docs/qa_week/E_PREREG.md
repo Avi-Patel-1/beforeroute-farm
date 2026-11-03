@@ -236,3 +236,7 @@ text above left implicit.
    state both timestamps (commit time and the run's createdAt).
 10. **Source count.** The outbox HOLDOUT_E.md said 36 sources (9 per family); the registered count is 35 (wbqspiflash 8),
     `farm/qa/E/sources.json` SHA-256 0bbcc3f668c4bce4dff91fd3c152164e60dac12ed86fd93bba714d7b142a51f3 (commit c99b6fb).
+11. **Stratum counts (2026-11-03 04:10Z).** The sources paragraph above says "(16 tight, 12 loose, 7 very loose)"; the
+    registered table and `sources.json` give 15 tight, 12 loose and 8 very loose (wbqspiflash: 3 tight, 3 loose, 2 very
+    loose). The table and the selection script govern; only the prose sum was wrong. All 35 capture runs reproduced
+    their record runs exactly (worst setup slack identical to every digit); 20 sources pass the judge (all loose ones).

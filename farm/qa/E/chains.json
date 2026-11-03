@@ -1,0 +1,320 @@
+{
+ "about": "Addendum 42 chain jobs (dispatched only after the lock commit)",
+ "chains": [
+  {
+   "source": "ers-zipdiv-01",
+   "tag": "erk-zipdiv-01",
+   "T0": 9.28,
+   "C0": 12.559246300653509,
+   "R1": 12.6,
+   "source_pass": false,
+   "replay_ws_equal_record": true
+  },
+  {
+   "source": "ers-zipdiv-02",
+   "tag": "erk-zipdiv-02",
+   "T0": 13.36,
+   "C0": 14.159144772975482,
+   "R1": 14.2,
+   "source_pass": false,
+   "replay_ws_equal_record": true
+  },
+  {
+   "source": "ers-zipdiv-03",
+   "tag": "erk-zipdiv-03",
+   "T0": 8.59,
+   "C0": 12.902537116144542,
+   "R1": 12.95,
+   "source_pass": false,
+   "replay_ws_equal_record": true
+  },
+  {
+   "source": "ers-zipdiv-04",
+   "tag": "erk-zipdiv-04",
+   "T0": 11.8,
+   "C0": 12.51475893893318,
+   "R1": 12.55,
+   "source_pass": false,
+   "replay_ws_equal_record": true
+  },
+  {
+   "source": "ers-zipdiv-05",
+   "tag": "erk-zipdiv-05",
+   "T0": 11.45,
+   "C0": 9.958560097317712,
+   "R1": 10.0,
+   "source_pass": true,
+   "replay_ws_equal_record": true
+  },
+  {
+   "source": "ers-zipdiv-06",
+   "tag": "erk-zipdiv-06",
+   "T0": 8.59,
+   "C0": 8.104835189052668,
+   "R1": 8.15,
+   "source_pass": true,
+   "replay_ws_equal_record": true
+  },
+  {
+   "source": "ers-zipdiv-07",
+   "tag": "erk-zipdiv-07",
+   "T0": 8.59,
+   "C0": 7.155842277937903,
+   "R1": 7.2,
+   "source_pass": true,
+   "replay_ws_equal_record": true
+  },
+  {
+   "source": "ers-zipdiv-08",
+   "tag": "erk-zipdiv-08",
+   "T0": 19.09,
+   "C0": 11.396320311120027,
+   "R1": 11.4,
+   "source_pass": true,
+   "replay_ws_equal_record": true
+  },
+  {
+   "source": "ers-zipdiv-09",
+   "tag": "erk-zipdiv-09",
+   "T0": 17.72,
+   "C0": 8.245601577138464,
+   "R1": 8.25,
+   "source_pass": true,
+   "replay_ws_equal_record": true
+  },
+  {
+   "source": "ers-cic_decimator-01",
+   "tag": "erk-cic_decimator-01",
+   "T0": 7.0,
+   "C0": 8.005497935595738,
+   "R1": 8.05,
+   "source_pass": false,
+   "replay_ws_equal_record": true
+  },
+  {
+   "source": "ers-cic_decimator-02",
+   "tag": "erk-cic_decimator-02",
+   "T0": 5.45,
+   "C0": 7.773289182352916,
+   "R1": 7.8,
+   "source_pass": false,
+   "replay_ws_equal_record": true
+  },
+  {
+   "source": "ers-cic_decimator-03",
+   "tag": "erk-cic_decimator-03",
+   "T0": 4.84,
+   "C0": 7.777849602301448,
+   "R1": 7.8,
+   "source_pass": false,
+   "replay_ws_equal_record": true
+  },
+  {
+   "source": "ers-cic_decimator-04",
+   "tag": "erk-cic_decimator-04",
+   "T0": 4.5,
+   "C0": 5.488208653988882,
+   "R1": 5.5,
+   "source_pass": false,
+   "replay_ws_equal_record": true
+  },
+  {
+   "source": "ers-cic_decimator-05",
+   "tag": "erk-cic_decimator-05",
+   "T0": 5.48,
+   "C0": 4.993512247259109,
+   "R1": 5.0,
+   "source_pass": true,
+   "replay_ws_equal_record": true
+  },
+  {
+   "source": "ers-cic_decimator-06",
+   "tag": "erk-cic_decimator-06",
+   "T0": 4.5,
+   "C0": 4.198696564825536,
+   "R1": 4.2,
+   "source_pass": true,
+   "replay_ws_equal_record": true
+  },
+  {
+   "source": "ers-cic_decimator-07",
+   "tag": "erk-cic_decimator-07",
+   "T0": 10.0,
+   "C0": 8.846669647245498,
+   "R1": 8.85,
+   "source_pass": true,
+   "replay_ws_equal_record": true
+  },
+  {
+   "source": "ers-cic_decimator-08",
+   "tag": "erk-cic_decimator-08",
+   "T0": 8.32,
+   "C0": 6.271955097250544,
+   "R1": 6.3,
+   "source_pass": true,
+   "replay_ws_equal_record": true
+  },
+  {
+   "source": "ers-cic_decimator-09",
+   "tag": "erk-cic_decimator-09",
+   "T0": 8.13,
+   "C0": 5.828943700477808,
+   "R1": 5.85,
+   "source_pass": true,
+   "replay_ws_equal_record": true
+  },
+  {
+   "source": "ers-wbqspiflash-01",
+   "tag": "erk-wbqspiflash-01",
+   "T0": 11.32,
+   "C0": 13.08483277431752,
+   "R1": 13.1,
+   "source_pass": false,
+   "replay_ws_equal_record": true
+  },
+  {
+   "source": "ers-wbqspiflash-02",
+   "tag": "erk-wbqspiflash-02",
+   "T0": 8.49,
+   "C0": 9.060606689160526,
+   "R1": 9.1,
+   "source_pass": false,
+   "replay_ws_equal_record": true
+  },
+  {
+   "source": "ers-wbqspiflash-03",
+   "tag": "erk-wbqspiflash-03",
+   "T0": 8.49,
+   "C0": 9.432867144380845,
+   "R1": 9.45,
+   "source_pass": false,
+   "replay_ws_equal_record": true
+  },
+  {
+   "source": "ers-wbqspiflash-04",
+   "tag": "erk-wbqspiflash-04",
+   "T0": 13.2,
+   "C0": 11.440623305869005,
+   "R1": 11.45,
+   "source_pass": true,
+   "replay_ws_equal_record": true
+  },
+  {
+   "source": "ers-wbqspiflash-05",
+   "tag": "erk-wbqspiflash-05",
+   "T0": 13.2,
+   "C0": 10.88031682213305,
+   "R1": 10.9,
+   "source_pass": true,
+   "replay_ws_equal_record": true
+  },
+  {
+   "source": "ers-wbqspiflash-06",
+   "tag": "erk-wbqspiflash-06",
+   "T0": 8.49,
+   "C0": 7.882673349395301,
+   "R1": 7.9,
+   "source_pass": true,
+   "replay_ws_equal_record": true
+  },
+  {
+   "source": "ers-wbqspiflash-07",
+   "tag": "erk-wbqspiflash-07",
+   "T0": 18.28,
+   "C0": 10.312458481265931,
+   "R1": 10.35,
+   "source_pass": true,
+   "replay_ws_equal_record": true
+  },
+  {
+   "source": "ers-wbqspiflash-08",
+   "tag": "erk-wbqspiflash-08",
+   "T0": 15.39,
+   "C0": 10.148822581803733,
+   "R1": 10.15,
+   "source_pass": true,
+   "replay_ws_equal_record": true
+  },
+  {
+   "source": "ers-picorv32-01",
+   "tag": "erk-picorv32-01",
+   "T0": 17.5,
+   "C0": 20.27083963616214,
+   "R1": 20.3,
+   "source_pass": false,
+   "replay_ws_equal_record": true
+  },
+  {
+   "source": "ers-picorv32-02",
+   "tag": "erk-picorv32-02",
+   "T0": 12.68,
+   "C0": 15.230335126380576,
+   "R1": 15.25,
+   "source_pass": false,
+   "replay_ws_equal_record": true
+  },
+  {
+   "source": "ers-picorv32-03",
+   "tag": "erk-picorv32-03",
+   "T0": 12.6,
+   "C0": 13.502529632130921,
+   "R1": 13.55,
+   "source_pass": false,
+   "replay_ws_equal_record": true
+  },
+  {
+   "source": "ers-picorv32-04",
+   "tag": "erk-picorv32-04",
+   "T0": 15.61,
+   "C0": 16.572160156559214,
+   "R1": 16.6,
+   "source_pass": false,
+   "replay_ws_equal_record": true
+  },
+  {
+   "source": "ers-picorv32-05",
+   "tag": "erk-picorv32-05",
+   "T0": 12.76,
+   "C0": 11.174279067221674,
+   "R1": 11.2,
+   "source_pass": true,
+   "replay_ws_equal_record": true
+  },
+  {
+   "source": "ers-picorv32-06",
+   "tag": "erk-picorv32-06",
+   "T0": 13.99,
+   "C0": 11.714284319686953,
+   "R1": 11.75,
+   "source_pass": true,
+   "replay_ws_equal_record": true
+  },
+  {
+   "source": "ers-picorv32-07",
+   "tag": "erk-picorv32-07",
+   "T0": 18.47,
+   "C0": 17.166372534902358,
+   "R1": 17.2,
+   "source_pass": true,
+   "replay_ws_equal_record": true
+  },
+  {
+   "source": "ers-picorv32-08",
+   "tag": "erk-picorv32-08",
+   "T0": 21.25,
+   "C0": 13.761713352841433,
+   "R1": 13.8,
+   "source_pass": true,
+   "replay_ws_equal_record": true
+  },
+  {
+   "source": "ers-picorv32-09",
+   "tag": "erk-picorv32-09",
+   "T0": 16.0,
+   "C0": 11.940187843079741,
+   "R1": 11.95,
+   "source_pass": true,
+   "replay_ws_equal_record": true
+  }
+ ]
+}

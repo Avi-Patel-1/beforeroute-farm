@@ -1,0 +1,26 @@
+{
+ "tag": "erk-zipdiv-08",
+ "design": "designs/zipdiv",
+ "config": "config_sky130.json",
+ "overrides": {
+  "RUN_MAGIC_DRC": false,
+  "RUN_KLAYOUT_DRC": false,
+  "RUN_LVS": false,
+  "RUN_KLAYOUT_XOR": false,
+  "RUN_IRDROP_REPORT": false,
+  "RUN_LINTER": false,
+  "SYNTH_STRATEGY": "DELAY 0",
+  "PL_TIMING_DRIVEN": true,
+  "RUN_POST_GRT_RESIZER_TIMING": true,
+  "RUN_POST_GRT_DESIGN_REPAIR": true,
+  "CLOCK_PERIOD": 19.09
+ },
+ "chain": {
+  "source_tag": "ers-zipdiv-08",
+  "T0": 19.09,
+  "C0": 11.396320311120027,
+  "source_pass": true,
+  "drv_bar": 295,
+  "max_rebuilds": 4
+ }
+}

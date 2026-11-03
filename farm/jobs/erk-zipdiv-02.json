@@ -1,0 +1,22 @@
+{
+ "tag": "erk-zipdiv-02",
+ "design": "designs/zipdiv",
+ "config": "config_sky130.json",
+ "overrides": {
+  "RUN_MAGIC_DRC": false,
+  "RUN_KLAYOUT_DRC": false,
+  "RUN_LVS": false,
+  "RUN_KLAYOUT_XOR": false,
+  "RUN_IRDROP_REPORT": false,
+  "RUN_LINTER": false,
+  "CLOCK_PERIOD": 13.36
+ },
+ "chain": {
+  "source_tag": "ers-zipdiv-02",
+  "T0": 13.36,
+  "C0": 14.159144772975482,
+  "source_pass": false,
+  "drv_bar": 295,
+  "max_rebuilds": 4
+ }
+}
