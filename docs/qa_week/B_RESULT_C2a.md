@@ -56,7 +56,8 @@ registered) C2a-i would be 1 of 3 (FAIL) and C2a-ii 2 of 48 (PASS).**
 ## Per design (counts beside the pooled numbers)
 | design | winners | first rebuilds failing | why | median rebuild-again gain (finished chains) |
 |---|---|---|---|---|
-| aes_cipher, picorv32, md5, ocs_blitter | 1 each | 0 | – | chains continuing |
+| aes_cipher, ocs_blitter | 1 each | 0 | – | 1.115, 1.000 |
+| picorv32, md5 | 1 each | 0 | – | chains continuing |
 | des, blabla | 1 each | 0 | – | 1.000 each |
 | y_huff | 1 | 1 | hold (input-to-register, ss corner) | – |
 | bm64 | 1 | 1 | setup, register-to-register | – |
