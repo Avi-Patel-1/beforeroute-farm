@@ -281,3 +281,25 @@ Every flow below completed with detailed-route DRC 0 and met hold.
   setup (WS +97.9 ps, C = 2807.1 ps), so its F lies between 2325 and 2905 ps; GT2N gcd at 260 ps met setup
   (WS +0.97 ps, C = 259.0 ps), so its F lies between 170 and 260 ps. The aes and ibex pilots were still running when
   this file was hashed; their values enter only through the anchor rule.
+
+
+## Amendment 1 (written 2026-11-03 ~03:50 UTC, after the hash above and before any non-smoke run)
+Forced by the pilots, not by any registered outcome. Nothing in the predictions, the judge, the chain rule, the fits
+or the tests changes; only how the grid anchor's pilots are obtained and run.
+- **What happened.** smoke02 ran three pilots per design *at once* on one 4-vCPU runner. The GT2N aes job lost its
+  runner after 61 min ("The hosted runner lost communication with the server": three concurrent GT2N aes flows
+  starved it); the sky130hd aes and ibex jobs were still running after 71 min and were cancelled (run 41567215999).
+  Only the gcd pilots landed. Lesson kept: every aes/ibex flow runs alone on its runner.
+- **gcd anchors** (computed by `ad.py anchor` from smoke01/smoke02, written into farm/qa/AD/grid.json in the dispatch
+  commit): sky130hd gcd pilots (1100 ps, C 2321.8; 2325, C 2437.7; 2905, C 2807.1) → F_pilot 2635.3 → **P0 2635 ps**:
+  S0 1845, 2240, 2635, 3690; S1/S2 2110, 3160, 3820. GT2N gcd pilots (170, C 216.2; 260, C 259.0) → F_pilot 258.2 →
+  **P0 260 ps**: S0 180, 220, 260, 365; S1/S2 210, 310, 375.
+- **sky130hd aes, sky130hd ibex, GT2N aes:** their pilots (the same targets as smoke02: aes 3600/5760/9000 ps, ibex
+  8000/12800/20000 ps, GT2N aes 350/490/700 ps; tags `smoke-pilot2-*`, excluded from every analysis) run solo as jobs
+  of the main batch, and each of these designs' grid jobs computes P0 **on the runner** with the registered rule
+  (`run_group.py` `anchor_grid`, which calls the same `crossing` in ad.py; P0 = 5·round(F_pilot/5); the 10 targets by
+  E5's multipliers; record in the job's `anchors/` output). If fewer than two pilot claims land, that design's grid
+  is not run and the result says so.
+- **Plumbing added after the hash** (no registered computation touched): `anchor_grid`/`wait_for_tags` in
+  run_group.py; `plan --runtime-anchor` and `anchor --apply` in ad.py; the batch's group order and splits (pilots
+  first; work that needs no anchor next; then the anchored sky130hd grids, T2b's ibex, the chains, GT2N, the control).

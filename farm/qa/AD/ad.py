@@ -129,6 +129,51 @@ def cmd_plan(a):
             G.setdefault((name, r["design"]), []).append(r)
     T3 = t3_runs(grid)
     groups = []
+    # designs whose grid anchor is computed on the runner from pilots re-run solo in this batch (amendment 1)
+    RT = set((a.runtime_anchor or "").split(",")) - {""}
+    PILOTS = {"sky130hd/aes": [3600, 5760, 9000], "sky130hd/ibex": [8000, 12800, 20000], "gt2n/aes": [350, 490, 700]}
+    MULT = {"S0": [0.70, 0.85, 1.00, 1.40], "S1": [0.80, 1.20, 1.45], "S2": [0.80, 1.20, 1.45]}
+    pilot_groups = {}
+    for key in [k for k in ("sky130hd/ibex", "sky130hd/aes") if k in RT]:
+        platform, design = key.split("/")
+        pilot_groups[key] = []
+        for T in PILOTS[key]:
+            name = f"p2-{platform}-{design}-{T}"
+            groups.append({"name": name, "num_cores": 4, "timeout_s": 7200, "parallel": 1,
+                           "runs": [{"tag": f"smoke-pilot2-{platform}-{design}-{T}", "design": design,
+                                     "platform": platform, "period": T, "vars": {}, "setting": "S0", "kind": "pilot",
+                                     "arm": "smoke"}]})
+            pilot_groups[key].append(name)
+
+    def add_pilots(key):
+        platform, design = key.split("/")
+        pilot_groups[key] = []
+        for T in PILOTS[key]:
+            name = f"p2-{platform}-{design}-{T}"
+            groups.append({"name": name, "num_cores": 4, "timeout_s": 7200, "parallel": 1,
+                           "runs": [{"tag": f"smoke-pilot2-{platform}-{design}-{T}", "design": design,
+                                     "platform": platform, "period": T, "vars": {}, "setting": "S0", "kind": "pilot",
+                                     "arm": "smoke"}]})
+            pilot_groups[key].append(name)
+
+    def grid_groups_for(arm_name, design, n, prefix, timeout):
+        arm = arms[arm_name]
+        key = f"{arm['platform']}/{design}"
+        if key not in RT:
+            return [add(f"{prefix}-{i + 1}", p, timeout=timeout) for i, p in enumerate(split(G[(arm_name, design)], n))]
+        d = next(x for x in arm["designs"] if x["design"] == design)
+        settings = [{"setting": s_["setting"], "vars": s_["vars"], "mult": MULT[s_["setting"]]} for s_ in d["settings"]]
+        names = []
+        for i in range(n):
+            spec = {"key": f"{arm_name}/{key}", "arm": arm_name, "tag": arm["tag"], "design": design,
+                    "platform": arm["platform"], "pilot_tags": [f"smoke-pilot2-{key.replace('/', '-')}-{T}"
+                                                                for T in PILOTS[key]],
+                    "pilot_groups": pilot_groups[key], "settings": settings, "share": list(range(10))[i::n],
+                    "max_wait_s": 9000, "extra_vars": arm.get("extra_vars", {}).get(design, {})}
+            groups.append({"name": f"{prefix}-{i + 1}", "num_cores": 4, "timeout_s": timeout, "parallel": 1,
+                           "anchor_grid": [spec]})
+            names.append(f"{prefix}-{i + 1}")
+        return names
 
     def add(name, runs=None, aw=None, timeout=10800, parallel=1):
         g = {"name": name, "num_cores": 4, "timeout_s": timeout, "parallel": parallel}
@@ -145,27 +190,30 @@ def cmd_plan(a):
                 "grid_tags": [r["tag"] for r in rs], "grid_groups": grid_groups, "ranks": ranks,
                 "chain_prefix": prefix, "arm": arm, "max_wait_s": max_wait}
 
-    # T2 grids: sky130hd (T2a, also D) and ASAP7 with ABC told the clock (T2b)
-    s_ibex = [add(f"s-ibex-{i + 1}", p, timeout=10800) for i, p in enumerate(split(G[("T2a", "ibex")], 4))]
-    b_ibex = [add(f"b-ibex-{i + 1}", p, timeout=9000) for i, p in enumerate(split(G[("T2b", "ibex")], 3))]
-    s_aes = [add(f"s-aes-{i + 1}", p, timeout=7200) for i, p in enumerate(split(G[("T2a", "aes")], 2))]
-    b_aes = [add(f"b-aes-{i + 1}", p, timeout=5400) for i, p in enumerate(split(G[("T2b", "aes")], 2))]
+    # order: (pilots above), work that needs no anchor, GT2N pilots, anchored T2a grids, T2b ibex, chains, GT2N
     add("s-gcd", G[("T2a", "gcd")], [await_spec("T2a", "gcd", [1, 2, 3], [], "adsk-gcd")], timeout=3600)
     add("b-gcd", G[("T2b", "gcd")], timeout=3600, parallel=2)
-    # D: sky130hd rebuild chains (runner side, once the design's grid has landed)
+    [add(f"b-aes-{i + 1}", p, timeout=5400) for i, p in enumerate(split(G[("T2b", "aes")], 2))]
+    add("r-aes-gcd", [r for r in T3 if r["design"] != "ibex"], timeout=5400)
+    if "gt2n/aes" in RT:
+        add_pilots("gt2n/aes")
+    s_ibex = grid_groups_for("T2a", "ibex", 5, "s-ibex", 10800)
+    s_aes = grid_groups_for("T2a", "aes", 4, "s-aes", 9000)
+    add("r-ibex", [r for r in T3 if r["design"] == "ibex"], timeout=5400)
+    [add(f"b-ibex-{i + 1}", p, timeout=5400) for i, p in enumerate(split(G[("T2b", "ibex")], 3))]
+    # D: sky130hd rebuild chains (runner side, once the design's grid has landed), one chain per job
     for i in (1, 2, 3):
         add(f"ks-ibex-{i}", aw=[await_spec("T2a", "ibex", [i], s_ibex, "adsk-ibex")], timeout=10800)
-    add("ks-aes", aw=[await_spec("T2a", "aes", [1, 2, 3], s_aes, "adsk-aes")], timeout=7200)
-    # T3: re-time judge on E5's 9 winners (replayed)
-    add("r-ibex", [r for r in T3 if r["design"] == "ibex"], timeout=5400)
-    add("r-aes-gcd", [r for r in T3 if r["design"] != "ibex"], timeout=5400)
+    for i in (1, 2, 3):
+        add(f"ks-aes-{i}", aw=[await_spec("T2a", "aes", [i], s_aes, "adsk-aes")], timeout=9000)
     # D: GT2N grids and chains
-    g_aes = [add(f"g-aes-{i + 1}", p, timeout=7200) for i, p in enumerate(split(G[("DG", "aes")], 2))]
     add("g-gcd", G[("DG", "gcd")], [await_spec("DG", "gcd", [1, 2, 3], [], "adgk-gcd")], timeout=3600)
-    add("kg-aes", aw=[await_spec("DG", "aes", [1, 2, 3], g_aes, "adgk-aes")], timeout=7200)
+    g_aes = grid_groups_for("DG", "aes", 4, "g-aes", 9000)
+    for i in (1, 2, 3):
+        add(f"kg-aes-{i}", aw=[await_spec("DG", "aes", [i], g_aes, "adgk-aes")], timeout=9000)
     # descriptive control: ASAP7 gcd and aes through Yosys/ABC without the clock (the T2b synthesizer, stock)
-    add("c-aes", G[("C", "aes")], timeout=5400)
     add("c-gcd", G[("C", "gcd")], timeout=3600, parallel=2)
+    add("c-aes", G[("C", "aes")], timeout=5400)
     write_dispatch(a.batch, groups, "AD main batch (registered in docs/qa_week/AD_PREREG.md): T2a/D sky130hd grid "
                    "and chains, T2b ASAP7 ABC-told-the-clock grid, T3 re-time replays, D GT2N grid and chains, "
                    "descriptive Yosys control")
@@ -397,6 +445,28 @@ def cmd_anchor(a):
         print(f"{'/'.join(k):14s} pilots {[(int(T), round(C, 1)) for T, C, _ in ps]} -> F_pilot "
               f"{'-' if F is None else round(F, 1)} ({how}) -> P0 {P0} targets {tg}")
     json.dump(out, open(a.out, "w"), indent=1)
+    if a.apply:   # write P0 and the targets into grid.json (arms T2a = sky130hd, DG = gt2n)
+        grid = json.load(open(GRID_PATH))
+        for arm in grid["arms"]:
+            if arm["platform"] not in ("sky130hd", "gt2n"):
+                continue
+            for d in arm["designs"]:
+                k = f"{arm['platform']}/{d['design']}"
+                d["P0_shipped"] = d.get("P0_shipped", d["P0"])
+                if k not in out or out[k]["P0"] is None:   # anchored on the runner (Amendment 1)
+                    d["P0"] = None
+                    d["anchor"] = "runtime: run_group.py anchor_grid from the smoke-pilot2 runs of the main batch"
+                    for s_ in d["settings"]:
+                        s_["targets"] = [0] * len(s_["targets"])
+                    print(f"{k}: runtime anchor")
+                    continue
+                d["anchor"] = "ad.py anchor (smoke01/smoke02 pilots)"
+                d["P0"] = out[k]["P0"]
+                d["F_pilot"] = out[k]["F_pilot"]
+                for s in d["settings"]:
+                    s["targets"] = out[k]["targets"]["S0" if s["setting"] == "S0" else "S1S2"]
+        json.dump(grid, open(GRID_PATH, "w"), indent=1)
+        print(f"wrote anchored targets into {GRID_PATH}")
 
 
 # ======================================================================================================== T1
@@ -650,6 +720,8 @@ def main():
         p.add_argument("--batch", default=None)
         p.add_argument("--what", default="main", choices=("smoke", "main"))
         p.add_argument("--run-id", default=None)
+        p.add_argument("--apply", action="store_true", help="anchor: write the targets into grid.json")
+        p.add_argument("--runtime-anchor", default="", help="plan: platform/design list anchored on the runner")
         p.add_argument("--out", default=os.path.join(DEFAULT_RESULTS, f"ad_{name}.json"))
     a = ap.parse_args()
     if a.cmd in ("t1", "analyze", "anchor"):

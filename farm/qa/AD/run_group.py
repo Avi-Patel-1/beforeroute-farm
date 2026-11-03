@@ -237,6 +237,82 @@ def await_chains(spec: dict, batch: str, image: str, results: str, num_cores: in
     shutil.rmtree(cache, ignore_errors=True)
 
 
+# ------------------------------------------------------------------ runner-side grid anchor (amendment, AD_PREREG.md)
+def wait_for_tags(tags: list[str], groups: list[str], batch: str, results: str, max_wait: int, label: str):
+    """Wait until every tag has landed (in this job's results or in the listed groups' artifacts of this workflow
+    run). Returns (landed {tag: dir}, complete?)."""
+    cache = tempfile.mkdtemp(prefix="adwait-")
+    have: set = set()
+    t0 = time.time()
+
+    def landed_now():
+        roots = [results] + [os.path.join(cache, g) for g in sorted(have)]
+        found = find_grid(tags, roots)
+        return {t: d for t, d in found.items() if adlib.load_run(d)["status"] not in ("missing", "no_run_json")}
+
+    while True:
+        landed = landed_now()
+        if len(landed) == len(tags):
+            return landed, True
+        if all(g in have for g in groups) or time.time() - t0 > max_wait:
+            print(f"[ad] {label}: gave up waiting after {round(time.time() - t0)} s; landed {sorted(landed)}",
+                  flush=True)
+            return landed, False
+        try:
+            fetch_group_artifacts(batch, [g for g in groups if g not in have], cache, have)
+        except Exception as e:
+            print(f"[ad] {label}: artifact poll error: {e}", flush=True)
+        if len(landed_now()) < len(tags) and not all(g in have for g in groups):
+            time.sleep(90)
+
+
+def anchor_grid(spec: dict, batch: str, image: str, results: str, num_cores: int, timeout_s: int, par: int) -> None:
+    """The registered grid anchor computed on the runner: P0 = 5 * round(F_pilot / 5), F_pilot = E5's crossing over
+    the design's pilot runs (median claim per target); then this job's share of the design's 10 grid runs."""
+    sys.path.insert(0, HERE)
+    import ad  # noqa: E402  (crossing, as registered)
+    key = spec["key"]
+    landed, complete = wait_for_tags(spec["pilot_tags"], spec.get("pilot_groups", []), batch, results,
+                                     int(spec.get("max_wait_s", 9000)), key)
+    pts = {}
+    for t, d in landed.items():
+        r = adlib.load_run(d)
+        if r["claim"] is not None:
+            pts.setdefault(float(r["period"]), []).append(r["claim"])
+    rec = {"key": key, "pilots": {str(T): v for T, v in sorted(pts.items())}, "complete": complete}
+    os.makedirs(os.path.join(results, "anchors"), exist_ok=True)
+    if len(pts) < 2:
+        rec["status"] = "no anchor (fewer than 2 pilot claims)"
+        json.dump(rec, open(os.path.join(results, "anchors", key.replace("/", "-") + ".json"), "w"), indent=1)
+        print(f"[ad] {key}: no anchor; grid not run", flush=True)
+        return
+    import statistics as st
+    F, how = ad.crossing([(T, st.median(pts[T])) for T in sorted(pts)])
+    if F is None:
+        rec["status"] = f"no anchor ({how})"
+        json.dump(rec, open(os.path.join(results, "anchors", key.replace("/", "-") + ".json"), "w"), indent=1)
+        print(f"[ad] {key}: no anchor ({how}); grid not run", flush=True)
+        return
+    P0 = int(5 * round(F / 5))
+    runs = []
+    k = 0
+    for s_ in spec["settings"]:
+        for m in s_["mult"]:
+            k += 1
+            v = dict(spec.get("extra_vars", {}))
+            v.update(s_["vars"])
+            runs.append({"tag": f"{spec['tag']}-{spec['design']}-{k:03d}", "design": spec["design"],
+                         "platform": spec["platform"], "period": int(5 * round(m * P0 / 5)), "vars": v,
+                         "setting": s_["setting"], "kind": "grid", "arm": spec["arm"]})
+    rec.update(status="anchored", F_pilot=F, how=how, P0=P0, grid=[(r["tag"], r["setting"], r["period"]) for r in runs])
+    json.dump(rec, open(os.path.join(results, "anchors", key.replace("/", "-") + ".json"), "w"), indent=1)
+    mine = [runs[i] for i in spec["share"] if i < len(runs)]
+    print(f"[ad] {key}: F_pilot {F:.1f} ({how}) -> P0 {P0}; this job runs {[(r['tag'], r['period']) for r in mine]}",
+          flush=True)
+    with ThreadPoolExecutor(max_workers=par) as ex:
+        list(ex.map(lambda r: run_one(r, image, results, num_cores, timeout_s), mine))
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--spec", required=True)
@@ -258,6 +334,8 @@ def main() -> int:
             list(ex.map(lambda r: run_one(r, a.image, results, nc, to), grp["runs"]))
         if grp.get("chains"):
             list(ex.map(lambda c: run_chain(c, a.image, results, nc, to), grp["chains"]))
+    for an in grp.get("anchor_grid", []):
+        anchor_grid(an, spec["batch"], a.image, results, nc, to, par)
     for aw in grp.get("await_chains", []):
         await_chains(aw, spec["batch"], a.image, results, nc, to, par)
     return 0
