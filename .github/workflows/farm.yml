@@ -53,10 +53,21 @@ jobs:
       - name: Run job
         run: |
           mkdir -p results
-          docker run --rm -v "$PWD:/work" -w /work -e PDK_ROOT=/work/pdk "$IMAGE" \
-            python3 br/run_job.py --job-spec "farm/jobs/${{ matrix.tag }}.json" \
-              --jobs 4 --results results --pdk-root /work/pdk --timeout 16000 || true
-          cat "results/${{ matrix.tag }}/job.json" || echo "no job.json"
+          case "${{ matrix.tag }}" in
+            io-*|smoke-io-*)
+              # IO1 (docs/qa_week/IO_PREREG.md): source run [+ pin plan] [+ capture] [+ rebuild chain] in one job
+              docker run --rm -v "$PWD:/work" -w /work -e PDK_ROOT=/work/pdk "$IMAGE" \
+                python3 farm/qa/IO/io_run.py --job-spec "farm/jobs/${{ matrix.tag }}.json" \
+                  --jobs 4 --results results --pdk-root /work/pdk || true
+              cat "results/${{ matrix.tag }}/chain.json" || echo "no chain.json"
+              ;;
+            *)
+              docker run --rm -v "$PWD:/work" -w /work -e PDK_ROOT=/work/pdk "$IMAGE" \
+                python3 br/run_job.py --job-spec "farm/jobs/${{ matrix.tag }}.json" \
+                  --jobs 4 --results results --pdk-root /work/pdk --timeout 16000 || true
+              cat "results/${{ matrix.tag }}/job.json" || echo "no job.json"
+              ;;
+          esac
           sudo chown -R "$(id -u):$(id -g)" results || true
 
       - name: Upload result

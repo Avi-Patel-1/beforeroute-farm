@@ -1,0 +1,14 @@
+{
+ "version": 1,
+ "case": "smoke",
+ "arm": "noop",
+ "moves": [
+  {
+   "group": "mode",
+   "pins": [
+    "mode"
+   ],
+   "option": "KEEP"
+  }
+ ]
+}

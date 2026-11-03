@@ -1,0 +1,745 @@
+{
+ "rule": [
+  "Population: Addendum 39 (E2)'s 17 rebuilt winners whose first passing rebuild was port-limited (worst setup slack below",
+  "the register-to-register worst slack), as docs/qa_week/E2_analysis.py computes them. Winners with identical settings",
+  "(same job-spec overrides) are one case (the first by the order below). Per design, sort by sha256 of the winner's",
+  "search-run tag and keep the first three; case ids c01.. follow the same sha256 order across designs."
+ ],
+ "population": [
+  "x8b-wbqspiflash-006",
+  "x8a-usb_cdc_core-002",
+  "xaf1-xtea-004",
+  "xag1-xtea-003",
+  "xah1-xtea-007",
+  "xab2-xtea-008",
+  "xag2-xtea-004",
+  "xah2-xtea-001",
+  "xag2-cic_decimator-004",
+  "xaf1-usb_cdc_core-001",
+  "xag1-usb_cdc_core-007",
+  "xah1-usb_cdc_core-008",
+  "xaf2-usb_cdc_core-004",
+  "xag2-usb_cdc_core-002",
+  "xah2-usb_cdc_core-002",
+  "xah1-wbqspiflash-003",
+  "xag2-wbqspiflash-008"
+ ],
+ "duplicates": [
+  [
+   "xah2-usb_cdc_core-002",
+   "xag2-usb_cdc_core-002"
+  ]
+ ],
+ "cases": [
+  {
+   "case": "c01",
+   "design": "cic_decimator",
+   "design_dir": "designs/cic_decimator",
+   "config": "config_sky130.json",
+   "winner_tag": "xag2-cic_decimator-004",
+   "winner_sha256": "0882df56998d423a97e1881c9ee0663f85c497b93d33a992f0dbd644e4c8036b",
+   "set": "A35",
+   "arm": "g",
+   "seed": 2,
+   "T0": 4.6,
+   "claim0_record": 4.095178023711922,
+   "overrides": {
+    "RUN_MAGIC_DRC": false,
+    "RUN_KLAYOUT_DRC": false,
+    "RUN_LVS": false,
+    "RUN_KLAYOUT_XOR": false,
+    "RUN_IRDROP_REPORT": false,
+    "RUN_LINTER": false,
+    "CLOCK_PERIOD": 4.6,
+    "SYNTH_STRATEGY": "AREA 3",
+    "SYNTH_ABC_BUFFERING": true,
+    "SYNTH_SIZING": true,
+    "FP_CORE_UTIL": 43,
+    "PL_TARGET_DENSITY_PCT": 67,
+    "PL_TIMING_DRIVEN": true,
+    "PL_ROUTABILITY_DRIVEN": false,
+    "RUN_POST_GRT_RESIZER_TIMING": true,
+    "RUN_POST_GRT_DESIGN_REPAIR": true,
+    "PL_RESIZER_SETUP_SLACK_MARGIN": 0.312,
+    "GRT_RESIZER_SETUP_SLACK_MARGIN": 0.388,
+    "DESIGN_REPAIR_MAX_SLEW_PCT": 40,
+    "DESIGN_REPAIR_MAX_CAP_PCT": 29,
+    "LAYERS_RC": {
+     "*": {
+      "li1": {
+       "res": 0.0752941175,
+       "cap": 0.00018676206809
+      },
+      "met1": {
+       "res": 0.0008928571,
+       "cap": 0.000180502538973
+      },
+      "met2": {
+       "res": 0.0008928571,
+       "cap": 0.000165905533799
+      },
+      "met3": {
+       "res": 0.0001566667,
+       "cap": 0.000182519422998
+      },
+      "met4": {
+       "res": 0.0001566667,
+       "cap": 0.00016161718191
+      },
+      "met5": {
+       "res": 1.78125e-05,
+       "cap": 0.000187045967495
+      }
+     }
+    }
+   },
+   "drv_ref": 89,
+   "record_chain": {
+    "T1_tag": "xak-cic_decimator-005",
+    "T1": 4.1,
+    "kept_tag": "xak-cic_decimator-005",
+    "kept": 4.1,
+    "gain": 1.0
+   }
+  },
+  {
+   "case": "c02",
+   "design": "xtea",
+   "design_dir": "designs/xtea",
+   "config": "config_sky130.json",
+   "winner_tag": "xaf1-xtea-004",
+   "winner_sha256": "3f60d5b730c3b336c6166ca2e402d5bc4c3baba256e3b191a891b1217e29882c",
+   "set": "A35",
+   "arm": "f",
+   "seed": 1,
+   "T0": 11.71,
+   "claim0_record": 6.212760292073042,
+   "overrides": {
+    "RUN_MAGIC_DRC": false,
+    "RUN_KLAYOUT_DRC": false,
+    "RUN_LVS": false,
+    "RUN_KLAYOUT_XOR": false,
+    "RUN_IRDROP_REPORT": false,
+    "RUN_LINTER": false,
+    "CLOCK_PERIOD": 11.71,
+    "SYNTH_STRATEGY": "DELAY 1",
+    "SYNTH_ABC_BUFFERING": true,
+    "SYNTH_SIZING": true,
+    "FP_CORE_UTIL": 32,
+    "PL_TARGET_DENSITY_PCT": 41,
+    "PL_TIMING_DRIVEN": true,
+    "PL_ROUTABILITY_DRIVEN": false,
+    "RUN_POST_GRT_RESIZER_TIMING": false,
+    "RUN_POST_GRT_DESIGN_REPAIR": true,
+    "PL_RESIZER_SETUP_SLACK_MARGIN": 0.345,
+    "GRT_RESIZER_SETUP_SLACK_MARGIN": 0.344,
+    "DESIGN_REPAIR_MAX_SLEW_PCT": 22,
+    "DESIGN_REPAIR_MAX_CAP_PCT": 13,
+    "LAYERS_RC": {
+     "*": {
+      "li1": {
+       "res": 0.07176,
+       "cap": 0.0001499
+      },
+      "met1": {
+       "res": 0.00120565,
+       "cap": 0.000172375
+      },
+      "met2": {
+       "res": 0.00122132,
+       "cap": 0.000136233
+      },
+      "met3": {
+       "res": 0.000166281,
+       "cap": 0.000214962
+      },
+      "met4": {
+       "res": 0.000168093,
+       "cap": 0.000148128
+      },
+      "met5": {
+       "res": 1.83558e-05,
+       "cap": 0.000154087
+      }
+     }
+    }
+   },
+   "drv_ref": 0,
+   "record_chain": {
+    "T1_tag": "xak-xtea-004",
+    "T1": 6.25,
+    "kept_tag": "xac-xtea-016",
+    "kept": 4.6,
+    "gain": 1.358695652173913
+   }
+  },
+  {
+   "case": "c03",
+   "design": "usb_cdc_core",
+   "design_dir": "designs/usb_cdc_core",
+   "config": "config_sky130.json",
+   "winner_tag": "xah1-usb_cdc_core-008",
+   "winner_sha256": "57274bc071c0c9820527646672a2cb0e5931132be9111029f9603f2ac29765f2",
+   "set": "A35",
+   "arm": "h",
+   "seed": 1,
+   "T0": 7.02,
+   "claim0_record": 6.186652363292961,
+   "overrides": {
+    "RUN_MAGIC_DRC": false,
+    "RUN_KLAYOUT_DRC": false,
+    "RUN_LVS": false,
+    "RUN_KLAYOUT_XOR": false,
+    "RUN_IRDROP_REPORT": false,
+    "RUN_LINTER": false,
+    "CLOCK_PERIOD": 7.02,
+    "SYNTH_STRATEGY": "AREA 3",
+    "SYNTH_ABC_BUFFERING": true,
+    "SYNTH_SIZING": true,
+    "FP_CORE_UTIL": 20,
+    "PL_TARGET_DENSITY_PCT": 50,
+    "PL_TIMING_DRIVEN": true,
+    "PL_ROUTABILITY_DRIVEN": false,
+    "RUN_POST_GRT_RESIZER_TIMING": true,
+    "RUN_POST_GRT_DESIGN_REPAIR": true,
+    "PL_RESIZER_SETUP_SLACK_MARGIN": 0.4,
+    "GRT_RESIZER_SETUP_SLACK_MARGIN": 0.4,
+    "DESIGN_REPAIR_MAX_SLEW_PCT": 40,
+    "DESIGN_REPAIR_MAX_CAP_PCT": 30,
+    "LAYERS_RC": {
+     "*": {
+      "li1": {
+       "res": 0.0752941175,
+       "cap": 0.00018676206809
+      },
+      "met1": {
+       "res": 0.0008928571,
+       "cap": 0.000180502538973
+      },
+      "met2": {
+       "res": 0.0008928571,
+       "cap": 0.000165905533799
+      },
+      "met3": {
+       "res": 0.0001566667,
+       "cap": 0.000182519422998
+      },
+      "met4": {
+       "res": 0.0001566667,
+       "cap": 0.00016161718191
+      },
+      "met5": {
+       "res": 1.78125e-05,
+       "cap": 0.000187045967495
+      }
+     }
+    }
+   },
+   "drv_ref": 309,
+   "record_chain": {
+    "T1_tag": "xak-usb_cdc_core-007",
+    "T1": 6.2,
+    "kept_tag": "xac-usb_cdc_core-014",
+    "kept": 5.9,
+    "gain": 1.0508474576271185
+   }
+  },
+  {
+   "case": "c04",
+   "design": "usb_cdc_core",
+   "design_dir": "designs/usb_cdc_core",
+   "config": "config_sky130.json",
+   "winner_tag": "xaf1-usb_cdc_core-001",
+   "winner_sha256": "58bda0fbe0e0360ce4b06dcb0cab58d72530ecfcc7c14c7b4e8c915292ba3042",
+   "set": "A35",
+   "arm": "f",
+   "seed": 1,
+   "T0": 7.02,
+   "claim0_record": 6.340679825104341,
+   "overrides": {
+    "RUN_MAGIC_DRC": false,
+    "RUN_KLAYOUT_DRC": false,
+    "RUN_LVS": false,
+    "RUN_KLAYOUT_XOR": false,
+    "RUN_IRDROP_REPORT": false,
+    "RUN_LINTER": false,
+    "CLOCK_PERIOD": 7.02,
+    "SYNTH_STRATEGY": "AREA 3",
+    "SYNTH_ABC_BUFFERING": true,
+    "SYNTH_SIZING": false,
+    "FP_CORE_UTIL": 43,
+    "PL_TARGET_DENSITY_PCT": 59,
+    "PL_TIMING_DRIVEN": true,
+    "PL_ROUTABILITY_DRIVEN": false,
+    "RUN_POST_GRT_RESIZER_TIMING": true,
+    "RUN_POST_GRT_DESIGN_REPAIR": true,
+    "PL_RESIZER_SETUP_SLACK_MARGIN": 0.124,
+    "GRT_RESIZER_SETUP_SLACK_MARGIN": 0.033,
+    "DESIGN_REPAIR_MAX_SLEW_PCT": 35,
+    "DESIGN_REPAIR_MAX_CAP_PCT": 19,
+    "LAYERS_RC": {
+     "*": {
+      "li1": {
+       "res": 0.0752941175,
+       "cap": 0.00018676206809
+      },
+      "met1": {
+       "res": 0.0008928571,
+       "cap": 0.000180502538973
+      },
+      "met2": {
+       "res": 0.0008928571,
+       "cap": 0.000165905533799
+      },
+      "met3": {
+       "res": 0.0001566667,
+       "cap": 0.000182519422998
+      },
+      "met4": {
+       "res": 0.0001566667,
+       "cap": 0.00016161718191
+      },
+      "met5": {
+       "res": 1.78125e-05,
+       "cap": 0.000187045967495
+      }
+     }
+    }
+   },
+   "drv_ref": 309,
+   "record_chain": {
+    "T1_tag": "xak-usb_cdc_core-005",
+    "T1": 6.35,
+    "kept_tag": "xac-usb_cdc_core-010",
+    "kept": 5.7,
+    "gain": 1.1140350877192982
+   }
+  },
+  {
+   "case": "c05",
+   "design": "usb_cdc_core",
+   "design_dir": "designs/usb_cdc_core",
+   "config": "config_sky130.json",
+   "winner_tag": "x8a-usb_cdc_core-002",
+   "winner_sha256": "5a515001ef65b70233b63699374a79fdec1837ef30ca63683ee72f34672bf79e",
+   "set": "A32",
+   "arm": "agent",
+   "seed": null,
+   "T0": 7.02,
+   "claim0_record": 6.302018305579792,
+   "overrides": {
+    "RUN_MAGIC_DRC": false,
+    "RUN_KLAYOUT_DRC": false,
+    "RUN_LVS": false,
+    "RUN_KLAYOUT_XOR": false,
+    "RUN_IRDROP_REPORT": false,
+    "RUN_LINTER": false,
+    "CLOCK_PERIOD": 7.02,
+    "SYNTH_STRATEGY": "AREA 3",
+    "SYNTH_ABC_BUFFERING": true,
+    "SYNTH_SIZING": true,
+    "FP_CORE_UTIL": 36,
+    "PL_TARGET_DENSITY_PCT": 48,
+    "PL_TIMING_DRIVEN": true,
+    "PL_ROUTABILITY_DRIVEN": false,
+    "RUN_POST_GRT_RESIZER_TIMING": true,
+    "RUN_POST_GRT_DESIGN_REPAIR": true,
+    "PL_RESIZER_SETUP_SLACK_MARGIN": 0.4,
+    "GRT_RESIZER_SETUP_SLACK_MARGIN": 0.4,
+    "DESIGN_REPAIR_MAX_SLEW_PCT": 30,
+    "DESIGN_REPAIR_MAX_CAP_PCT": 25,
+    "LAYERS_RC": {
+     "*": {
+      "li1": {
+       "res": 0.0752941175,
+       "cap": 0.00018676206809
+      },
+      "met1": {
+       "res": 0.0008928571,
+       "cap": 0.000180502538973
+      },
+      "met2": {
+       "res": 0.0008928571,
+       "cap": 0.000165905533799
+      },
+      "met3": {
+       "res": 0.0001566667,
+       "cap": 0.000182519422998
+      },
+      "met4": {
+       "res": 0.0001566667,
+       "cap": 0.00016161718191
+      },
+      "met5": {
+       "res": 1.78125e-05,
+       "cap": 0.000187045967495
+      }
+     }
+    }
+   },
+   "drv_ref": 309,
+   "record_chain": {
+    "T1_tag": "x8k-usb_cdc_core-002",
+    "T1": 6.35,
+    "kept_tag": "x8c-usb_cdc_core-003",
+    "kept": 5.85,
+    "gain": 1.0854700854700854
+   }
+  },
+  {
+   "case": "c06",
+   "design": "xtea",
+   "design_dir": "designs/xtea",
+   "config": "config_sky130.json",
+   "winner_tag": "xag2-xtea-004",
+   "winner_sha256": "60d492e3c802f037d7f56cb34bfa55a8df91327a4dac04721476035cc283618f",
+   "set": "A35",
+   "arm": "g",
+   "seed": 2,
+   "T0": 11.71,
+   "claim0_record": 5.927190938048555,
+   "overrides": {
+    "RUN_MAGIC_DRC": false,
+    "RUN_KLAYOUT_DRC": false,
+    "RUN_LVS": false,
+    "RUN_KLAYOUT_XOR": false,
+    "RUN_IRDROP_REPORT": false,
+    "RUN_LINTER": false,
+    "CLOCK_PERIOD": 11.71,
+    "SYNTH_STRATEGY": "DELAY 3",
+    "SYNTH_ABC_BUFFERING": false,
+    "SYNTH_SIZING": true,
+    "FP_CORE_UTIL": 22,
+    "PL_TARGET_DENSITY_PCT": 47,
+    "PL_TIMING_DRIVEN": true,
+    "PL_ROUTABILITY_DRIVEN": false,
+    "RUN_POST_GRT_RESIZER_TIMING": true,
+    "RUN_POST_GRT_DESIGN_REPAIR": true,
+    "PL_RESIZER_SETUP_SLACK_MARGIN": 0.281,
+    "GRT_RESIZER_SETUP_SLACK_MARGIN": 0.196,
+    "DESIGN_REPAIR_MAX_SLEW_PCT": 35,
+    "DESIGN_REPAIR_MAX_CAP_PCT": 26,
+    "LAYERS_RC": {
+     "*": {
+      "li1": {
+       "res": 0.07176,
+       "cap": 0.0001499
+      },
+      "met1": {
+       "res": 0.00120565,
+       "cap": 0.000172375
+      },
+      "met2": {
+       "res": 0.00122132,
+       "cap": 0.000136233
+      },
+      "met3": {
+       "res": 0.000166281,
+       "cap": 0.000214962
+      },
+      "met4": {
+       "res": 0.000168093,
+       "cap": 0.000148128
+      },
+      "met5": {
+       "res": 1.83558e-05,
+       "cap": 0.000154087
+      }
+     }
+    }
+   },
+   "drv_ref": 0,
+   "record_chain": {
+    "T1_tag": "xak-xtea-005",
+    "T1": 5.95,
+    "kept_tag": "xac-xtea-018",
+    "kept": 4.25,
+    "gain": 1.4000000000000001
+   }
+  },
+  {
+   "case": "c07",
+   "design": "xtea",
+   "design_dir": "designs/xtea",
+   "config": "config_sky130.json",
+   "winner_tag": "xah1-xtea-007",
+   "winner_sha256": "99985788350ea3de46c228f9649cfdecdcc5c56c2b06e087d28559e01231923b",
+   "set": "A35",
+   "arm": "h",
+   "seed": 1,
+   "T0": 11.71,
+   "claim0_record": 6.007647470650976,
+   "overrides": {
+    "RUN_MAGIC_DRC": false,
+    "RUN_KLAYOUT_DRC": false,
+    "RUN_LVS": false,
+    "RUN_KLAYOUT_XOR": false,
+    "RUN_IRDROP_REPORT": false,
+    "RUN_LINTER": false,
+    "CLOCK_PERIOD": 11.71,
+    "SYNTH_STRATEGY": "DELAY 3",
+    "SYNTH_ABC_BUFFERING": false,
+    "SYNTH_SIZING": true,
+    "FP_CORE_UTIL": 20,
+    "PL_TARGET_DENSITY_PCT": 36,
+    "PL_TIMING_DRIVEN": true,
+    "PL_ROUTABILITY_DRIVEN": false,
+    "RUN_POST_GRT_RESIZER_TIMING": false,
+    "RUN_POST_GRT_DESIGN_REPAIR": true,
+    "PL_RESIZER_SETUP_SLACK_MARGIN": 0.398,
+    "GRT_RESIZER_SETUP_SLACK_MARGIN": 0.203,
+    "DESIGN_REPAIR_MAX_SLEW_PCT": 30,
+    "DESIGN_REPAIR_MAX_CAP_PCT": 37,
+    "LAYERS_RC": {
+     "*": {
+      "li1": {
+       "res": 0.07176,
+       "cap": 0.0001499
+      },
+      "met1": {
+       "res": 0.00120565,
+       "cap": 0.000172375
+      },
+      "met2": {
+       "res": 0.00122132,
+       "cap": 0.000136233
+      },
+      "met3": {
+       "res": 0.000166281,
+       "cap": 0.000214962
+      },
+      "met4": {
+       "res": 0.000168093,
+       "cap": 0.000148128
+      },
+      "met5": {
+       "res": 1.83558e-05,
+       "cap": 0.000154087
+      }
+     }
+    }
+   },
+   "drv_ref": 0,
+   "record_chain": {
+    "T1_tag": "xak-xtea-007",
+    "T1": 6.05,
+    "kept_tag": "xac-xtea-024",
+    "kept": 4.2,
+    "gain": 1.4404761904761905
+   }
+  },
+  {
+   "case": "c08",
+   "design": "wbqspiflash",
+   "design_dir": "designs/wbqspiflash",
+   "config": "config_sky130.json",
+   "winner_tag": "x8b-wbqspiflash-006",
+   "winner_sha256": "afc79bb388e62385982ef25b8c48eec2ce40182fea4950cea7b4ae374950b921",
+   "set": "A32",
+   "arm": "tpe",
+   "seed": null,
+   "T0": 8.52,
+   "claim0_record": 8.037585877696273,
+   "overrides": {
+    "RUN_MAGIC_DRC": false,
+    "RUN_KLAYOUT_DRC": false,
+    "RUN_LVS": false,
+    "RUN_KLAYOUT_XOR": false,
+    "RUN_IRDROP_REPORT": false,
+    "RUN_LINTER": false,
+    "CLOCK_PERIOD": 8.52,
+    "SYNTH_STRATEGY": "DELAY 4",
+    "SYNTH_ABC_BUFFERING": false,
+    "SYNTH_SIZING": false,
+    "FP_CORE_UTIL": 32,
+    "PL_TARGET_DENSITY_PCT": 50,
+    "PL_TIMING_DRIVEN": false,
+    "PL_ROUTABILITY_DRIVEN": false,
+    "RUN_POST_GRT_RESIZER_TIMING": true,
+    "RUN_POST_GRT_DESIGN_REPAIR": true,
+    "PL_RESIZER_SETUP_SLACK_MARGIN": 0.217,
+    "GRT_RESIZER_SETUP_SLACK_MARGIN": 0.283,
+    "DESIGN_REPAIR_MAX_SLEW_PCT": 27,
+    "DESIGN_REPAIR_MAX_CAP_PCT": 11,
+    "LAYERS_RC": {
+     "*": {
+      "li1": {
+       "res": 0.0752941175,
+       "cap": 0.00018676206809
+      },
+      "met1": {
+       "res": 0.0008928571,
+       "cap": 0.000180502538973
+      },
+      "met2": {
+       "res": 0.0008928571,
+       "cap": 0.000165905533799
+      },
+      "met3": {
+       "res": 0.0001566667,
+       "cap": 0.000182519422998
+      },
+      "met4": {
+       "res": 0.0001566667,
+       "cap": 0.00016161718191
+      },
+      "met5": {
+       "res": 1.78125e-05,
+       "cap": 0.000187045967495
+      }
+     }
+    }
+   },
+   "drv_ref": 953,
+   "record_chain": {
+    "T1_tag": "x8k-wbqspiflash-001",
+    "T1": 8.05,
+    "kept_tag": "x8c-wbqspiflash-004",
+    "kept": 7.65,
+    "gain": 1.0522875816993464
+   }
+  },
+  {
+   "case": "c09",
+   "design": "wbqspiflash",
+   "design_dir": "designs/wbqspiflash",
+   "config": "config_sky130.json",
+   "winner_tag": "xag2-wbqspiflash-008",
+   "winner_sha256": "bc2e6391698872c949e006d9a50dcd039e3ceee58c3206356f3b37cb9ee1bf18",
+   "set": "A35",
+   "arm": "g",
+   "seed": 2,
+   "T0": 8.49,
+   "claim0_record": 7.979688192744493,
+   "overrides": {
+    "RUN_MAGIC_DRC": false,
+    "RUN_KLAYOUT_DRC": false,
+    "RUN_LVS": false,
+    "RUN_KLAYOUT_XOR": false,
+    "RUN_IRDROP_REPORT": false,
+    "RUN_LINTER": false,
+    "CLOCK_PERIOD": 8.49,
+    "SYNTH_STRATEGY": "DELAY 4",
+    "SYNTH_ABC_BUFFERING": true,
+    "SYNTH_SIZING": false,
+    "FP_CORE_UTIL": 20,
+    "PL_TARGET_DENSITY_PCT": 27,
+    "PL_TIMING_DRIVEN": false,
+    "PL_ROUTABILITY_DRIVEN": false,
+    "RUN_POST_GRT_RESIZER_TIMING": true,
+    "RUN_POST_GRT_DESIGN_REPAIR": false,
+    "PL_RESIZER_SETUP_SLACK_MARGIN": 0.391,
+    "GRT_RESIZER_SETUP_SLACK_MARGIN": 0.305,
+    "DESIGN_REPAIR_MAX_SLEW_PCT": 26,
+    "DESIGN_REPAIR_MAX_CAP_PCT": 24,
+    "LAYERS_RC": {
+     "*": {
+      "li1": {
+       "res": 0.0752941175,
+       "cap": 0.00018676206809
+      },
+      "met1": {
+       "res": 0.0008928571,
+       "cap": 0.000180502538973
+      },
+      "met2": {
+       "res": 0.0008928571,
+       "cap": 0.000165905533799
+      },
+      "met3": {
+       "res": 0.0001566667,
+       "cap": 0.000182519422998
+      },
+      "met4": {
+       "res": 0.0001566667,
+       "cap": 0.00016161718191
+      },
+      "met5": {
+       "res": 1.78125e-05,
+       "cap": 0.000187045967495
+      }
+     }
+    }
+   },
+   "drv_ref": 953,
+   "record_chain": {
+    "T1_tag": "xak-wbqspiflash-005",
+    "T1": 8.0,
+    "kept_tag": "xac-wbqspiflash-011",
+    "kept": 7.7,
+    "gain": 1.0389610389610389
+   }
+  },
+  {
+   "case": "c10",
+   "design": "wbqspiflash",
+   "design_dir": "designs/wbqspiflash",
+   "config": "config_sky130.json",
+   "winner_tag": "xah1-wbqspiflash-003",
+   "winner_sha256": "eab3384898a6a8c9b6eb8019430fa6c6cedfdb0fbf510431e340841dcaa7139c",
+   "set": "A35",
+   "arm": "h",
+   "seed": 1,
+   "T0": 8.49,
+   "claim0_record": 7.957212837198335,
+   "overrides": {
+    "RUN_MAGIC_DRC": false,
+    "RUN_KLAYOUT_DRC": false,
+    "RUN_LVS": false,
+    "RUN_KLAYOUT_XOR": false,
+    "RUN_IRDROP_REPORT": false,
+    "RUN_LINTER": false,
+    "CLOCK_PERIOD": 8.49,
+    "SYNTH_STRATEGY": "DELAY 4",
+    "SYNTH_ABC_BUFFERING": false,
+    "SYNTH_SIZING": false,
+    "FP_CORE_UTIL": 30,
+    "PL_TARGET_DENSITY_PCT": 54,
+    "PL_TIMING_DRIVEN": false,
+    "PL_ROUTABILITY_DRIVEN": false,
+    "RUN_POST_GRT_RESIZER_TIMING": true,
+    "RUN_POST_GRT_DESIGN_REPAIR": false,
+    "PL_RESIZER_SETUP_SLACK_MARGIN": 0.35,
+    "GRT_RESIZER_SETUP_SLACK_MARGIN": 0.4,
+    "DESIGN_REPAIR_MAX_SLEW_PCT": 12,
+    "DESIGN_REPAIR_MAX_CAP_PCT": 37,
+    "LAYERS_RC": {
+     "*": {
+      "li1": {
+       "res": 0.0752941175,
+       "cap": 0.00018676206809
+      },
+      "met1": {
+       "res": 0.0008928571,
+       "cap": 0.000180502538973
+      },
+      "met2": {
+       "res": 0.0008928571,
+       "cap": 0.000165905533799
+      },
+      "met3": {
+       "res": 0.0001566667,
+       "cap": 0.000182519422998
+      },
+      "met4": {
+       "res": 0.0001566667,
+       "cap": 0.00016161718191
+      },
+      "met5": {
+       "res": 1.78125e-05,
+       "cap": 0.000187045967495
+      }
+     }
+    }
+   },
+   "drv_ref": 953,
+   "record_chain": {
+    "T1_tag": "xak-wbqspiflash-006",
+    "T1": 8.0,
+    "kept_tag": "xac-wbqspiflash-016",
+    "kept": 7.6,
+    "gain": 1.0526315789473684
+   }
+  }
+ ]
+}
