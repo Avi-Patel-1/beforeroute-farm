@@ -1,0 +1,12 @@
+{
+ "rationale": "Best feasible runs (x6z-xtea-001, aes_cipher) use RC_MODEL 'orfs' or 'cap213' with low density_delta (7-18) and moderate FP_CORE_UTIL (23-27). High density_delta (25) in x6z-xtea-001 correlates with high cell count (429) and high wirelength. To improve T_eff, pin RC_MODEL to 'orfs' (proven robust), reduce density_delta to 10 (lower congestion), and set FP_CORE_UTIL to 25 (balance density and repair). Keep SYNTH_STRATEGY 'AREA 3' (smaller area helps density) and enable SYNTH_SIZING. Disable aggressive repair margins (PL_RESIZER_SETUP_SLACK_MARGIN 0.1, GRT_RESIZER_SETUP_SLACK_MARGIN 0.1) to allow tighter optimization without violating constraints.",
+ "pins": {
+  "RC_MODEL": "orfs",
+  "density_delta": 10,
+  "FP_CORE_UTIL": 25,
+  "SYNTH_STRATEGY": "AREA 3",
+  "SYNTH_SIZING": true,
+  "PL_RESIZER_SETUP_SLACK_MARGIN": 0.1,
+  "GRT_RESIZER_SETUP_SLACK_MARGIN": 0.1
+ }
+}

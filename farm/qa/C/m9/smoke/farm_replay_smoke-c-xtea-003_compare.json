@@ -1,0 +1,22 @@
+{
+ "keys_old": 280,
+ "keys_new": 280,
+ "identical": 280,
+ "different": [],
+ "only_in_original": [],
+ "only_in_replay": [],
+ "setup_ws": [
+  6.648293215238167,
+  6.648293215238167
+ ],
+ "hold_ws": [
+  0.09882761555506879,
+  0.09882761555506879
+ ],
+ "area": [
+  2894.03,
+  2894.03
+ ],
+ "flow_seconds": 68.4,
+ "status": "completed"
+}

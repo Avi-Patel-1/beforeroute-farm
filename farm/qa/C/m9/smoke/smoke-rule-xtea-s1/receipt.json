@@ -1,0 +1,90 @@
+{
+ "item": "smoke-rule-xtea-s1",
+ "prompt": "farm/agent_a35/xtea/s1/round1_prompt.md",
+ "prompt_sha256": "13d28ddd6d5b40a1a12a4e359ce534f49380bff598a09b56f48af7e96b628d9d",
+ "prompt_chars": 12615,
+ "model": {
+  "name": "Qwen3.5-9B (instruct, Apache-2.0)",
+  "base": "Qwen/Qwen3.5-9B@c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+  "repo": "lmstudio-community/Qwen3.5-9B-GGUF",
+  "revision": "1379f25c6b505a3fc737bd7818cb09389cf807c1",
+  "file": "Qwen3.5-9B-Q4_K_M.gguf",
+  "size": 5627044256,
+  "sha256": "cd76ec205963b3b33350093e6904d9de16c4e666fd104e1f632d25c7f15f2a13",
+  "license": "apache-2.0",
+  "why_this_file": "its embedded chat template equals Qwen's official template byte for byte (checked 2026-11-03 via the Hub's GGUF metadata); unsloth's GGUF alters the thinking switch"
+ },
+ "llama_cpp": {
+  "tag": "b11700",
+  "commit": "23f7aabc16c72f6f707dba227251c35d7bd1ed96"
+ },
+ "cpu": {
+  "machine": "x86_64",
+  "nproc": 4,
+  "model": "AMD EPYC 7763 64-Core Processor",
+  "avx512f": false,
+  "mem_gb": 15.6
+ },
+ "started_utc": "2026-11-03T02:53:32Z",
+ "server_args": [
+  "-m",
+  "/tmp/model.gguf",
+  "--host",
+  "127.0.0.1",
+  "--port",
+  "8080",
+  "-t",
+  "4",
+  "-tb",
+  "4",
+  "-c",
+  "16384",
+  "-np",
+  "1",
+  "--jinja",
+  "--reasoning",
+  "off"
+ ],
+ "server_load_s": 6.0,
+ "call": {
+  "wall_s": 398.2,
+  "prompt_tokens": 4713,
+  "prompt_tokens_per_s": 13.876032164589564,
+  "reply_tokens": 301,
+  "reply_tokens_per_s": 5.123663810389188,
+  "cached_tokens": 0,
+  "finish_reason": "stop",
+  "reasoning_chars": 0
+ },
+ "valid": {
+  "ok": true,
+  "pins": {
+   "RC_MODEL": "orfs",
+   "density_delta": 10,
+   "FP_CORE_UTIL": 25,
+   "SYNTH_STRATEGY": "AREA 3",
+   "SYNTH_SIZING": true,
+   "PL_RESIZER_SETUP_SLACK_MARGIN": 0.1,
+   "GRT_RESIZER_SETUP_SLACK_MARGIN": 0.1
+  },
+  "rationale": "Best feasible runs (x6z-xtea-001, aes_cipher) use RC_MODEL 'orfs' or 'cap213' with low density_delta (7-18) and moderate FP_CORE_UTIL (23-27). High density_delta (25) in x6z-xtea-001 correlates with high cell count (429) and high wirelength. To improve T_eff, pin RC_MODEL to 'orfs' (proven robust), reduce density_delta to 10 (lower congestion), and set FP_CORE_UTIL to 25 (balance density and repair). Keep SYNTH_STRATEGY 'AREA 3' (smaller area helps density) and enable SYNTH_SIZING. Disable aggressive repair margins (PL_RESIZER_SETUP_SLACK_MARGIN 0.1, GRT_RESIZER_SETUP_SLACK_MARGIN 0.1) to allow tighter optimization without violating constraints.",
+  "log": [],
+  "n_pins": 7,
+  "period_frac": null,
+  "pins_period_frac_le_05": false
+ },
+ "rule_file": {
+  "rationale": "Best feasible runs (x6z-xtea-001, aes_cipher) use RC_MODEL 'orfs' or 'cap213' with low density_delta (7-18) and moderate FP_CORE_UTIL (23-27). High density_delta (25) in x6z-xtea-001 correlates with high cell count (429) and high wirelength. To improve T_eff, pin RC_MODEL to 'orfs' (proven robust), reduce density_delta to 10 (lower congestion), and set FP_CORE_UTIL to 25 (balance density and repair). Keep SYNTH_STRATEGY 'AREA 3' (smaller area helps density) and enable SYNTH_SIZING. Disable aggressive repair margins (PL_RESIZER_SETUP_SLACK_MARGIN 0.1, GRT_RESIZER_SETUP_SLACK_MARGIN 0.1) to allow tighter optimization without violating constraints.",
+  "pins": {
+   "RC_MODEL": "orfs",
+   "density_delta": 10,
+   "FP_CORE_UTIL": 25,
+   "SYNTH_STRATEGY": "AREA 3",
+   "SYNTH_SIZING": true,
+   "PL_RESIZER_SETUP_SLACK_MARGIN": 0.1,
+   "GRT_RESIZER_SETUP_SLACK_MARGIN": 0.1
+  }
+ },
+ "rule_file_source": "reply",
+ "finished_utc": "2026-11-03T03:00:17Z"
+}
