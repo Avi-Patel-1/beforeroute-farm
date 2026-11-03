@@ -1,0 +1,664 @@
+{
+ "law": {
+  "s_minus": 0.2591819688664724,
+  "n_minus": 16,
+  "s_plus": 0.5658836179392184,
+  "n_plus": 14
+ },
+ "settings": {
+  "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {}}": {
+   "F": 386.68516455824494,
+   "how": "interpolated",
+   "targets": [
+    265,
+    325,
+    380,
+    530
+   ]
+  },
+  "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {\"CORE_UTILIZATION\": 55}}": {
+   "F": 429.7469484257798,
+   "how": "interpolated",
+   "targets": [
+    305,
+    455,
+    550
+   ]
+  },
+  "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY\": 0.85}}": {
+   "F": 439.7874376095597,
+   "how": "interpolated",
+   "targets": [
+    305,
+    455,
+    550
+   ]
+  },
+  "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {}}": {
+   "F": 373.5579488416261,
+   "how": "interpolated",
+   "targets": [
+    215,
+    265,
+    310,
+    435
+   ]
+  },
+  "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"CORE_UTILIZATION\": 50}}": {
+   "F": 356.1317191314009,
+   "how": "interpolated",
+   "targets": [
+    250,
+    370,
+    450
+   ]
+  },
+  "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY\": 0.9}}": {
+   "F": 359.56441199705796,
+   "how": "interpolated",
+   "targets": [
+    250,
+    370,
+    450
+   ]
+  },
+  "{\"design\": \"ibex\", \"platform\": \"asap7\", \"vars\": {}}": {
+   "F": 968.2044247125433,
+   "how": "interpolated",
+   "targets": [
+    630,
+    765,
+    900,
+    1260
+   ]
+  },
+  "{\"design\": \"ibex\", \"platform\": \"asap7\", \"vars\": {\"CORE_UTILIZATION\": 30}}": {
+   "F": 1058.947518764651,
+   "how": "interpolated",
+   "targets": [
+    720,
+    1080,
+    1305
+   ]
+  },
+  "{\"design\": \"ibex\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY_LB_ADDON\": 0.4}}": {
+   "F": 1094.819571509694,
+   "how": "interpolated",
+   "targets": [
+    720,
+    1080,
+    1305
+   ]
+  }
+ },
+ "points": [
+  {
+   "tag": "e5g-aes-001",
+   "design": "aes",
+   "key": "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {}}",
+   "F": 386.68516455824494,
+   "r": 0.6853120426865614,
+   "e": -0.0071043960566300746,
+   "port": false
+  },
+  {
+   "tag": "e5g-aes-002",
+   "design": "aes",
+   "key": "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {}}",
+   "F": 386.68516455824494,
+   "r": 0.8404770334835188,
+   "e": 0.006164538131371722,
+   "port": false
+  },
+  {
+   "tag": "e5g-aes-003",
+   "design": "aes",
+   "key": "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {}}",
+   "F": 386.68516455824494,
+   "r": 0.9827116083807297,
+   "e": -0.01091951526785016,
+   "port": false
+  },
+  {
+   "tag": "e5g-aes-004",
+   "design": "aes",
+   "key": "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {}}",
+   "F": 386.68516455824494,
+   "r": 1.3706240853731229,
+   "e": 0.23408975502115634,
+   "port": false
+  },
+  {
+   "tag": "e5g-aes-005",
+   "design": "aes",
+   "key": "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {\"CORE_UTILIZATION\": 55}}",
+   "F": 429.7469484257798,
+   "r": 0.7097199901413042,
+   "e": -0.10718086212015249,
+   "port": false
+  },
+  {
+   "tag": "e5g-aes-006",
+   "design": "aes",
+   "key": "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {\"CORE_UTILIZATION\": 55}}",
+   "F": 429.7469484257798,
+   "r": 1.058762608243585,
+   "e": 0.021697074542067474,
+   "port": false
+  },
+  {
+   "tag": "e5g-aes-007",
+   "design": "aes",
+   "key": "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {\"CORE_UTILIZATION\": 55}}",
+   "F": 429.7469484257798,
+   "r": 1.2798229330416961,
+   "e": 0.13533581049794205,
+   "port": false
+  },
+  {
+   "tag": "e5g-aes-008",
+   "design": "aes",
+   "key": "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY\": 0.85}}",
+   "F": 439.7874376095597,
+   "r": 0.693516853636863,
+   "e": -0.07744522625450118,
+   "port": false
+  },
+  {
+   "tag": "e5g-aes-009",
+   "design": "aes",
+   "key": "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY\": 0.85}}",
+   "F": 439.7874376095597,
+   "r": 1.0345907160812218,
+   "e": 0.008740728046563884,
+   "port": false
+  },
+  {
+   "tag": "e5g-aes-010",
+   "design": "aes",
+   "key": "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY\": 0.85}}",
+   "F": 439.7874376095597,
+   "r": 1.2506041622959825,
+   "e": 0.0938795855899247,
+   "port": false
+  },
+  {
+   "tag": "e5g-gcd-001",
+   "design": "gcd",
+   "key": "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {}}",
+   "F": 373.5579488416261,
+   "r": 0.5755465803008559,
+   "e": -0.12617841217885442,
+   "port": true
+  },
+  {
+   "tag": "e5g-gcd-002",
+   "design": "gcd",
+   "key": "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {}}",
+   "F": 373.5579488416261,
+   "r": 0.7093946222312876,
+   "e": -0.09537167915206238,
+   "port": true
+  },
+  {
+   "tag": "e5g-gcd-003",
+   "design": "gcd",
+   "key": "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {}}",
+   "F": 373.5579488416261,
+   "r": 0.829857859968676,
+   "e": -0.07984022006253899,
+   "port": true
+  },
+  {
+   "tag": "e5g-gcd-004",
+   "design": "gcd",
+   "key": "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {}}",
+   "F": 373.5579488416261,
+   "r": 1.164477964794755,
+   "e": 0.07718227184772751,
+   "port": true
+  },
+  {
+   "tag": "e5g-gcd-005",
+   "design": "gcd",
+   "key": "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"CORE_UTILIZATION\": 50}}",
+   "F": 356.1317191314009,
+   "r": 0.7019874573647796,
+   "e": -0.06309496718294326,
+   "port": true
+  },
+  {
+   "tag": "e5g-gcd-006",
+   "design": "gcd",
+   "key": "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"CORE_UTILIZATION\": 50}}",
+   "F": 356.1317191314009,
+   "r": 1.038941436899874,
+   "e": 0.008244648569243916,
+   "port": true
+  },
+  {
+   "tag": "e5g-gcd-007",
+   "design": "gcd",
+   "key": "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"CORE_UTILIZATION\": 50}}",
+   "F": 356.1317191314009,
+   "r": 1.2635774232566035,
+   "e": 0.1376697952886054,
+   "port": true
+  },
+  {
+   "tag": "e5g-gcd-008",
+   "design": "gcd",
+   "key": "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY\": 0.9}}",
+   "F": 359.56441199705796,
+   "r": 0.6952857169914957,
+   "e": -0.05862763747940234,
+   "port": true
+  },
+  {
+   "tag": "e5g-gcd-009",
+   "design": "gcd",
+   "key": "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY\": 0.9}}",
+   "F": 359.56441199705796,
+   "r": 1.0290228611474137,
+   "e": 0.005584056530484699,
+   "port": true
+  },
+  {
+   "tag": "e5g-gcd-010",
+   "design": "gcd",
+   "key": "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY\": 0.9}}",
+   "F": 359.56441199705796,
+   "r": 1.2515142905846923,
+   "e": 0.11670089308862235,
+   "port": true
+  },
+  {
+   "tag": "e5g-ibex-001",
+   "design": "ibex",
+   "key": "{\"design\": \"ibex\", \"platform\": \"asap7\", \"vars\": {}}",
+   "F": 968.2044247125433,
+   "r": 0.6506890321091487,
+   "e": -0.03296455159458621,
+   "port": false
+  },
+  {
+   "tag": "e5g-ibex-002",
+   "design": "ibex",
+   "key": "{\"design\": \"ibex\", \"platform\": \"asap7\", \"vars\": {}}",
+   "F": 968.2044247125433,
+   "r": 0.7901223961325378,
+   "e": -0.04451996253305787,
+   "port": false
+  },
+  {
+   "tag": "e5g-ibex-003",
+   "design": "ibex",
+   "key": "{\"design\": \"ibex\", \"platform\": \"asap7\", \"vars\": {}}",
+   "F": 968.2044247125433,
+   "r": 0.9295557601559268,
+   "e": -0.05632263530373106,
+   "port": false
+  },
+  {
+   "tag": "e5g-ibex-004",
+   "design": "ibex",
+   "key": "{\"design\": \"ibex\", \"platform\": \"asap7\", \"vars\": {}}",
+   "F": 968.2044247125433,
+   "r": 1.3013780642182975,
+   "e": 0.2409623105747766,
+   "port": false
+  },
+  {
+   "tag": "e5g-ibex-005",
+   "design": "ibex",
+   "key": "{\"design\": \"ibex\", \"platform\": \"asap7\", \"vars\": {\"CORE_UTILIZATION\": 30}}",
+   "F": 1058.947518764651,
+   "r": 0.6799203806057725,
+   "e": -0.10593586252085346,
+   "port": false
+  },
+  {
+   "tag": "e5g-ibex-006",
+   "design": "ibex",
+   "key": "{\"design\": \"ibex\", \"platform\": \"asap7\", \"vars\": {\"CORE_UTILIZATION\": 30}}",
+   "F": 1058.947518764651,
+   "r": 1.019880570908659,
+   "e": 0.006579817329830719,
+   "port": false
+  },
+  {
+   "tag": "e5g-ibex-007",
+   "design": "ibex",
+   "key": "{\"design\": \"ibex\", \"platform\": \"asap7\", \"vars\": {\"CORE_UTILIZATION\": 30}}",
+   "F": 1058.947518764651,
+   "r": 1.2323556898479628,
+   "e": 0.12561196742830422,
+   "port": false
+  },
+  {
+   "tag": "e5g-ibex-008",
+   "design": "ibex",
+   "key": "{\"design\": \"ibex\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY_LB_ADDON\": 0.4}}",
+   "F": 1094.819571509694,
+   "r": 0.6576426095554365,
+   "e": -0.16453813596087957,
+   "port": false
+  },
+  {
+   "tag": "e5g-ibex-009",
+   "design": "ibex",
+   "key": "{\"design\": \"ibex\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY_LB_ADDON\": 0.4}}",
+   "F": 1094.819571509694,
+   "r": 0.9864639143331547,
+   "e": -0.009000662543971217,
+   "port": false
+  },
+  {
+   "tag": "e5g-ibex-010",
+   "design": "ibex",
+   "key": "{\"design\": \"ibex\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY_LB_ADDON\": 0.4}}",
+   "F": 1094.819571509694,
+   "r": 1.1919772298192286,
+   "e": 0.12765302350010885,
+   "port": false
+  }
+ ],
+ "rebuilds": [
+  {
+   "tag": "e5k-aes-1-1",
+   "design": "aes",
+   "setting": "S0",
+   "R": 385.0,
+   "C": 400.1948,
+   "pass": false,
+   "F_grid": 386.68516455824494,
+   "F_how": "interpolated",
+   "s_used": 0.2591819688664724,
+   "pred_claim": 386.248400290175,
+   "pred_pass": false,
+   "call_right": true,
+   "claim_err": 0.03484902779802476,
+   "C0": 382.46275,
+   "claim_baseline_err": 0.04430854673773862,
+   "claim_baseline_call_right": false
+  },
+  {
+   "tag": "e5k-aes-1-2",
+   "design": "aes",
+   "setting": "S0",
+   "R": 405.0,
+   "C": 407.4305,
+   "pass": false,
+   "F_grid": 386.68516455824494,
+   "F_how": "interpolated",
+   "s_used": 0.5658836179392184,
+   "pred_claim": 397.0492298999867,
+   "pred_pass": true,
+   "call_right": false,
+   "claim_err": 0.025479855091882657,
+   "C0": 382.46275,
+   "claim_baseline_err": 0.06128100375401441,
+   "claim_baseline_call_right": false
+  },
+  {
+   "tag": "e5k-aes-2-1",
+   "design": "aes",
+   "setting": "S1",
+   "R": 385.0,
+   "C": 390.26776,
+   "pass": false,
+   "F_grid": 429.7469484257798,
+   "F_how": "interpolated",
+   "s_used": 0.2591819688664724,
+   "pred_claim": 418.1493462320197,
+   "pred_pass": false,
+   "call_right": true,
+   "claim_err": 0.07144219710083069,
+   "C0": 383.6863,
+   "claim_baseline_err": 0.016863960271788766,
+   "claim_baseline_call_right": false
+  },
+  {
+   "tag": "e5k-aes-2-2",
+   "design": "aes",
+   "setting": "S1",
+   "R": 395.0,
+   "C": 407.4499,
+   "pass": false,
+   "F_grid": 429.7469484257798,
+   "F_how": "interpolated",
+   "s_used": 0.2591819688664724,
+   "pred_claim": 420.7411659206844,
+   "pred_pass": false,
+   "call_right": true,
+   "claim_err": 0.032620614020728425,
+   "C0": 383.6863,
+   "claim_baseline_err": 0.058322753300467114,
+   "claim_baseline_call_right": false
+  },
+  {
+   "tag": "e5k-aes-3-1",
+   "design": "aes",
+   "setting": "S0",
+   "R": 385.0,
+   "C": 400.1948,
+   "pass": false,
+   "F_grid": 386.68516455824494,
+   "F_how": "interpolated",
+   "s_used": 0.2591819688664724,
+   "pred_claim": 386.248400290175,
+   "pred_pass": false,
+   "call_right": true,
+   "claim_err": 0.03484902779802476,
+   "C0": 383.938,
+   "claim_baseline_err": 0.040622216980330576,
+   "claim_baseline_call_right": false
+  },
+  {
+   "tag": "e5k-aes-3-2",
+   "design": "aes",
+   "setting": "S0",
+   "R": 405.0,
+   "C": 407.4305,
+   "pass": false,
+   "F_grid": 386.68516455824494,
+   "F_how": "interpolated",
+   "s_used": 0.5658836179392184,
+   "pred_claim": 397.0492298999867,
+   "pred_pass": true,
+   "call_right": false,
+   "claim_err": 0.025479855091882657,
+   "C0": 383.938,
+   "claim_baseline_err": 0.05766014080929142,
+   "claim_baseline_call_right": false
+  },
+  {
+   "tag": "e5k-gcd-1-1",
+   "design": "gcd",
+   "setting": "S0",
+   "R": 330.0,
+   "C": 350.432,
+   "pass": false,
+   "F_grid": 373.5579488416261,
+   "F_how": "interpolated",
+   "s_used": 0.2591819688664724,
+   "pred_claim": 362.2685139010684,
+   "pred_pass": false,
+   "call_right": true,
+   "claim_err": 0.033776920775124335,
+   "C0": 326.423,
+   "claim_baseline_err": 0.06851257875993064,
+   "claim_baseline_call_right": false
+  },
+  {
+   "tag": "e5k-gcd-1-2",
+   "design": "gcd",
+   "setting": "S0",
+   "R": 355.0,
+   "C": 356.09077,
+   "pass": false,
+   "F_grid": 373.5579488416261,
+   "F_how": "interpolated",
+   "s_used": 0.2591819688664724,
+   "pred_claim": 368.7480631227302,
+   "pred_pass": false,
+   "call_right": true,
+   "claim_err": 0.03554513115498655,
+   "C0": 326.423,
+   "claim_baseline_err": 0.08331518955124846,
+   "claim_baseline_call_right": false
+  },
+  {
+   "tag": "e5k-gcd-2-1",
+   "design": "gcd",
+   "setting": "S1",
+   "R": 335.0,
+   "C": 350.3793,
+   "pass": false,
+   "F_grid": 356.1317191314009,
+   "F_how": "interpolated",
+   "s_used": 0.2591819688664724,
+   "pred_claim": 350.65475856139113,
+   "pred_pass": false,
+   "call_right": true,
+   "claim_err": 0.0007861724747755736,
+   "C0": 333.6616,
+   "claim_baseline_err": 0.04771314972088813,
+   "claim_baseline_call_right": false
+  },
+  {
+   "tag": "e5k-gcd-2-2",
+   "design": "gcd",
+   "setting": "S1",
+   "R": 355.0,
+   "C": 353.62954,
+   "pass": true,
+   "F_grid": 356.1317191314009,
+   "F_how": "interpolated",
+   "s_used": 0.2591819688664724,
+   "pred_claim": 355.83839793872056,
+   "pred_pass": false,
+   "call_right": false,
+   "claim_err": 0.006246248372578098,
+   "C0": 333.6616,
+   "claim_baseline_err": 0.056465701366463894,
+   "claim_baseline_call_right": true
+  },
+  {
+   "tag": "e5k-gcd-3-1",
+   "design": "gcd",
+   "setting": "S0",
+   "R": 340.0,
+   "C": 349.86736,
+   "pass": false,
+   "F_grid": 373.5579488416261,
+   "F_how": "interpolated",
+   "s_used": 0.2591819688664724,
+   "pred_claim": 364.8603335897331,
+   "pred_pass": false,
+   "call_right": true,
+   "claim_err": 0.04285330757842939,
+   "C0": 337.9311,
+   "claim_baseline_err": 0.03411652918980497,
+   "claim_baseline_call_right": false
+  },
+  {
+   "tag": "e5k-gcd-3-2",
+   "design": "gcd",
+   "setting": "S0",
+   "R": 350.0,
+   "C": 353.10219,
+   "pass": false,
+   "F_grid": 373.5579488416261,
+   "F_how": "interpolated",
+   "s_used": 0.2591819688664724,
+   "pred_claim": 367.4521532783978,
+   "pred_pass": false,
+   "call_right": true,
+   "claim_err": 0.040639689259355224,
+   "C0": 337.9311,
+   "claim_baseline_err": 0.042965154081882055,
+   "claim_baseline_call_right": false
+  },
+  {
+   "tag": "e5k-ibex-1-1",
+   "design": "ibex",
+   "setting": "S0",
+   "R": 915.0,
+   "C": 919.86999,
+   "pass": false,
+   "F_grid": 968.2044247125433,
+   "F_how": "interpolated",
+   "s_used": 0.2591819688664724,
+   "pred_claim": 954.4147971631384,
+   "pred_pass": false,
+   "call_right": true,
+   "claim_err": 0.037554010391336205,
+   "C0": 913.6726,
+   "claim_baseline_err": 0.006737245553580937,
+   "claim_baseline_call_right": false
+  },
+  {
+   "tag": "e5k-ibex-1-2",
+   "design": "ibex",
+   "setting": "S0",
+   "R": 920.0,
+   "C": 909.8729,
+   "pass": true,
+   "F_grid": 968.2044247125433,
+   "F_how": "interpolated",
+   "s_used": 0.2591819688664724,
+   "pred_claim": 955.7107070074707,
+   "pred_pass": false,
+   "call_right": false,
+   "claim_err": 0.050378252838908275,
+   "C0": 913.6726,
+   "claim_baseline_err": 0.004176077779654752,
+   "claim_baseline_call_right": true
+  },
+  {
+   "tag": "e5k-ibex-2-1",
+   "design": "ibex",
+   "setting": "S2",
+   "R": 915.0,
+   "C": 914.148348,
+   "pass": true,
+   "F_grid": 1094.819571509694,
+   "F_how": "interpolated",
+   "s_used": 0.2591819688664724,
+   "pred_claim": 1048.213580925086,
+   "pred_pass": false,
+   "call_right": false,
+   "claim_err": 0.1466558827332541,
+   "C0": 914.6800000000001,
+   "claim_baseline_err": 0.0005815817543872083,
+   "claim_baseline_call_right": true
+  },
+  {
+   "tag": "e5k-ibex-3-1",
+   "design": "ibex",
+   "setting": "S0",
+   "R": 930.0,
+   "C": 925.24192,
+   "pass": true,
+   "F_grid": 968.2044247125433,
+   "F_how": "interpolated",
+   "s_used": 0.2591819688664724,
+   "pred_claim": 958.3025266961354,
+   "pred_pass": false,
+   "call_right": false,
+   "claim_err": 0.03573185129369768,
+   "C0": 925.1,
+   "claim_baseline_err": 0.00015338691096057055,
+   "claim_baseline_call_right": true
+  }
+ ],
+ "calls_right": 10,
+ "n": 16,
+ "median_claim_error": 0.03519707947650566,
+ "verdict": "FAIL",
+ "baseline_all_fail_calls_right": 12,
+ "baseline_all_pass_calls_right": 4,
+ "baseline_claim_calls_right": 4,
+ "baseline_claim_median_error": 0.043636850409810336
+}
