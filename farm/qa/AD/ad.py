@@ -147,7 +147,7 @@ def cmd_plan(a):
 
     # T2 grids: sky130hd (T2a, also D) and ASAP7 with ABC told the clock (T2b)
     s_ibex = [add(f"s-ibex-{i + 1}", p, timeout=10800) for i, p in enumerate(split(G[("T2a", "ibex")], 4))]
-    b_ibex = [add(f"b-ibex-{i + 1}", p, timeout=5400) for i, p in enumerate(split(G[("T2b", "ibex")], 2))]
+    b_ibex = [add(f"b-ibex-{i + 1}", p, timeout=9000) for i, p in enumerate(split(G[("T2b", "ibex")], 3))]
     s_aes = [add(f"s-aes-{i + 1}", p, timeout=7200) for i, p in enumerate(split(G[("T2a", "aes")], 2))]
     b_aes = [add(f"b-aes-{i + 1}", p, timeout=5400) for i, p in enumerate(split(G[("T2b", "aes")], 2))]
     add("s-gcd", G[("T2a", "gcd")], [await_spec("T2a", "gcd", [1, 2, 3], [], "adsk-gcd")], timeout=3600)
@@ -368,6 +368,37 @@ def bins_of(pts):
     return out
 
 
+# ======================================================================================================== anchoring
+def cmd_anchor(a):
+    """Grid anchor for sky130hd and GT2N (registered in AD_PREREG.md, 'Grid anchor'): P0 = 5 * round(F_pilot / 5),
+    F_pilot = E5's crossing over the shipped config's pilot runs (smoke01 + smoke02, tags smoke-ads-gcd,
+    smoke-adsk-gcd-1-1, smoke-adg-gcd, smoke-pilot-*). Targets: 5 * round(m * P0 / 5)."""
+    R = all_runs(a.results, "smoke-")
+    pts = defaultdict(list)
+    for t, r in R.items():
+        if r["claim"] is None or r.get("platform") not in ("sky130hd", "gt2n"):
+            continue
+        if (r.get("vars") or {}) not in ({}, None):
+            continue
+        pts[(r["platform"], r["design"])].append((float(r["period"]), r["claim"], t))
+    out = {}
+    for k, ps in sorted(pts.items()):
+        ps.sort()
+        byT = defaultdict(list)
+        for T, C, _ in ps:
+            byT[T].append(C)
+        F, how = crossing([(T, st.median(byT[T])) for T in sorted(byT)])
+        P0 = None if F is None else int(5 * round(F / 5))
+        tg = None if P0 is None else {
+            "S0": [int(5 * round(m * P0 / 5)) for m in (0.70, 0.85, 1.00, 1.40)],
+            "S1S2": [int(5 * round(m * P0 / 5)) for m in (0.80, 1.20, 1.45)]}
+        out["/".join(k)] = {"pilots": [(T, round(C, 2), t) for T, C, t in ps], "F_pilot": F, "how": how, "P0": P0,
+                            "targets": tg}
+        print(f"{'/'.join(k):14s} pilots {[(int(T), round(C, 1)) for T, C, _ in ps]} -> F_pilot "
+              f"{'-' if F is None else round(F, 1)} ({how}) -> P0 {P0} targets {tg}")
+    json.dump(out, open(a.out, "w"), indent=1)
+
+
 # ======================================================================================================== T1
 def cmd_t1(a):
     """T1 (registered retrodiction). Fit s-/s+ on E5's 30 ASAP7 grid runs only (F per setting from those grid runs
@@ -407,14 +438,25 @@ def cmd_t1(a):
     errs = [x["claim_err"] for x in rows if x["claim_err"] is not None]
     med = st.median(errs) if errs else None
     verdict = "PASS" if (right >= 13 and med is not None and med <= 0.03) else "FAIL"
-    # baselines beside: (i) the claim of the setting's own winner/grid run at the nearest target, (ii) all-pass /
-    # all-fail calls
+    # baselines beside (no criterion): the claim itself (each rebuild's claim forecast as its chain winner's claim
+    # C0, and every rebuild at or above C0 called a pass, which is what the claim asserts); all-fail calls
+    c0 = {}
+    for c in e5["primary"]["chains"]:
+        for k in range(1, 5):
+            c0[f"{c['chain_id']}-{k}"] = c["C0"]
+    for x in rows:
+        x["C0"] = c0.get(x["tag"])
+        x["claim_baseline_err"] = None if x["C0"] is None else abs(x["C0"] - x["C"]) / x["C"]
+        x["claim_baseline_call_right"] = (x["R"] >= (x["C0"] or 0)) == bool(x["pass"])
     base_allfail = sum(1 for x in rows if not x["pass"])
+    berrs = [x["claim_baseline_err"] for x in rows if x["claim_baseline_err"] is not None]
     out = {"law": law, "settings": {k: {"F": v[0], "how": v[1], "targets": sorted({r["period"] for r in v[2]})}
                                     for k, v in SF.items()},
            "points": pts, "rebuilds": rows, "calls_right": right, "n": len(rows), "median_claim_error": med,
            "verdict": verdict, "baseline_all_fail_calls_right": base_allfail,
-           "baseline_all_pass_calls_right": len(rows) - base_allfail}
+           "baseline_all_pass_calls_right": len(rows) - base_allfail,
+           "baseline_claim_calls_right": sum(1 for x in rows if x["claim_baseline_call_right"]),
+           "baseline_claim_median_error": st.median(berrs) if berrs else None}
     json.dump(out, open(a.out, "w"), indent=1, default=float)
     print(f"T1 law on 30 grid runs: s- {law['s_minus']:.3f} (n {law['n_minus']}), s+ {law['s_plus']:.3f} "
           f"(n {law['n_plus']}); interpolated settings {sum(1 for v in SF.values() if v[1] == 'interpolated')}/"
@@ -426,6 +468,9 @@ def cmd_t1(a):
               f" C={x['C']:.1f} C^={pc} err={ce} pass={x['pass']} pred={x['pred_pass']} right={x['call_right']}")
     print(f"T1: calls right {right}/16 (need >= 13); median claim error "
           f"{'-' if med is None else f'{100 * med:.2f}%'} (need <= 3%) -> {verdict}")
+    bm = out["baseline_claim_median_error"]
+    print(f"beside: the claim itself: calls right {out['baseline_claim_calls_right']}/16, median claim error "
+          f"{'-' if bm is None else f'{100 * bm:.2f}%'}; all-fail calls right {base_allfail}/16")
 
 
 # ======================================================================================================== T2, T3, D
@@ -598,7 +643,7 @@ def cmd_analyze(a):
 def main():
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
-    for name in ("plan", "collect", "table", "t1", "analyze"):
+    for name in ("plan", "collect", "table", "anchor", "t1", "analyze"):
         p = sub.add_parser(name)
         p.add_argument("--results", default=DEFAULT_RESULTS)
         p.add_argument("--prefix", default=None)
@@ -607,9 +652,10 @@ def main():
         p.add_argument("--run-id", default=None)
         p.add_argument("--out", default=os.path.join(DEFAULT_RESULTS, f"ad_{name}.json"))
     a = ap.parse_args()
-    if a.cmd in ("t1", "analyze"):
+    if a.cmd in ("t1", "analyze", "anchor"):
         os.makedirs(os.path.dirname(a.out), exist_ok=True)
-    {"plan": cmd_plan, "collect": cmd_collect, "table": cmd_table, "t1": cmd_t1, "analyze": cmd_analyze}[a.cmd](a)
+    {"plan": cmd_plan, "collect": cmd_collect, "table": cmd_table, "anchor": cmd_anchor, "t1": cmd_t1,
+     "analyze": cmd_analyze}[a.cmd](a)
 
 
 if __name__ == "__main__":
