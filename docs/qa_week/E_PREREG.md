@@ -1,6 +1,6 @@
 # Addendum 42 (E) — pre-registration: reading the chip. Can one finished run's record predict how the tools respond when the clock target moves?
 
-Written 2026-11-03 ~02:40Z (Nov 2, ~21:40 ET) by the E1 agent of the overnight push, after the slides were locked
+Written 2026-11-03 02:25Z (Nov 2, 21:25 ET) by the E1 agent of the overnight push, after the slides were locked
 (Oct 30), **before any source run (tags `ers-*`) and before any rebuild (tags `erk-*`)**. Only the smoke run
 `smoke-ers-xtea-01` (a training design; docs/qa_week/E_SMOKE.md) ran before this. Its SHA-256 is appended to
 farm/prereg_hashes.txt on branch `qa-e-reading` before the source batch is dispatched. Avi did not see the split, the
