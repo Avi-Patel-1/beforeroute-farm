@@ -198,7 +198,7 @@ Each part is reported separately whatever the verdict.
 - The law's constants were fitted on the 328-run audit, which includes runs of the test families (not these labels).
 - The training labels are historical (retrospective); only the test labels are prospective.
 
-## Clarifications, 2026-11-03 03:35Z (before any packet reached a reader and before any rebuild existed)
+## Clarifications, 2026-11-03 03:33Z (before any packet reached a reader and before any rebuild existed)
 Made after Codex's independent audits (AUDIT_PREREG_E, AUDIT_PACKET_FORMAT, AUDIT_HOLDOUT_E, AUDIT_SMOKE_E). No
 prediction, test, threshold, source or chain rule above is changed; these fix wording elsewhere and pin down cases the
 text above left implicit.
