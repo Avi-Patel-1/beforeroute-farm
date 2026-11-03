@@ -197,3 +197,42 @@ Each part is reported separately whatever the verdict.
 - Race designs' search runs are mostly loose (few tight candidates); tight sources are 16 of 35.
 - The law's constants were fitted on the 328-run audit, which includes runs of the test families (not these labels).
 - The training labels are historical (retrospective); only the test labels are prospective.
+
+## Clarifications, 2026-11-03 03:35Z (before any packet reached a reader and before any rebuild existed)
+Made after Codex's independent audits (AUDIT_PREREG_E, AUDIT_PACKET_FORMAT, AUDIT_HOLDOUT_E, AUDIT_SMOKE_E). No
+prediction, test, threshold, source or chain rule above is changed; these fix wording elsewhere and pin down cases the
+text above left implicit.
+1. **Kept clock.** The definition above governs: the source counts as a run of the chain, so a passing source whose
+   rebuilds all fail keeps its own target (source-only kept clock). The outbox PACKET_FORMAT.md said "none if no rebuild
+   passed"; it is corrected. The contract.json text and the reader prompts already used this definition.
+2. **Label states.** (i) first rebuild landed with metrics: pass1 by the judge, C1 and the slope defined; (ii) first
+   rebuild ran but left no final metrics (a flow failure, recorded with its exit code): pass1 = fail, C1 and the slope
+   **undefined** (never set to 0; excluded from slope error and counted), and the chain steps back to R1 + 0.05 as rule
+   3 says; (iii) infrastructure loss (job or artifact lost, no chain record) after the one registered re-dispatch: the
+   source is "not checked", excluded from every metric and listed. A null kept clock (no run of the chain passed, the
+   source included) is a label value, distinct from (ii) and (iii). A missing or invalid prediction file counts as an
+   abstention with p_pass 0.5 for pass/fail and Brier; its slope and kept clock are missing (not imputed) and counted.
+   Fixtures committed: farm/qa/E/fixtures/test_score.py (source-only kept, no pass, no-metrics first rebuild, not
+   landed, invalid prediction) and test_chain.py (runner-side chain = the baselines' chain simulation).
+3. **Baseline probabilities.** The scripted baselines (raw claim, law, I/O rule, two-point line, hand-picked feature)
+   are deterministic: p_pass = 1.0 when their response gives C(R1) ≤ R1, else 0.0; the Brier score uses exactly these.
+4. **What the law has seen.** The law's constants s⁻ 0.59 / s⁺ 0.29 were fitted on the 328-run audit, which contains
+   older runs of all four test families (other settings and targets, never these rebuild targets). For the law (and the
+   two-point line, which uses a record run of the same setting) the test is therefore prediction of fresh rebuild
+   targets of previously seen designs, not of wholly unseen designs; it is reported that way.
+5. **Ties.** "Ties" under McNemar means no significant difference at α 0.05 over 35 sources, not equivalence. The four
+   families are the replication units; per-family results are reported beside the pooled ones.
+6. **Codex's arm** is a same-packet deterministic comparator: it may read any rung-2 file, but its training data lack
+   layout/STA files, so in practice it uses the fields common to training and test packets.
+7. **Electrical bar.** drv_bar differs by family; it is part of the judge, so it stays in the contract. Packets of one
+   family are recognizable as such from their netlists anyway; each reader sees one packet and every predictor is run
+   one packet at a time.
+8. **Leak test.** Strengthened before any hand-over: only allowlisted packet paths may exist, MANIFEST.json must match
+   every file's SHA-256, every .gz is decompressed, and each run starts with a self-test that plants leaks (design and
+   port names inside a gzipped dump, a /work/ path inside a gzipped STA report, an unlisted file) and must catch all of
+   them. farm/qa/E/verify_packets.py checks that net names agree across dumps, connectivity, DEF and SPEF, that SPEF
+   units are NS/PF/OHM, DEF units 1000/µm, and the 9 corners.
+9. **Ordering.** The lock commit with every prediction precedes the creation of the chain workflow run; E_RESULT.md will
+   state both timestamps (commit time and the run's createdAt).
+10. **Source count.** The outbox HOLDOUT_E.md said 36 sources (9 per family); the registered count is 35 (wbqspiflash 8),
+    `farm/qa/E/sources.json` SHA-256 0bbcc3f668c4bce4dff91fd3c152164e60dac12ed86fd93bba714d7b142a51f3 (commit c99b6fb).

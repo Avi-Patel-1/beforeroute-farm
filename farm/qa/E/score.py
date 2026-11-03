@@ -6,13 +6,20 @@ packets through the private key (packet -> source) and farm/qa/E/chains.json (so
 Predictions: <pred>/<arm>/<packet_id>.json. Main arms are scored on the 35 main packets; control arms (rung2_rename,
 rung2_shuffle) are matched to their main packet through the key and reported as differences only.
 
+Label states (clarification note 2 of the pre-registration): a chain record with first rebuild "landed" gives pass1,
+C1 and the slope; a first rebuild that ran but produced no final metrics ("no_metrics", a flow failure) is a failed
+pass1 with an UNDEFINED slope (excluded from slope error, counted); a source whose chain record never landed after the
+one re-dispatch is "not checked" (excluded from every metric, listed). Undefined slopes are never set to 0. A null kept
+clock (no run of the chain passed, the source included) is a label value.
 Per arm: false passes / predicted passes; missed passes / actual passes; abstentions; correct calls (abstain = not
-correct); Brier = mean (p_pass - pass1)^2 over all sources; |slope error| median (primary) and mean; kept-clock relative
-error over sources whose chain kept a clock (null prediction scores 1.0), median and p90 (nearest rank); kept-vs-none
-agreement. A missing or invalid prediction counts as p_pass 0.5, call abstain, slope 0, kept null.
-Comparisons: exact two-sided McNemar on per-source correctness (alpha 0.05) -> beats / ties / loses; kept clock:
-median error lower by > 1 percentage point = beats, higher by > 1 point = loses, else ties.
-Registered tests R1, R2, R3 as in the pre-registration. Also per family (equal-family medians).
+correct); Brier = mean (p_pass - pass1)^2 over all checked sources; |slope error| median (primary) and mean over sources
+with a defined slope; kept-clock relative error over sources whose chain kept a clock (a null prediction scores 1.0),
+median and p90 (nearest rank); kept-vs-none agreement. A missing or invalid prediction file counts as call "abstain"
+with p_pass 0.5 for the pass/fail and Brier tallies; its slope and kept clock are MISSING (not imputed): excluded from
+those medians and counted per arm ("slope_missing", "kept_missing").
+Comparisons: exact two-sided McNemar on per-source correctness (alpha 0.05) -> beats / ties / loses ("ties" = no
+significant difference, not equivalence); kept clock: median error lower by > 1 percentage point = beats, higher by
+> 1 point = loses, else ties. Registered tests R1, R2, R3 as in the pre-registration. Also per family.
 """
 from __future__ import annotations
 
@@ -30,6 +37,9 @@ import elib as E  # noqa: E402
 MAIN = ["raw_claim", "law", "io_rule", "two_point", "handpicked", "rung1", "rung2", "rung3", "codex_det"]
 
 
+MISSING = "missing"
+
+
 def load_pred(path, C0, T0):
     try:
         p = json.load(open(path))
@@ -43,11 +53,15 @@ def load_pred(path, C0, T0):
         if sl is None and p.get("claim1_ns") is not None:
             sl = (float(p["claim1_ns"]) - C0) / (E.ceil05(C0) - T0)
         sl = float(sl)
+        if math.isnan(sl) or math.isinf(sl):
+            raise ValueError("slope")
+        if "kept_clock_ns" not in p:
+            raise ValueError("kept_clock_ns")
         k = p.get("kept_clock_ns")
         k = None if k is None else float(k)
         return {"p_pass": pp, "call": call, "slope": sl, "kept": k, "valid": True}
     except Exception:
-        return {"p_pass": 0.5, "call": "abstain", "slope": 0.0, "kept": None, "valid": False}
+        return {"p_pass": 0.5, "call": "abstain", "slope": MISSING, "kept": MISSING, "valid": False}
 
 
 def nearest_rank(xs, q):
@@ -88,6 +102,8 @@ def verdict_kept(ea, eb):
 
 
 def score_arm(rows, preds):
+    if not rows:
+        return {"n": 0, "false_passes": 0, "predicted_passes": 0, "slope_err_median": None, "kept_err_median": None}, []
     out = {"n": len(rows), "valid": sum(1 for r in rows if preds[r["pid"]]["valid"])}
     pp = [preds[r["pid"]] for r in rows]
     y = [r["pass1"] for r in rows]
@@ -100,12 +116,17 @@ def score_arm(rows, preds):
     ok = [(c == "pass" and t) or (c == "fail" and not t) for c, t in zip(calls, y)]
     out["correct"] = sum(ok)
     out["brier"] = sum((p["p_pass"] - (1.0 if t else 0.0)) ** 2 for p, t in zip(pp, y)) / len(rows)
-    se = [abs(p["slope"] - r["slope"]) for p, r in zip(pp, rows) if r["slope"] is not None]
+    se = [abs(p["slope"] - r["slope"]) for p, r in zip(pp, rows) if r["slope"] is not None and p["slope"] != MISSING]
+    out["slope_defined"] = sum(1 for r in rows if r["slope"] is not None)
+    out["slope_missing"] = sum(1 for p, r in zip(pp, rows) if r["slope"] is not None and p["slope"] == MISSING)
     out["slope_err_median"] = st.median(se) if se else None
     out["slope_err_mean"] = sum(se) / len(se) if se else None
     ke = []
     agree = 0
+    out["kept_missing"] = sum(1 for p in pp if p["kept"] == MISSING)
     for p, r in zip(pp, rows):
+        if p["kept"] == MISSING:
+            continue
         if (p["kept"] is None) == (r["kept"] is None):
             agree += 1
         if r["kept"] is not None:
@@ -116,7 +137,7 @@ def score_arm(rows, preds):
     out["kept_vs_none_agree"] = agree
     fam = {}
     for p, r in zip(pp, rows):
-        if r["slope"] is not None:
+        if r["slope"] is not None and p["slope"] != MISSING:
             fam.setdefault(r["family"], []).append(abs(p["slope"] - r["slope"]))
     out["slope_err_median_by_family"] = {f: st.median(v) for f, v in sorted(fam.items())}
     out["slope_err_equal_family"] = st.median([st.median(v) for v in fam.values()]) if fam else None
@@ -134,19 +155,26 @@ def main() -> int:
     key = json.load(open(a.key))
     chains = json.load(open(a.chains_index))["chains"]
     tag_of = {c["source"]: c["tag"] for c in chains}
-    rows = []
+    rows, not_checked = [], []
     for pid, v in sorted(key["packets"].items()):
         if v["kind"] != "main":
             continue
         cp = os.path.join(a.chains, tag_of[v["source"]], "chain.json")
         if not os.path.exists(cp):
-            print(f"[score] {pid} {v['source']}: chain not landed")
+            print(f"[score] {pid} {v['source']}: chain record not landed -> not checked")
+            not_checked.append(pid)
             continue
         c = json.load(open(cp))
         rows.append({"pid": pid, "source": v["source"], "family": v["design"], "T0": c["T0_ns"], "C0": c["C0_ns"],
                      "pass1": bool(c["first_pass"]), "slope": c["slope"], "kept": c["kept_clock_ns"],
+                     "first_outcome": c.get("first_outcome", "landed" if c.get("C1_ns") is not None else "no_metrics"),
                      "two_point": bool(v.get("has_second_point"))})
-    res = {"n_landed": len(rows), "arms": {}, "tests": {}}
+    res = {"n_checked": len(rows), "not_checked": not_checked,
+           "first_rebuild_no_metrics": [r["pid"] for r in rows if r["first_outcome"] != "landed"],
+           "slope_undefined": [r["pid"] for r in rows if r["slope"] is None],
+           "kept_null": [r["pid"] for r in rows if r["kept"] is None],
+           "kept_source_only": [r["pid"] for r in rows if r["kept"] is not None and abs(r["kept"] - r["T0"]) < 1e-9],
+           "arms": {}, "tests": {}}
     oks = {}
     for arm in sorted(os.listdir(a.pred)):
         d = os.path.join(a.pred, arm)
@@ -174,10 +202,12 @@ def main() -> int:
                 continue
             p1 = load_pred(os.path.join(a.pred, "rung2", main_pid + ".json"), r["C0"], r["T0"])
             p2 = load_pred(os.path.join(d, pid + ".json"), r["C0"], r["T0"])
+            ok_s = r["slope"] is not None and MISSING not in (p1["slope"], p2["slope"])
             diffs.append({"main": main_pid, "control": pid, "d_p_pass": p2["p_pass"] - p1["p_pass"],
-                          "same_call": p1["call"] == p2["call"], "d_slope": p2["slope"] - p1["slope"],
-                          "slope_err_main": abs(p1["slope"] - r["slope"]) if r["slope"] is not None else None,
-                          "slope_err_control": abs(p2["slope"] - r["slope"]) if r["slope"] is not None else None})
+                          "same_call": p1["call"] == p2["call"],
+                          "d_slope": (p2["slope"] - p1["slope"]) if MISSING not in (p1["slope"], p2["slope"]) else None,
+                          "slope_err_main": abs(p1["slope"] - r["slope"]) if ok_s else None,
+                          "slope_err_control": abs(p2["slope"] - r["slope"]) if ok_s else None})
         res["controls_" + ctl] = diffs
 
     def common(x, y):
@@ -193,7 +223,9 @@ def main() -> int:
         res["tests"]["R1"] = {"pass_fail_vs_law": v_pf, "kept_vs_law": v_k,
                               "false_passes_rung1_on_19": fp1, "false_passes_two_point": fp2,
                               "holds": v_pf[0] in ("ties", "loses") and v_k in ("ties", "loses") and part3}
-    if "rung2" in A and "rung1" in A and "law" in A:
+    def med(arm):
+        return A[arm]["slope_err_median"] if arm in A else None
+    if "rung2" in A and "rung1" in A and "law" in A and None not in (med("rung2"), med("rung1"), med("law")):
         v21 = verdict_pf(*common("rung2", "rung1"))
         p_i = A["rung2"]["slope_err_median"] < A["rung1"]["slope_err_median"] and v21[0] != "loses"
         v2l = verdict_pf(*common("rung2", "law"))
@@ -202,13 +234,15 @@ def main() -> int:
                               "iii_slope_ratio_vs_law": A["rung2"]["slope_err_median"] / A["law"]["slope_err_median"]
                               if A["law"]["slope_err_median"] else None,
                               "holds": p_i and v2l[0] == "ties" and p_iii}
-    if "rung3" in A and "law" in A and "handpicked" in A:
+    if "rung3" in A and "law" in A and "handpicked" in A and None not in (med("rung3"), med("law"), med("handpicked")):
         r3 = A["rung3"]["slope_err_median"]
         res["tests"]["R3"] = {"slope_ratio_vs_law": r3 / A["law"]["slope_err_median"] if A["law"]["slope_err_median"] else None,
                               "beats_handpicked": r3 < A["handpicked"]["slope_err_median"],
                               "holds": r3 <= 0.75 * A["law"]["slope_err_median"] and r3 < A["handpicked"]["slope_err_median"]}
     json.dump(res, open(a.out, "w"), indent=1)
-    print(f"[score] {len(rows)} sources landed")
+    print(f"[score] {len(rows)} sources checked; not checked {len(not_checked)}; first rebuild without metrics "
+          f"{len(res['first_rebuild_no_metrics'])}; slope undefined {len(res['slope_undefined'])}; kept null "
+          f"{len(res['kept_null'])}; kept = source only {len(res['kept_source_only'])}")
     hdr = f"{'arm':14s} {'n':>3s} {'FP/pred':>8s} {'miss/act':>9s} {'abst':>4s} {'corr':>4s} {'Brier':>6s} {'slope med':>9s} {'kept med':>8s} {'kept p90':>8s}"
     print(hdr)
     for arm, r in A.items():

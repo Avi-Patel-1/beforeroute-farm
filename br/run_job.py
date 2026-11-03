@@ -133,9 +133,14 @@ def run_chain(spec, a):
         drc = m.get("route__drc_errors")
         ok = (ws is not None and ws >= 0 and hold is not None and hold >= 0 and (drc or 0) == 0
               and (bar is None or drv(m) <= bar))
+        try:
+            jj = json.load(open(os.path.join(d, "job.json")))
+        except Exception:
+            jj = {}
         rec = {"k": k, "tag": sub, "clock_ns": clk, "ws_ns": ws, "ws_r2r_ns": wr, "hold_ws_ns": hold, "drc": drc,
                "drv": drv(m) if m else None, "claim_ns": (clk - ws) if ws is not None else None, "pass": bool(ok),
-               "metrics": bool(m), "seconds": round(time.time() - t1, 1)}
+               "metrics": ws is not None, "flow_exit": jj.get("flow_exit"), "job_status": jj.get("status"),
+               "outcome": "landed" if ws is not None else "no_metrics", "seconds": round(time.time() - t1, 1)}
         tried[round(clk, 4)] = rec
         order.append(rec)
         print(f"[chain] {sub} at {clk} ns: ws {ws} hold {hold} drc {drc} drv {rec['drv']} -> {'PASS' if ok else 'FAIL'}",
@@ -182,7 +187,7 @@ def run_chain(spec, a):
             break
     out = {"tag": tag, "source_tag": ch.get("source_tag"), "T0_ns": T0, "C0_ns": C0, "R1_ns": R1,
            "source_pass": bool(ch.get("source_pass")), "drv_bar": bar, "rebuilds": order,
-           "first_pass": first["pass"], "C1_ns": first["claim_ns"],
+           "first_pass": first["pass"], "first_outcome": first["outcome"], "C1_ns": first["claim_ns"],
            "slope": ((first["claim_ns"] - C0) / (R1 - T0)) if first["claim_ns"] is not None and abs(R1 - T0) > 1e-9 else None,
            "kept_clock_ns": smallest, "failed_clocks_ns": failed, "n_rebuilds": len(order),
            "seconds": round(time.time() - t_start, 1), "rule": "Addendum 42 (docs/qa_week/E_PREREG.md)"}
