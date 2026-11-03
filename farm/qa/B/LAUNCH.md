@@ -36,7 +36,7 @@ C1, S and C2b: not launched yet (they wait for free share; see docs/qa_week/B_PR
   chains landed by then (stage 1 complete): 0 changed verdicts, 0 trajectory differences, so the pre-fix runner judge
   did not alter any chain. Every C2a run directory had all judged fields (194 of 194 admitted).
 
-## C1 on lane 1 (qa-b-frozen-io, after C2a's run 41567699017 completed at 11:08Z)
+## C1 on lane 1 (qa-b-frozen-io, after C2a's run 41567699017 completed at 11:06Z)
 - Lane 2 (qa-b-asap7) runs C1 chunk A: run 41593980763 (commit 689217c), see that branch's LAUNCH.md.
 - **C1 chunk B** (batch c1b: 19 settings, 113 replays, 19 jobs, max-parallel 4), code at b6b2cbb (run_group.py, fail-closed blib.py, resume.py top-ups; scoring c1.py). Dispatched 2026-11-03T11:09Z.
 - Workflow run **41625206127** (commit f3bea82), started 11:09Z with 4 jobs; C2a's run 41567699017 had finished at 11:06Z (success).
