@@ -37,4 +37,4 @@ C1, S and C2b: not launched yet (they wait for free share; see docs/qa_week/B_PR
   2 start + 2 TPE runs with frozen I/O, winner rebuilt (smoke-b2b-xtea-s1-*; not part of any analysis).
 - **C1 chunk A** (batch c1a: 33 settings, 170 replays, 9 jobs, max-parallel 2), code at 4943a2c (merge of
   qa-b-frozen-io: run_group.py, blib.py with the fail-closed judge, resume.py with the registered top-up rule;
-  scoring farm/qa/B/c1.py). Dispatched 2026-11-03T07:05Z.
+  scoring farm/qa/B/c1.py): workflow run 41593980763. Dispatched 2026-11-03T07:05Z.
