@@ -390,6 +390,40 @@
    "state": "/home/claude/qa/c-method/results/tune_xn/state.json",
    "original": "farm/qa/C/prompts/prop-cic_decimator/round3.full.md",
    "leak_check_at_write": "PASS"
+  },
+  {
+   "kind": "prop",
+   "race": "prop-usb_cdc_core",
+   "call": "round3",
+   "design": "usb_cdc_core",
+   "seed": null,
+   "round": 3,
+   "repo_path": "farm/qa/C/prompts/prop-usb_cdc_core/round3.md",
+   "ideas_path": "/home/claude/ideas/overnight/method/opus_prompts/prop-usb_cdc_core/round3.md",
+   "sha256": "718e1a5936f06f936cf2aea35db5f20cca8db025bb15006a4af9292baf3cf3d4",
+   "reply_path": "/home/claude/ideas/overnight/method/opus_replies/prop-usb_cdc_core/round3.json",
+   "reask_path": "/home/claude/ideas/overnight/method/opus_replies/prop-usb_cdc_core/round3_reask.json",
+   "delivery_note": "Read the file /home/claude/ideas/overnight/method/opus_prompts/prop-usb_cdc_core/round3.md with the Read tool. That file is your entire task. Do not open any other file, run any command, or search anything. Reply with exactly the JSON the file asks for and nothing else.",
+   "state": "/home/claude/qa/c-method/results/tune_xn/state.json",
+   "original": "farm/qa/C/prompts/prop-usb_cdc_core/round3.full.md",
+   "leak_check_at_write": "PASS"
+  },
+  {
+   "kind": "prop",
+   "race": "prop-APU",
+   "call": "round3",
+   "design": "APU",
+   "seed": null,
+   "round": 3,
+   "repo_path": "farm/qa/C/prompts/prop-APU/round3.md",
+   "ideas_path": "/home/claude/ideas/overnight/method/opus_prompts/prop-APU/round3.md",
+   "sha256": "c922fbda35d7c325788b7918f795917dc68765f35c376fe27f3316c31a55b943",
+   "reply_path": "/home/claude/ideas/overnight/method/opus_replies/prop-APU/round3.json",
+   "reask_path": "/home/claude/ideas/overnight/method/opus_replies/prop-APU/round3_reask.json",
+   "delivery_note": "Read the file /home/claude/ideas/overnight/method/opus_prompts/prop-APU/round3.md with the Read tool. That file is your entire task. Do not open any other file, run any command, or search anything. Reply with exactly the JSON the file asks for and nothing else.",
+   "state": "/home/claude/qa/c-method/results/tune_xn/state.json",
+   "original": "farm/qa/C/prompts/prop-APU/round3.full.md",
+   "leak_check_at_write": "PASS"
   }
  ],
  "delivery_notes": {
