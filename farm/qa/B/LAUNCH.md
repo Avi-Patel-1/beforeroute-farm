@@ -14,3 +14,20 @@ batch s01). Receipt: SMOKE_B.md (outbox) — controls bit-identical, frozen dela
 | C3 | qa-b-asap7 | g01 (30 grid runs, 6 groups; chains picked on the runner) | 5def9c4 (farm/qa/B3/, b_asap7.yml; E5's e5lib/e5_hook unchanged) | 2026-11-03T02:42Z | 41567743736 | 2 |
 
 C1, S and C2b: not launched yet (they wait for free share; see docs/qa_week/B_PREREG.md and the workstream report).
+
+## Fixes (dated; outcome-neutral)
+- **2026-11-03 ~04:50Z — fail-closed judge (Codex code audit).** farm/qa/B/blib.py `load_run` read missing max-slew /
+  max-cap counts as 0 and passed a run whose slew/cap reference was unknown, and did not check the job record. Fixed:
+  a run is judged only if its job record says the flow completed and setup WS, hold WS, route DRC and both slew/cap
+  counts are present and finite and the reference is known; otherwise it is not admitted and fails (the registered
+  rule: a run without metrics fails). farm/qa/B/c2a.py now re-judges every chain entry from its own collected run
+  directory with the fixed function and reports any entry where that differs from the flag the runner recorded.
+  Before/after on everything landed at the time (C2a: 4 chains, 10 run directories; C3: 15 grid runs, judged by E5's
+  e5lib.load_run, which already required a completed status and setup/hold/DRC): 10 of 10 C2a runs admitted, 0
+  entries changed, C2a-i PASS (2 of 3) and C2a-ii PASS (2 of 4 landed) unchanged; C3 15 of 15 status "completed",
+  no verdict yet. The C2a workflow run (41567699017, commit c4f055f) keeps stepping its chains with the old function on
+  the runner; the re-judge in c2a.py catches any divergence. Later launches use the fixed function.
+- **Provenance of c2a.py.** The C2a-i/ii verdicts logged at 23:37 ET were produced by c2a.py at commit 117e483
+  (sha256 8897fa72…); outbox/code/B/MANIFEST.txt still listed the 3dba6ea version (647e1fbb…) because the file was
+  re-copied without regenerating the manifest. The registered-test code is the same in both (117e483 added only the
+  setup-only sensitivity). The manifest is now generated from git (path, commit, sha256) and checked after copying.

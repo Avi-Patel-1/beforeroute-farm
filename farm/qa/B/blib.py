@@ -4,8 +4,8 @@ and the registered rebuild chain (docs/qa_week/B_PREREG.md).
 Units: ns. Claim C = CLOCK_PERIOD - timing__setup__ws (worst over the nine corners, incl. port paths).
 Frozen I/O: IO_DELAY_CONSTRAINT = 100 * D / T, so base.sdc's input/output delay = T * IO/100 = D at every target T;
 at T == F_best the value is the design's shipped integer percentage (20; clip16 10), i.e. the stock configuration.
-Judge: metrics landed; setup WS >= 0 and hold WS >= 0 (worst over the nine corners); route__drc_errors == 0;
-max-slew + max-cap violation count <= the design's stock reference (drv_ref).
+Judge (fail-closed): a completed job with every judged metric present; setup WS >= 0 and hold WS >= 0 (worst over the
+nine corners); route__drc_errors == 0; max-slew + max-cap violation count <= the design's stock reference (drv_ref).
 Chain: E5's rule (qa-e5-asap7 farm/qa/E5/e5lib.chain_next) on the 0.05 ns grid (farm/tune_a32.py ceil05).
 """
 from __future__ import annotations
@@ -39,32 +39,64 @@ def _load(p, default=None):
         return default
 
 
+REQUIRED = ("timing__setup__ws", "timing__hold__ws", "route__drc_errors") + DRV_KEYS
+JOB_OK = ("completed", "extract_failed")   # br/run_job.py: the flow completed (extract_failed = post-flow dumps only)
+
+
 def load_run(results: str, tag: str, period: float, drv_ref) -> dict:
-    """Summarize results/<tag>/ as written by br/run_job.py."""
+    """Summarize results/<tag>/ as written by br/run_job.py.
+
+    Fail-closed admission (bug fix 2026-11-03, Codex code audit; before it, missing slew/cap counts were read as 0 and
+    a missing reference or job record could still PASS): a run is judged only if its job record says the flow
+    completed and every judged metric (setup WS, hold WS, route DRC, max-slew and max-cap counts) is present and finite,
+    and the slew/cap reference is known. Otherwise it is not admitted and fails the judge (B_PREREG.md: a run without
+    metrics fails); "why" says what was missing. The claim needs only a completed job and the setup WS."""
     d = os.path.join(results, tag)
     job = _load(os.path.join(d, "job.json"), {}) or {}
     m = _load(os.path.join(d, "metrics.json"), {}) or {}
-    ws, hs = m.get("timing__setup__ws"), m.get("timing__hold__ws")
-    wr = m.get("timing__setup_r2r__ws")
-    drc = m.get("route__drc_errors")
-    drv = sum((m.get(k) or 0) for k in DRV_KEYS) if m else None
-    ok = bool(m) and ws is not None and hs is not None
+
+    def num(k):
+        try:
+            v = float(m.get(k))
+        except (TypeError, ValueError):
+            return None
+        return v if math.isfinite(v) else None
+    ws, hs, drc = num("timing__setup__ws"), num("timing__hold__ws"), num("route__drc_errors")
+    wr = num("timing__setup_r2r__ws")
+    slew, cap = num(DRV_KEYS[0]), num(DRV_KEYS[1])
+    drv = (slew + cap) if (slew is not None and cap is not None) else None
+    job_ok = bool(job) and job.get("status") in JOB_OK and job.get("flow_completed", True) is not False
+    why = []
+    if not job:
+        why.append("no job record")
+    elif not job_ok:
+        why.append(f"job status {job.get('status')}")
+    if not m:
+        why.append("no metrics")
+    else:
+        miss = [k for k in REQUIRED if num(k) is None]
+        if miss:
+            why.append("missing/non-finite " + ",".join(miss))
+    if drv_ref is None:
+        why.append("no slew/cap reference")
+    admitted = not why
+    claim = (float(period) - ws) if (job_ok and ws is not None) else None
     r = {"tag": tag, "period": float(period), "status": job.get("status", "missing"),
          "flow_seconds": job.get("flow_seconds"), "ws": ws, "ws_r2r": wr, "hold_ws": hs, "drc": drc, "drv": drv,
-         "drv_ref": drv_ref, "claim": (float(period) - float(ws)) if ok else None,
-         "claim_r2r": (float(period) - float(wr)) if (ok and wr is not None and math.isfinite(wr)) else None,
-         "area": m.get("design__instance__area__stdcell"), "io_pct": (job.get("overrides") or {}).get(
-             "IO_DELAY_CONSTRAINT")}
-    if ok:
+         "drv_ref": drv_ref, "claim": claim,
+         "claim_r2r": (float(period) - wr) if (claim is not None and wr is not None) else None,
+         "area": m.get("design__instance__area__stdcell"),
+         "io_pct": (job.get("overrides") or {}).get("IO_DELAY_CONSTRAINT"),
+         "admitted": admitted, "why": "; ".join(why) or None}
+    if admitted:
         r["pass_setup"] = ws >= 0
         r["pass_hold"] = hs >= 0
         r["pass_drc"] = drc == 0
-        r["pass_drv"] = drv_ref is None or drv <= drv_ref
+        r["pass_drv"] = drv <= drv_ref
         r["pass"] = bool(r["pass_setup"] and r["pass_hold"] and r["pass_drc"] and r["pass_drv"])
-        r["port"] = None if wr is None else bool(ws < wr - 1e-4)
     else:
-        r.update({"pass_setup": None, "pass_hold": None, "pass_drc": None, "pass_drv": None, "pass": False,
-                  "port": None})
+        r.update({"pass_setup": None, "pass_hold": None, "pass_drc": None, "pass_drv": None, "pass": False})
+    r["port"] = None if (ws is None or wr is None) else bool(ws < wr - 1e-4)
     return r
 
 

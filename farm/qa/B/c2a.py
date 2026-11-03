@@ -56,6 +56,9 @@ def main():
     ap.add_argument("--prefix", default="b2a-")
     ap.add_argument("--out", default=os.path.join(HERE, "c2a.json"))
     ap.add_argument("--final", action="store_true")
+    ap.add_argument("--judge", choices=["failclosed", "runner"], default="failclosed",
+                    help="failclosed (default, fix 2026-11-03): re-judge every chain entry from the collected run "
+                         "directory with blib.load_run; runner: the pass flags the runner recorded (before the fix)")
     a = ap.parse_args()
     plan = json.load(open(os.path.join(HERE, "plan.json")))
     W = plan["c2a"]
@@ -66,6 +69,7 @@ def main():
             c = json.load(open(os.path.join(cdir, f)))
             chains[c["source"]] = c
     rows = []
+    rejudge_diff = []
     for w in W:
         c = chains.get(w["source"])
         row = {"design": w["design"], "set": w["set"], "source": w["source"], "T0": w["T0"],
@@ -75,6 +79,20 @@ def main():
             rows.append(row)
             continue
         s = c["state"]
+        for x in s:                                   # fail-closed re-judge of every entry from its own run directory
+            x["pass_runner"] = x.get("pass")
+            if a.judge == "runner":
+                continue
+            if os.path.isdir(os.path.join(a.results, x["tag"])):
+                j = blib.load_run(a.results, x["tag"], x["period"], w["drv_ref"])
+                x.update({"pass": j["pass"], "claim": j["claim"], "admitted": j["admitted"], "why": j["why"],
+                          "ws": j["ws"], "ws_r2r": j["ws_r2r"], "hold_ws": j["hold_ws"], "drc": j["drc"],
+                          "drv": j["drv"], "port": j["port"]})
+            else:
+                x.update({"pass": False, "admitted": False, "why": "run directory not collected"})
+            if bool(x["pass"]) != bool(x["pass_runner"]):
+                rejudge_diff.append({"tag": x["tag"], "runner": x["pass_runner"], "failclosed": x["pass"],
+                                     "why": x.get("why")})
         wr = s[0] if s else None
         fr = blib.first_rebuild(s) if s else None
         for x in s:
@@ -108,6 +126,7 @@ def main():
     def verdict(ok, ready):
         return ("PASS" if ok else "FAIL") if (ready or a.final) else "pending"
     res = {
+        "judge": a.judge, "rejudge_discrepancies": rejudge_diff,
         "landed_chains": sum(1 for r in rows if r.get("landed")), "complete_chains": sum(1 for r in rows if r.get("complete")),
         "first_rebuilds_landed": len(fr_landed), "expected": n_expected, "no_claim": [r["source"] for r in rows if r.get("no_claim")],
         "C2a_i": {"original_failures_landed": len(of), "still_fail": n_of_fail,
@@ -156,6 +175,8 @@ def main():
         "fails_by_reason": {k: v for k, v in res["status_counts"].get("R1_status", {}).items() if "fail" in k}}
     # C2a-ii is decided as soon as 2 failures have landed (more landings cannot undo ">= 2")
     json.dump(res, open(a.out, "w"), indent=1, default=str)
+    print(f"judge: {a.judge}; entries where the fail-closed re-judge differs from the runner's flag: "
+          f"{len(rejudge_diff)} {rejudge_diff[:5]}")
     print(f"chains landed {res['landed_chains']}/48, complete {res['complete_chains']}; first rebuilds landed "
           f"{len(fr_landed)}/{n_expected}")
     print("C2a-i  :", res["C2a_i"]["still_fail"], "of", len(of), "original failures still fail ->", res["C2a_i"]["verdict"],
