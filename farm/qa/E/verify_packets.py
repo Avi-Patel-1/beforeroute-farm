@@ -116,15 +116,20 @@ def check(p):
         d = [sets["spef_" + rc] for rc in ("min", "nom", "max")]
         if not d[0] == d[1] == d[2]:
             errs.append("SPEF corners extract different net sets")
+        # dataset check for these sky130 packets (min/nom/max are three RC rule sets of one extraction), not a
+        # universal extraction invariant
         tc = [info["spef"][rc]["total_cap_pf"] for rc in ("min", "nom", "max")]
         if not tc[0] < tc[1] < tc[2]:
-            errs.append(f"SPEF total cap not min < nom < max: {tc}")
+            errs.append(f"dataset check: SPEF total cap not min < nom < max: {tc}")
     base = sets["connectivity"]
     for k, v in sets.items():
         if k.startswith("spef_"):     # nets without any wire (e.g. unconnected input ports) carry no parasitics
             if v - base:
                 errs.append(f"{k} has {len(v - base)} nets not in connectivity")
-            info["no_parasitics"] = len(base - v)
+            # exception counts per RC corner: nets without a D_NET, and how many of those have no load (justified)
+            info.setdefault("no_parasitics_by_corner", {})[k[5:]] = {"no_d_net": len(base - v),
+                                                                     "of_which_loadless": len((base - v) - wired)}
+            info["no_parasitics"] = max(info.get("no_parasitics", 0), len(base - v))
         elif v != base:
             errs.append(f"{k} nets differ from connectivity: {len(v - base)} extra, {len(base - v)} missing")
     info["nets"] = len(base)
@@ -145,8 +150,10 @@ def main() -> int:
             f"{rc} {v['populated']}/{v['wired']} ({100.0 * v['populated'] / max(1, v['wired']):.1f}%, {v['total_cap_pf']} pF)"
             for rc, v in sp.items())) if sp else "; SPEF: layout withheld (shuffled view)"
         dumps = "; dump rows with all 9 corners " + ", ".join(f"{k} {a}/{b}" for k, (a, b) in info["dump_corner_rows"].items())
+        npc = info.get("no_parasitics_by_corner")
         print(("FAIL " if errs else "ok   ") + f"{pid}: {info['nets']} nets agree across {', '.join(info['views'])}"
-              + (f" ({info['no_parasitics']} without parasitics)" if info.get("no_parasitics") else "")
+              + (" (without parasitics per corner: " + ", ".join(f"{rc} {v['no_d_net']} [{v['of_which_loadless']} load-less]"
+                                                              for rc, v in npc.items()) + ")" if info.get("no_parasitics") else "")
               + cov + dumps + (f" | {errs}" if errs else ""), flush=True)
         bad += bool(errs)
     print(f"[verify] {bad} packets with problems")
