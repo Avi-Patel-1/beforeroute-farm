@@ -3,7 +3,7 @@
  "rejudge_discrepancies": [],
  "trajectory_discrepancies": [],
  "landed_chains": 48,
- "complete_chains": 44,
+ "complete_chains": 46,
  "first_rebuilds_landed": 48,
  "expected": 48,
  "no_claim": [],
@@ -37,9 +37,9 @@
   "verdict": "PASS"
  },
  "C2a_iii": {
-  "n": 42,
+  "n": 44,
   "median_g": 1.0948655952211634,
-  "over_1.02": 33,
+  "over_1.02": 34,
   "verdict": "pending"
  },
  "rows": [
@@ -54,8 +54,8 @@
    "D": 2.06,
    "landed": true,
    "chain_id": "b2a-aes_cipher-01",
-   "complete": false,
-   "stage": 1,
+   "complete": true,
+   "stage": 2,
    "W_status": "completed, pass",
    "R1_status": "completed, pass",
    "smoke_seen": [],
@@ -83,7 +83,7 @@
     "drv": 13.0
    },
    "first_fails": false,
-   "K": 15.0,
+   "K": 13.45,
    "T1": 15.0,
    "chain": [
     [
@@ -97,9 +97,15 @@
      15.0,
      13.431569237006975,
      true
+    ],
+    [
+     "b2a-aes_cipher-01-2",
+     13.45,
+     13.43133937087434,
+     true
     ]
    ],
-   "g": 1.0
+   "g": 1.1152416356877324
   },
   {
    "design": "picorv32",
@@ -412,8 +418,8 @@
    "D": 2.2,
    "landed": true,
    "chain_id": "b2a-ocs_blitter-01",
-   "complete": false,
-   "stage": 1,
+   "complete": true,
+   "stage": 2,
    "W_status": "completed, pass",
    "R1_status": "completed, pass",
    "smoke_seen": [],
@@ -455,6 +461,12 @@
      10.95,
      10.811818973911867,
      true
+    ],
+    [
+     "b2a-ocs_blitter-01-2",
+     10.85,
+     10.861307399780998,
+     false
     ]
    ],
    "g": 1.0
@@ -3426,8 +3438,10 @@
    "first_fail": 0,
    "first_pass": 1,
    "no_claim": 0,
-   "gains": [],
-   "median_g": null
+   "gains": [
+    1.1152
+   ],
+   "median_g": 1.1152
   },
   "picorv32": {
    "winners": 1,
@@ -3482,8 +3496,10 @@
    "first_fail": 0,
    "first_pass": 1,
    "no_claim": 0,
-   "gains": [],
-   "median_g": null
+   "gains": [
+    1.0
+   ],
+   "median_g": 1.0
   },
   "blabla": {
    "winners": 1,
