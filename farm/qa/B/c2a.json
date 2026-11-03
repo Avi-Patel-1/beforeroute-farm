@@ -3,7 +3,7 @@
  "rejudge_discrepancies": [],
  "trajectory_discrepancies": [],
  "landed_chains": 48,
- "complete_chains": 46,
+ "complete_chains": 47,
  "first_rebuilds_landed": 48,
  "expected": 48,
  "no_claim": [],
@@ -37,9 +37,9 @@
   "verdict": "PASS"
  },
  "C2a_iii": {
-  "n": 44,
-  "median_g": 1.0948655952211634,
-  "over_1.02": 34,
+  "n": 45,
+  "median_g": 1.0886075949367087,
+  "over_1.02": 35,
   "verdict": "pending"
  },
  "rows": [
@@ -118,8 +118,8 @@
    "D": 1.86,
    "landed": true,
    "chain_id": "b2a-picorv32-01",
-   "complete": false,
-   "stage": 1,
+   "complete": true,
+   "stage": 2,
    "W_status": "completed, pass",
    "R1_status": "completed, pass",
    "smoke_seen": [],
@@ -147,7 +147,7 @@
     "drv": 854.0
    },
    "first_fails": false,
-   "K": 10.25,
+   "K": 9.85,
    "T1": 10.25,
    "chain": [
     [
@@ -161,9 +161,27 @@
      10.25,
      10.036327358815987,
      true
+    ],
+    [
+     "b2a-picorv32-01-2",
+     10.05,
+     9.832761322360037,
+     true
+    ],
+    [
+     "b2a-picorv32-01-3",
+     9.85,
+     9.730033737458227,
+     true
+    ],
+    [
+     "b2a-picorv32-01-4",
+     9.75,
+     10.304536876558407,
+     false
     ]
    ],
-   "g": 1.0
+   "g": 1.0406091370558377
   },
   {
    "design": "y_huff",
@@ -3449,8 +3467,10 @@
    "first_fail": 0,
    "first_pass": 1,
    "no_claim": 0,
-   "gains": [],
-   "median_g": null
+   "gains": [
+    1.0406
+   ],
+   "median_g": 1.0406
   },
   "y_huff": {
    "winners": 1,

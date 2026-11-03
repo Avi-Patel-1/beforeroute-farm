@@ -1,9 +1,10 @@
 # Workstream B, arm C2a — result: the 48 tuned winners with frozen I/O budgets, rebuilt at their claims (sky130)
 
 **C2a-i and C2a-ii are final** (all 48 first rebuilds landed 2026-11-03 08:31Z). **C2a-iii is decided but not final**:
-at 09:14Z, 2 of the 48 chains (the Bayesian picorv32 and md5 winners) were still being continued by the workflow's resume
-stage; whatever they do, the median rebuild-again gain stays between 1.089 and 1.105 (≥ 1.05). aes_cipher's
-continuation reached 13.45 ns (gain 1.115); ocs_blitter's ended at 10.95 ns (1.000). Scored with farm/qa/B/c2a.py
+at 09:41Z, 1 of the 48 chains (the Bayesian md5 winner) was still being continued by the workflow's resume stage;
+whatever it does, the median rebuild-again gain ends between 1.0885 and 1.0949 (≥ 1.05). aes_cipher's continuation
+reached 13.45 ns (gain 1.115); ocs_blitter's ended at 10.95 ns (1.000); picorv32's kept 9.85 ns (1.041), the clock its
+stock-budget rebuild had failed at. Scored with farm/qa/B/c2a.py
 (fail-closed judge, commit 805c5b0 and later) → farm/qa/B/c2a.json; table by farm/qa/B/c2a_table.py.
 - Pre-registration: docs/qa_week/B_PREREG.md, SHA-256 e8134105…8d8f (commit 9e3c24f; hash line cdadff9, 02:23Z) and,
   with Amendment B.1, 3c633b31…74b7 (commit 55429f5; hash line 9c69316, 02:41Z), both before the first C2a run.
@@ -27,7 +28,7 @@ winners still fail, and does rebuilding again still pay?
 |---|---|---|---|
 | C2a-i | ≥2 of the 3 original failures still fail | bm64 and y_huff fail; picorv32 now passes | **PASS** (registered judge) |
 | C2a-ii | ≥2 of 48 fail | 3 of 48 first rebuilds fail (bm64, y_huff, one cic_decimator winner) | **PASS** |
-| C2a-iii | rebuild-again median ≥ 1.05× | median 1.095 over 44 finished chains (34 ≥ 1.02); with the 2 chains still running it can only end between 1.089 and 1.105 | **PASS** (decided; final value pending) |
+| C2a-iii | rebuild-again median ≥ 1.05× | median 1.089 over 45 finished chains; with md5's chain still running it will end between 1.0885 and 1.0949 | **PASS** (decided; final value pending) |
 
 **Read this with the failure reasons.** Of the 3 failing first rebuilds, 2 miss *setup* on register-to-register paths
 (bm64 at 13.20 ns by −0.44 ns, then −0.50 at 13.65; cic_decimator's f1 winner at 4.30 ns by −0.010 ns, passing at
@@ -57,7 +58,8 @@ registered) C2a-i would be 1 of 3 (FAIL) and C2a-ii 2 of 48 (PASS).**
 | design | winners | first rebuilds failing | why | median rebuild-again gain (finished chains) |
 |---|---|---|---|---|
 | aes_cipher, ocs_blitter | 1 each | 0 | – | 1.115, 1.000 |
-| picorv32, md5 | 1 each | 0 | – | chains continuing |
+| picorv32 | 1 | 0 | – | 1.041 |
+| md5 | 1 | 0 | – | chain continuing |
 | des, blabla | 1 each | 0 | – | 1.000 each |
 | y_huff | 1 | 1 | hold (input-to-register, ss corner) | – |
 | bm64 | 1 | 1 | setup, register-to-register | – |
@@ -74,7 +76,7 @@ Addendum 35's first closure run (race winners), under the stock budget.
 | winner (search run) | design | T0 (ns) | claim, stock budget (record) | claim, frozen | first rebuild R1 | R1 verdict | R1 limiting path | record's first rebuild | kept clock K | T1/K |
 |---|---|---|---|---|---|---|---|---|---|---|
 | x1t-aes_cipher-017 | aes_cipher | 25.84 | 17.975 | 14.978 | 15.00 | pass | reg-to-reg | pass | 13.45 | 1.115 |
-| x1t-picorv32-014 | picorv32 | 13.06 | 9.850 | 10.243 | 10.25 | pass | reg-to-reg | fail | 10.25 | 1.000 (chain running) |
+| x1t-picorv32-014 | picorv32 | 13.06 | 9.850 | 10.243 | 10.25 | pass | reg-to-reg | fail | 9.85 | 1.041 |
 | x1t-y_huff-005 | y_huff | 10.97 | 10.240 | 11.353 | 11.40 | **fail** (hold -0.484) | port | fail | – | – |
 | x2t-des-008 | des | 10.55 | 9.088 | 8.722 | 8.75 | pass | port | pass | 8.75 | 1.000 |
 | x2t-md5-012 | md5 | 17.19 | 18.501 | 18.501 | 18.55 | pass | reg-to-reg | pass | 18.55 | 1.000 (chain running) |
@@ -156,4 +158,4 @@ input paths); "significant" (48 winners from 13 designs, 40 of them from 5).
    its D small. Arm S (D = 1.0 ns flat for the race designs) bounds the choice; it has not run yet.
 2. The winners were selected by searches run under the stock budget; only C2b repeats the search with frozen budgets.
 3. Chain rule differs from the record's (one step back vs up to two refinements).
-4. C2a-iii's final value waits for the two continuing Bayesian chains (picorv32, md5); the verdict cannot change.
+4. C2a-iii's final value waits for md5's continuing chain; the verdict cannot change.
