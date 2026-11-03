@@ -1,0 +1,34 @@
+{
+ "batch": "s01",
+ "about": "workstream B C3 smoke (not part of any analysis)",
+ "max_parallel": 1,
+ "groups": [
+  {
+   "name": "smoke-gcd",
+   "num_cores": 4,
+   "timeout_s": 3600,
+   "runs": [
+    {
+     "tag": "smoke-b3g-gcd-001",
+     "design": "gcd",
+     "period": 215,
+     "vars": {},
+     "setting": "S0",
+     "kind": "grid",
+     "io_p0": 310,
+     "e5_twin": "e5g-gcd-001"
+    },
+    {
+     "tag": "smoke-b3g-gcd-003",
+     "design": "gcd",
+     "period": 310,
+     "vars": {},
+     "setting": "S0",
+     "kind": "grid",
+     "io_p0": 310,
+     "e5_twin": "e5g-gcd-003"
+    }
+   ]
+  }
+ ]
+}

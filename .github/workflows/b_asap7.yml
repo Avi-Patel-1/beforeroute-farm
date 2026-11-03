@@ -1,0 +1,156 @@
+name: B3 frozen-I/O ASAP7 (ORFS)
+
+# Workstream B, arm C3 (docs/qa_week/B_PREREG.md on qa-b-frozen-io): E5's workflow with the I/O budget frozen
+# (farm/qa/B3/: clk_io_pct = 0.2*P0/T). Copied from .github/workflows/e5_asap7.yml; changes: trigger branch/path,
+# max-parallel from the batch (workstream B's share), farm/qa/B3 scripts, artifact prefix b3-.
+# Runs only on pushes to qa-b-asap7 that change farm/qa/B3/dispatch.json. Each push runs the batch named there:
+#   run    - one matrix job per group; each group's runs (or rebuild chains) execute in the pinned ORFS image
+#            (farm/qa/E5/run_group.py); artifact e5-<batch>-<group> (metrics JSON, gzipped logs, reports; no layouts)
+#   select - if the batch sets "auto_chains": once its grid jobs are done, picks each listed design's top 3 runs by
+#            AutoTuner's score from this run's own artifacts (farm/qa/E5/e5.py chains); artifact e5-<batch>k-spec
+#   chain  - runs those registered rebuild chains; artifact e5-<batch>k-<group>
+
+on:
+  push:
+    branches: [qa-b-asap7]
+    paths: ['farm/qa/B3/dispatch.json']
+
+permissions:
+  contents: read
+
+env:
+  # openroad/orfs:26Q4-244-g202c7fccb (ORFS commit 202c7fccb), pinned by digest
+  IMAGE: openroad/orfs@sha256:cba40c1de21f048b545c005210dabe728bf501f4bb7d5ae5f03b33feb52b49fa
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      groups: ${{ steps.p.outputs.groups }}
+      batch: ${{ steps.p.outputs.batch }}
+      auto_chains: ${{ steps.p.outputs.auto_chains }}
+      max_parallel: ${{ steps.p.outputs.max_parallel }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: p
+        run: |
+          python3 - <<'PY'
+          import json, os
+          d = json.load(open("farm/qa/B3/dispatch.json"))
+          groups = [g["name"] for g in d["groups"]]
+          assert len(groups) <= 8, "at most 8 groups per batch"
+          mp = int(d.get("max_parallel", 2))
+          assert 1 <= mp <= 6, "workstream B share is 6 jobs"
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write("groups=" + json.dumps(groups) + "\n")
+              f.write("batch=" + d["batch"] + "\n")
+              f.write("auto_chains=" + d.get("auto_chains", "") + "\n")
+              f.write("max_parallel=" + str(mp) + "\n")
+          print(d["batch"], groups, d.get("auto_chains", ""))
+          PY
+
+  run:
+    needs: plan
+    if: needs.plan.outputs.groups != '[]'
+    name: ${{ needs.plan.outputs.batch }} ${{ matrix.group }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    strategy:
+      fail-fast: false
+      max-parallel: ${{ fromJSON(needs.plan.outputs.max_parallel) }}
+      matrix:
+        group: ${{ fromJSON(needs.plan.outputs.groups) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Pull ORFS image
+        run: |
+          for i in 1 2 3 4 5; do
+            docker pull -q "$IMAGE" && break
+            echo "pull failed (attempt $i)"; sleep $((60 * i))
+          done
+          docker image inspect "$IMAGE" --format '{{.Id}} {{.Size}}'
+          df -h / | tail -1
+
+      - name: Run group
+        run: |
+          python3 farm/qa/B3/run_group.py --spec farm/qa/B3/dispatch.json --group "${{ matrix.group }}" \
+            --image "$IMAGE" --results results
+
+      - name: Fix ownership
+        if: always()
+        run: sudo chown -R "$(id -u):$(id -g)" results || true
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: b3-${{ needs.plan.outputs.batch }}-${{ matrix.group }}
+          path: results/
+          retention-days: 30
+          if-no-files-found: warn
+
+  select:
+    needs: [plan, run]
+    if: ${{ !cancelled() && needs.plan.outputs.auto_chains != '' }}
+    runs-on: ubuntu-latest
+    outputs:
+      groups: ${{ steps.s.outputs.groups }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: b3-${{ needs.plan.outputs.batch }}-*
+          path: grid
+          merge-multiple: true
+      - id: s
+        run: |
+          ls grid | head -50
+          python3 farm/qa/B3/b3.py chains --results grid --designs "${{ needs.plan.outputs.auto_chains }}" \
+            --batch "${{ needs.plan.outputs.batch }}k" --spec-out chains.json --require-complete
+          python3 -c "import json,os; d=json.load(open('chains.json')); open(os.environ['GITHUB_OUTPUT'],'a').write('groups='+json.dumps([g['name'] for g in d['groups']])+'\n')"
+          cat chains.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: b3-${{ needs.plan.outputs.batch }}k-spec
+          path: chains.json
+          retention-days: 30
+
+  chain:
+    needs: [plan, select]
+    if: ${{ !cancelled() && needs.select.outputs.groups != '' && needs.select.outputs.groups != '[]' }}
+    name: ${{ needs.plan.outputs.batch }}k ${{ matrix.group }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    strategy:
+      fail-fast: false
+      max-parallel: ${{ fromJSON(needs.plan.outputs.max_parallel) }}
+      matrix:
+        group: ${{ fromJSON(needs.select.outputs.groups) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: b3-${{ needs.plan.outputs.batch }}k-spec
+          path: spec
+      - name: Pull ORFS image
+        run: |
+          for i in 1 2 3 4 5; do
+            docker pull -q "$IMAGE" && break
+            echo "pull failed (attempt $i)"; sleep $((60 * i))
+          done
+      - name: Run chains
+        run: |
+          python3 farm/qa/B3/run_group.py --spec spec/chains.json --group "${{ matrix.group }}" \
+            --image "$IMAGE" --results results
+      - name: Fix ownership
+        if: always()
+        run: sudo chown -R "$(id -u):$(id -g)" results || true
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: b3-${{ needs.plan.outputs.batch }}k-${{ matrix.group }}
+          path: results/
+          retention-days: 30
+          if-no-files-found: warn
