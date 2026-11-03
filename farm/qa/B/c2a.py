@@ -72,7 +72,7 @@ def main():
     rejudge_diff = []
     for w in W:
         c = chains.get(w["source"])
-        row = {"design": w["design"], "set": w["set"], "source": w["source"], "T0": w["T0"],
+        row = {"design": w["design"], "set": w["set"], "source": w["source"], "T0": w["T0"], "drv_ref": w["drv_ref"],
                "claim_orig": w["claim_orig"], "orig_first_pass": (w.get("orig_first_rebuild") or {}).get("pass"),
                "D": w["D"], "landed": c is not None}
         if c is None:

@@ -39,8 +39,8 @@ def main():
                 bits.append(f"hold {fr['hold_ws']:+.3f}")
             if fr.get("drc"):
                 bits.append(f"DRC {fr['drc']}")
-            if fr.get("drv") is not None:
-                bits.append(f"slew/cap {fr['drv']}")
+            if fr.get("drv") is not None and r.get("drv_ref") is not None and fr["drv"] > r["drv_ref"]:
+                bits.append(f"slew/cap {fr['drv']:.0f} > {r['drv_ref']}")
             why = " (" + ", ".join(bits) + ")" if bits else ""
         orig = {True: "pass", False: "fail", None: "–"}[r.get("orig_first_pass")]
         print(f"| {r['source']} | {r['design']} | {f(r['T0'])} | {f(r['claim_orig'], 3)} | {f(r.get('claim_frozen'), 3)} | "
