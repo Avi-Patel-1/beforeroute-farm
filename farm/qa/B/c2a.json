@@ -1,6 +1,7 @@
 {
  "judge": "failclosed",
  "rejudge_discrepancies": [],
+ "trajectory_discrepancies": [],
  "landed_chains": 48,
  "complete_chains": 44,
  "first_rebuilds_landed": 48,

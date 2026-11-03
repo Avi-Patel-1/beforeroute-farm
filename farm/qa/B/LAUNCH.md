@@ -31,3 +31,7 @@ C1, S and C2b: not launched yet (they wait for free share; see docs/qa_week/B_PR
   (sha256 8897fa72…); outbox/code/B/MANIFEST.txt still listed the 3dba6ea version (647e1fbb…) because the file was
   re-copied without regenerating the manifest. The registered-test code is the same in both (117e483 added only the
   setup-only sensitivity). The manifest is now generated from git (path, commit, sha256) and checked after copying.
+- **2026-11-03 ~08:45Z — trajectory check (Codex audit of LAUNCH/c2a/blib).** c2a.py also replays the registered
+  chain rule over the fail-closed re-judged entries and compares each target with the one the runner ran. On all 48
+  chains landed by then (stage 1 complete): 0 changed verdicts, 0 trajectory differences, so the pre-fix runner judge
+  did not alter any chain. Every C2a run directory had all judged fields (194 of 194 admitted).

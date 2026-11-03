@@ -11,7 +11,8 @@ resume stage; their rebuild-again gains can only rise from the 1.000 counted her
 - Judge (nine corners: min/nom/max RC × tt 25 °C 1.80 V, ss 100 °C 1.60 V, ff −40 °C 1.95 V, OpenRCX): setup and hold
   slack ≥ 0 at every corner, router DRC 0, slew/cap violation pins ≤ the design's stock reference; fail-closed
   admission (a run without a completed job record or any judged metric fails). Re-judging every chain entry from its
-  own run directory changed 0 of the runner's verdicts.
+  own run directory changed 0 of the runner's verdicts, and replaying the registered chain rule over the re-judged
+  entries reproduces every target the runner chose (0 trajectory differences; audit request).
 
 ## Question
 In the record, 3 of the 8 Bayesian-tuned winners failed setup when rebuilt at their claimed clock, and rebuilding the

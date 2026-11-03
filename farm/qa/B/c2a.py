@@ -70,6 +70,7 @@ def main():
             chains[c["source"]] = c
     rows = []
     rejudge_diff = []
+    trajectory_diff = []
     for w in W:
         c = chains.get(w["source"])
         row = {"design": w["design"], "set": w["set"], "source": w["source"], "T0": w["T0"], "drv_ref": w["drv_ref"],
@@ -93,6 +94,18 @@ def main():
             if bool(x["pass"]) != bool(x["pass_runner"]):
                 rejudge_diff.append({"tag": x["tag"], "runner": x["pass_runner"], "failclosed": x["pass"],
                                      "why": x.get("why")})
+        # trajectory check (audit): replay the registered rule over the re-judged entries and compare every target the
+        # runner actually chose; a changed verdict could have changed later targets (reused entries are skipped)
+        mx = int(c.get("max_rebuilds", blib.MAX_REBUILDS))
+        for i in range(1, len(s)):
+            want, _ = blib.chain_next(s[:i], mx)
+            if want is None or abs(want - s[i]["period"]) > 1e-9:
+                trajectory_diff.append({"chain": c["chain_id"], "step": i, "ran": s[i]["period"], "rule": want})
+        if s and c.get("complete"):
+            want, why = blib.chain_next(s, mx)
+            if want is not None:
+                trajectory_diff.append({"chain": c["chain_id"], "step": len(s), "ran": None, "rule": want,
+                                        "note": "chain ended but the rule asks for another rebuild"})
         wr = s[0] if s else None
         fr = blib.first_rebuild(s) if s else None
         for x in s:
@@ -126,7 +139,7 @@ def main():
     def verdict(ok, ready):
         return ("PASS" if ok else "FAIL") if (ready or a.final) else "pending"
     res = {
-        "judge": a.judge, "rejudge_discrepancies": rejudge_diff,
+        "judge": a.judge, "rejudge_discrepancies": rejudge_diff, "trajectory_discrepancies": trajectory_diff,
         "landed_chains": sum(1 for r in rows if r.get("landed")), "complete_chains": sum(1 for r in rows if r.get("complete")),
         "first_rebuilds_landed": len(fr_landed), "expected": n_expected, "no_claim": [r["source"] for r in rows if r.get("no_claim")],
         "C2a_i": {"original_failures_landed": len(of), "still_fail": n_of_fail,
@@ -177,6 +190,8 @@ def main():
     json.dump(res, open(a.out, "w"), indent=1, default=str)
     print(f"judge: {a.judge}; entries where the fail-closed re-judge differs from the runner's flag: "
           f"{len(rejudge_diff)} {rejudge_diff[:5]}")
+    print(f"trajectory check (registered rule over the re-judged entries vs the targets actually run): "
+          f"{len(trajectory_diff)} differences {trajectory_diff[:5]}")
     print(f"chains landed {res['landed_chains']}/48, complete {res['complete_chains']}; first rebuilds landed "
           f"{len(fr_landed)}/{n_expected}")
     print("C2a-i  :", res["C2a_i"]["still_fail"], "of", len(of), "original failures still fail ->", res["C2a_i"]["verdict"],
