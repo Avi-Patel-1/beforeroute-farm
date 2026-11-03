@@ -1,32 +1,320 @@
 {
- "batch": "s01",
- "kind": "smoke",
- "max_parallel": 2,
- "about": "workstream B smoke batch s01 (docs/qa_week/B_PREREG.md).",
+ "batch": "c2a1",
+ "kind": "c2a",
+ "max_parallel": 4,
+ "about": "workstream B c2a batch c2a1 (docs/qa_week/B_PREREG.md). Arm C2a (registered): 48 winners replayed at their search target with frozen I/O, then chained; Bayesian chains stop at their first passing rebuild in stage 1 and continue in the resume stage.",
  "groups": [
   {
-   "name": "smoke-ctl",
-   "timeout_s": 7200,
-   "budget_s": 7200,
-   "est_flow_s": 300,
-   "runs": [
+   "name": "bay-bm64",
+   "chains": [
     {
-     "tag": "smoke-b-xtea-ctl",
-     "base_spec": "farm/jobs/xac-xtea-024.json",
-     "period": 4.2,
+     "chain_id": "b2a-bm64-01",
+     "design": "bm64",
+     "source": "x2t-bm64-007",
+     "set": "A24/A25 (Bayesian, TPE)",
+     "base_spec": "farm/jobs/x2t-bm64-007.json",
+     "T0": 10.08,
+     "claim_orig": 13.406548020089264,
+     "D": 2.28,
+     "io0": 0.2,
+     "F_best": 11.4,
+     "drv_ref": 2155,
+     "tag_prefix": "b2a-bm64-01-",
+     "group": "bay-bm64",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 5583
+     },
+     "stop_after_first_pass": true,
+     "frozen": true
+    }
+   ],
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 5583
+  },
+  {
+   "name": "bay-md5",
+   "chains": [
+    {
+     "chain_id": "b2a-md5-01",
+     "design": "md5",
+     "source": "x2t-md5-012",
+     "set": "A24/A25 (Bayesian, TPE)",
+     "base_spec": "farm/jobs/x2t-md5-012.json",
+     "T0": 17.19,
+     "claim_orig": 18.501089940391015,
+     "D": 3.1,
+     "io0": 0.2,
+     "F_best": 15.5,
+     "drv_ref": 1629,
+     "tag_prefix": "b2a-md5-01-",
+     "group": "bay-md5",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 6157
+     },
+     "stop_after_first_pass": true,
+     "frozen": true
+    }
+   ],
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 6157
+  },
+  {
+   "name": "bay-y_huff",
+   "chains": [
+    {
+     "chain_id": "b2a-y_huff-01",
+     "design": "y_huff",
+     "source": "x1t-y_huff-005",
+     "set": "A24/A25 (Bayesian, TPE)",
+     "base_spec": "farm/jobs/x1t-y_huff-005.json",
+     "T0": 10.97,
+     "claim_orig": 10.239824059621643,
+     "D": 1.402,
+     "io0": 0.2,
+     "F_best": 7.01,
+     "drv_ref": 3751,
+     "tag_prefix": "b2a-y_huff-01-",
+     "group": "bay-y_huff",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 2508
+     },
+     "stop_after_first_pass": true,
+     "frozen": true
+    }
+   ],
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 2508
+  },
+  {
+   "name": "bay-picorv32",
+   "chains": [
+    {
+     "chain_id": "b2a-picorv32-01",
+     "design": "picorv32",
+     "source": "x1t-picorv32-014",
+     "set": "A24/A25 (Bayesian, TPE)",
+     "base_spec": "farm/jobs/x1t-picorv32-014.json",
+     "T0": 13.06,
+     "claim_orig": 9.849927257075146,
+     "D": 1.86,
+     "io0": 0.2,
+     "F_best": 9.3,
+     "drv_ref": 2881,
+     "tag_prefix": "b2a-picorv32-01-",
+     "group": "bay-picorv32",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 1712
+     },
+     "stop_after_first_pass": true,
+     "frozen": true
+    }
+   ],
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 1712
+  },
+  {
+   "name": "bay-des",
+   "chains": [
+    {
+     "chain_id": "b2a-des-01",
+     "design": "des",
+     "source": "x2t-des-008",
+     "set": "A24/A25 (Bayesian, TPE)",
+     "base_spec": "farm/jobs/x2t-des-008.json",
+     "T0": 10.55,
+     "claim_orig": 9.087991666443697,
+     "D": 1.65,
+     "io0": 0.2,
+     "F_best": 8.25,
+     "drv_ref": 2240,
+     "tag_prefix": "b2a-des-01-",
+     "group": "bay-des",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 3271
+     },
+     "stop_after_first_pass": true,
+     "frozen": true
+    }
+   ],
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 3271
+  },
+  {
+   "name": "bay-ocs_blitter",
+   "chains": [
+    {
+     "chain_id": "b2a-ocs_blitter-01",
+     "design": "ocs_blitter",
+     "source": "x2t-ocs_blitter-022",
+     "set": "A24/A25 (Bayesian, TPE)",
+     "base_spec": "farm/jobs/x2t-ocs_blitter-022.json",
+     "T0": 11.23,
+     "claim_orig": 11.04981079800724,
+     "D": 2.2,
+     "io0": 0.2,
+     "F_best": 11.0,
+     "drv_ref": 3669,
+     "tag_prefix": "b2a-ocs_blitter-01-",
+     "group": "bay-ocs_blitter",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 2691
+     },
+     "stop_after_first_pass": true,
+     "frozen": true
+    }
+   ],
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 2691
+  },
+  {
+   "name": "bay-blabla",
+   "chains": [
+    {
+     "chain_id": "b2a-blabla-01",
+     "design": "blabla",
+     "source": "x2t-blabla-021",
+     "set": "A24/A25 (Bayesian, TPE)",
+     "base_spec": "farm/jobs/x2t-blabla-021.json",
+     "T0": 60.35,
+     "claim_orig": 26.336392884180754,
+     "D": 4.38,
+     "io0": 0.2,
+     "F_best": 21.9,
+     "drv_ref": 3877,
+     "tag_prefix": "b2a-blabla-01-",
+     "group": "bay-blabla",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 2533
+     },
+     "stop_after_first_pass": true,
+     "frozen": true
+    }
+   ],
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 2533
+  },
+  {
+   "name": "bay-aes_cipher",
+   "chains": [
+    {
+     "chain_id": "b2a-aes_cipher-01",
+     "design": "aes_cipher",
+     "source": "x1t-aes_cipher-017",
+     "set": "A24/A25 (Bayesian, TPE)",
+     "base_spec": "farm/jobs/x1t-aes_cipher-017.json",
+     "T0": 25.84,
+     "claim_orig": 17.974737558257566,
+     "D": 2.06,
+     "io0": 0.2,
+     "F_best": 10.3,
+     "drv_ref": 14,
+     "tag_prefix": "b2a-aes_cipher-01-",
+     "group": "bay-aes_cipher",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 2328
+     },
+     "stop_after_first_pass": true,
+     "frozen": true
+    }
+   ],
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 2328
+  },
+  {
+   "name": "xtea-s1",
+   "chains": [
+    {
+     "chain_id": "b2a-xtea-01",
+     "design": "xtea",
+     "source": "xab1-xtea-005",
+     "set": "A35 race b1",
+     "base_spec": "farm/jobs/xab1-xtea-005.json",
+     "T0": 11.9,
+     "claim_orig": 6.515273849284334,
      "D": 0.84,
      "io0": 0.2,
      "F_best": 4.2,
      "drv_ref": 0,
-     "note": "control: replay of xac-xtea-024 at T = F_best with the override (must equal the record)"
-    }
-   ]
-  },
-  {
-   "name": "smoke-chain",
-   "chains": [
+     "tag_prefix": "b2a-xtea-01-",
+     "group": "xtea-s1",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    },
     {
-     "chain_id": "smoke-b2a-xtea",
+     "chain_id": "b2a-xtea-02",
+     "design": "xtea",
+     "source": "xaf1-xtea-004",
+     "set": "A35 race f1",
+     "base_spec": "farm/jobs/xaf1-xtea-004.json",
+     "T0": 11.71,
+     "claim_orig": 6.212760292073042,
+     "D": 0.84,
+     "io0": 0.2,
+     "F_best": 4.2,
+     "drv_ref": 0,
+     "tag_prefix": "b2a-xtea-02-",
+     "group": "xtea-s1",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    },
+    {
+     "chain_id": "b2a-xtea-03",
+     "design": "xtea",
+     "source": "xag1-xtea-003",
+     "set": "A35 race g1",
+     "base_spec": "farm/jobs/xag1-xtea-003.json",
+     "T0": 11.71,
+     "claim_orig": 6.367383277531673,
+     "D": 0.84,
+     "io0": 0.2,
+     "F_best": 4.2,
+     "drv_ref": 0,
+     "tag_prefix": "b2a-xtea-03-",
+     "group": "xtea-s1",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    },
+    {
+     "chain_id": "b2a-xtea-04",
      "design": "xtea",
      "source": "xah1-xtea-007",
      "set": "A35 race h1",
@@ -37,20 +325,884 @@
      "io0": 0.2,
      "F_best": 4.2,
      "drv_ref": 0,
-     "tag_prefix": "smoke-b2a-xtea-",
-     "group": "smoke-chain",
+     "tag_prefix": "b2a-xtea-04-",
+     "group": "xtea-s1",
      "group_params": {
-      "timeout_s": 7200,
-      "budget_s": 7200,
-      "est_flow_s": 300
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
      },
-     "stop_after_first_pass": true,
+     "stop_after_first_pass": false,
      "frozen": true
     }
    ],
-   "timeout_s": 7200,
-   "budget_s": 7200,
-   "est_flow_s": 300
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 900
+  },
+  {
+   "name": "xtea-s2",
+   "chains": [
+    {
+     "chain_id": "b2a-xtea-05",
+     "design": "xtea",
+     "source": "xab2-xtea-008",
+     "set": "A35 race b2",
+     "base_spec": "farm/jobs/xab2-xtea-008.json",
+     "T0": 14.23,
+     "claim_orig": 6.7315596968602565,
+     "D": 0.84,
+     "io0": 0.2,
+     "F_best": 4.2,
+     "drv_ref": 0,
+     "tag_prefix": "b2a-xtea-05-",
+     "group": "xtea-s2",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    },
+    {
+     "chain_id": "b2a-xtea-06",
+     "design": "xtea",
+     "source": "xaf2-xtea-006",
+     "set": "A35 race f2",
+     "base_spec": "farm/jobs/xaf2-xtea-006.json",
+     "T0": 11.71,
+     "claim_orig": 6.239382996867285,
+     "D": 0.84,
+     "io0": 0.2,
+     "F_best": 4.2,
+     "drv_ref": 0,
+     "tag_prefix": "b2a-xtea-06-",
+     "group": "xtea-s2",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    },
+    {
+     "chain_id": "b2a-xtea-07",
+     "design": "xtea",
+     "source": "xag2-xtea-004",
+     "set": "A35 race g2",
+     "base_spec": "farm/jobs/xag2-xtea-004.json",
+     "T0": 11.71,
+     "claim_orig": 5.927190938048555,
+     "D": 0.84,
+     "io0": 0.2,
+     "F_best": 4.2,
+     "drv_ref": 0,
+     "tag_prefix": "b2a-xtea-07-",
+     "group": "xtea-s2",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    },
+    {
+     "chain_id": "b2a-xtea-08",
+     "design": "xtea",
+     "source": "xah2-xtea-001",
+     "set": "A35 race h2",
+     "base_spec": "farm/jobs/xah2-xtea-001.json",
+     "T0": 11.71,
+     "claim_orig": 5.947449400196444,
+     "D": 0.84,
+     "io0": 0.2,
+     "F_best": 4.2,
+     "drv_ref": 0,
+     "tag_prefix": "b2a-xtea-08-",
+     "group": "xtea-s2",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    }
+   ],
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 900
+  },
+  {
+   "name": "cic_decimator-s1",
+   "chains": [
+    {
+     "chain_id": "b2a-cic_decimator-01",
+     "design": "cic_decimator",
+     "source": "xab1-cic_decimator-007",
+     "set": "A35 race b1",
+     "base_spec": "farm/jobs/xab1-cic_decimator-007.json",
+     "T0": 4.97,
+     "claim_orig": 4.830745166172081,
+     "D": 0.78,
+     "io0": 0.2,
+     "F_best": 3.9,
+     "drv_ref": 89,
+     "tag_prefix": "b2a-cic_decimator-01-",
+     "group": "cic_decimator-s1",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    },
+    {
+     "chain_id": "b2a-cic_decimator-02",
+     "design": "cic_decimator",
+     "source": "xaf1-cic_decimator-006",
+     "set": "A35 race f1",
+     "base_spec": "farm/jobs/xaf1-cic_decimator-006.json",
+     "T0": 4.5,
+     "claim_orig": 4.239938686821508,
+     "D": 0.78,
+     "io0": 0.2,
+     "F_best": 3.9,
+     "drv_ref": 89,
+     "tag_prefix": "b2a-cic_decimator-02-",
+     "group": "cic_decimator-s1",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    },
+    {
+     "chain_id": "b2a-cic_decimator-03",
+     "design": "cic_decimator",
+     "source": "xag1-cic_decimator-006",
+     "set": "A35 race g1",
+     "base_spec": "farm/jobs/xag1-cic_decimator-006.json",
+     "T0": 4.7,
+     "claim_orig": 4.1280650399752465,
+     "D": 0.78,
+     "io0": 0.2,
+     "F_best": 3.9,
+     "drv_ref": 89,
+     "tag_prefix": "b2a-cic_decimator-03-",
+     "group": "cic_decimator-s1",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    },
+    {
+     "chain_id": "b2a-cic_decimator-04",
+     "design": "cic_decimator",
+     "source": "xah1-cic_decimator-005",
+     "set": "A35 race h1",
+     "base_spec": "farm/jobs/xah1-cic_decimator-005.json",
+     "T0": 4.5,
+     "claim_orig": 3.9523633817793966,
+     "D": 0.78,
+     "io0": 0.2,
+     "F_best": 3.9,
+     "drv_ref": 89,
+     "tag_prefix": "b2a-cic_decimator-04-",
+     "group": "cic_decimator-s1",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    }
+   ],
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 900
+  },
+  {
+   "name": "cic_decimator-s2",
+   "chains": [
+    {
+     "chain_id": "b2a-cic_decimator-05",
+     "design": "cic_decimator",
+     "source": "xab2-cic_decimator-005",
+     "set": "A35 race b2",
+     "base_spec": "farm/jobs/xab2-cic_decimator-005.json",
+     "T0": 5.07,
+     "claim_orig": 4.783653933925519,
+     "D": 0.78,
+     "io0": 0.2,
+     "F_best": 3.9,
+     "drv_ref": 89,
+     "tag_prefix": "b2a-cic_decimator-05-",
+     "group": "cic_decimator-s2",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    },
+    {
+     "chain_id": "b2a-cic_decimator-06",
+     "design": "cic_decimator",
+     "source": "xaf2-cic_decimator-007",
+     "set": "A35 race f2",
+     "base_spec": "farm/jobs/xaf2-cic_decimator-007.json",
+     "T0": 4.5,
+     "claim_orig": 4.2299231425885,
+     "D": 0.78,
+     "io0": 0.2,
+     "F_best": 3.9,
+     "drv_ref": 89,
+     "tag_prefix": "b2a-cic_decimator-06-",
+     "group": "cic_decimator-s2",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    },
+    {
+     "chain_id": "b2a-cic_decimator-07",
+     "design": "cic_decimator",
+     "source": "xag2-cic_decimator-004",
+     "set": "A35 race g2",
+     "base_spec": "farm/jobs/xag2-cic_decimator-004.json",
+     "T0": 4.6,
+     "claim_orig": 4.095178023711922,
+     "D": 0.78,
+     "io0": 0.2,
+     "F_best": 3.9,
+     "drv_ref": 89,
+     "tag_prefix": "b2a-cic_decimator-07-",
+     "group": "cic_decimator-s2",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    },
+    {
+     "chain_id": "b2a-cic_decimator-08",
+     "design": "cic_decimator",
+     "source": "xah2-cic_decimator-008",
+     "set": "A35 race h2",
+     "base_spec": "farm/jobs/xah2-cic_decimator-008.json",
+     "T0": 4.5,
+     "claim_orig": 3.951633299097755,
+     "D": 0.78,
+     "io0": 0.2,
+     "F_best": 3.9,
+     "drv_ref": 89,
+     "tag_prefix": "b2a-cic_decimator-08-",
+     "group": "cic_decimator-s2",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    }
+   ],
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 900
+  },
+  {
+   "name": "zipdiv-s1",
+   "chains": [
+    {
+     "chain_id": "b2a-zipdiv-01",
+     "design": "zipdiv",
+     "source": "xab1-zipdiv-008",
+     "set": "A35 race b1",
+     "base_spec": "farm/jobs/xab1-zipdiv-008.json",
+     "T0": 11.7,
+     "claim_orig": 7.534793924282121,
+     "D": 1.12,
+     "io0": 0.2,
+     "F_best": 5.6,
+     "drv_ref": 295,
+     "tag_prefix": "b2a-zipdiv-01-",
+     "group": "zipdiv-s1",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    },
+    {
+     "chain_id": "b2a-zipdiv-02",
+     "design": "zipdiv",
+     "source": "xaf1-zipdiv-005",
+     "set": "A35 race f1",
+     "base_spec": "farm/jobs/xaf1-zipdiv-005.json",
+     "T0": 8.59,
+     "claim_orig": 7.182620858049211,
+     "D": 1.12,
+     "io0": 0.2,
+     "F_best": 5.6,
+     "drv_ref": 295,
+     "tag_prefix": "b2a-zipdiv-02-",
+     "group": "zipdiv-s1",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    },
+    {
+     "chain_id": "b2a-zipdiv-03",
+     "design": "zipdiv",
+     "source": "xag1-zipdiv-005",
+     "set": "A35 race g1",
+     "base_spec": "farm/jobs/xag1-zipdiv-005.json",
+     "T0": 8.59,
+     "claim_orig": 7.228449089445009,
+     "D": 1.12,
+     "io0": 0.2,
+     "F_best": 5.6,
+     "drv_ref": 295,
+     "tag_prefix": "b2a-zipdiv-03-",
+     "group": "zipdiv-s1",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    },
+    {
+     "chain_id": "b2a-zipdiv-04",
+     "design": "zipdiv",
+     "source": "xah1-zipdiv-005",
+     "set": "A35 race h1",
+     "base_spec": "farm/jobs/xah1-zipdiv-005.json",
+     "T0": 8.59,
+     "claim_orig": 6.674545040028537,
+     "D": 1.12,
+     "io0": 0.2,
+     "F_best": 5.6,
+     "drv_ref": 295,
+     "tag_prefix": "b2a-zipdiv-04-",
+     "group": "zipdiv-s1",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    }
+   ],
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 900
+  },
+  {
+   "name": "zipdiv-s2",
+   "chains": [
+    {
+     "chain_id": "b2a-zipdiv-05",
+     "design": "zipdiv",
+     "source": "xab2-zipdiv-006",
+     "set": "A35 race b2",
+     "base_spec": "farm/jobs/xab2-zipdiv-006.json",
+     "T0": 10.88,
+     "claim_orig": 7.700297186728084,
+     "D": 1.12,
+     "io0": 0.2,
+     "F_best": 5.6,
+     "drv_ref": 295,
+     "tag_prefix": "b2a-zipdiv-05-",
+     "group": "zipdiv-s2",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    },
+    {
+     "chain_id": "b2a-zipdiv-06",
+     "design": "zipdiv",
+     "source": "xaf2-zipdiv-008",
+     "set": "A35 race f2",
+     "base_spec": "farm/jobs/xaf2-zipdiv-008.json",
+     "T0": 8.59,
+     "claim_orig": 6.986725108438261,
+     "D": 1.12,
+     "io0": 0.2,
+     "F_best": 5.6,
+     "drv_ref": 295,
+     "tag_prefix": "b2a-zipdiv-06-",
+     "group": "zipdiv-s2",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    },
+    {
+     "chain_id": "b2a-zipdiv-07",
+     "design": "zipdiv",
+     "source": "xag2-zipdiv-004",
+     "set": "A35 race g2",
+     "base_spec": "farm/jobs/xag2-zipdiv-004.json",
+     "T0": 8.59,
+     "claim_orig": 7.223977110975343,
+     "D": 1.12,
+     "io0": 0.2,
+     "F_best": 5.6,
+     "drv_ref": 295,
+     "tag_prefix": "b2a-zipdiv-07-",
+     "group": "zipdiv-s2",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    },
+    {
+     "chain_id": "b2a-zipdiv-08",
+     "design": "zipdiv",
+     "source": "xah2-zipdiv-005",
+     "set": "A35 race h2",
+     "base_spec": "farm/jobs/xah2-zipdiv-005.json",
+     "T0": 8.59,
+     "claim_orig": 6.81241831228554,
+     "D": 1.12,
+     "io0": 0.2,
+     "F_best": 5.6,
+     "drv_ref": 295,
+     "tag_prefix": "b2a-zipdiv-08-",
+     "group": "zipdiv-s2",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    }
+   ],
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 900
+  },
+  {
+   "name": "usb_cdc_core-s1",
+   "chains": [
+    {
+     "chain_id": "b2a-usb_cdc_core-01",
+     "design": "usb_cdc_core",
+     "source": "xab1-usb_cdc_core-005",
+     "set": "A35 race b1",
+     "base_spec": "farm/jobs/xab1-usb_cdc_core-005.json",
+     "T0": 7.36,
+     "claim_orig": 6.644426157343698,
+     "D": 1.11,
+     "io0": 0.2,
+     "F_best": 5.55,
+     "drv_ref": 309,
+     "tag_prefix": "b2a-usb_cdc_core-01-",
+     "group": "usb_cdc_core-s1",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    },
+    {
+     "chain_id": "b2a-usb_cdc_core-02",
+     "design": "usb_cdc_core",
+     "source": "xaf1-usb_cdc_core-001",
+     "set": "A35 race f1",
+     "base_spec": "farm/jobs/xaf1-usb_cdc_core-001.json",
+     "T0": 7.02,
+     "claim_orig": 6.340679825104341,
+     "D": 1.11,
+     "io0": 0.2,
+     "F_best": 5.55,
+     "drv_ref": 309,
+     "tag_prefix": "b2a-usb_cdc_core-02-",
+     "group": "usb_cdc_core-s1",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    },
+    {
+     "chain_id": "b2a-usb_cdc_core-03",
+     "design": "usb_cdc_core",
+     "source": "xag1-usb_cdc_core-007",
+     "set": "A35 race g1",
+     "base_spec": "farm/jobs/xag1-usb_cdc_core-007.json",
+     "T0": 7.02,
+     "claim_orig": 6.320187327936242,
+     "D": 1.11,
+     "io0": 0.2,
+     "F_best": 5.55,
+     "drv_ref": 309,
+     "tag_prefix": "b2a-usb_cdc_core-03-",
+     "group": "usb_cdc_core-s1",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    },
+    {
+     "chain_id": "b2a-usb_cdc_core-04",
+     "design": "usb_cdc_core",
+     "source": "xah1-usb_cdc_core-008",
+     "set": "A35 race h1",
+     "base_spec": "farm/jobs/xah1-usb_cdc_core-008.json",
+     "T0": 7.02,
+     "claim_orig": 6.186652363292961,
+     "D": 1.11,
+     "io0": 0.2,
+     "F_best": 5.55,
+     "drv_ref": 309,
+     "tag_prefix": "b2a-usb_cdc_core-04-",
+     "group": "usb_cdc_core-s1",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    }
+   ],
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 900
+  },
+  {
+   "name": "usb_cdc_core-s2",
+   "chains": [
+    {
+     "chain_id": "b2a-usb_cdc_core-05",
+     "design": "usb_cdc_core",
+     "source": "xab2-usb_cdc_core-005",
+     "set": "A35 race b2",
+     "base_spec": "farm/jobs/xab2-usb_cdc_core-005.json",
+     "T0": 7.22,
+     "claim_orig": 7.325664813223289,
+     "D": 1.11,
+     "io0": 0.2,
+     "F_best": 5.55,
+     "drv_ref": 309,
+     "tag_prefix": "b2a-usb_cdc_core-05-",
+     "group": "usb_cdc_core-s2",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    },
+    {
+     "chain_id": "b2a-usb_cdc_core-06",
+     "design": "usb_cdc_core",
+     "source": "xaf2-usb_cdc_core-004",
+     "set": "A35 race f2",
+     "base_spec": "farm/jobs/xaf2-usb_cdc_core-004.json",
+     "T0": 7.02,
+     "claim_orig": 6.328443390670063,
+     "D": 1.11,
+     "io0": 0.2,
+     "F_best": 5.55,
+     "drv_ref": 309,
+     "tag_prefix": "b2a-usb_cdc_core-06-",
+     "group": "usb_cdc_core-s2",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    },
+    {
+     "chain_id": "b2a-usb_cdc_core-07",
+     "design": "usb_cdc_core",
+     "source": "xag2-usb_cdc_core-002",
+     "set": "A35 race g2",
+     "base_spec": "farm/jobs/xag2-usb_cdc_core-002.json",
+     "T0": 7.02,
+     "claim_orig": 6.327487710663437,
+     "D": 1.11,
+     "io0": 0.2,
+     "F_best": 5.55,
+     "drv_ref": 309,
+     "tag_prefix": "b2a-usb_cdc_core-07-",
+     "group": "usb_cdc_core-s2",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    },
+    {
+     "chain_id": "b2a-usb_cdc_core-08",
+     "design": "usb_cdc_core",
+     "source": "xah2-usb_cdc_core-002",
+     "set": "A35 race h2",
+     "base_spec": "farm/jobs/xah2-usb_cdc_core-002.json",
+     "T0": 7.02,
+     "claim_orig": 6.327487710663437,
+     "D": 1.11,
+     "io0": 0.2,
+     "F_best": 5.55,
+     "drv_ref": 309,
+     "tag_prefix": "b2a-usb_cdc_core-08-",
+     "group": "usb_cdc_core-s2",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    }
+   ],
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 900
+  },
+  {
+   "name": "wbqspiflash-s1",
+   "chains": [
+    {
+     "chain_id": "b2a-wbqspiflash-01",
+     "design": "wbqspiflash",
+     "source": "xab1-wbqspiflash-006",
+     "set": "A35 race b1",
+     "base_spec": "farm/jobs/xab1-wbqspiflash-006.json",
+     "T0": 10.29,
+     "claim_orig": 8.541488392784482,
+     "D": 1.29,
+     "io0": 0.2,
+     "F_best": 6.45,
+     "drv_ref": 953,
+     "tag_prefix": "b2a-wbqspiflash-01-",
+     "group": "wbqspiflash-s1",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    },
+    {
+     "chain_id": "b2a-wbqspiflash-02",
+     "design": "wbqspiflash",
+     "source": "xaf1-wbqspiflash-007",
+     "set": "A35 race f1",
+     "base_spec": "farm/jobs/xaf1-wbqspiflash-007.json",
+     "T0": 8.49,
+     "claim_orig": 7.941919292556987,
+     "D": 1.29,
+     "io0": 0.2,
+     "F_best": 6.45,
+     "drv_ref": 953,
+     "tag_prefix": "b2a-wbqspiflash-02-",
+     "group": "wbqspiflash-s1",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    },
+    {
+     "chain_id": "b2a-wbqspiflash-03",
+     "design": "wbqspiflash",
+     "source": "xag1-wbqspiflash-003",
+     "set": "A35 race g1",
+     "base_spec": "farm/jobs/xag1-wbqspiflash-003.json",
+     "T0": 8.49,
+     "claim_orig": 7.971729225700465,
+     "D": 1.29,
+     "io0": 0.2,
+     "F_best": 6.45,
+     "drv_ref": 953,
+     "tag_prefix": "b2a-wbqspiflash-03-",
+     "group": "wbqspiflash-s1",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    },
+    {
+     "chain_id": "b2a-wbqspiflash-04",
+     "design": "wbqspiflash",
+     "source": "xah1-wbqspiflash-003",
+     "set": "A35 race h1",
+     "base_spec": "farm/jobs/xah1-wbqspiflash-003.json",
+     "T0": 8.49,
+     "claim_orig": 7.957212837198335,
+     "D": 1.29,
+     "io0": 0.2,
+     "F_best": 6.45,
+     "drv_ref": 953,
+     "tag_prefix": "b2a-wbqspiflash-04-",
+     "group": "wbqspiflash-s1",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    }
+   ],
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 900
+  },
+  {
+   "name": "wbqspiflash-s2",
+   "chains": [
+    {
+     "chain_id": "b2a-wbqspiflash-05",
+     "design": "wbqspiflash",
+     "source": "xab2-wbqspiflash-008",
+     "set": "A35 race b2",
+     "base_spec": "farm/jobs/xab2-wbqspiflash-008.json",
+     "T0": 8.83,
+     "claim_orig": 8.542402490496768,
+     "D": 1.29,
+     "io0": 0.2,
+     "F_best": 6.45,
+     "drv_ref": 953,
+     "tag_prefix": "b2a-wbqspiflash-05-",
+     "group": "wbqspiflash-s2",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    },
+    {
+     "chain_id": "b2a-wbqspiflash-06",
+     "design": "wbqspiflash",
+     "source": "xaf2-wbqspiflash-008",
+     "set": "A35 race f2",
+     "base_spec": "farm/jobs/xaf2-wbqspiflash-008.json",
+     "T0": 8.49,
+     "claim_orig": 8.247339878912413,
+     "D": 1.29,
+     "io0": 0.2,
+     "F_best": 6.45,
+     "drv_ref": 953,
+     "tag_prefix": "b2a-wbqspiflash-06-",
+     "group": "wbqspiflash-s2",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    },
+    {
+     "chain_id": "b2a-wbqspiflash-07",
+     "design": "wbqspiflash",
+     "source": "xag2-wbqspiflash-008",
+     "set": "A35 race g2",
+     "base_spec": "farm/jobs/xag2-wbqspiflash-008.json",
+     "T0": 8.49,
+     "claim_orig": 7.979688192744493,
+     "D": 1.29,
+     "io0": 0.2,
+     "F_best": 6.45,
+     "drv_ref": 953,
+     "tag_prefix": "b2a-wbqspiflash-07-",
+     "group": "wbqspiflash-s2",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    },
+    {
+     "chain_id": "b2a-wbqspiflash-08",
+     "design": "wbqspiflash",
+     "source": "xah2-wbqspiflash-003",
+     "set": "A35 race h2",
+     "base_spec": "farm/jobs/xah2-wbqspiflash-003.json",
+     "T0": 8.49,
+     "claim_orig": 7.966484531983806,
+     "D": 1.29,
+     "io0": 0.2,
+     "F_best": 6.45,
+     "drv_ref": 953,
+     "tag_prefix": "b2a-wbqspiflash-08-",
+     "group": "wbqspiflash-s2",
+     "group_params": {
+      "timeout_s": 16000,
+      "budget_s": 15000,
+      "est_flow_s": 900
+     },
+     "stop_after_first_pass": false,
+     "frozen": true
+    }
+   ],
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 900
   }
  ]
 }
