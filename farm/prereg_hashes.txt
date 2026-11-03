@@ -50,3 +50,4 @@
 2026-11-03T02:26:43Z  ae1b4b209c6bddc907283c1d2b9c7093e17dd875afd44611fea5082d62f28809  pre-registration with Addendum 42 (supersedes the 02:26:31Z line: header time corrected from ~02:40Z to 02:25Z; nothing else changed; no run dispatched in between)
 2026-11-03T03:33:04Z  53efc247205f5e31fa434e208767d61fb1e779419fac8a08e9b573a9bf54f042  pre-registration with Addendum 42 + dated clarifications (03:35Z) after Codex's audits; no prediction, test or rule changed; no packet handed over, no rebuild dispatched
 2026-11-03T03:33:17Z  32d6c80368620994e76f176b67a9c0fa7605084754f1ff91b452d10dacd68a2f  pre-registration with Addendum 42 + clarifications (supersedes the 03:33:04Z line: header time 03:35Z corrected to 03:33Z, nothing else)
+2026-11-03T04:05:37Z  58dff5af664704f7dfc2bf0bd2e9063f3a7d5c2812cd82a16d91ec7715a456c2  pre-registration with Addendum 42 + clarification 11 (prose stratum count 15/12/8 corrected to match the registered table; nothing else)
