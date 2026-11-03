@@ -1,6 +1,6 @@
 {
- "batch": "smoke-s02",
- "about": "F smoke batch s02 (plumbing only; not part of any analysis). EDA-env evaluator path after the s01 driver fix: task 004 (aes area task) in rebuild mode at 420 ps (image-SDC bind mount), task 018 (mult16 completion task) replayed at its eval clock 900 ps and in rebuild mode at 700 ps (workspace-SDC edit). ORFS-agent harness on sky130hd (image ce8d36a7): the second-best aes/sky130hd row of output.json (not registered) at its own target 0.91 ns.",
+ "batch": "smoke-s03",
+ "about": "F smoke batch s03 (plumbing only; not part of any analysis): the EDA-env rebuild path after the s02 fix (edaenv_run.py truncated the SDC before reading it): task 018 (mult16, workspace SDC) at 700 ps and task 004 (aes, image SDC bind mount) at 420 ps. Neither task is registered.",
  "groups": [
   {
    "name": "smk-ee",
@@ -10,35 +10,18 @@
    "items": [
     {
      "config": "smk-ee018",
-     "tag_prefix": "smoke-f-ee018-",
+     "tag_prefix": "smoke-f-ee018c-",
      "mode": "single",
      "periods": [
-      900,
       700
      ]
     },
     {
      "config": "smk-ee004",
-     "tag_prefix": "smoke-f-ee004b-",
+     "tag_prefix": "smoke-f-ee004c-",
      "mode": "single",
      "periods": [
       420
-     ]
-    }
-   ]
-  },
-  {
-   "name": "smk-oa",
-   "harness": "orfsagent",
-   "timeout_s": 14400,
-   "budget_s": 12000,
-   "items": [
-    {
-     "config": "smk-oa-aes-s130-2",
-     "tag_prefix": "smoke-f-oas2-",
-     "mode": "single",
-     "periods": [
-      0.91
      ]
     }
    ]

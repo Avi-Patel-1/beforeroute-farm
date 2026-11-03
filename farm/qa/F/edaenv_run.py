@@ -111,7 +111,8 @@ def main():
         xs = a.period
         for rel in ("project/constraint.sdc", "eval/eval.sdc"):
             p = os.path.join(task, rel)
-            open(p, "w").write(set_period(open(p).read(), xs))
+            txt = open(p).read()          # read first: open(p, "w") would truncate it
+            open(p, "w").write(set_period(txt, xs))
         tj = dict(targets0, eval_clk_ps=x)
         json.dump(tj, open(os.path.join(task, "targets.json"), "w"), indent=2)
         kind, where = sdc_mode(open(os.path.join(task, "project", "config.mk")).read())

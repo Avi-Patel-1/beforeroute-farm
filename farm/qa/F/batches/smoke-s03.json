@@ -1,0 +1,30 @@
+{
+ "batch": "smoke-s03",
+ "about": "F smoke batch s03 (plumbing only; not part of any analysis): the EDA-env rebuild path after the s02 fix (edaenv_run.py truncated the SDC before reading it): task 018 (mult16, workspace SDC) at 700 ps and task 004 (aes, image SDC bind mount) at 420 ps. Neither task is registered.",
+ "groups": [
+  {
+   "name": "smk-ee",
+   "harness": "edaenv",
+   "timeout_s": 14400,
+   "budget_s": 12000,
+   "items": [
+    {
+     "config": "smk-ee018",
+     "tag_prefix": "smoke-f-ee018c-",
+     "mode": "single",
+     "periods": [
+      700
+     ]
+    },
+    {
+     "config": "smk-ee004",
+     "tag_prefix": "smoke-f-ee004c-",
+     "mode": "single",
+     "periods": [
+      420
+     ]
+    }
+   ]
+  }
+ ]
+}

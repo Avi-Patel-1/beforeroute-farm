@@ -151,6 +151,15 @@ def cmd_score(a):
     out["by_replay_slack_sign"] = {
         "negative (claim from a failing run)": split([r for r in landed if (r.get("replay_slack") or 0) < 0]),
         "non-negative (claim from a passing run)": split([r for r in landed if (r.get("replay_slack") or 0) >= 0])}
+    # beside: P2 judged on setup only (which part of the judge each first-rebuild failure breaks)
+    def broke(r):
+        d = r.get("r1_detail") or {}
+        if d.get("status") != "completed":
+            return ["no metrics"]
+        return [k for k, ok in (("setup", d.get("pass_setup")), ("hold", d.get("pass_hold")),
+                                ("drc", d.get("pass_drc"))) if not ok]
+    out["first_rebuild_failures_by_part"] = {r["config"]: broke(r) for r in landed if not r["r1_pass"]}
+    out["P2_setup_only"] = any(("setup" in v or "no metrics" in v) for v in out["first_rebuild_failures_by_part"].values())
     out["d1_vs_published_median"] = med([r.get("d1_vs_published") for r in landed])
     out["kept_over_C0_median"] = med([r.get("kept_over_C0") for r in landed])
     json.dump(out, open(a.out, "w"), indent=1, default=float)
