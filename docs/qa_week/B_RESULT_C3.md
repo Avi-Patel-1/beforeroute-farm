@@ -68,7 +68,10 @@ budget at each design's own ORFS clock (gcd 62 ps, aes 76 ps, ibex 180 ps), and 
 E5 (stock budget, same grid) for comparison: picks gcd 001/005/002 (claims 326.4/333.7/337.9; all first rebuilds
 failed, one chain kept 355), aes 003/005/001 (382.5/383.7/383.9; all failed, none kept), ibex 003/008/002
 (913.7/914.7/925.1; kept 920/915/930). Freezing the budget changed which runs AutoTuner ranks first on gcd and ibex
-(it raised the claims at tight targets), so the picks are not the same runs.
+(it raised the claims at tight targets), so the picks are not the same runs. The causal contrast for the budget is
+the paired grid table below (same setting, same target, only the I/O delay changed); pick-to-pick comparisons mix the
+budget change with a different selection. For aes, "no kept clock" means no rebuild in the chain passed at ≤ 395 ps;
+it is not the setting's attainable clock (aes settings pass at the grid's 455–550 ps targets).
 
 ## Every grid run, frozen vs E5's stock budget (paired by grid position)
 | run (frozen ↔ stock) | setting | T (ps) | I/O delay frozen / stock (ps) | claim frozen | claim stock | change | limiting path | pass |
