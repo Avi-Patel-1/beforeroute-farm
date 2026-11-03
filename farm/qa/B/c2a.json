@@ -3,7 +3,7 @@
  "rejudge_discrepancies": [],
  "trajectory_discrepancies": [],
  "landed_chains": 48,
- "complete_chains": 47,
+ "complete_chains": 48,
  "first_rebuilds_landed": 48,
  "expected": 48,
  "no_claim": [],
@@ -37,10 +37,10 @@
   "verdict": "PASS"
  },
  "C2a_iii": {
-  "n": 45,
-  "median_g": 1.0886075949367087,
+  "n": 46,
+  "median_g": 1.0885214845431843,
   "over_1.02": 35,
-  "verdict": "pending"
+  "verdict": "PASS"
  },
  "rows": [
   {
@@ -315,8 +315,8 @@
    "D": 3.1,
    "landed": true,
    "chain_id": "b2a-md5-01",
-   "complete": false,
-   "stage": 1,
+   "complete": true,
+   "stage": 2,
    "W_status": "completed, fail (setup)",
    "R1_status": "completed, pass",
    "smoke_seen": [],
@@ -344,7 +344,7 @@
     "drv": 34.0
    },
    "first_fails": false,
-   "K": 18.55,
+   "K": 18.45,
    "T1": 18.55,
    "chain": [
     [
@@ -358,9 +358,21 @@
      18.55,
      18.426509445389183,
      true
+    ],
+    [
+     "b2a-md5-01-2",
+     18.45,
+     18.237529952430272,
+     true
+    ],
+    [
+     "b2a-md5-01-3",
+     18.25,
+     18.46831070902286,
+     false
     ]
    ],
-   "g": 1.0
+   "g": 1.005420054200542
   },
   {
    "design": "bm64",
@@ -3498,8 +3510,10 @@
    "first_fail": 0,
    "first_pass": 1,
    "no_claim": 0,
-   "gains": [],
-   "median_g": null
+   "gains": [
+    1.0054
+   ],
+   "median_g": 1.0054
   },
   "bm64": {
    "winners": 1,

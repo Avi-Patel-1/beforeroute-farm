@@ -1,17 +1,18 @@
 # Workstream B, arm C2a — result: the 48 tuned winners with frozen I/O budgets, rebuilt at their claims (sky130)
 
-**C2a-i and C2a-ii are final** (all 48 first rebuilds landed 2026-11-03 08:31Z). **C2a-iii is decided but not final**:
-at 09:41Z, 1 of the 48 chains (the Bayesian md5 winner) was still being continued by the workflow's resume stage;
-whatever it does, the median rebuild-again gain ends between 1.0885 and 1.0949 (≥ 1.05). aes_cipher's continuation
-reached 13.45 ns (gain 1.115); ocs_blitter's ended at 10.95 ns (1.000); picorv32's kept 9.85 ns (1.041), the clock its
-stock-budget rebuild had failed at. Two complete chains, y_huff and bm64, never passed a rebuild and have no defined
-gain; as registered they are outside the gain's population (chains with a passing rebuild), and they are counted as
-failures under C2a-i/ii instead. Scored with farm/qa/B/c2a.py
-(fail-closed judge, commit 805c5b0 and later) → farm/qa/B/c2a.json; table by farm/qa/B/c2a_table.py.
+**Final: all three tests final.** All 48 first rebuilds landed 2026-11-03 08:31Z; the last chain (the Bayesian md5
+winner, continued by the workflow's resume stage) completed 11:06Z, so all 48 chains are complete (final scoring
+11:10Z). md5's chain kept 18.45 ns (gain 1.005); aes_cipher's reached 13.45 ns (1.115); ocs_blitter's ended at
+10.95 ns (1.000); picorv32's kept 9.85 ns (1.041), the clock its stock-budget rebuild had failed at. Two complete
+chains, y_huff and bm64, never passed a rebuild and have no defined gain; as registered they are outside the gain's
+population (chains with a passing rebuild), and they are counted as failures under C2a-i/ii instead. Scored with
+farm/qa/B/c2a.py --final (fail-closed judge, commit 805c5b0 and later) → farm/qa/B/c2a.json; table by
+farm/qa/B/c2a_table.py.
 - Pre-registration: docs/qa_week/B_PREREG.md, SHA-256 e8134105…8d8f (commit 9e3c24f; hash line cdadff9, 02:23Z) and,
   with Amendment B.1, 3c633b31…74b7 (commit 55429f5; hash line 9c69316, 02:41Z), both before the first C2a run.
-- Workflow run 41567699017 (branch qa-b-frozen-io, code commit c4f055f): 18 stage-1 jobs, then the resume stage
-  (4 jobs, running at writing). LibreLane 3.0.16 / sky130A, the farm's pinned image; one flow per 4-vCPU runner.
+- Workflow run 41567699017 (branch qa-b-frozen-io, code commit c4f055f; 02:41Z–11:06Z, success): 18 stage-1 jobs,
+  one resume stage of 4 jobs (aes_cipher, md5, ocs_blitter, picorv32 chains), third stage empty (skipped).
+  201 flows, 23.9 flow-hours. LibreLane 3.0.16 / sky130A, the farm's pinned image; one flow per 4-vCPU runner.
 - Judge (nine corners: min/nom/max RC × tt 25 °C 1.80 V, ss 100 °C 1.60 V, ff −40 °C 1.95 V, OpenRCX): setup and hold
   slack ≥ 0 at every corner, router DRC 0, slew/cap violation pins ≤ the design's stock reference; fail-closed
   admission (a run without a completed job record or any judged metric fails). Re-judging every chain entry from its
@@ -31,7 +32,7 @@ winners still fail, and does rebuilding again still pay?
 |---|---|---|---|
 | C2a-i | ≥2 of the 3 original failures still fail | bm64 and y_huff fail; picorv32 now passes | **PASS** (registered judge) |
 | C2a-ii | ≥2 of 48 fail | 3 of 48 first rebuilds fail (bm64, y_huff, one cic_decimator winner) | **PASS** |
-| C2a-iii | rebuild-again median ≥ 1.05× | median 1.089 over 45 finished chains; with md5's chain still running it will end between 1.0885 and 1.0949 | **PASS** (decided; final value pending) |
+| C2a-iii | rebuild-again median ≥ 1.05× | median **1.0885** over the 46 chains with a passing rebuild (35 of 46 ≥ 1.02) | **PASS** |
 
 **Read this with the failure reasons.** Of the 3 failing first rebuilds, 2 miss *setup* on register-to-register paths
 (bm64 at 13.20 ns by −0.44 ns, then −0.50 at 13.65; cic_decimator's f1 winner at 4.30 ns by −0.010 ns, passing at
@@ -62,7 +63,7 @@ registered) C2a-i would be 1 of 3 (FAIL) and C2a-ii 2 of 48 (PASS).**
 |---|---|---|---|---|
 | aes_cipher, ocs_blitter | 1 each | 0 | – | 1.115, 1.000 |
 | picorv32 | 1 | 0 | – | 1.041 |
-| md5 | 1 | 0 | – | chain continuing |
+| md5 | 1 | 0 | – | 1.005 |
 | des, blabla | 1 each | 0 | – | 1.000 each |
 | y_huff | 1 | 1 | hold (input-to-register, ss corner) | – |
 | bm64 | 1 | 1 | setup, register-to-register | – |
@@ -82,7 +83,7 @@ Addendum 35's first closure run (race winners), under the stock budget.
 | x1t-picorv32-014 | picorv32 | 13.06 | 9.850 | 10.243 | 10.25 | pass | reg-to-reg | fail | 9.85 | 1.041 |
 | x1t-y_huff-005 | y_huff | 10.97 | 10.240 | 11.353 | 11.40 | **fail** (hold -0.484) | port | fail | – | – |
 | x2t-des-008 | des | 10.55 | 9.088 | 8.722 | 8.75 | pass | port | pass | 8.75 | 1.000 |
-| x2t-md5-012 | md5 | 17.19 | 18.501 | 18.501 | 18.55 | pass | reg-to-reg | pass | 18.55 | 1.000 (chain running) |
+| x2t-md5-012 | md5 | 17.19 | 18.501 | 18.501 | 18.55 | pass | reg-to-reg | pass | 18.45 | 1.005 |
 | x2t-bm64-007 | bm64 | 10.08 | 13.407 | 13.198 | 13.20 | **fail** (setup -0.439) | reg-to-reg | fail | – | – |
 | x2t-ocs_blitter-022 | ocs_blitter | 11.23 | 11.050 | 10.947 | 10.95 | pass | reg-to-reg | pass | 10.95 | 1.000 |
 | x2t-blabla-021 | blabla | 60.35 | 26.336 | 25.645 | 25.65 | pass | reg-to-reg | pass | 25.65 | 1.000 |
@@ -130,27 +131,31 @@ Addendum 35's first closure run (race winners), under the stock budget.
 ## Already seen, and foreseeable (by logical configuration)
 - The xah1-xtea-007 chain (b2a-xtea-04) repeats the smoke chain exactly (replay at 11.71 ns, rebuilds at 4.55, 4.15,
   4.10 ns): identical outcomes, seen before launch. Without it the race median gain is 1.101 instead of 1.105 (32 of
-  39 ≥ 1.02); no first-rebuild failure involved (it passed).
+  39 ≥ 1.02) and C2a-iii's median is 1.0884 (n 45) instead of 1.0885, still PASS; no first-rebuild failure involved
+  (it passed).
 - Controls: the sky130 control smoke (XTEA at F_best, IO_DELAY_CONSTRAINT 20) was identical to the record in all 281
-  metrics. All 194 C2a run directories collected so far carry the frozen delay D both in the resolved config
-  (CLOCK_PERIOD × IO_DELAY_CONSTRAINT / 100) and in base.sdc's own "Setting input/output delay" log lines.
+  metrics. All 201 C2a run directories carry the frozen delay D both in the resolved config
+  (CLOCK_PERIOD × IO_DELAY_CONSTRAINT / 100) and in base.sdc's own "Setting input/output delay" log lines (201 of 201
+  within 1e-6 ns).
 
 ## Status counts (fail-closed judge)
 Replays W: 44 completed and passing at their own target, 3 completed with setup failures, 1 with setup and hold
-failures (y_huff); first rebuilds: 45 pass, 2 setup failures, 1 hold failure; no flow errors, no runs missing, no run
-excluded by admission.
+failures (y_huff); first rebuilds: 45 pass, 2 setup failures, 1 hold failure. All 201 chain runs have a completed job
+record; no flow errors, no retries needed, no runs missing, no run excluded by admission.
 
 ## What it means
 Freezing the I/O budget moves the claims of port-limited winners (XTEA by a quarter) but not whether a winner survives
 a rebuild at its claim: 47 of 48 first-rebuild verdicts are the record's. The failures that remain are register-path
 physics (bm64, cic_decimator) and one interface-hold failure created by the smaller fixed input delay (y_huff).
-Rebuilding again still gains a median ~1.10×, and the designs whose gains were mostly register physics keep them;
-XTEA's large record gains (1.39×) shrink to 1.12× once its I/O budget stops sliding with the target.
+Rebuilding again still gains a median 1.09× over all 46 chains with a passing rebuild (1.105× over the 40 race
+winners, record 1.124×), and the designs whose gains were mostly register physics keep them; XTEA's large record gains
+(1.39×) shrink to 1.12× once its I/O budget stops sliding with the target.
 
 ## Q&A lines
 > "I froze the I/O budgets and rebuilt all 48 tuned winners at their new claims. 47 of 48 came out exactly as before:
 > the ones that failed still fail, except one. The surviving failures are register-to-register paths, and one is a
-> hold failure on the inputs, which a fixed input budget makes harder. Rebuilding again still gains about 10 percent."
+> hold failure on the inputs, which a fixed input budget makes harder. Rebuilding again still gains about 9 percent
+> in the median."
 
 Do not say: "all three original failures still fail" (picorv32 now passes); "physics" for y_huff (it fails hold on
 input paths); "significant" (48 winners from 13 designs, 40 of them from 5).
@@ -161,4 +166,5 @@ input paths); "significant" (48 winners from 13 designs, 40 of them from 5).
    its D small. Arm S (D = 1.0 ns flat for the race designs) bounds the choice; it has not run yet.
 2. The winners were selected by searches run under the stock budget; only C2b repeats the search with frozen budgets.
 3. Chain rule differs from the record's (one step back vs up to two refinements).
-4. C2a-iii's final value waits for md5's continuing chain; the verdict cannot change.
+4. C2a-i passes on the registered judge (setup, hold, DRC, slew/cap at nine corners) only because y_huff fails hold on
+   input paths; on setup alone it would be 1 of 3. Quote it with the reasons.
