@@ -4,7 +4,9 @@
 at 09:41Z, 1 of the 48 chains (the Bayesian md5 winner) was still being continued by the workflow's resume stage;
 whatever it does, the median rebuild-again gain ends between 1.0885 and 1.0949 (≥ 1.05). aes_cipher's continuation
 reached 13.45 ns (gain 1.115); ocs_blitter's ended at 10.95 ns (1.000); picorv32's kept 9.85 ns (1.041), the clock its
-stock-budget rebuild had failed at. Scored with farm/qa/B/c2a.py
+stock-budget rebuild had failed at. Two complete chains, y_huff and bm64, never passed a rebuild and have no defined
+gain; as registered they are outside the gain's population (chains with a passing rebuild), and they are counted as
+failures under C2a-i/ii instead. Scored with farm/qa/B/c2a.py
 (fail-closed judge, commit 805c5b0 and later) → farm/qa/B/c2a.json; table by farm/qa/B/c2a_table.py.
 - Pre-registration: docs/qa_week/B_PREREG.md, SHA-256 e8134105…8d8f (commit 9e3c24f; hash line cdadff9, 02:23Z) and,
   with Amendment B.1, 3c633b31…74b7 (commit 55429f5; hash line 9c69316, 02:41Z), both before the first C2a run.
@@ -14,7 +16,8 @@ stock-budget rebuild had failed at. Scored with farm/qa/B/c2a.py
   slack ≥ 0 at every corner, router DRC 0, slew/cap violation pins ≤ the design's stock reference; fail-closed
   admission (a run without a completed job record or any judged metric fails). Re-judging every chain entry from its
   own run directory changed 0 of the runner's verdicts, and replaying the registered chain rule over the re-judged
-  entries reproduces every target the runner chose (0 trajectory differences; audit request).
+  entries reproduces every target the runner chose (0 trajectory differences; audit request). This shows the recorded
+  schedule is the one the rule prescribes; it says nothing about rebuilds that were never run.
 
 ## Question
 In the record, 3 of the 8 Bayesian-tuned winners failed setup when rebuilt at their claimed clock, and rebuilding the
