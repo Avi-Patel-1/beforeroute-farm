@@ -1,0 +1,9 @@
+{
+ "rationale": "four-line script (farm/qa/C/clib.py script_pins): period_frac 0.45 plus SYNTH_STRATEGY, RC_MODEL and FP_CORE_UTIL of the lowest-T_eff feasible start run",
+ "pins": {
+  "period_frac": 0.45,
+  "SYNTH_STRATEGY": "DELAY 3",
+  "RC_MODEL": "orfs",
+  "FP_CORE_UTIL": 21
+ }
+}
