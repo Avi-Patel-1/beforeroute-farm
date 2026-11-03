@@ -1,0 +1,4 @@
+# p3d0074: no group is moved; the tool's own pins are kept.
+# Critical I/O groups (G02, G07, G05, G13, G11, G06) already sit next to the logic that ends or starts
+# their worst paths; every contiguous, segment-centred option modelled made the worst path (G02[5]) longer.
+ABSTAIN

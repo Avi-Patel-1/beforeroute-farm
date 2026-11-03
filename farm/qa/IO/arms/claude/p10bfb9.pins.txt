@@ -1,0 +1,4 @@
+# p10bfb9: pull the near-critical input cone (G04 compare + G01/G09 qualifiers) onto the west edge beside its logic
+G04 W2
+G01 W2
+G09 W2

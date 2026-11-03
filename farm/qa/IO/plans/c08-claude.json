@@ -1,0 +1,48 @@
+{
+ "version": 1,
+ "case": "c08",
+ "arm": "claude",
+ "pseudonym": "pbae019",
+ "pin_file_sha256": "c9ad1549bf152c1f4824e55b08b1d00b4830a9b72fafb046ea7a1d632ef649d7",
+ "moves": [
+  {
+   "group": "i_wb_data",
+   "pseudonym": "G01",
+   "pins": [
+    "i_wb_data[0]",
+    "i_wb_data[1]",
+    "i_wb_data[2]",
+    "i_wb_data[3]",
+    "i_wb_data[4]",
+    "i_wb_data[5]",
+    "i_wb_data[6]",
+    "i_wb_data[7]",
+    "i_wb_data[8]",
+    "i_wb_data[9]",
+    "i_wb_data[10]",
+    "i_wb_data[11]",
+    "i_wb_data[12]",
+    "i_wb_data[13]",
+    "i_wb_data[14]",
+    "i_wb_data[15]",
+    "i_wb_data[16]",
+    "i_wb_data[17]",
+    "i_wb_data[18]",
+    "i_wb_data[19]",
+    "i_wb_data[20]",
+    "i_wb_data[21]",
+    "i_wb_data[22]",
+    "i_wb_data[23]",
+    "i_wb_data[24]",
+    "i_wb_data[25]",
+    "i_wb_data[26]",
+    "i_wb_data[27]",
+    "i_wb_data[28]",
+    "i_wb_data[29]",
+    "i_wb_data[30]",
+    "i_wb_data[31]"
+   ],
+   "option": "S1"
+  }
+ ]
+}

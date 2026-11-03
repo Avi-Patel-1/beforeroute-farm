@@ -1,0 +1,2 @@
+# p00d863: keep the tool's own pins for every group (no move judged to have a positive expected effect)
+ABSTAIN

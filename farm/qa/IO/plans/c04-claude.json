@@ -1,0 +1,17 @@
+{
+ "version": 1,
+ "case": "c04",
+ "arm": "claude",
+ "pseudonym": "p6dbefa",
+ "pin_file_sha256": "d8e1d79fcbca2db93fe492463a5c54c85ad74d511cf3ef7de29051f767dfa778",
+ "moves": [
+  {
+   "group": "utmi_txvalid_o",
+   "pseudonym": "G15",
+   "pins": [
+    "utmi_txvalid_o"
+   ],
+   "option": "E2"
+  }
+ ]
+}

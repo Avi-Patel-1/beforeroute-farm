@@ -1,0 +1,3 @@
+# p0ba4e7: compact the two buses that feed the critical comparator/select cone
+G03 W2
+G09 S1

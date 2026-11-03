@@ -1,0 +1,5 @@
+# p89c9e8: keep the tool's pins.
+# All 64 output bits (G01, G04) are buffered copies of one flop's output; these paths set the clock.
+# Their only legal moves (W, or N+W) split the output cluster away from the compact N/E stock spot.
+# G02/G05/G07 are unconnected; G03 is a constant; G06 has large slack.
+ABSTAIN

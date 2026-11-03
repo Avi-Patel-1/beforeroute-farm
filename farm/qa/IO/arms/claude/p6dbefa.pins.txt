@@ -1,0 +1,4 @@
+# p6dbefa: one move. Every other group keeps the tool's pins.
+# G15 (output, intrinsic worst slack 0.907 ns at T0, launched by the central flops through and2->a22o->a21o)
+# moves from the N edge (x=150.2) to the E edge middle third (lands near y=125.5), next to its driving logic.
+G15 E2

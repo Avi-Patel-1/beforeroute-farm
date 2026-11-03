@@ -1,0 +1,6 @@
+# p7a494d: keep the tool's pins for every group.
+# All 64 output bits (G01, G05) are copies of one flop (i1330/Q) fanned out through a
+# 3-level buf_2 chain plus a per-bit buf_2 > buf_1 > clkbuf_4; the pin wire adds ~0.003 ns.
+# G02/G04/G06 are unconnected, G03 is a tie cell, G07 has ~7 ns slack. No legal move is
+# expected to beat the stock pins by more than build-to-build noise.
+ABSTAIN

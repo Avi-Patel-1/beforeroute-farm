@@ -1,0 +1,52 @@
+{
+ "version": 1,
+ "case": "c10",
+ "arm": "claude",
+ "pseudonym": "p10bfb9",
+ "pin_file_sha256": "823573b9a7b732ce681e59b0d79563f9754144672e1d28310d7ba73174f482f5",
+ "moves": [
+  {
+   "group": "i_wb_addr",
+   "pseudonym": "G04",
+   "pins": [
+    "i_wb_addr[0]",
+    "i_wb_addr[1]",
+    "i_wb_addr[2]",
+    "i_wb_addr[3]",
+    "i_wb_addr[4]",
+    "i_wb_addr[5]",
+    "i_wb_addr[6]",
+    "i_wb_addr[7]",
+    "i_wb_addr[8]",
+    "i_wb_addr[9]",
+    "i_wb_addr[10]",
+    "i_wb_addr[11]",
+    "i_wb_addr[12]",
+    "i_wb_addr[13]",
+    "i_wb_addr[14]",
+    "i_wb_addr[15]",
+    "i_wb_addr[16]",
+    "i_wb_addr[17]",
+    "i_wb_addr[18]",
+    "i_wb_addr[19]"
+   ],
+   "option": "W2"
+  },
+  {
+   "group": "i_wb_we",
+   "pseudonym": "G01",
+   "pins": [
+    "i_wb_we"
+   ],
+   "option": "W2"
+  },
+  {
+   "group": "i_wb_data_stb",
+   "pseudonym": "G09",
+   "pins": [
+    "i_wb_data_stb"
+   ],
+   "option": "W2"
+  }
+ ]
+}

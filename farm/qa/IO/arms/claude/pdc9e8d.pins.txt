@@ -1,0 +1,7 @@
+# pdc9e8d: keep the tool's pins.
+# Critical paths are reg->output: all 64 bits of G06/G07 are buffered copies of one flop (i394),
+# fanned out through a greedy max-fanout-10 repeater chain (depth 3) set by repair_design, not by pin position.
+# Stock already packs the 64 outputs contiguously on E (7.1-87.4 um) + 4 on S next to the source flop;
+# the only legal destinations for these groups (W, or S after evicting unconnected groups) add a die-wide
+# bridge or a single 2-arm line that risks a 4th repeater level. Other movable groups are unconnected or non-critical.
+ABSTAIN

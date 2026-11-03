@@ -1,0 +1,5 @@
+# pbae019: compact the 32-bit G01 input-register bus into one run at S1.
+# G01's registers are the endpoints of the worst path family that has no hold buffers
+# (i4564 / G15 / G13 / G12 -> match logic -> load-enable tree -> G01 muxes, 0.53-0.74 ns).
+# Their Q paths have >= 2.7 ns slack, so pulling them together is cheap.
+G01 S1

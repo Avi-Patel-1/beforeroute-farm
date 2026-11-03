@@ -1,0 +1,8 @@
+# p6dbefa rationale
+
+**Diagnosis.** The binding setup paths at T0 are outputs launched by four central flops (i1488, i3589, i8398, i8954 at x≈99-116, y≈125-133), going to G08 (E edge), G15 (N edge), G10 (W edge) and G12 (E edge). Their arrival times carry the full ~1.29 ns clock latency, and the 1.2 ns dlygate4sd3_1 hold-fix cells add more. G08[5]'s 0.679 ns worst slack includes one of those hold-fix cells. With the hold-fix delays removed, the order is G08[2] 0.79, G08[7] 0.87, G08[1] 0.90, G15 0.91, G10 0.92. Reg-to-reg paths and RST recovery are internal or fixed.
+
+**Move: G15 → E2 (lands at y≈125.5 on the E edge).** G15 is driven by a21o i5663, whose critical input comes from a22o i4559 at (163,131) on the central-flop branch. Today the pin sits on the N edge at x=150, so that branch climbs about 118 um to the edge (the a21o drives an 87 um wire). An E-edge pin at y≈125 is about 51 um closer to i4559. It is also closer to the other inputs, i7671 (167,158; 1.20 ns slack) and i6211 (157,136). So no G15 input loses.
+- Expected effect: shorter a21o_2 load and a straighter path. G15 slack gains about +0.03 to +0.06 ns, so G15 drops out of the top tier. The shared and2 i8109 may also drift east, which helps G08[7] slightly. Confidence that G15's delay goes down: 0.7. Confidence the final score improves: 0.35, because G15 is not the single worst path.
+
+**Kept on purpose.** G08 bit slices already end near their pins. E2 or E3 would move the bus 30-50 um away from the last gates and stretch northern source registers (avg distance 316 → 552-601 um summed). G10 and G12 already sit on their best edge. All other groups are non-critical and already near their logic.

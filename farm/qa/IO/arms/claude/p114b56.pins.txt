@@ -1,0 +1,7 @@
+# p114b56: the critical endpoints at T0 are outputs G10/G18/G09/G20, all launched from one
+# 4-bit select register (i14705/i22835/i9097/i25353) at x~167-196, y~177-184. Put its east-side
+# outputs on the middle of the east edge, level with that register and with the G14 input
+# registers that feed G10. G20 is listed first only to keep it on its current slot (179.86 um).
+G20 E2
+G18 E2
+G10 E2
