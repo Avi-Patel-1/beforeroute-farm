@@ -271,6 +271,40 @@
    "state": "/home/claude/qa/c-method/results/tune_xn/state.json",
    "original": "farm/qa/C/prompts/prop-APU/round2.full.md",
    "leak_check_at_write": "PASS"
+  },
+  {
+   "kind": "prop",
+   "race": "prop-usb_cdc_core",
+   "call": "round2",
+   "design": "usb_cdc_core",
+   "seed": null,
+   "round": 2,
+   "repo_path": "farm/qa/C/prompts/prop-usb_cdc_core/round2.md",
+   "ideas_path": "/home/claude/ideas/overnight/method/opus_prompts/prop-usb_cdc_core/round2.md",
+   "sha256": "4c4e6acf7d5e72766bac790952a926f9aa7302c8e56b0f992413e95a5064c026",
+   "reply_path": "/home/claude/ideas/overnight/method/opus_replies/prop-usb_cdc_core/round2.json",
+   "reask_path": "/home/claude/ideas/overnight/method/opus_replies/prop-usb_cdc_core/round2_reask.json",
+   "delivery_note": "Read the file /home/claude/ideas/overnight/method/opus_prompts/prop-usb_cdc_core/round2.md with the Read tool. That file is your entire task. Do not open any other file, run any command, or search anything. Reply with exactly the JSON the file asks for and nothing else.",
+   "state": "/home/claude/qa/c-method/results/tune_xn/state.json",
+   "original": "farm/qa/C/prompts/prop-usb_cdc_core/round2.full.md",
+   "leak_check_at_write": "PASS"
+  },
+  {
+   "kind": "prop",
+   "race": "prop-cic_decimator",
+   "call": "round2",
+   "design": "cic_decimator",
+   "seed": null,
+   "round": 2,
+   "repo_path": "farm/qa/C/prompts/prop-cic_decimator/round2.md",
+   "ideas_path": "/home/claude/ideas/overnight/method/opus_prompts/prop-cic_decimator/round2.md",
+   "sha256": "524deb034b06057d417074c00d4f2186eab3f930de9a7d08b3d25fe66aea1c15",
+   "reply_path": "/home/claude/ideas/overnight/method/opus_replies/prop-cic_decimator/round2.json",
+   "reask_path": "/home/claude/ideas/overnight/method/opus_replies/prop-cic_decimator/round2_reask.json",
+   "delivery_note": "Read the file /home/claude/ideas/overnight/method/opus_prompts/prop-cic_decimator/round2.md with the Read tool. That file is your entire task. Do not open any other file, run any command, or search anything. Reply with exactly the JSON the file asks for and nothing else.",
+   "state": "/home/claude/qa/c-method/results/tune_xn/state.json",
+   "original": "farm/qa/C/prompts/prop-cic_decimator/round2.full.md",
+   "leak_check_at_write": "PASS"
   }
  ],
  "delivery_notes": {
