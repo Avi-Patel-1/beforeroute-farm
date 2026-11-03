@@ -1,7 +1,7 @@
 {
- "batch": "r01",
+ "batch": "r01b",
  "phase1": "primary",
- "about": "F registered batch r01 (docs/qa_week/F_PREREG.md): the 14 registered published configurations; per group the replay at the published target and the first rebuild at ceil(claim) (job 'run'), then the rest of each chain by E5's rule (job 'cont'). At most 2 jobs at once.",
+ "about": "F registered batch r01, second dispatch (r01b) under the PREREG's infrastructure rule: Zenodo returned 503 for the EDA-env archive, so EDA-env group ee013 failed at the source fetch and run 41575196054 was cancelled before the other six EDA-env groups (ee097, ee054, ee074, ee087, ee037, ee075) could start; they run here with the same tags, with the source now also fetchable from the authors' GitHub mirror (per-file sha256 manifest of the Zenodo archive). The seven groups whose primary phase landed in run 41575196054 (artifacts f-r01-<group>) are continued here ('cont_only').",
  "groups": [
   {
    "name": "ee008",
@@ -14,7 +14,10 @@
      "tag_prefix": "f-ee008-",
      "mode": "chain"
     }
-   ]
+   ],
+   "cont_only": true,
+   "primary_batch": "r01",
+   "primary_run_id": 41575196054
   },
   {
    "name": "ee016",
@@ -27,7 +30,10 @@
      "tag_prefix": "f-ee016-",
      "mode": "chain"
     }
-   ]
+   ],
+   "cont_only": true,
+   "primary_batch": "r01",
+   "primary_run_id": 41575196054
   },
   {
    "name": "oa-aes-s130",
@@ -40,7 +46,10 @@
      "tag_prefix": "f-oa-aes-s130-",
      "mode": "chain"
     }
-   ]
+   ],
+   "cont_only": true,
+   "primary_batch": "r01",
+   "primary_run_id": 41575196054
   },
   {
    "name": "ee011",
@@ -53,7 +62,10 @@
      "tag_prefix": "f-ee011-",
      "mode": "chain"
     }
-   ]
+   ],
+   "cont_only": true,
+   "primary_batch": "r01",
+   "primary_run_id": 41575196054
   },
   {
    "name": "oa-ibex-a7",
@@ -66,33 +78,10 @@
      "tag_prefix": "f-oa-ibex-a7-",
      "mode": "chain"
     }
-   ]
-  },
-  {
-   "name": "oa-aes-a7",
-   "harness": "orfsagent",
-   "timeout_s": 14400,
-   "budget_s": 14400,
-   "items": [
-    {
-     "config": "oa-aes-a7",
-     "tag_prefix": "f-oa-aes-a7-",
-     "mode": "chain"
-    }
-   ]
-  },
-  {
-   "name": "ee001",
-   "harness": "edaenv",
-   "timeout_s": 14400,
-   "budget_s": 14400,
-   "items": [
-    {
-     "config": "ee001",
-     "tag_prefix": "f-ee001-",
-     "mode": "chain"
-    }
-   ]
+   ],
+   "cont_only": true,
+   "primary_batch": "r01",
+   "primary_run_id": 41575196054
   },
   {
    "name": "ee013",
@@ -184,6 +173,38 @@
      "mode": "chain"
     }
    ]
+  },
+  {
+   "name": "ee001",
+   "harness": "edaenv",
+   "timeout_s": 14400,
+   "budget_s": 14400,
+   "items": [
+    {
+     "config": "ee001",
+     "tag_prefix": "f-ee001-",
+     "mode": "chain"
+    }
+   ],
+   "cont_only": true,
+   "primary_batch": "r01",
+   "primary_run_id": 41575196054
+  },
+  {
+   "name": "oa-aes-a7",
+   "harness": "orfsagent",
+   "timeout_s": 14400,
+   "budget_s": 14400,
+   "items": [
+    {
+     "config": "oa-aes-a7",
+     "tag_prefix": "f-oa-aes-a7-",
+     "mode": "chain"
+    }
+   ],
+   "cont_only": true,
+   "primary_batch": "r01",
+   "primary_run_id": 41575196054
   }
  ]
 }

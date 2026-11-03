@@ -14,12 +14,14 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 jobs:
   plan:
     runs-on: ubuntu-latest
     outputs:
       groups: ${{ steps.p.outputs.groups }}
+      cont_groups: ${{ steps.p.outputs.cont_groups }}
       batch: ${{ steps.p.outputs.batch }}
     steps:
       - uses: actions/checkout@v4
@@ -28,12 +30,15 @@ jobs:
           python3 - <<'PY'
           import json, os
           d = json.load(open("farm/qa/F/dispatch.json"))
-          groups = [g["name"] for g in d["groups"]]
-          assert len(groups) <= 16, "at most 16 groups per batch"
+          # "cont_only" groups: their primary phase already landed in an earlier run (primary_run_id/primary_batch)
+          groups = [g["name"] for g in d["groups"] if not g.get("cont_only")]
+          cont = [g["name"] for g in d["groups"]] if d.get("phase1") == "primary" else []
+          assert len(groups) <= 16 and len(cont) <= 16, "at most 16 groups per matrix"
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
               f.write("groups=" + json.dumps(groups) + "\n")
+              f.write("cont_groups=" + json.dumps(cont) + "\n")
               f.write("batch=" + d["batch"] + "\n")
-          print(d["batch"], groups)
+          print(d["batch"], groups, cont)
           PY
 
   run:
@@ -105,7 +110,7 @@ jobs:
   # each chain continues (E5's rule) from its chain file, on the runner.
   cont:
     needs: [plan, run]
-    if: ${{ !cancelled() && needs.plan.outputs.groups != '[]' }}
+    if: ${{ !cancelled() && needs.plan.outputs.cont_groups != '[]' }}
     name: ${{ needs.plan.outputs.batch }} ${{ matrix.group }} cont
     runs-on: ubuntu-latest
     timeout-minutes: 300
@@ -113,18 +118,33 @@ jobs:
       fail-fast: false
       max-parallel: 2
       matrix:
-        group: ${{ fromJSON(needs.plan.outputs.groups) }}
+        group: ${{ fromJSON(needs.plan.outputs.cont_groups) }}
     steps:
       - uses: actions/checkout@v4
-      - name: Needed?
+      - name: Where did this group's primary phase land?
         id: need
         run: |
-          python3 -c "import json; d=json.load(open('farm/qa/F/dispatch.json')); print('go=' + ('1' if d.get('phase1') == 'primary' else '0'))" >> "$GITHUB_OUTPUT"
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          d = json.load(open("farm/qa/F/dispatch.json"))
+          g = next(x for x in d["groups"] if x["name"] == "${{ matrix.group }}")
+          print("go=1")
+          print("batch=" + g.get("primary_batch", d["batch"]))
+          print("run_id=" + str(g.get("primary_run_id", "")))
+          PY
+          cat "$GITHUB_OUTPUT"
       - uses: actions/download-artifact@v4
-        if: steps.need.outputs.go == '1'
+        if: steps.need.outputs.run_id == ''
         with:
-          name: f-${{ needs.plan.outputs.batch }}-${{ matrix.group }}
+          name: f-${{ steps.need.outputs.batch }}-${{ matrix.group }}
           path: results
+      - uses: actions/download-artifact@v4
+        if: steps.need.outputs.run_id != ''
+        with:
+          name: f-${{ steps.need.outputs.batch }}-${{ matrix.group }}
+          path: results
+          run-id: ${{ steps.need.outputs.run_id }}
+          github-token: ${{ github.token }}
       - name: Chain finished in the primary phase?
         id: open
         if: steps.need.outputs.go == '1'

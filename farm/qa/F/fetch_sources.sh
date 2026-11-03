@@ -34,9 +34,32 @@ EOF
       chmod +x "$O/report_param.sh"
       ;;
     edaenv)
-      get "https://zenodo.org/api/records/22990248/files/EDA-env-85-tasks.tar.gz/content" "$DEST/eda-env.tar.gz" \
-          3f80927e92be70b4e92deb1e5db7ad6c0009861d43e5c7bb7f8a5026b0a96205
-      tar -xzf "$DEST/eda-env.tar.gz" -C "$DEST"
+      # 1) the Zenodo archive, sha256-pinned; 2) if Zenodo is unavailable (it returned 503 on 2026-11-03), the authors'
+      # GitHub mirror at a pinned commit, accepted only if every one of the archive's 1,295 files matches the per-file
+      # sha256 manifest made from the Zenodo archive (farm/qa/F/edaenv_manifest.sha256). Same bytes either way.
+      Z=https://zenodo.org/api/records/22990248/files/EDA-env-85-tasks.tar.gz/content
+      ZH=3f80927e92be70b4e92deb1e5db7ad6c0009861d43e5c7bb7f8a5026b0a96205
+      MAN=$(cd "$(dirname "$0")" && pwd)/edaenv_manifest.sha256
+      ok=0
+      for i in 1 2; do
+        if curl -sSfL --retry 2 -o "$DEST/eda-env.tar.gz" "$Z" && echo "$ZH  $DEST/eda-env.tar.gz" | sha256sum -c -; then
+          tar -xzf "$DEST/eda-env.tar.gz" -C "$DEST"; ok=1; echo "source: Zenodo"; break
+        fi
+        echo "Zenodo fetch failed ($i)"; sleep 15
+      done
+      if [ "$ok" -eq 0 ]; then
+        GC=89dfcbed4376e2065b3917249f6c91f56dbf79bc
+        for i in 1 2 3 4 5; do
+          curl -sSfL --retry 3 -o "$DEST/eda-env-gh.tar.gz" \
+            "https://codeload.github.com/Ergodex-Labs/eda-env-iccad-26/tar.gz/$GC" && break
+          echo "GitHub fetch failed ($i)"; sleep $((20 * i))
+        done
+        mkdir -p "$DEST/gh"
+        tar -xzf "$DEST/eda-env-gh.tar.gz" -C "$DEST/gh"
+        mv "$DEST/gh/eda-env-iccad-26-$GC" "$DEST/EDA-env"
+        (cd "$DEST/EDA-env" && sha256sum -c --quiet "$MAN")     # fatal on any mismatch (set -e)
+        echo "source: GitHub mirror @$GC, all manifest files match"
+      fi
       ;;
     *) echo "unknown source $what"; exit 2 ;;
   esac
