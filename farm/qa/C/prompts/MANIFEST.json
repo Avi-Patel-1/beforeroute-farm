@@ -526,6 +526,40 @@
    "state": "/home/claude/qa/c-method/results/tune_xn/state.json",
    "original": "farm/qa/C/prompts/prop-cic_decimator/round4.full.md",
    "leak_check_at_write": "PASS"
+  },
+  {
+   "kind": "prop",
+   "race": "prop-xtea",
+   "call": "round4",
+   "design": "xtea",
+   "seed": null,
+   "round": 4,
+   "repo_path": "farm/qa/C/prompts/prop-xtea/round4.md",
+   "ideas_path": "/home/claude/ideas/overnight/method/opus_prompts/prop-xtea/round4.md",
+   "sha256": "2fc97384299845b2436208a76c4650c7ac41350f7bf3e43296b35d8b832fceae",
+   "reply_path": "/home/claude/ideas/overnight/method/opus_replies/prop-xtea/round4.json",
+   "reask_path": "/home/claude/ideas/overnight/method/opus_replies/prop-xtea/round4_reask.json",
+   "delivery_note": "Read the file /home/claude/ideas/overnight/method/opus_prompts/prop-xtea/round4.md with the Read tool. That file is your entire task. Do not open any other file, run any command, or search anything. Reply with exactly the JSON the file asks for and nothing else.",
+   "state": "/home/claude/qa/c-method/results/tune_xn/state.json",
+   "original": "farm/qa/C/prompts/prop-xtea/round4.full.md",
+   "leak_check_at_write": "PASS"
+  },
+  {
+   "kind": "prop",
+   "race": "prop-wbqspiflash",
+   "call": "round4",
+   "design": "wbqspiflash",
+   "seed": null,
+   "round": 4,
+   "repo_path": "farm/qa/C/prompts/prop-wbqspiflash/round4.md",
+   "ideas_path": "/home/claude/ideas/overnight/method/opus_prompts/prop-wbqspiflash/round4.md",
+   "sha256": "ce5b69e943b2e00e679963f9f00a4b6887956a12548463ef0903ec295326e8be",
+   "reply_path": "/home/claude/ideas/overnight/method/opus_replies/prop-wbqspiflash/round4.json",
+   "reask_path": "/home/claude/ideas/overnight/method/opus_replies/prop-wbqspiflash/round4_reask.json",
+   "delivery_note": "Read the file /home/claude/ideas/overnight/method/opus_prompts/prop-wbqspiflash/round4.md with the Read tool. That file is your entire task. Do not open any other file, run any command, or search anything. Reply with exactly the JSON the file asks for and nothing else.",
+   "state": "/home/claude/qa/c-method/results/tune_xn/state.json",
+   "original": "farm/qa/C/prompts/prop-wbqspiflash/round4.full.md",
+   "leak_check_at_write": "PASS"
   }
  ],
  "delivery_notes": {
