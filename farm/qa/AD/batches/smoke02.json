@@ -1,0 +1,148 @@
+{
+ "batch": "smoke02",
+ "about": "AD pilots (smoke-tagged, excluded from every analysis): the shipped config of each sky130hd and GT2N design at its shipped period and looser multiples, used only to anchor the grid's P0 at the pilot-estimated F (smoke01 showed sky130hd gcd's shipped 1.1 ns is 2.1x below its claim)",
+ "groups": [
+  {
+   "name": "p-ibex",
+   "num_cores": 4,
+   "timeout_s": 7200,
+   "parallel": 3,
+   "runs": [
+    {
+     "tag": "smoke-pilot-sky130hd-ibex-8000",
+     "design": "ibex",
+     "platform": "sky130hd",
+     "period": 8000,
+     "vars": {},
+     "setting": "S0",
+     "kind": "pilot",
+     "arm": "smoke"
+    },
+    {
+     "tag": "smoke-pilot-sky130hd-ibex-12800",
+     "design": "ibex",
+     "platform": "sky130hd",
+     "period": 12800,
+     "vars": {},
+     "setting": "S0",
+     "kind": "pilot",
+     "arm": "smoke"
+    },
+    {
+     "tag": "smoke-pilot-sky130hd-ibex-20000",
+     "design": "ibex",
+     "platform": "sky130hd",
+     "period": 20000,
+     "vars": {},
+     "setting": "S0",
+     "kind": "pilot",
+     "arm": "smoke"
+    }
+   ]
+  },
+  {
+   "name": "p-aes",
+   "num_cores": 4,
+   "timeout_s": 7200,
+   "parallel": 3,
+   "runs": [
+    {
+     "tag": "smoke-pilot-sky130hd-aes-3600",
+     "design": "aes",
+     "platform": "sky130hd",
+     "period": 3600,
+     "vars": {},
+     "setting": "S0",
+     "kind": "pilot",
+     "arm": "smoke"
+    },
+    {
+     "tag": "smoke-pilot-sky130hd-aes-5760",
+     "design": "aes",
+     "platform": "sky130hd",
+     "period": 5760,
+     "vars": {},
+     "setting": "S0",
+     "kind": "pilot",
+     "arm": "smoke"
+    },
+    {
+     "tag": "smoke-pilot-sky130hd-aes-9000",
+     "design": "aes",
+     "platform": "sky130hd",
+     "period": 9000,
+     "vars": {},
+     "setting": "S0",
+     "kind": "pilot",
+     "arm": "smoke"
+    }
+   ]
+  },
+  {
+   "name": "p-gaes",
+   "num_cores": 4,
+   "timeout_s": 7200,
+   "parallel": 3,
+   "runs": [
+    {
+     "tag": "smoke-pilot-gt2n-aes-350",
+     "design": "aes",
+     "platform": "gt2n",
+     "period": 350,
+     "vars": {},
+     "setting": "S0",
+     "kind": "pilot",
+     "arm": "smoke"
+    },
+    {
+     "tag": "smoke-pilot-gt2n-aes-490",
+     "design": "aes",
+     "platform": "gt2n",
+     "period": 490,
+     "vars": {},
+     "setting": "S0",
+     "kind": "pilot",
+     "arm": "smoke"
+    },
+    {
+     "tag": "smoke-pilot-gt2n-aes-700",
+     "design": "aes",
+     "platform": "gt2n",
+     "period": 700,
+     "vars": {},
+     "setting": "S0",
+     "kind": "pilot",
+     "arm": "smoke"
+    }
+   ]
+  },
+  {
+   "name": "p-gcd",
+   "num_cores": 4,
+   "timeout_s": 3600,
+   "parallel": 2,
+   "runs": [
+    {
+     "tag": "smoke-pilot-sky130hd-gcd-2905",
+     "design": "gcd",
+     "platform": "sky130hd",
+     "period": 2905,
+     "vars": {},
+     "setting": "S0",
+     "kind": "pilot",
+     "arm": "smoke"
+    },
+    {
+     "tag": "smoke-pilot-gt2n-gcd-260",
+     "design": "gcd",
+     "platform": "gt2n",
+     "period": 260,
+     "vars": {},
+     "setting": "S0",
+     "kind": "pilot",
+     "arm": "smoke"
+    }
+   ]
+  }
+ ]
+}
