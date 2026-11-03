@@ -35,6 +35,7 @@ def main() -> int:
     ap.add_argument("--salt", required=True)
     ap.add_argument("--n-controls", type=int, default=6)
     ap.add_argument("--only", default=None, help="comma list of sources (debug)")
+    ap.add_argument("--controls-only", action="store_true", help="build only the controls (mains already built)")
     a = ap.parse_args()
     src = json.load(open(os.path.join(HERE, "sources.json")))["sources"]
     if a.only:
@@ -68,7 +69,8 @@ def main() -> int:
     for s in src:
         pid = pid_for(s, "main")
         mains[s["source"]] = pid
-        build(s, pid, "main", (1, 2), a.salt + pid)
+        if not a.controls_only:
+            build(s, pid, "main", (1, 2), a.salt + pid)
     ctl = sorted(mains.items(), key=lambda kv: kv[1])[:a.n_controls] if not a.only else []
     by = {s["source"]: s for s in src}
     for sid, mpid in ctl:
