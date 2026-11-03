@@ -1,0 +1,2 @@
+d6a64c8334389bc72c25a9c98411f441c93e9a79cd181329cf292340e40a0e34  formula.py  (file committed)
+dae47c7b40ab7bb491456ed87e5acf264044b6c488d3168ff812bf345d18b05d  NOTES.md  (file committed)
