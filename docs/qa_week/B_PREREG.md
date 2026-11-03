@@ -199,3 +199,29 @@ claim still miss, and do tuned winners still fail when rebuilt at their claim?**
 6. **C0 was seen before registration** (above). C1–C3, S, C2b: no frozen-budget run of any kind existed when this was
    written.
 7. Synthesis: LibreLane's ABC sees the clock target (`-D`), not the I/O delays; ORFS's synthesis sees neither (E5).
+
+## Amendment B.1 (2026-11-03, before any non-smoke run; clarifications and launch facts — no population, rule, judge, test or prediction changed)
+1. **Erratum.** The header's "02:30Z" should read 02:22Z: the file was committed (9e3c24f) and its hash pushed (cdadff9)
+   at 02:23Z.
+2. **Chain cap.** "(4) At most 4 new runs per chain" counts rebuilds after W. In C2a and S, W's frozen replay at its
+   search target is the arm's step 0 and is not one of the 4 (as in E5, where W was a grid run; the brief's "≤ 4
+   rebuilds").
+3. **Runner staging (plumbing, no rule change).** sky130 chains run on the runner (farm/qa/B/run_group.py, blib.py;
+   .github/workflows/b_farm.yml), one flow at a time per job, each flow exactly as farm.yml runs a job (br/run_job.py,
+   same image and PDK; the opt-in `skip_dumps` key only skips the post-flow per-net dumps). A job starts no new flow after
+   15,000 s (job timeout 300 min); a chain left incomplete is continued by the same workflow run's resume stage
+   (farm/qa/B/resume.py) with the same rule. The 8 Bayesian C2a chains stop after their first passing rebuild in stage 1,
+   so that every first-rebuild verdict lands early, and continue in the resume stage. A flow without metrics is retried
+   once with the same tag, as registered.
+4. **Smoke outcomes seen before launch** (plumbing only, excluded from every analysis; receipt SMOKE_B.md):
+   sky130 control smoke-b-xtea-ctl (xac-xtea-024 replayed at F_best = 4.20 ns with IO_DELAY_CONSTRAINT = 20) identical to
+   the record in all 281 metrics; frozen runs show input and output delay 0.84 ns in the resolved config and in base.sdc's
+   own log lines; ASAP7 control smoke-b3g-gcd-003 (310 ps = P0) identical to E5's e5g-gcd-003 in all 470 non-execution
+   metrics; smoke-b3g-gcd-001 (215 ps) carries `set clk_io_pct 0.28837209` (62.0 ps). Outcome values also seen: the XTEA
+   race winner xah1-xtea-007 replayed with frozen I/O at 11.71 ns claimed 4.51 ns (record, stock budget: 6.01 ns) and its
+   first rebuild at 4.55 ns passed; gcd at 215 ps claimed 346.2 ps (E5, stock budget: 326.4 ps). No prediction changed.
+5. **Scoring scripts:** farm/qa/B/c2a.py (C2a; reads the chain states collected by farm/qa/B/collect.py, which keeps only
+   the members the analysis needs) and farm/qa/B3/c3.py on qa-b-asap7 (C3). C1, C2b and S scripts are written before
+   their launch and named in farm/qa/B/LAUNCH.md.
+6. **Farm share at launch:** C2a max-parallel 4 (qa-b-frozen-io), C3 max-parallel 2 (qa-b-asap7); C1, S and C2b wait for
+   free share (one active workflow run per branch, ≤ 6 jobs in all).

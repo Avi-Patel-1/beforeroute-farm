@@ -40,7 +40,8 @@ def chain_entry(w, fb, chain_id, tag_prefix, group, gparams, D=None, stop_first=
 def c2a_groups(plan, chains_only_first=False):
     fb = plan["fbest"]
     groups = []
-    bay = [w for w in plan["c2a"] if not w["set"].startswith("A35")]
+    order = ["bm64", "md5", "y_huff", "picorv32", "des", "ocs_blitter", "blabla", "aes_cipher"]   # longest first
+    bay = sorted([w for w in plan["c2a"] if not w["set"].startswith("A35")], key=lambda w: order.index(w["design"]))
     race = [w for w in plan["c2a"] if w["set"].startswith("A35")]
     for w in bay:                                         # long flows: one job each, stage 1 stops at the first pass
         est = 1.3 * max(rec_seconds(w["source"]), rec_seconds((w["orig_first_rebuild"] or {}).get("tag", ""))) + 300
