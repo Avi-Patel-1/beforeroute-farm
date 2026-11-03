@@ -126,6 +126,31 @@ def main():
             diff = sorted(k for k in set(mo) | set(r["metrics"]) if mo.get(k) != r["metrics"].get(k))
             ctl.append({"tag": r["tag"], "source": r["source"], "identical": not diff, "diff_keys": diff[:10]})
     res["control_ii"] = ctl
+    bad = [c["tag"] for c in ctl if not c["identical"]]
+    res["control_failed"] = bad
+    if bad:                                      # registered: a failed control stops the arm
+        for k in ("C1a", "C1b", "C1c", "C1d"):
+            res[k]["verdict"] = f"STOPPED (control failed: {bad})"
+    # status classes (audit: completed builds vs flow errors vs not landed) and per-design counts beside the pooled
+    landed = {r["tag"] for r in runs}
+    n_exp = sum(len(v) for v in expected.values())
+    res["status_counts"] = {"replays expected": n_exp,
+                            "replays landed": sum(1 for r in runs if r["kind"] == "c1r"),
+                            "completed with metrics": sum(1 for r in runs if r["claim"] is not None),
+                            "flow error (no metrics after the retry)": sum(1 for r in runs if r["claim"] is None),
+                            "top-ups landed": sum(1 for r in runs if r["kind"] == "c1t")}
+    per = {}
+    for b in bias:
+        p_ = per.setdefault(b["design"], {"tight": [], "loose": [], "settings": set()})
+        p_["settings"].add(b["setting"])
+        if b["ratio"] < 0.9:
+            p_["tight"].append(b["e"])
+        elif 1.1 <= b["ratio"] < 1.5:
+            p_["loose"].append(b["e"])
+    res["per_design"] = {d: {"bracketed_settings": len(v["settings"]), "tight_n": len(v["tight"]),
+                             "tight_median": st.median(v["tight"]) if v["tight"] else None,
+                             "loose_n": len(v["loose"]), "loose_median": st.median(v["loose"]) if v["loose"] else None}
+                         for d, v in sorted(per.items())}
     for r in runs:
         r.pop("metrics", None)
     res["run_rows"] = runs
@@ -135,6 +160,9 @@ def main():
     for k in ("C1a", "C1b", "C1c", "C1d"):
         print(k, {kk: v for kk, v in res[k].items()})
     print("control (ii):", [(c["tag"], c["identical"]) for c in ctl])
+    print("status:", res["status_counts"])
+    print("per design (tight n, median):", {d: (v["tight_n"], v["tight_median"] and round(v["tight_median"], 4))
+                                            for d, v in res["per_design"].items()})
 
 
 if __name__ == "__main__":

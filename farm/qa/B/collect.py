@@ -3,6 +3,8 @@
 
   python3 farm/qa/B/collect.py --run-id ID [--run-id ID ...] --results DIR [--keep-logs]
 
+Evidence (always): sky130 base.sdc [INFO] lines -> <tag>/sdc_lines.txt; ASAP7 finish-report external delays, clock edges,
+period_min and the loaded liberty/SDC files -> <tag>/finish_evidence.txt (whole logs kept only with --keep-logs).
 Kept per run directory: metrics.json, job.json, host.json, run.json, resolved.json (gzipped), checks/ (gzipped),
 logs/*.json and reports/e5_hook.json (ASAP7), constraint.sdc / constraint.orig.sdc (ASAP7), docker.log tail; with
 --keep-logs also flow.log.gz (sky130 SDC delay lines). chains/*.json: the latest stage of each chain.
@@ -15,6 +17,7 @@ import fnmatch
 import gzip
 import json
 import os
+import re
 import shutil
 import subprocess
 import tempfile
@@ -32,6 +35,46 @@ def gh_json(path):
     if r.returncode != 0:
         raise RuntimeError(f"gh api {path}: {r.stderr.strip()[:200]}")
     return json.loads(r.stdout)
+
+
+SKY_PAT = re.compile(r"(Setting (?:input|output) delay to: .*|Using clock .*|Setting clock uncertainty to: .*|"
+                     r"Setting timing derate to: .*|Setting load to: .*)")
+ASAP_RPT = re.compile(r"(.*external delay.*|.*clock \S+ \(rise edge\).*|.*period_min = .*)")
+ASAP_LOG = re.compile(r"^(read_liberty .*|read_sdc .*)$", re.M)
+
+
+def evidence(z, names, results):
+    """Small evidence files instead of whole logs (audit request: show the constraints the tools actually loaded).
+    sky130: base.sdc's own [INFO] lines from flow.log.gz -> <tag>/sdc_lines.txt (unique lines with counts).
+    ASAP7: external-delay / clock-edge / period_min lines of reports/6_finish.rpt(.gz) and the read_liberty / read_sdc
+    lines of logs/6_report.log.gz -> <tag>/finish_evidence.txt."""
+    import collections
+    for nm in names:
+        parts = nm.split("/")
+        if len(parts) < 2:
+            continue
+        tag = parts[0]
+        try:
+            if nm.endswith("flow.log.gz") and len(parts) == 2:
+                txt = gzip.decompress(z.read(nm)).decode(errors="replace")
+                c = collections.Counter(m.strip() for m in SKY_PAT.findall(txt))
+                if c:
+                    os.makedirs(os.path.join(results, tag), exist_ok=True)
+                    with open(os.path.join(results, tag, "sdc_lines.txt"), "w") as fo:
+                        for line, n in sorted(c.items()):
+                            fo.write(f"{n}\t{line}\n")
+            elif parts[1:] in (["reports", "6_finish.rpt"], ["reports", "6_finish.rpt.gz"]):
+                raw = z.read(nm)
+                txt = (gzip.decompress(raw) if nm.endswith(".gz") else raw).decode(errors="replace")
+                ev = sorted(set(" ".join(x.split()) for x in ASAP_RPT.findall(txt)))
+                lg = f"{tag}/logs/6_report.log.gz"
+                if lg in names:
+                    ev += sorted(set(ASAP_LOG.findall(gzip.decompress(z.read(lg)).decode(errors="replace"))))
+                os.makedirs(os.path.join(results, tag), exist_ok=True)
+                with open(os.path.join(results, tag, "finish_evidence.txt"), "w") as fo:
+                    fo.write("\n".join(ev) + "\n")
+        except Exception as e:
+            print(f"[collect] evidence {nm}: {e!r}")
 
 
 def chain_rank(c):
@@ -108,6 +151,8 @@ def main() -> int:
                         else:
                             with open(dst, "wb") as fo:
                                 fo.write(data)
+                with zipfile.ZipFile(zp) as z:
+                    evidence(z, z.namelist(), a.results)
                 tags = {n.split("/")[0] for n in zipfile.ZipFile(zp).namelist() if "/" in n} - {"chains"}
                 new += len(tags)
                 print(f"[collect] {art['name']}: {len(tags)} run dirs")

@@ -25,6 +25,29 @@ sys.path.insert(0, HERE)
 import blib  # noqa: E402
 
 ORIG_FAIL = ["x1t-picorv32-014", "x1t-y_huff-005", "x2t-bm64-007"]
+# Logical configurations already run in smoke (Amendment B.1; audit request: flag by configuration, not by tag):
+# the XTEA race winner xah1-xtea-007 with D = 0.84 ns at these targets (smoke run 41566723780, tags smoke-b2a-xtea-*).
+SMOKE_SEEN = {("xah1-xtea-007", 11.71), ("xah1-xtea-007", 4.55), ("xah1-xtea-007", 4.15), ("xah1-xtea-007", 4.10)}
+
+
+def status_class(x):
+    """Audit request: keep failed completed builds distinct from flow errors and from runs that never landed."""
+    if x is None:
+        return "not landed"
+    if x.get("claim") is None:
+        return "flow error (no metrics after the retry)"
+    if x.get("pass"):
+        return "completed, pass"
+    why = []
+    if x.get("ws") is not None and x["ws"] < 0:
+        why.append("setup")
+    if x.get("hold_ws") is not None and x["hold_ws"] < 0:
+        why.append("hold")
+    if x.get("drc"):
+        why.append("DRC")
+    if x.get("drv") is not None and x.get("drv_ref") is not None and x["drv"] > x["drv_ref"]:
+        why.append("slew/cap")
+    return "completed, fail (" + "+".join(why or ["judge"]) + ")"
 
 
 def main():
@@ -54,7 +77,11 @@ def main():
         s = c["state"]
         wr = s[0] if s else None
         fr = blib.first_rebuild(s) if s else None
+        for x in s:
+            x.setdefault("drv_ref", w["drv_ref"])
         row.update({"chain_id": c["chain_id"], "complete": bool(c.get("complete")), "stage": c.get("stage"),
+                    "W_status": status_class(wr), "R1_status": status_class(fr) if s else "not landed",
+                    "smoke_seen": sorted(x["period"] for x in s if (w["source"], round(x["period"], 2)) in SMOKE_SEEN),
                     "W": wr and {k: wr.get(k) for k in ("tag", "period", "claim", "pass", "port", "ws", "ws_r2r",
                                                         "io_pct")},
                     "claim_frozen": wr and wr.get("claim"),
@@ -94,6 +121,32 @@ def main():
                     "verdict": verdict(bool(gs) and st.median(gs) >= 1.05, all_chains)},
         "rows": rows,
     }
+    # per-design counts beside the pooled ones (audit request)
+    per = {}
+    for r in rows:
+        p = per.setdefault(r["design"], {"winners": 0, "landed": 0, "first_fail": 0, "first_pass": 0, "no_claim": 0,
+                                         "gains": []})
+        p["winners"] += 1
+        if r.get("landed"):
+            p["landed"] += 1
+        if r.get("no_claim"):
+            p["no_claim"] += 1
+        if r.get("first_fails") is True:
+            p["first_fail"] += 1
+        if r.get("first_fails") is False:
+            p["first_pass"] += 1
+        if r.get("g") is not None and r.get("complete"):
+            p["gains"].append(round(r["g"], 4))
+    for p in per.values():
+        p["median_g"] = st.median(p["gains"]) if p["gains"] else None
+    res["per_design"] = per
+    res["status_counts"] = {}
+    for r in rows:
+        for k in ("W_status", "R1_status"):
+            if r.get(k):
+                res["status_counts"].setdefault(k, {}).setdefault(r[k], 0)
+                res["status_counts"][k][r[k]] += 1
+    res["smoke_overlap"] = {r["source"]: r["smoke_seen"] for r in rows if r.get("smoke_seen")}
     # C2a-ii is decided as soon as 2 failures have landed (more landings cannot undo ">= 2")
     json.dump(res, open(a.out, "w"), indent=1, default=str)
     print(f"chains landed {res['landed_chains']}/48, complete {res['complete_chains']}; first rebuilds landed "
@@ -102,6 +155,10 @@ def main():
           res["C2a_i"]["which"])
     print("C2a-ii :", n_fail, "of", len(fr_landed), "first rebuilds fail ->", res["C2a_ii"]["verdict"], res["C2a_ii"]["which"])
     print("C2a-iii: median g", None if not gs else round(st.median(gs), 4), f"(n {len(gs)}) ->", res["C2a_iii"]["verdict"])
+    print("per design:", {d: (p["first_fail"], p["landed"], p["winners"], p["median_g"]) for d, p in per.items()})
+    print("status:", res["status_counts"])
+    if res["smoke_overlap"]:
+        print("already observed in smoke (same logical configuration):", res["smoke_overlap"])
     for r in rows:
         if not r.get("landed"):
             continue
