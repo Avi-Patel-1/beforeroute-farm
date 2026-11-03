@@ -36,6 +36,7 @@ def main() -> int:
     ap.add_argument("--key", required=True, help="private packet key json")
     ap.add_argument("--train", required=True, help="training set dir (labels.csv, runs/)")
     ap.add_argument("--pred", required=True)
+    ap.add_argument("--meta", default=None, help="where to write baselines_meta.json (default: beside --key, private)")
     a = ap.parse_args()
     src = json.load(open(os.path.join(HERE, "sources.json")))["sources"]
     key = json.load(open(a.key))
@@ -55,6 +56,9 @@ def main() -> int:
     meta = {"handpicked_fit": {"a": ha, "b": hb, "n": len(xs)}, "sources": {}}
     for s in src:
         sid = s["source"]
+        if sid not in pid_of or not os.path.exists(os.path.join(a.results, sid, "metrics.json")):
+            print(f"[baselines] {sid}: no packet or no capture result yet; skipped")
+            continue
         pid = pid_of[sid]
         m = json.load(open(os.path.join(a.results, sid, "metrics.json")))
         T0 = float(s["T0"])
@@ -78,7 +82,8 @@ def main() -> int:
             os.makedirs(d, exist_ok=True)
             out = {"packet_id": pid, "arm": arm, **pr}
             json.dump(out, open(os.path.join(d, pid + ".json"), "w"), indent=1)
-    json.dump(meta, open(os.path.join(a.pred, "baselines_meta.json"), "w"), indent=1)
+    json.dump(meta, open(a.meta or os.path.join(os.path.dirname(os.path.abspath(a.key)), "baselines_meta.json"), "w"),
+              indent=1)
     print(f"[baselines] {len(src)} sources; handpicked fit a={ha:.4f} b={hb:.4f} on n={len(xs)}")
     return 0
 
