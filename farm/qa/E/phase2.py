@@ -5,6 +5,8 @@
       copies every prediction (<pred>/<arm>/<packet>.json), plus extra files (rung-3 formula, Codex's hash file,
       the reader prompts), into farm/qa/E/locked/, writes farm/qa/E/locked/MANIFEST.sha256, commits and pushes
       branch qa-e-reading. Prints the lock commit. Refuses if any chain workflow run already exists on the branch.
+  phase2.py freeze --label rung3 --files rung3/formula.py   (or --label codex --hash <sha256>)
+      commits the predictor (or its hash) to farm/qa/E/frozen/ BEFORE it is run on any test packet.
   phase2.py dispatch --lock-commit SHA
       checks that SHA is pushed (an ancestor of origin/qa-e-reading) and contains farm/qa/E/locked/MANIFEST.sha256,
       then dispatches farm.yml on qa-e-reading with the 35 chain tags (farm/qa/E/chains.json), max_parallel 4.
@@ -75,6 +77,25 @@ def lock(a):
     print(f"[lock] {n} predictions locked; commit {c}; manifest sha256 {sha(os.path.join(dst, 'MANIFEST.sha256'))}")
 
 
+def freeze(a):
+    """Commit a predictor (rung 3's formula) or only its hash (Codex's) BEFORE it is run on any test packet."""
+    dst = os.path.join(HERE, "frozen")
+    os.makedirs(dst, exist_ok=True)
+    lines = []
+    for f in a.files or []:
+        shutil.copy2(f, os.path.join(dst, os.path.basename(f)))
+        lines.append(f"{sha(f)}  {os.path.basename(f)}  (file committed)")
+    for f in a.hash_only or []:
+        lines.append(f"{sha(f)}  {os.path.basename(f)}  (hash only)")
+    for h in a.hash or []:
+        lines.append(f"{h}  (hash given: {a.label})")
+    open(os.path.join(dst, f"FROZEN_{a.label}.txt"), "w").write("\n".join(lines) + "\n")
+    sh(["git", "add", "-A", os.path.relpath(dst, WT)])
+    sh(["git", "commit", "-q", "-m", f"Addendum 42: freeze {a.label} before it sees any test packet" + TRAILER])
+    sh(["git", "push", "-q", "origin", BRANCH])
+    print(f"[freeze] {a.label}: commit {sh(['git', 'rev-parse', 'HEAD']).strip()}\n" + "\n".join(lines))
+
+
 def dispatch(a):
     sh(["git", "fetch", "-q", "origin", BRANCH])
     sh(["git", "merge-base", "--is-ancestor", a.lock_commit, f"origin/{BRANCH}"])
@@ -106,13 +127,18 @@ def main() -> int:
     p1.add_argument("--pred", default="/home/claude/ideas/overnight/reading/predictions")
     p1.add_argument("--extra", nargs="*")
     p1.add_argument("--hash-only", nargs="*")
+    p0 = sp.add_parser("freeze")
+    p0.add_argument("--label", required=True)
+    p0.add_argument("--files", nargs="*")
+    p0.add_argument("--hash-only", nargs="*")
+    p0.add_argument("--hash", nargs="*")
     p2 = sp.add_parser("dispatch")
     p2.add_argument("--lock-commit", required=True)
     p3 = sp.add_parser("collect")
     p3.add_argument("--run", required=True)
     p3.add_argument("--dest", required=True)
     a = ap.parse_args()
-    return {"lock": lock, "dispatch": dispatch, "collect": collect}[a.cmd](a) or 0
+    return {"lock": lock, "freeze": freeze, "dispatch": dispatch, "collect": collect}[a.cmd](a) or 0
 
 
 if __name__ == "__main__":
