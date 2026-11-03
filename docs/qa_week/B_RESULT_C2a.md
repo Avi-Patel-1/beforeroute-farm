@@ -17,7 +17,8 @@ farm/qa/B/c2a_table.py.
   slack ≥ 0 at every corner, router DRC 0, slew/cap violation pins ≤ the design's stock reference; fail-closed
   admission (a run without a completed job record or any judged metric fails). Re-judging every chain entry from its
   own run directory changed 0 of the runner's verdicts, and replaying the registered chain rule over the re-judged
-  entries reproduces every target the runner chose (0 trajectory differences; audit request). This shows the recorded
+  entries reproduces every target the runner chose (0 trajectory differences; audit request). Final pass over all 201
+  entries of the 48 complete chains, including the 4 continued by the resume stage: 0 and 0. This shows the recorded
   schedule is the one the rule prescribes; it says nothing about rebuilds that were never run.
 
 ## Question
