@@ -254,6 +254,23 @@
    "reask_path": "/home/claude/ideas/overnight/method/opus_replies/prop-PPU/round1_reask.json",
    "delivery_note": "Read the file /home/claude/ideas/overnight/method/opus_prompts/prop-PPU/round1.md with the Read tool. That file is your entire task. Do not open any other file, run any command, or search anything. Reply with exactly the JSON the file asks for and nothing else.",
    "original": "farm/agent_a32/PPU/round1_prompt.md"
+  },
+  {
+   "kind": "prop",
+   "race": "prop-APU",
+   "call": "round2",
+   "design": "APU",
+   "seed": null,
+   "round": 2,
+   "repo_path": "farm/qa/C/prompts/prop-APU/round2.md",
+   "ideas_path": "/home/claude/ideas/overnight/method/opus_prompts/prop-APU/round2.md",
+   "sha256": "3547d89abd57cf539350cd597e58c343ad121b0e24d9ed3fe2e41b661afb3b1d",
+   "reply_path": "/home/claude/ideas/overnight/method/opus_replies/prop-APU/round2.json",
+   "reask_path": "/home/claude/ideas/overnight/method/opus_replies/prop-APU/round2_reask.json",
+   "delivery_note": "Read the file /home/claude/ideas/overnight/method/opus_prompts/prop-APU/round2.md with the Read tool. That file is your entire task. Do not open any other file, run any command, or search anything. Reply with exactly the JSON the file asks for and nothing else.",
+   "state": "/home/claude/qa/c-method/results/tune_xn/state.json",
+   "original": "farm/qa/C/prompts/prop-APU/round2.full.md",
+   "leak_check_at_write": "PASS"
   }
  ],
  "delivery_notes": {
