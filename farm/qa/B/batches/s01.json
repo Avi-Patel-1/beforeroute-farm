@@ -1,0 +1,56 @@
+{
+ "batch": "s01",
+ "kind": "smoke",
+ "max_parallel": 2,
+ "about": "workstream B smoke batch s01 (docs/qa_week/B_PREREG.md).",
+ "groups": [
+  {
+   "name": "smoke-ctl",
+   "timeout_s": 7200,
+   "budget_s": 7200,
+   "est_flow_s": 300,
+   "runs": [
+    {
+     "tag": "smoke-b-xtea-ctl",
+     "base_spec": "farm/jobs/xac-xtea-024.json",
+     "period": 4.2,
+     "D": 0.84,
+     "io0": 0.2,
+     "F_best": 4.2,
+     "drv_ref": 0,
+     "note": "control: replay of xac-xtea-024 at T = F_best with the override (must equal the record)"
+    }
+   ]
+  },
+  {
+   "name": "smoke-chain",
+   "chains": [
+    {
+     "chain_id": "smoke-b2a-xtea",
+     "design": "xtea",
+     "source": "xah1-xtea-007",
+     "set": "A35 race h1",
+     "base_spec": "farm/jobs/xah1-xtea-007.json",
+     "T0": 11.71,
+     "claim_orig": 6.007647470650976,
+     "D": 0.84,
+     "io0": 0.2,
+     "F_best": 4.2,
+     "drv_ref": 0,
+     "tag_prefix": "smoke-b2a-xtea-",
+     "group": "smoke-chain",
+     "group_params": {
+      "timeout_s": 7200,
+      "budget_s": 7200,
+      "est_flow_s": 300
+     },
+     "stop_after_first_pass": true,
+     "frozen": true
+    }
+   ],
+   "timeout_s": 7200,
+   "budget_s": 7200,
+   "est_flow_s": 300
+  }
+ ]
+}

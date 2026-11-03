@@ -173,7 +173,18 @@ def main() -> int:
     copy_if(os.path.join(run_dir, "error.log"), "error.log")
 
     status = "flow_failed"
-    if manifest["flow_completed"]:
+    # Optional (spec "skip_dumps": true, workstream B): skip the post-flow per-net dumps and labels (read-only steps after
+    # the flow has ended; the flow itself and metrics.json are unchanged). Jobs without the key: unchanged.
+    if manifest["flow_completed"] and spec.get("skip_dumps"):
+        status = "completed"
+        manifest["dumps"] = "skipped"
+        import glob
+
+        for rpt in glob.glob(os.path.join(run_dir, "*-openroad-stapostpnr", "*", "checks.rpt")):
+            corner = os.path.basename(os.path.dirname(rpt))
+            os.makedirs(os.path.join(results, "checks"), exist_ok=True)
+            shutil.copy2(rpt, os.path.join(results, "checks", f"{corner}.checks.rpt"))
+    elif manifest["flow_completed"]:
         status = "completed"
         t1 = time.time()
         d = subprocess.run([sys.executable, os.path.join(HERE, "run_dump.py"), run_dir, "--pdk-root", a.pdk_root],
