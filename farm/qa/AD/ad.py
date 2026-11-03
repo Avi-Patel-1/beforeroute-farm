@@ -656,10 +656,13 @@ def cmd_analyze(a):
     else:
         tv = ("NEARER ASAP7 (median > -10.05%)" if tight["median"] > -0.1005 else
               "NEARER LIBRELANE (median <= -10.05%)")
+        if len(s_all) < 30 or sum(1 for p in prim if p["platform"] == "sky130hd") < 9:
+            tv = "PARTIAL (sky130hd grid or chains still landing): " + tv
     d_first = None if n == 0 else fails / n
     out["D"] = {"chains": prim, "n_winners": n, "first_rebuild_fails": fails, "fail_fraction": d_first,
                 "first_rebuild_verdict": None if n == 0 else (
-                    "PREDICTION HELD (>= 55% fail)" if d_first >= 0.55 else "PREDICTION FAILED (< 55% fail)"),
+                    ("" if n >= 15 else f"PARTIAL ({n} of 15 winners' chains landed): ") +
+                    ("PREDICTION HELD (>= 55% fail)" if d_first >= 0.55 else "PREDICTION FAILED (< 55% fail)")),
                 "sky130hd_tight_bin": tight, "tight_verdict": tv,
                 "sky130hd_bins": sky_all["bins"],
                 "gt2n": {k: v for k, v in law_block(arm_runs(("adg-", "adgk-")), "D gt2n grid + chains").items()
