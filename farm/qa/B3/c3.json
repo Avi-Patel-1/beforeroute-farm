@@ -1,0 +1,1394 @@
+{
+ "picks": {
+  "gcd": [
+   {
+    "chain_id": "b3k-gcd-1",
+    "winner": "b3g-gcd-003",
+    "setting": "S0",
+    "T0": 310,
+    "C0": 343.733,
+    "W_port": true,
+    "R1": 345,
+    "R1_pass": false,
+    "C1": 350.62295,
+    "d1": 0.02004448219984689,
+    "R1_port": true,
+    "R1_ws": -5.62295,
+    "R1_ws_r2r": 7.3024,
+    "K": 350,
+    "K_over_C0": 1.01823217439117,
+    "chain": [
+     [
+      "b3g-gcd-003",
+      310,
+      343.733,
+      false
+     ],
+     [
+      "b3k-gcd-1-1",
+      345,
+      350.62295,
+      false
+     ],
+     [
+      "b3k-gcd-1-2",
+      355,
+      348.80682,
+      true
+     ],
+     [
+      "b3k-gcd-1-3",
+      350,
+      345.17639,
+      true
+     ]
+    ]
+   },
+   {
+    "chain_id": "b3k-gcd-2",
+    "winner": "b3g-gcd-005",
+    "setting": "S1",
+    "T0": 250,
+    "C0": 344.2178,
+    "W_port": true,
+    "R1": 345,
+    "R1_pass": true,
+    "C1": 344.451911,
+    "d1": 0.0006801246187733145,
+    "R1_port": true,
+    "R1_ws": 0.548089,
+    "R1_ws_r2r": 8.6478,
+    "K": 345,
+    "K_over_C0": 1.0022723984639956,
+    "chain": [
+     [
+      "b3g-gcd-005",
+      250,
+      344.2178,
+      false
+     ],
+     [
+      "b3k-gcd-2-1",
+      345,
+      344.451911,
+      true
+     ]
+    ]
+   },
+   {
+    "chain_id": "b3k-gcd-3",
+    "winner": "b3g-gcd-001",
+    "setting": "S0",
+    "T0": 215,
+    "C0": 346.243,
+    "W_port": true,
+    "R1": 350,
+    "R1_pass": true,
+    "C1": 345.17639,
+    "d1": -0.0030805243716117703,
+    "R1_port": true,
+    "R1_ws": 4.82361,
+    "R1_ws_r2r": 26.6374,
+    "K": 350,
+    "K_over_C0": 1.0108507608818085,
+    "chain": [
+     [
+      "b3g-gcd-001",
+      215,
+      346.243,
+      false
+     ],
+     [
+      "b3k-gcd-3-1",
+      350,
+      345.17639,
+      true
+     ]
+    ]
+   }
+  ],
+  "aes": [
+   {
+    "chain_id": "b3k-aes-1",
+    "winner": "b3g-aes-001",
+    "setting": "S0",
+    "T0": 265,
+    "C0": 376.929,
+    "W_port": false,
+    "R1": 380,
+    "R1_pass": false,
+    "C1": 382.46275,
+    "d1": 0.014681146847284277,
+    "R1_port": false,
+    "R1_ws": -2.46275,
+    "R1_ws_r2r": -2.4628,
+    "K": null,
+    "K_over_C0": null,
+    "chain": [
+     [
+      "b3g-aes-001",
+      265,
+      376.929,
+      false
+     ],
+     [
+      "b3k-aes-1-1",
+      380,
+      382.46275,
+      false
+     ],
+     [
+      "b3k-aes-1-2",
+      385,
+      387.64946,
+      false
+     ]
+    ]
+   },
+   {
+    "chain_id": "b3k-aes-2",
+    "winner": "b3g-aes-005",
+    "setting": "S1",
+    "T0": 305,
+    "C0": 381.5184,
+    "W_port": false,
+    "R1": 385,
+    "R1_pass": false,
+    "C1": 390.26776,
+    "d1": 0.02293299615431388,
+    "R1_port": false,
+    "R1_ws": -5.26776,
+    "R1_ws_r2r": -5.2678,
+    "K": null,
+    "K_over_C0": null,
+    "chain": [
+     [
+      "b3g-aes-005",
+      305,
+      381.5184,
+      false
+     ],
+     [
+      "b3k-aes-2-1",
+      385,
+      390.26776,
+      false
+     ],
+     [
+      "b3k-aes-2-2",
+      395,
+      398.72871,
+      false
+     ]
+    ]
+   },
+   {
+    "chain_id": "b3k-aes-3",
+    "winner": "b3g-aes-003",
+    "setting": "S0",
+    "T0": 380,
+    "C0": 382.46275,
+    "W_port": false,
+    "R1": 385,
+    "R1_pass": false,
+    "C1": 387.64946,
+    "d1": 0.013561346823971698,
+    "R1_port": false,
+    "R1_ws": -2.64946,
+    "R1_ws_r2r": -2.6495,
+    "K": null,
+    "K_over_C0": null,
+    "chain": [
+     [
+      "b3g-aes-003",
+      380,
+      382.46275,
+      false
+     ],
+     [
+      "b3k-aes-3-1",
+      385,
+      387.64946,
+      false
+     ],
+     [
+      "b3k-aes-3-2",
+      390,
+      395.14117,
+      false
+     ]
+    ]
+   }
+  ],
+  "ibex": [
+   {
+    "chain_id": "b3k-ibex-1",
+    "winner": "b3g-ibex-003",
+    "setting": "S0",
+    "T0": 900,
+    "C0": 913.6726,
+    "W_port": false,
+    "R1": 915,
+    "R1_pass": true,
+    "C1": 914.23106,
+    "d1": 0.0006112255090060525,
+    "R1_port": false,
+    "R1_ws": 0.76894,
+    "R1_ws_r2r": 0.7689,
+    "K": 915,
+    "K_over_C0": 1.0014528180006712,
+    "chain": [
+     [
+      "b3g-ibex-003",
+      900,
+      913.6726,
+      false
+     ],
+     [
+      "b3k-ibex-1-1",
+      915,
+      914.23106,
+      true
+     ]
+    ]
+   },
+   {
+    "chain_id": "b3k-ibex-2",
+    "winner": "b3g-ibex-008",
+    "setting": "S2",
+    "T0": 720,
+    "C0": 919.491,
+    "W_port": false,
+    "R1": 920,
+    "R1_pass": true,
+    "C1": 917.12763,
+    "d1": -0.0025703024825691756,
+    "R1_port": false,
+    "R1_ws": 2.87237,
+    "R1_ws_r2r": 2.8724,
+    "K": 920,
+    "K_over_C0": 1.0005535671366006,
+    "chain": [
+     [
+      "b3g-ibex-008",
+      720,
+      919.491,
+      false
+     ],
+     [
+      "b3k-ibex-2-1",
+      920,
+      917.12763,
+      true
+     ]
+    ]
+   },
+   {
+    "chain_id": "b3k-ibex-3",
+    "winner": "b3g-ibex-001",
+    "setting": "S0",
+    "T0": 630,
+    "C0": 935.9549999999999,
+    "W_port": false,
+    "R1": 940,
+    "R1_pass": false,
+    "C1": 950.34,
+    "d1": 0.015369328653621173,
+    "R1_port": false,
+    "R1_ws": -10.34,
+    "R1_ws_r2r": -10.34,
+    "K": 950,
+    "K_over_C0": 1.015006063325694,
+    "chain": [
+     [
+      "b3g-ibex-001",
+      630,
+      935.9549999999999,
+      false
+     ],
+     [
+      "b3k-ibex-3-1",
+      940,
+      950.34,
+      false
+     ],
+     [
+      "b3k-ibex-3-2",
+      955,
+      948.90199,
+      true
+     ],
+     [
+      "b3k-ibex-3-3",
+      950,
+      938.5497,
+      true
+     ]
+    ]
+   }
+  ]
+ },
+ "runs": {
+  "b3g-aes-001": {
+   "design": "aes",
+   "period": 265,
+   "status": "completed, fail (setup)",
+   "claim": 376.929,
+   "port": false,
+   "sdc_io_delay_ps": 75.99999924999999,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -76.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3g-aes-002": {
+   "design": "aes",
+   "period": 325,
+   "status": "completed, fail (setup)",
+   "claim": 387.055,
+   "port": false,
+   "sdc_io_delay_ps": 75.99999875,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -76.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3g-aes-003": {
+   "design": "aes",
+   "period": 380,
+   "status": "completed, fail (setup)",
+   "claim": 382.46275,
+   "port": false,
+   "sdc_io_delay_ps": 76.0,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -76.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3g-aes-004": {
+   "design": "aes",
+   "period": 530,
+   "status": "completed, pass",
+   "claim": 473.5605,
+   "port": false,
+   "sdc_io_delay_ps": 76.0000019,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -76.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3g-aes-005": {
+   "design": "aes",
+   "period": 305,
+   "status": "completed, fail (setup)",
+   "claim": 381.5184,
+   "port": false,
+   "sdc_io_delay_ps": 76.00000065,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -76.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3g-aes-006": {
+   "design": "aes",
+   "period": 455,
+   "status": "completed, pass",
+   "claim": 441.0159,
+   "port": false,
+   "sdc_io_delay_ps": 76.00000135,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -76.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3g-aes-007": {
+   "design": "aes",
+   "period": 550,
+   "status": "completed, pass",
+   "claim": 485.2407,
+   "port": false,
+   "sdc_io_delay_ps": 76.00000100000001,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -76.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3g-aes-008": {
+   "design": "aes",
+   "period": 305,
+   "status": "completed, fail (setup)",
+   "claim": 394.7658,
+   "port": false,
+   "sdc_io_delay_ps": 76.00000065,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -76.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3g-aes-009": {
+   "design": "aes",
+   "period": 455,
+   "status": "completed, pass",
+   "claim": 441.9839,
+   "port": false,
+   "sdc_io_delay_ps": 76.00000135,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -76.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3g-aes-010": {
+   "design": "aes",
+   "period": 550,
+   "status": "completed, pass",
+   "claim": 474.593,
+   "port": false,
+   "sdc_io_delay_ps": 76.00000100000001,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -76.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3g-gcd-001": {
+   "design": "gcd",
+   "period": 215,
+   "status": "completed, fail (setup)",
+   "claim": 346.243,
+   "port": true,
+   "sdc_io_delay_ps": 61.99999935,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -62.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": true
+  },
+  "b3g-gcd-002": {
+   "design": "gcd",
+   "period": 265,
+   "status": "completed, fail (setup)",
+   "claim": 349.3555,
+   "port": true,
+   "sdc_io_delay_ps": 61.9999989,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -62.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3g-gcd-003": {
+   "design": "gcd",
+   "period": 310,
+   "status": "completed, fail (setup)",
+   "claim": 343.733,
+   "port": true,
+   "sdc_io_delay_ps": 62.0,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -62.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": true
+  },
+  "b3g-gcd-004": {
+   "design": "gcd",
+   "period": 435,
+   "status": "completed, pass",
+   "claim": 374.8095,
+   "port": true,
+   "sdc_io_delay_ps": 62.000001899999994,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -62.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3g-gcd-005": {
+   "design": "gcd",
+   "period": 250,
+   "status": "completed, fail (setup)",
+   "claim": 344.2178,
+   "port": true,
+   "sdc_io_delay_ps": 62.0,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -62.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3g-gcd-006": {
+   "design": "gcd",
+   "period": 370,
+   "status": "completed, pass",
+   "claim": 363.3574,
+   "port": true,
+   "sdc_io_delay_ps": 62.000000899999996,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -62.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3g-gcd-007": {
+   "design": "gcd",
+   "period": 450,
+   "status": "completed, pass",
+   "claim": 376.0525,
+   "port": true,
+   "sdc_io_delay_ps": 62.000001,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -62.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3g-gcd-008": {
+   "design": "gcd",
+   "period": 250,
+   "status": "completed, fail (setup)",
+   "claim": 352.151,
+   "port": true,
+   "sdc_io_delay_ps": 62.0,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -62.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3g-gcd-009": {
+   "design": "gcd",
+   "period": 370,
+   "status": "completed, pass",
+   "claim": 365.14816,
+   "port": true,
+   "sdc_io_delay_ps": 62.000000899999996,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -62.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3g-gcd-010": {
+   "design": "gcd",
+   "period": 450,
+   "status": "completed, pass",
+   "claim": 374.6264,
+   "port": true,
+   "sdc_io_delay_ps": 62.000001,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -62.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3g-ibex-001": {
+   "design": "ibex",
+   "period": 630,
+   "status": "completed, fail (setup)",
+   "claim": 935.9549999999999,
+   "port": false,
+   "sdc_io_delay_ps": 180.00000269999998,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -180.0,
+    180.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3g-ibex-002": {
+   "design": "ibex",
+   "period": 765,
+   "status": "completed, fail (setup)",
+   "claim": 936.374,
+   "port": false,
+   "sdc_io_delay_ps": 180.0000018,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -180.0,
+    180.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3g-ibex-003": {
+   "design": "ibex",
+   "period": 900,
+   "status": "completed, fail (setup)",
+   "claim": 913.6726,
+   "port": false,
+   "sdc_io_delay_ps": 180.0,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -180.0,
+    180.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3g-ibex-004": {
+   "design": "ibex",
+   "period": 1260,
+   "status": "completed, pass",
+   "claim": 1236.3013,
+   "port": false,
+   "sdc_io_delay_ps": 179.9999964,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -180.0,
+    180.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3g-ibex-005": {
+   "design": "ibex",
+   "period": 720,
+   "status": "completed, fail (setup)",
+   "claim": 943.542,
+   "port": false,
+   "sdc_io_delay_ps": 180.0,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -180.0,
+    180.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3g-ibex-006": {
+   "design": "ibex",
+   "period": 1080,
+   "status": "completed, pass",
+   "claim": 1072.81397,
+   "port": false,
+   "sdc_io_delay_ps": 180.00000359999999,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -180.0,
+    180.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3g-ibex-007": {
+   "design": "ibex",
+   "period": 1305,
+   "status": "completed, pass",
+   "claim": 1232.7221,
+   "port": false,
+   "sdc_io_delay_ps": 179.99999415000002,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -180.0,
+    180.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3g-ibex-008": {
+   "design": "ibex",
+   "period": 720,
+   "status": "completed, fail (setup)",
+   "claim": 919.491,
+   "port": false,
+   "sdc_io_delay_ps": 180.0,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -180.0,
+    180.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3g-ibex-009": {
+   "design": "ibex",
+   "period": 1080,
+   "status": "completed, fail (setup)",
+   "claim": 1084.96736,
+   "port": false,
+   "sdc_io_delay_ps": 180.00000359999999,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -180.0,
+    180.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3g-ibex-010": {
+   "design": "ibex",
+   "period": 1305,
+   "status": "completed, pass",
+   "claim": 1220.3208,
+   "port": false,
+   "sdc_io_delay_ps": 179.99999415000002,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -180.0,
+    180.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3k-aes-1-1": {
+   "design": "aes",
+   "period": 380,
+   "status": "completed, fail (setup)",
+   "claim": 382.46275,
+   "port": false,
+   "sdc_io_delay_ps": 76.0,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -76.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3k-aes-1-2": {
+   "design": "aes",
+   "period": 385,
+   "status": "completed, fail (setup)",
+   "claim": 387.64946,
+   "port": false,
+   "sdc_io_delay_ps": 76.000001,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -76.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3k-aes-2-1": {
+   "design": "aes",
+   "period": 385,
+   "status": "completed, fail (setup)",
+   "claim": 390.26776,
+   "port": false,
+   "sdc_io_delay_ps": 76.000001,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -76.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3k-aes-2-2": {
+   "design": "aes",
+   "period": 395,
+   "status": "completed, fail (setup)",
+   "claim": 398.72871,
+   "port": false,
+   "sdc_io_delay_ps": 75.99999869999999,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -76.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3k-aes-3-1": {
+   "design": "aes",
+   "period": 385,
+   "status": "completed, fail (setup)",
+   "claim": 387.64946,
+   "port": false,
+   "sdc_io_delay_ps": 76.000001,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -76.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3k-aes-3-2": {
+   "design": "aes",
+   "period": 390,
+   "status": "completed, fail (setup)",
+   "claim": 395.14117,
+   "port": false,
+   "sdc_io_delay_ps": 75.9999981,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -76.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3k-gcd-1-1": {
+   "design": "gcd",
+   "period": 345,
+   "status": "completed, fail (setup)",
+   "claim": 350.62295,
+   "port": true,
+   "sdc_io_delay_ps": 61.999998299999994,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -62.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3k-gcd-1-2": {
+   "design": "gcd",
+   "period": 355,
+   "status": "completed, pass",
+   "claim": 348.80682,
+   "port": true,
+   "sdc_io_delay_ps": 62.00000095,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -62.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3k-gcd-1-3": {
+   "design": "gcd",
+   "period": 350,
+   "status": "completed, pass",
+   "claim": 345.17639,
+   "port": true,
+   "sdc_io_delay_ps": 62.000001000000005,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -62.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3k-gcd-2-1": {
+   "design": "gcd",
+   "period": 345,
+   "status": "completed, pass",
+   "claim": 344.451911,
+   "port": true,
+   "sdc_io_delay_ps": 61.999998299999994,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -62.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3k-gcd-3-1": {
+   "design": "gcd",
+   "period": 350,
+   "status": "completed, pass",
+   "claim": 345.17639,
+   "port": true,
+   "sdc_io_delay_ps": 62.000001000000005,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -62.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3k-ibex-1-1": {
+   "design": "ibex",
+   "period": 915,
+   "status": "completed, pass",
+   "claim": 914.23106,
+   "port": false,
+   "sdc_io_delay_ps": 179.99999865,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -180.0,
+    180.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3k-ibex-2-1": {
+   "design": "ibex",
+   "period": 920,
+   "status": "completed, pass",
+   "claim": 917.12763,
+   "port": false,
+   "sdc_io_delay_ps": 179.9999964,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -180.0,
+    180.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3k-ibex-3-1": {
+   "design": "ibex",
+   "period": 940,
+   "status": "completed, fail (setup)",
+   "claim": 950.34,
+   "port": false,
+   "sdc_io_delay_ps": 179.9999984,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -180.0,
+    180.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3k-ibex-3-2": {
+   "design": "ibex",
+   "period": 955,
+   "status": "completed, pass",
+   "claim": 948.90199,
+   "port": false,
+   "sdc_io_delay_ps": 180.00000440000002,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -180.0,
+    180.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  },
+  "b3k-ibex-3-3": {
+   "design": "ibex",
+   "period": 950,
+   "status": "completed, pass",
+   "claim": 938.5497,
+   "port": false,
+   "sdc_io_delay_ps": 179.999996,
+   "sdc_ok": true,
+   "loaded_ext_delays_ps": [
+    -180.0,
+    180.0
+   ],
+   "loaded_ok": true,
+   "libs": [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ],
+   "smoke_seen": false
+  }
+ },
+ "evidence_summary": {
+  "runs": 46,
+  "sdc_io_delay_ok": 46,
+  "loaded_external_delay_ok": 46,
+  "loaded_external_delay_bad": [],
+  "no_external_delay_in_report": [],
+  "liberty_sets": [
+   [
+    "asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
+    "asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
+    "asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
+    "asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz"
+   ]
+  ],
+  "status_counts": {
+   "completed, fail (setup)": 24,
+   "completed, pass": 22
+  },
+  "smoke_overlap": [
+   "b3g-gcd-001",
+   "b3g-gcd-003"
+  ]
+ },
+ "C3_gcd": {
+  "n": 3,
+  "each_ok": [
+   true,
+   true,
+   true
+  ],
+  "verdict": "PASS"
+ },
+ "C3_aes": {
+  "n": 3,
+  "first_rebuild_fails": 3,
+  "verdict": "PASS"
+ },
+ "C3_ibex": {
+  "n": 3,
+  "each_ok": [
+   true,
+   true,
+   false
+  ],
+  "verdict": "FAIL"
+ },
+ "control": {
+  "gcd": {
+   "identical": true,
+   "diff_keys": [],
+   "n_keys": 470
+  },
+  "aes": {
+   "identical": true,
+   "diff_keys": [],
+   "n_keys": 475
+  },
+  "ibex": {
+   "identical": true,
+   "diff_keys": [],
+   "n_keys": 489
+  }
+ },
+ "control_failed": [],
+ "bins": {
+  "tight (<0.9)": {
+   "n": 13,
+   "median": -0.011384503206953335
+  },
+  "near (0.9-1.1)": {
+   "n": 22,
+   "median": -1.6322470565371304e-05
+  },
+  "loose (1.1-1.5)": {
+   "n": 11,
+   "median": 0.15338340305527878
+  },
+  "very loose (>1.5)": null
+ }
+}
