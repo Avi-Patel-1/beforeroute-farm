@@ -28,6 +28,8 @@ workflow run 41602153382; kept clocks are added when they land.
   - The median change from the replay's claim to the first rebuild's own claim (d1) is **−1.5 %**: the rebuild claims a
     faster clock. The plan predicted ≥ +3 %.
   - 8 of the 14 held at their claim, and their rebuilds claimed 1.3–5.0 % faster still.
+  - A negative d1 is itself only a claim (the rebuild's slack at R1), not a measured faster clock. Only the chains,
+    which rebuild at those new claims, can show a faster clock that holds.
 - **Registered verdict: the plan's prediction FAILS** ("median claim optimistic by ≥ 3 %, and at least one published
   winner fails at its claim": the second half holds, the first does not). This is the outcome the PREREG called
   "P2 without P1": the bias is design-, flow- and regime-dependent, and only a rebuild tells you which case a claim is in.
@@ -42,9 +44,8 @@ workflow run 41602153382; kept clocks are added when they land.
 > "I rebuilt the field's own published winners: eleven final submissions from EDA-env at ICCAD this year and the three
 > best runs in ORFS-agent's published database. Every one reproduced exactly. Then I rebuilt each at the clock it
 > claimed. Six of fourteen failed there: all four whose claim came from a run that missed timing, by 5 to 8 percent for
-> ORFS-agent's, and two more by about a picosecond. The other eight held, and most were faster than claimed. So the
-> score is off in both directions, and which one you get depends on whether the claim came from a passing or a failing
-> run."
+> ORFS-agent's, and two more by about a picosecond. The other eight held at their claim. So the score is wrong in
+> both directions: too fast when it comes from a failing run, and conservative when it comes from a passing one."
 
 If pushed on "so the claims were mostly fine?": *"The typical claim was fine; the AutoTuner-style ones were not. Every
 claim that came from a run that missed timing was too fast: ORFS-agent's best runs by 6 to 8 percent. The claims that
@@ -144,8 +145,15 @@ After the primary phase, each chain continues:
   - ee001 to 290; ee011 to 930; ee013 to 345; ee037 to 175;
   - ee054 to 295; ee075 to 220; ee087 to 445; ee097 to 325.
 
-Kept clocks will be added here when the continuation phase lands. (Kept clocks so far count the replay's own target
-where the replay met timing, E5's convention; the table above does not use them.)
+Landed so far (each chain: every clock tried, pass/fail; units as above):
+
+| config | chain after the replay | outcome |
+|---|---|---|
+| ee016 | 510 fail (−1.3), **515 fail (−35.3; own claim 550.3)** | ends with no passing rebuild near the claim: the flow is not monotonic in the clock. Only the replay passed, at the evaluation clock 560.5 with the flow asked for 400 |
+
+(E5's convention counts the replay's own target as the kept clock where the replay met timing; for EDA-env that
+target is the evaluation clock, not the clock the flow was asked for, so kept clocks are shown as chains here.)
+Rows are added as the continuation phase lands.
 
 ## Predictions (F_PREREG.md) against outcome
 | Prediction | Outcome | Held? |
@@ -153,6 +161,14 @@ where the replay met timing, E5's convention; the table above does not use them.
 | Median claim optimistic by ≥ 3 % (P1) | median d1 −1.5 % | **no** |
 | At least one published winner fails at its claim (P2) | 6 of 14 fail | yes |
 | (context in the PREREG, not a prediction) the law points against P1 on this population (10 of 14 claims from passing runs) and towards P2 | as described: missed-timing claims 4/4 fail, +5.9 %; met-timing claims −2.7 % | — |
+
+## Independent audit (Codex, AUDIT_RESULT_F.md)
+The audit recounted the table and agreed: 14 configurations, 6 failures at R1, median d1 −1.50 %, P2 holds, P1 fails.
+It asked for:
+- the sources to be stated as mixed and selected (caveats 1–2);
+- the rounding and the single corner to be explicit (caveats 5–6);
+- a negative median d1 not to be read as a measured speed-up.
+All three are now in the text. The Q&A line no longer says the passing winners "were faster than claimed".
 
 ## Deviations
 - **Zenodo outage (infrastructure, handled by the registered rule).**
@@ -176,8 +192,13 @@ where the replay met timing, E5's convention; the table above does not use them.
 4. **Same settings means the same absolute knobs.** EDA-env submissions set SETUP_SLACK_MARGIN and
    ABC_CLOCK_PERIOD_IN_PS in absolute ps; the rebuild keeps them. A rebuild that scaled them with the clock would ask
    a different question.
-5. **The small misses sit inside one grid step.** EDA-env 016 and 074 missed by 1.3 and 0.6 ps at 510 and 405 ps.
-   Under the registered judge they are failures; one 5 ps step back may well pass (the chains will show).
+5. **Rounding and the small misses.** Each rebuild clock is the claim rounded up to the grid.
+   - That gives every rebuild some headroom: 0.05–4.3 ps on ASAP7 and 0.049 ns for aes/sky130hd. Per config, R1 − C0:
+     ee001 3.5, ee008 4.3, ee011 1.3, ee013 0.8, ee016 1.1, ee037 3.5, ee054 0.05, ee074 3.5, ee075 2.3, ee087 2.3,
+     ee097 2.3, oa-aes-a7 2.3, oa-ibex-a7 0.8 ps.
+   - The rounding favours passing, as in E5.
+   - EDA-env 016 and 074 missed by 1.3 and 0.6 ps at 510 and 405 ps, inside one grid step. Under the registered judge
+     they are failures.
 6. **Predictive PDK, one corner.** ASAP7 is predictive and judged at its fast corner; sky130hd at tt only. Not
    signoff.
 
