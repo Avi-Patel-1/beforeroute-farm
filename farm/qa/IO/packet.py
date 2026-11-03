@@ -76,7 +76,8 @@ def unraw(obj):
 
 
 def read_capture(capdir, case):
-    runs = sorted(glob.glob(os.path.join(capdir, f"io-cap-{case}-r0")))
+    runs = sorted(glob.glob(os.path.join(capdir, f"io-cap-{case}-r0")) +
+                  glob.glob(os.path.join(os.path.dirname(capdir), f"io-cap-{case}", f"io-cap-{case}-r0")))
     if not runs:
         raise SystemExit(f"no capture run for {case} under {capdir}")
     r = runs[0]
