@@ -1,7 +1,8 @@
 name: B frozen-I/O farm (sky130)
 
 # Workstream B (constraint hygiene, docs/qa_week/B_PREREG.md): LibreLane sky130 runs with the I/O budget frozen.
-# Runs only on pushes to qa-b-frozen-io that change farm/qa/B/dispatch.json. Each push runs the batch named there:
+# Runs only on pushes to qa-b-frozen-io (or qa-b-asap7, the workstream's second lane) that change
+# farm/qa/B/dispatch.json. Each push runs the batch named there:
 #   run     - one matrix job per group (max-parallel from the batch); each group's runs or rebuild chains execute flow by
 #             flow in the pinned LibreLane image via br/run_job.py (farm/qa/B/run_group.py); artifact b-<batch>-<group>
 #   select2 - collects the chains left incomplete (job time budget, or stage 1 stopped at its first passing rebuild)
@@ -10,7 +11,7 @@ name: B frozen-I/O farm (sky130)
 
 on:
   push:
-    branches: [qa-b-frozen-io]
+    branches: [qa-b-frozen-io, qa-b-asap7]
     paths: ['farm/qa/B/dispatch.json']
 
 permissions:

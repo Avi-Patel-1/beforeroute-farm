@@ -173,10 +173,21 @@ def main() -> int:
     for r in grp.get("runs") or []:
         if not within_budget(budget, est):
             print(f"[b] {r['tag']}: deferred (job time budget)", flush=True)
+            os.makedirs(os.path.join(results, "deferred"), exist_ok=True)
+            json.dump(r, open(os.path.join(results, "deferred", r["tag"] + ".json"), "w"), indent=1)
             continue
         io_value = r.get("io_override", blib.io_pct(r["D"], r["period"], r["io0"], r["F_best"]))
         run_flow(r["tag"], r["base_spec"], r["period"], io_value, a.image, results, to)
         x = blib.load_run(results, r["tag"], r["period"], r.get("drv_ref"))
+        if x["claim"] is None and within_budget(budget, est):      # registered: one retry with the same tag
+            print(f"[b] {r['tag']}: no metrics (status {x['status']}): one retry", flush=True)
+            run_flow(r["tag"], r["base_spec"], r["period"], io_value, a.image, results, to)
+            x = blib.load_run(results, r["tag"], r["period"], r.get("drv_ref"))
+        if x.get("flow_seconds"):
+            est = max(float(est or 0), float(x["flow_seconds"]) + 120)
+        meta = {k: v for k, v in r.items() if k not in ("io_override",)}
+        meta.update({"io_value": io_value, "stage": a.stage})
+        json.dump(meta, open(os.path.join(results, r["tag"], "b_meta.json"), "w"), indent=1)
         print(f"[b] done {r['tag']}: ws={x['ws']} r2r={x['ws_r2r']} hold={x['hold_ws']} claim={x['claim']}", flush=True)
     for ch in grp.get("chains") or []:
         run_chain(ch, a.image, results, to, budget, est, a.stage)

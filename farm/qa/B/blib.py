@@ -129,3 +129,55 @@ def first_pass_clock(chain: list):
         if c.get("pass"):
             return c["period"]
     return None
+
+
+def linfit(xs, ys):                     # agents/analysis/fixedpoint/analyze.py linfit (copied verbatim)
+    n = len(xs)
+    mx, my = sum(xs) / n, sum(ys) / n
+    sxx = sum((x - mx) ** 2 for x in xs)
+    if sxx < 1e-12:
+        return None, None
+    a = sum((x - mx) * (y - my) for x, y in zip(xs, ys)) / sxx
+    return a, my - a * mx
+
+
+def crossing(pts):                      # agents/analysis/fixedpoint/analyze.py crossing (copied verbatim)
+    """pts: [(T, teff)] distinct T, sorted ascending. Returns (F, how)."""
+    g = [(T, te - T) for T, te in pts]
+    for (t1, g1), (t2, g2) in zip(g, g[1:]):
+        if g1 > 0 >= g2:
+            return t1 + (t2 - t1) * g1 / (g1 - g2), "interpolated"
+
+    def extra(p1, p2, how):
+        a, b = linfit([p1[0], p2[0]], [p1[1], p2[1]])
+        if a is None or a >= 0.999:
+            return None, how + " (no crossing: slope >= 1)"
+        return b / (1 - a), how
+    if all(x <= 0 for _, x in g):
+        return extra(pts[0], pts[1], "extrapolated below")
+    if all(x > 0 for _, x in g):
+        return extra(pts[-2], pts[-1], "extrapolated above")
+    a, b = linfit([p[0] for p in pts], [p[1] for p in pts])
+    if a is None or a >= 0.999:
+        return None, "no crossing"
+    return b / (1 - a), "fit all"
+
+
+def topup_target(pts):
+    """C1's registered top-up rule (B_PREREG.md): pts [(T, claim)] of one setting, one point per target (median if
+    repeated). Returns (target or None if bracketed, reason). Targets rounded to 0.01 ns."""
+    pts = sorted(pts)
+    if len(pts) < 2:
+        return None, "fewer than 2 targets"
+    F, how = crossing(pts)
+    if how == "interpolated":
+        return None, "bracketed"
+    tmin, tmax = pts[0][0], pts[-1][0]
+    if how.startswith("extrapolated below"):            # met at every target
+        Fx = F if F is not None else tmin
+        return round(0.95 * min(Fx, tmin), 2), "met at every target: 0.95 x min(F_x, T_min)"
+    if how.startswith("extrapolated above"):            # missed at every target
+        Fx = F if F is not None else tmax
+        return round(1.05 * max(Fx, tmax), 2), "missed at every target: 1.05 x max(F_x, T_max)"
+    Fx = F if F is not None else tmin                   # "fit all" / "no crossing"
+    return round(0.95 * min(Fx, tmin), 2), "neither: 0.95 x min(F_x, T_min)"

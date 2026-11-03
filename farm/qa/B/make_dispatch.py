@@ -89,6 +89,41 @@ def s_groups(plan):
     return groups
 
 
+def c1_runs(plan):
+    """All 328 C1 replays with stable tags b1r-<design>-<nnn> (numbered per design in plan order)."""
+    fb = plan["fbest"]
+    n = {}
+    out = []
+    for r in plan["c1"]["runs"]:
+        d = r["design"]
+        n[d] = n.get(d, 0) + 1
+        f = fb[d]
+        out.append({"tag": f"b1r-{d}-{n[d]:03d}", "kind": "c1r", "setting": r["setting"], "design": d,
+                    "base_spec": f"farm/jobs/{r['source']}.json", "source": r["source"], "period": r["T"],
+                    "D": f["D"], "io0": f["io0"], "F_best": f["F_best"],
+                    "est_s": round(1.2 * rec_seconds(r["source"]) + 300)})
+    return out
+
+
+def c1_groups(plan, settings, cap=12000.0):
+    rs = [r for r in c1_runs(plan) if r["setting"] in settings]
+    bins = []
+    for r in sorted(rs, key=lambda r: (-r["est_s"], r["tag"])):      # first-fit decreasing, longest jobs first
+        for b in bins:
+            if b["t"] + r["est_s"] <= cap:
+                b["runs"].append(r)
+                b["t"] += r["est_s"]
+                break
+        else:
+            bins.append({"t": r["est_s"], "runs": [r]})
+    groups = []
+    for i, b in enumerate(bins, 1):
+        groups.append({"name": f"c1-{i:02d}", "timeout_s": 16000, "budget_s": BUDGET_S,
+                       "est_flow_s": max(r["est_s"] for r in b["runs"]), "est_total_s": round(b["t"]),
+                       "runs": sorted(b["runs"], key=lambda r: r["tag"])})
+    return groups
+
+
 def smoke_groups(plan):
     fb = plan["fbest"]
     x = fb["xtea"]
@@ -105,12 +140,23 @@ def smoke_groups(plan):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--batch", required=True)
-    ap.add_argument("--kind", required=True, choices=["smoke", "c2a", "s"])
+    ap.add_argument("--kind", required=True, choices=["smoke", "c2a", "s", "c1"])
+    ap.add_argument("--settings", default="", help="C1: setting indices, e.g. 0-9,12,15-20")
     ap.add_argument("--max-parallel", type=int, default=4)
     ap.add_argument("--note", default="")
     a = ap.parse_args()
     plan = json.load(open(os.path.join(HERE, "plan.json")))
-    groups = {"smoke": smoke_groups, "c2a": c2a_groups, "s": s_groups}[a.kind](plan)
+    if a.kind == "c1":
+        sel = set()
+        for part in a.settings.split(","):
+            if "-" in part:
+                lo, hi = part.split("-")
+                sel |= set(range(int(lo), int(hi) + 1))
+            elif part:
+                sel.add(int(part))
+        groups = c1_groups(plan, sel)
+    else:
+        groups = {"smoke": smoke_groups, "c2a": c2a_groups, "s": s_groups}[a.kind](plan)
     spec = {"batch": a.batch, "kind": a.kind, "max_parallel": a.max_parallel,
             "about": f"workstream B {a.kind} batch {a.batch} (docs/qa_week/B_PREREG.md). {a.note}".strip(),
             "groups": groups}
