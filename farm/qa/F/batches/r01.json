@@ -1,7 +1,7 @@
 {
  "batch": "r01",
  "phase1": "primary",
- "about": "F registered batch r01 (docs/qa_week/F_PREREG.md): the 15 published configurations; per group the replay at the published target and the first rebuild at ceil(claim) (job 'run'), then the rest of each chain (job 'cont'). At most 2 jobs at once.",
+ "about": "F registered batch r01 (docs/qa_week/F_PREREG.md): the 14 registered published configurations; per group the replay at the published target and the first rebuild at ceil(claim) (job 'run'), then the rest of each chain by E5's rule (job 'cont'). At most 2 jobs at once.",
  "groups": [
   {
    "name": "ee008",
@@ -30,14 +30,14 @@
    ]
   },
   {
-   "name": "oa-ibex-s130",
+   "name": "oa-aes-s130",
    "harness": "orfsagent",
    "timeout_s": 14400,
    "budget_s": 12000,
    "items": [
     {
-     "config": "oa-ibex-s130",
-     "tag_prefix": "f-oa-ibex-s130-",
+     "config": "oa-aes-s130",
+     "tag_prefix": "f-oa-aes-s130-",
      "mode": "chain"
     }
    ]
@@ -64,19 +64,6 @@
     {
      "config": "oa-ibex-a7",
      "tag_prefix": "f-oa-ibex-a7-",
-     "mode": "chain"
-    }
-   ]
-  },
-  {
-   "name": "oa-aes-s130",
-   "harness": "orfsagent",
-   "timeout_s": 14400,
-   "budget_s": 14400,
-   "items": [
-    {
-     "config": "oa-aes-s130",
-     "tag_prefix": "f-oa-aes-s130-",
      "mode": "chain"
     }
    ]

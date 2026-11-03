@@ -1,5 +1,5 @@
 {
- "about": "F smoke configs (plumbing only; never analyzed). smk-ee004: EDA-env task 004 (aes/asap7 area task, not a registered timing winner). smk-oa-aes-a7-2: the second-best aes/asap7 row (1564) of ORFS-agent's output.json, not registered. smk-ee018: EDA-env task 018 (mult16/asap7 completion task, workspace-SDC mode, not registered). smk-oa-aes-s130-2: the second-best aes/sky130hd row (2322) of output.json, not registered.",
+ "about": "F smoke configs (plumbing only; never analyzed). smk-ee004: EDA-env task 004 (aes/asap7 area task, not a registered timing winner). smk-oa-aes-a7-2: the second-best aes/asap7 row (1564) of ORFS-agent's output.json, not registered. smk-ee018: EDA-env task 018 (mult16/asap7 completion task, workspace-SDC mode, not registered). smk-oa-aes-s130-2: the second-best aes/sky130hd row (2322) of output.json, not registered. smk-ee014s: EDA-env task 014's STARTER configuration (no submission; image-SDC mode), not registered.",
  "configs": [
   {
    "id": "smk-ee004",
@@ -88,6 +88,19 @@
     "ws": -2.91079
    },
    "grid": 0.05
+  },
+  {
+   "id": "smk-ee014s",
+   "source": "EDA-env",
+   "harness": "edaenv",
+   "platform": "asap7",
+   "design": "aes",
+   "task": "eda-env-014-aes-asap7-close15",
+   "submission": "none",
+   "published": {
+    "T0": 329.5
+   },
+   "grid": 5.0
   }
  ]
 }

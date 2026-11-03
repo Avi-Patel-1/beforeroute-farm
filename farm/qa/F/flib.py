@@ -110,6 +110,11 @@ def load_edaenv(d: str) -> dict:
     flow = _load(os.path.join(d, "case", "flow.json"), {}) or {}
     meas = _load(os.path.join(d, "case", "measure", "measure.json"), {}) or {}
     met = meas.get("metrics") or {}
+    fm = {}
+    for p in sorted(glob.glob(os.path.join(d, "logs", "*.json"))):
+        x = _load(p, {})
+        if isinstance(x, dict):
+            fm.update(x)
     period = run.get("period")
     wns, whs, drc = met.get("wns"), met.get("whs"), met.get("drc_violations")
     status = run.get("status", "missing")
@@ -122,6 +127,7 @@ def load_edaenv(d: str) -> dict:
          "ecp_evaluator": met.get("ecp"), "area_um2": met.get("area_um2"), "power_w": met.get("power_total"),
          "util": met.get("utilization"), "instance_count": met.get("instance_count"),
          "drc_source": met.get("drc_source"), "flow_failures": flow.get("failures"),
+         "flow_ws": fm.get("finish__timing__setup__ws"),   # the flow's own STA (working SDC); diagnostic only
          "elapsed_s": run.get("elapsed_s")}
     if ok:
         r.update(pass_setup=wns >= 0, pass_hold=whs >= 0, pass_drc=int(drc) == 0)

@@ -1,5 +1,5 @@
 {
- "about": "F (overnight workstream F): the registered published configurations. EDA-env: every ASAP7 timing task whose final submission the authors report as passing its gate (reported_gate 1); claim = their ECP = 1000/reported_reward ps. ORFS-agent: per design/platform, the DRC-clean run with the lowest ECP_final in the 3,116-run database the authors publish with their code; claim = its ECP_final (asked CLK - finish setup WS). Units: ps (asap7), ns (sky130hd).",
+ "about": "F (overnight workstream F): the registered published configurations. EDA-env: every ASAP7 timing task whose final submission the authors report as passing its gate (reported_gate 1); claim = their ECP = 1000/reported_reward ps. ORFS-agent: per design/platform (aes and ibex on asap7, aes on sky130hd; ibex on sky130hd deferred, see 'deferred'), the DRC-clean run with the lowest ECP_final in the 3,116-run database the authors publish with their code; claim = its ECP_final (asked CLK - finish setup WS). Units: ps (asap7), ns (sky130hd).",
  "sources": {
   "edaenv": {
    "zenodo_doi": "10.5281/zenodo.22990248",
@@ -363,7 +363,9 @@
     "where": "ORFS-Agent repo @730f1fa AutoTuner-integration/ORFS-with-AutoTuner/output.json row 2551 (lowest DRC-clean ECP_final of its design/platform)"
    },
    "grid": 0.05
-  },
+  }
+ ],
+ "deferred": [
   {
    "id": "oa-ibex-s130",
    "source": "ORFS-agent",
@@ -396,7 +398,8 @@
     "hold_violation_count": 171,
     "where": "ORFS-Agent repo @730f1fa AutoTuner-integration/ORFS-with-AutoTuner/output.json row 2717 (lowest DRC-clean ECP_final of its design/platform)"
    },
-   "grid": 0.05
+   "grid": 0.05,
+   "deferred_reason": "Not registered (decided before any registered run, from smoke runtime only): an aes/sky130hd row of the same database was still in detailed routing after 51 min on a 4-vCPU runner (smoke s02), so ibex/sky130hd (about 4x the cells, asked 3.634 ns against a 10.231 ns claim) is expected to need more than the 300-minute job limit for its replay plus first rebuild. Follow-up with its own pre-registration."
   }
  ]
 }

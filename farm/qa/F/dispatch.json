@@ -1,6 +1,6 @@
 {
- "batch": "smoke-s03",
- "about": "F smoke batch s03 (plumbing only; not part of any analysis): the EDA-env rebuild path after the s02 fix (edaenv_run.py truncated the SDC before reading it): task 018 (mult16, workspace SDC) at 700 ps and task 004 (aes, image SDC bind mount) at 420 ps. Neither task is registered.",
+ "batch": "smoke-s04",
+ "about": "F smoke batch s04 (plumbing only; not part of any analysis): the EDA-env rebuild path in image-SDC mode (the edited stock SDC bind-mounted over the image's), which s03 could not exercise because task 004's published submission is rejected by the evaluator's own sanitizer (unknown variable SKIP_PRE_PLACE_REPAIR). Task 014's starter configuration (no submission) at 420 ps. Check: the flow's own finish WS (working SDC) equals the measurement's wns (evaluation SDC) at the same clock.",
  "groups": [
   {
    "name": "smk-ee",
@@ -9,16 +9,8 @@
    "budget_s": 12000,
    "items": [
     {
-     "config": "smk-ee018",
-     "tag_prefix": "smoke-f-ee018c-",
-     "mode": "single",
-     "periods": [
-      700
-     ]
-    },
-    {
-     "config": "smk-ee004",
-     "tag_prefix": "smoke-f-ee004c-",
+     "config": "smk-ee014s",
+     "tag_prefix": "smoke-f-ee014s-",
      "mode": "single",
      "periods": [
       420
