@@ -76,6 +76,122 @@ def capture(run_dir, results, max_bytes=400 * 1024 * 1024):
     return got
 
 
+def _ceil05(x):
+    import math
+
+    return round(math.ceil(round(x / 0.05, 6)) * 0.05, 2)
+
+
+def run_chain(spec, a):
+    """Experiment E (Addendum 42) registered rebuild chain, run on the runner (spec "chain"):
+    source S (T0, claim C0); judge = setup WS >= 0 and hold WS >= 0 (9 corners), route DRC 0, max-slew + max-cap count
+    <= drv_bar; a rebuild without metrics fails.
+      1. first rebuild at R1 = ceil05(C0);
+      2. after a passing rebuild with claim C: rebuild at ceil05(C) while that is below the chain's smallest passing
+         clock and above every failed clock of the chain below it;
+      3. if the first rebuild fails: step back once to max(ceil05(C1), R1 + 0.05) unless that is not below the
+         smallest passing clock (the source's own target if it passed); a failure after that ends the chain;
+      4. at most 4 rebuilds; a clock already run in the chain reuses that result. Kept clock = smallest passing clock,
+         the source included (None if none passed).
+    Rebuild results go to <results>/<tag>/rebuilds/<tag>-<k>/ (per-net dumps removed to keep the artifact small);
+    the chain record to <results>/<tag>/chain.json."""
+    ch = spec["chain"]
+    tag = spec["tag"]
+    top = os.path.abspath(os.path.join(a.results, tag))
+    reb = os.path.join(top, "rebuilds")
+    os.makedirs(reb, exist_ok=True)
+    cap = int(ch.get("max_rebuilds", 4))
+    bar = ch.get("drv_bar")
+    T0, C0 = float(ch["T0"]), float(ch["C0"])
+    tried, order = {}, []
+    t_start = time.time()
+
+    def drv(m):
+        return (m.get("design__max_slew_violation__count") or 0) + (m.get("design__max_cap_violation__count") or 0)
+
+    def build(clk):
+        k = len(order) + 1
+        sub = f"{tag}-{k}"
+        s2 = {"tag": sub, "design": spec["design"], "config": spec["config"],
+              "overrides": dict(spec["overrides"], CLOCK_PERIOD=clk)}
+        sp = os.path.join(top, f"{sub}.spec.json")
+        json.dump(s2, open(sp, "w"), indent=1)
+        t1 = time.time()
+        subprocess.run([sys.executable, os.path.abspath(__file__), "--job-spec", sp, "--jobs", str(a.jobs),
+                        "--results", reb, "--pdk-root", a.pdk_root, "--timeout", str(a.timeout)])
+        d = os.path.join(reb, sub)
+        m = {}
+        try:
+            m = json.load(open(os.path.join(d, "metrics.json")))
+        except Exception:
+            m = {}
+        for f in ("nets.jsonl", "nets_signoff.jsonl", "final_nets.json", "nets.jsonl.gz", "nets_signoff.jsonl.gz",
+                  "final_nets.json.gz"):
+            if os.path.exists(os.path.join(d, f)):
+                os.remove(os.path.join(d, f))
+        ws, wr, hold = m.get("timing__setup__ws"), m.get("timing__setup_r2r__ws"), m.get("timing__hold__ws")
+        drc = m.get("route__drc_errors")
+        ok = (ws is not None and ws >= 0 and hold is not None and hold >= 0 and (drc or 0) == 0
+              and (bar is None or drv(m) <= bar))
+        rec = {"k": k, "tag": sub, "clock_ns": clk, "ws_ns": ws, "ws_r2r_ns": wr, "hold_ws_ns": hold, "drc": drc,
+               "drv": drv(m) if m else None, "claim_ns": (clk - ws) if ws is not None else None, "pass": bool(ok),
+               "metrics": bool(m), "seconds": round(time.time() - t1, 1)}
+        tried[round(clk, 4)] = rec
+        order.append(rec)
+        print(f"[chain] {sub} at {clk} ns: ws {ws} hold {hold} drc {drc} drv {rec['drv']} -> {'PASS' if ok else 'FAIL'}",
+              flush=True)
+        return rec
+
+    def run_or_reuse(clk):
+        r = tried.get(round(clk, 4))
+        return (r, False) if r is not None else (build(clk), True)
+
+    smallest = T0 if ch.get("source_pass") else None
+    failed = []
+    R1 = _ceil05(C0)
+    first = build(R1)
+    last = None
+    if first["pass"]:
+        smallest = R1 if smallest is None else min(smallest, R1)
+        last = first
+    else:
+        failed.append(R1)
+        step = max(_ceil05(first["claim_ns"]) if first["claim_ns"] is not None else round(R1 + 0.05, 2),
+                   round(R1 + 0.05, 2))
+        if (smallest is None or step < smallest - 1e-9) and len(order) < cap:
+            r2, _ = run_or_reuse(step)
+            if r2["pass"]:
+                smallest = step if smallest is None else min(smallest, step)
+                last = r2
+            else:
+                failed.append(step)
+    while last is not None and len(order) < cap:
+        nxt = _ceil05(last["claim_ns"])
+        if smallest is not None and nxt >= smallest - 1e-9:
+            break
+        if any(f >= nxt - 1e-9 and (smallest is None or f < smallest) for f in failed):
+            break
+        r, new = run_or_reuse(nxt)
+        if r["pass"]:
+            smallest = nxt if smallest is None else min(smallest, nxt)
+            last = r
+        else:
+            failed.append(nxt)
+            break
+        if not new:
+            break
+    out = {"tag": tag, "source_tag": ch.get("source_tag"), "T0_ns": T0, "C0_ns": C0, "R1_ns": R1,
+           "source_pass": bool(ch.get("source_pass")), "drv_bar": bar, "rebuilds": order,
+           "first_pass": first["pass"], "C1_ns": first["claim_ns"],
+           "slope": ((first["claim_ns"] - C0) / (R1 - T0)) if first["claim_ns"] is not None and abs(R1 - T0) > 1e-9 else None,
+           "kept_clock_ns": smallest, "failed_clocks_ns": failed, "n_rebuilds": len(order),
+           "seconds": round(time.time() - t_start, 1), "rule": "Addendum 42 (docs/qa_week/E_PREREG.md)"}
+    json.dump(out, open(os.path.join(top, "chain.json"), "w"), indent=1)
+    json.dump({"tag": tag, "status": "chain_done", "n_rebuilds": len(order)}, open(os.path.join(top, "job.json"), "w"))
+    print(json.dumps(out, indent=1))
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--job-spec", default=None, help="JSON file with design, config, tag, overrides (overrides CLI values)")
@@ -98,6 +214,8 @@ def main() -> int:
         a.tag = a.tag or spec["tag"]
     if not (a.design and a.config and a.tag):
         ap.error("--design, --config and --tag are required (or --job-spec)")
+    if spec.get("chain"):
+        return run_chain(spec, a)
 
     design = os.path.abspath(a.design)
     cfg_path = os.path.abspath(a.config) if os.path.isabs(a.config) or os.path.exists(a.config) else os.path.join(design, a.config)
