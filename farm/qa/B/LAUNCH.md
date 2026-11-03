@@ -10,4 +10,7 @@ batch s01). Receipt: SMOKE_B.md (outbox) — controls bit-identical, frozen dela
 | arm | branch | batch | code commit | dispatched (UTC) | workflow run | max-parallel |
 |---|---|---|---|---|---|---|
 | C0 | qa-b-frozen-io | (no runs) | c7298c3 (farm/qa/B/c0.py) | 2026-11-03 02:26Z (analysis) | — | — |
-| C2a | qa-b-frozen-io | c2a1 (48 chains, 18 groups) | 9c69316 (farm/qa/B/run_group.py, blib.py, resume.py, b_farm.yml) | 2026-11-03T02:41Z | (see STATUS / next line) | 4 |
+| C2a | qa-b-frozen-io | c2a1 (48 chains, 18 groups) | 9c69316 (farm/qa/B/run_group.py, blib.py, resume.py, b_farm.yml) | 2026-11-03T02:41Z | 41567699017 | 4 |
+| C3 | qa-b-asap7 | g01 (30 grid runs, 6 groups; chains picked on the runner) | 5def9c4 (farm/qa/B3/, b_asap7.yml; E5's e5lib/e5_hook unchanged) | 2026-11-03T02:42Z | 41567743736 | 2 |
+
+C1, S and C2b: not launched yet (they wait for free share; see docs/qa_week/B_PREREG.md and the workstream report).
