@@ -147,6 +147,13 @@ def main():
                 res["status_counts"].setdefault(k, {}).setdefault(r[k], 0)
                 res["status_counts"][k][r[k]] += 1
     res["smoke_overlap"] = {r["source"]: r["smoke_seen"] for r in rows if r.get("smoke_seen")}
+    # beside (descriptive, not registered): the same counts with a setup-only judge, and fails by reason
+    so = [r for r in fr_landed if (r.get("first_rebuild") or {}).get("ws") is not None]
+    res["beside_setup_only"] = {
+        "first_rebuild_setup_fails": sum(1 for r in so if r["first_rebuild"]["ws"] < 0), "of": len(so),
+        "original_failures_setup_fail": [(r["source"], r["first_rebuild"]["ws"] < 0) for r in so
+                                         if r["source"] in ORIG_FAIL],
+        "fails_by_reason": {k: v for k, v in res["status_counts"].get("R1_status", {}).items() if "fail" in k}}
     # C2a-ii is decided as soon as 2 failures have landed (more landings cannot undo ">= 2")
     json.dump(res, open(a.out, "w"), indent=1, default=str)
     print(f"chains landed {res['landed_chains']}/48, complete {res['complete_chains']}; first rebuilds landed "
@@ -157,6 +164,7 @@ def main():
     print("C2a-iii: median g", None if not gs else round(st.median(gs), 4), f"(n {len(gs)}) ->", res["C2a_iii"]["verdict"])
     print("per design:", {d: (p["first_fail"], p["landed"], p["winners"], p["median_g"]) for d, p in per.items()})
     print("status:", res["status_counts"])
+    print("beside, setup-only judge:", res["beside_setup_only"])
     if res["smoke_overlap"]:
         print("already observed in smoke (same logical configuration):", res["smoke_overlap"])
     for r in rows:
