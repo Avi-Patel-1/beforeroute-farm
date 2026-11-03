@@ -99,11 +99,12 @@ for bt in block.getBTerms():
                                  "pin": it.getMTerm().getName(), "io": it.getIoType(),
                                  "x": x if ok else None, "y": y if ok else None})
     s, err = slack_of(bt)
-    rec["slack_ns"] = s
+    rec["slack_ns"] = s if rec["cells"] else None    # a port with no instance pin has no timing path
+    rec["connected"] = bool(rec["cells"])
     slack_err = slack_err or err
     ports[bt.getName()] = rec
 
-FIELDS = "-fields {slew cap input_pins nets fanout} -digits 4"
+FIELDS = "-fields {slew cap input_pins fanout} -digits 4"   # this OpenSTA names each pin's net anyway
 
 
 def checks(args):
@@ -113,7 +114,7 @@ def checks(args):
     finally:
         s = tcl("sta::redirect_string_end")
     try:
-        return json.loads(s)
+        return json.loads(s[s.index("{"):])          # skip any warning lines printed before the JSON
     except Exception:  # noqa: BLE001
         return {"raw": s}
 
