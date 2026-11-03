@@ -1,7 +1,46 @@
 {
- "batch": "smoke-m9",
- "max_parallel": 1,
+ "batch": "race",
+ "max_parallel": 4,
  "items": [
-  {"id": "smoke-rule-xtea-s1", "prompt": "farm/agent_a35/xtea/s1/round1_prompt.md"}
+  {
+   "id": "rule-xtea-s1",
+   "prompt": "farm/agent_a35/xtea/s1/round1_prompt.md"
+  },
+  {
+   "id": "rule-xtea-s2",
+   "prompt": "farm/agent_a35/xtea/s2/round1_prompt.md"
+  },
+  {
+   "id": "rule-cic_decimator-s1",
+   "prompt": "farm/agent_a35/cic_decimator/s1/round1_prompt.md"
+  },
+  {
+   "id": "rule-cic_decimator-s2",
+   "prompt": "farm/agent_a35/cic_decimator/s2/round1_prompt.md"
+  },
+  {
+   "id": "rule-zipdiv-s1",
+   "prompt": "farm/agent_a35/zipdiv/s1/round1_prompt.md"
+  },
+  {
+   "id": "rule-zipdiv-s2",
+   "prompt": "farm/agent_a35/zipdiv/s2/round1_prompt.md"
+  },
+  {
+   "id": "rule-usb_cdc_core-s1",
+   "prompt": "farm/agent_a35/usb_cdc_core/s1/round1_prompt.md"
+  },
+  {
+   "id": "rule-usb_cdc_core-s2",
+   "prompt": "farm/agent_a35/usb_cdc_core/s2/round1_prompt.md"
+  },
+  {
+   "id": "rule-wbqspiflash-s1",
+   "prompt": "farm/agent_a35/wbqspiflash/s1/round1_prompt.md"
+  },
+  {
+   "id": "rule-wbqspiflash-s2",
+   "prompt": "farm/agent_a35/wbqspiflash/s2/round1_prompt.md"
+  }
  ]
 }
