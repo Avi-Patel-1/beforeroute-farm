@@ -1,15 +1,274 @@
 {
- "batch": "s01",
- "about": "workstream B C3 smoke (not part of any analysis)",
- "max_parallel": 1,
+ "batch": "g01",
+ "about": "workstream B arm C3 (registered, docs/qa_week/B_PREREG.md): E5 grid with frozen I/O",
+ "max_parallel": 2,
  "groups": [
   {
-   "name": "smoke-gcd",
+   "name": "ibex1",
+   "num_cores": 4,
+   "timeout_s": 14400,
+   "runs": [
+    {
+     "tag": "b3g-ibex-001",
+     "design": "ibex",
+     "period": 630,
+     "vars": {},
+     "setting": "S0",
+     "kind": "grid",
+     "io_p0": 900,
+     "e5_twin": "e5g-ibex-001"
+    },
+    {
+     "tag": "b3g-ibex-004",
+     "design": "ibex",
+     "period": 1260,
+     "vars": {},
+     "setting": "S0",
+     "kind": "grid",
+     "io_p0": 900,
+     "e5_twin": "e5g-ibex-004"
+    },
+    {
+     "tag": "b3g-ibex-007",
+     "design": "ibex",
+     "period": 1305,
+     "vars": {
+      "CORE_UTILIZATION": 30
+     },
+     "setting": "S1",
+     "kind": "grid",
+     "io_p0": 900,
+     "e5_twin": "e5g-ibex-007"
+    },
+    {
+     "tag": "b3g-ibex-010",
+     "design": "ibex",
+     "period": 1305,
+     "vars": {
+      "PLACE_DENSITY_LB_ADDON": 0.4
+     },
+     "setting": "S2",
+     "kind": "grid",
+     "io_p0": 900,
+     "e5_twin": "e5g-ibex-010"
+    }
+   ]
+  },
+  {
+   "name": "ibex2",
+   "num_cores": 4,
+   "timeout_s": 14400,
+   "runs": [
+    {
+     "tag": "b3g-ibex-002",
+     "design": "ibex",
+     "period": 765,
+     "vars": {},
+     "setting": "S0",
+     "kind": "grid",
+     "io_p0": 900,
+     "e5_twin": "e5g-ibex-002"
+    },
+    {
+     "tag": "b3g-ibex-005",
+     "design": "ibex",
+     "period": 720,
+     "vars": {
+      "CORE_UTILIZATION": 30
+     },
+     "setting": "S1",
+     "kind": "grid",
+     "io_p0": 900,
+     "e5_twin": "e5g-ibex-005"
+    },
+    {
+     "tag": "b3g-ibex-008",
+     "design": "ibex",
+     "period": 720,
+     "vars": {
+      "PLACE_DENSITY_LB_ADDON": 0.4
+     },
+     "setting": "S2",
+     "kind": "grid",
+     "io_p0": 900,
+     "e5_twin": "e5g-ibex-008"
+    }
+   ]
+  },
+  {
+   "name": "ibex3",
+   "num_cores": 4,
+   "timeout_s": 14400,
+   "runs": [
+    {
+     "tag": "b3g-ibex-003",
+     "design": "ibex",
+     "period": 900,
+     "vars": {},
+     "setting": "S0",
+     "kind": "grid",
+     "io_p0": 900,
+     "e5_twin": "e5g-ibex-003"
+    },
+    {
+     "tag": "b3g-ibex-006",
+     "design": "ibex",
+     "period": 1080,
+     "vars": {
+      "CORE_UTILIZATION": 30
+     },
+     "setting": "S1",
+     "kind": "grid",
+     "io_p0": 900,
+     "e5_twin": "e5g-ibex-006"
+    },
+    {
+     "tag": "b3g-ibex-009",
+     "design": "ibex",
+     "period": 1080,
+     "vars": {
+      "PLACE_DENSITY_LB_ADDON": 0.4
+     },
+     "setting": "S2",
+     "kind": "grid",
+     "io_p0": 900,
+     "e5_twin": "e5g-ibex-009"
+    }
+   ]
+  },
+  {
+   "name": "aes1",
+   "num_cores": 4,
+   "timeout_s": 10800,
+   "runs": [
+    {
+     "tag": "b3g-aes-001",
+     "design": "aes",
+     "period": 265,
+     "vars": {},
+     "setting": "S0",
+     "kind": "grid",
+     "io_p0": 380,
+     "e5_twin": "e5g-aes-001"
+    },
+    {
+     "tag": "b3g-aes-003",
+     "design": "aes",
+     "period": 380,
+     "vars": {},
+     "setting": "S0",
+     "kind": "grid",
+     "io_p0": 380,
+     "e5_twin": "e5g-aes-003"
+    },
+    {
+     "tag": "b3g-aes-005",
+     "design": "aes",
+     "period": 305,
+     "vars": {
+      "CORE_UTILIZATION": 55
+     },
+     "setting": "S1",
+     "kind": "grid",
+     "io_p0": 380,
+     "e5_twin": "e5g-aes-005"
+    },
+    {
+     "tag": "b3g-aes-007",
+     "design": "aes",
+     "period": 550,
+     "vars": {
+      "CORE_UTILIZATION": 55
+     },
+     "setting": "S1",
+     "kind": "grid",
+     "io_p0": 380,
+     "e5_twin": "e5g-aes-007"
+    },
+    {
+     "tag": "b3g-aes-009",
+     "design": "aes",
+     "period": 455,
+     "vars": {
+      "PLACE_DENSITY": 0.85
+     },
+     "setting": "S2",
+     "kind": "grid",
+     "io_p0": 380,
+     "e5_twin": "e5g-aes-009"
+    }
+   ]
+  },
+  {
+   "name": "aes2",
+   "num_cores": 4,
+   "timeout_s": 10800,
+   "runs": [
+    {
+     "tag": "b3g-aes-002",
+     "design": "aes",
+     "period": 325,
+     "vars": {},
+     "setting": "S0",
+     "kind": "grid",
+     "io_p0": 380,
+     "e5_twin": "e5g-aes-002"
+    },
+    {
+     "tag": "b3g-aes-004",
+     "design": "aes",
+     "period": 530,
+     "vars": {},
+     "setting": "S0",
+     "kind": "grid",
+     "io_p0": 380,
+     "e5_twin": "e5g-aes-004"
+    },
+    {
+     "tag": "b3g-aes-006",
+     "design": "aes",
+     "period": 455,
+     "vars": {
+      "CORE_UTILIZATION": 55
+     },
+     "setting": "S1",
+     "kind": "grid",
+     "io_p0": 380,
+     "e5_twin": "e5g-aes-006"
+    },
+    {
+     "tag": "b3g-aes-008",
+     "design": "aes",
+     "period": 305,
+     "vars": {
+      "PLACE_DENSITY": 0.85
+     },
+     "setting": "S2",
+     "kind": "grid",
+     "io_p0": 380,
+     "e5_twin": "e5g-aes-008"
+    },
+    {
+     "tag": "b3g-aes-010",
+     "design": "aes",
+     "period": 550,
+     "vars": {
+      "PLACE_DENSITY": 0.85
+     },
+     "setting": "S2",
+     "kind": "grid",
+     "io_p0": 380,
+     "e5_twin": "e5g-aes-010"
+    }
+   ]
+  },
+  {
+   "name": "gcd1",
    "num_cores": 4,
    "timeout_s": 3600,
    "runs": [
     {
-     "tag": "smoke-b3g-gcd-001",
+     "tag": "b3g-gcd-001",
      "design": "gcd",
      "period": 215,
      "vars": {},
@@ -19,7 +278,17 @@
      "e5_twin": "e5g-gcd-001"
     },
     {
-     "tag": "smoke-b3g-gcd-003",
+     "tag": "b3g-gcd-002",
+     "design": "gcd",
+     "period": 265,
+     "vars": {},
+     "setting": "S0",
+     "kind": "grid",
+     "io_p0": 310,
+     "e5_twin": "e5g-gcd-002"
+    },
+    {
+     "tag": "b3g-gcd-003",
      "design": "gcd",
      "period": 310,
      "vars": {},
@@ -27,8 +296,91 @@
      "kind": "grid",
      "io_p0": 310,
      "e5_twin": "e5g-gcd-003"
+    },
+    {
+     "tag": "b3g-gcd-004",
+     "design": "gcd",
+     "period": 435,
+     "vars": {},
+     "setting": "S0",
+     "kind": "grid",
+     "io_p0": 310,
+     "e5_twin": "e5g-gcd-004"
+    },
+    {
+     "tag": "b3g-gcd-005",
+     "design": "gcd",
+     "period": 250,
+     "vars": {
+      "CORE_UTILIZATION": 50
+     },
+     "setting": "S1",
+     "kind": "grid",
+     "io_p0": 310,
+     "e5_twin": "e5g-gcd-005"
+    },
+    {
+     "tag": "b3g-gcd-006",
+     "design": "gcd",
+     "period": 370,
+     "vars": {
+      "CORE_UTILIZATION": 50
+     },
+     "setting": "S1",
+     "kind": "grid",
+     "io_p0": 310,
+     "e5_twin": "e5g-gcd-006"
+    },
+    {
+     "tag": "b3g-gcd-007",
+     "design": "gcd",
+     "period": 450,
+     "vars": {
+      "CORE_UTILIZATION": 50
+     },
+     "setting": "S1",
+     "kind": "grid",
+     "io_p0": 310,
+     "e5_twin": "e5g-gcd-007"
+    },
+    {
+     "tag": "b3g-gcd-008",
+     "design": "gcd",
+     "period": 250,
+     "vars": {
+      "PLACE_DENSITY": 0.9
+     },
+     "setting": "S2",
+     "kind": "grid",
+     "io_p0": 310,
+     "e5_twin": "e5g-gcd-008"
+    },
+    {
+     "tag": "b3g-gcd-009",
+     "design": "gcd",
+     "period": 370,
+     "vars": {
+      "PLACE_DENSITY": 0.9
+     },
+     "setting": "S2",
+     "kind": "grid",
+     "io_p0": 310,
+     "e5_twin": "e5g-gcd-009"
+    },
+    {
+     "tag": "b3g-gcd-010",
+     "design": "gcd",
+     "period": 450,
+     "vars": {
+      "PLACE_DENSITY": 0.9
+     },
+     "setting": "S2",
+     "kind": "grid",
+     "io_p0": 310,
+     "e5_twin": "e5g-gcd-010"
     }
    ]
   }
- ]
+ ],
+ "auto_chains": "ibex,aes,gcd"
 }
