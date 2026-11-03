@@ -1,0 +1,3488 @@
+{
+ "cases": [
+  {
+   "case": "c01",
+   "design": "cic_decimator",
+   "T0": 4.6,
+   "record_claim0": 4.095178023711922,
+   "record_kept": 4.1,
+   "arms": {
+    "stock": {
+     "kept": 4.1,
+     "truncated": null,
+     "plan_sha256": null,
+     "n_moves_in_plan": 0,
+     "first_rebuild_passed": true,
+     "builds": [
+      {
+       "tag": "io-c01-stock-r0",
+       "kind": "source",
+       "clock": 4.6,
+       "passed": true,
+       "claim": 4.095178023711922,
+       "ws": 0.504821976288078,
+       "ws_r2r": 0.522645,
+       "hold": 0.08039291682131149,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 87.2,
+       "retried": null,
+       "pins": null
+      },
+      {
+       "tag": "io-c01-stock-r1",
+       "kind": "rebuild",
+       "clock": 4.1,
+       "passed": true,
+       "claim": 3.9298385546938617,
+       "ws": 0.17016144530613792,
+       "ws_r2r": 0.227637,
+       "hold": 0.08252504468925356,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 128.0,
+       "retried": null,
+       "pins": null
+      },
+      {
+       "tag": "io-c01-stock-r2",
+       "kind": "rebuild",
+       "clock": 3.95,
+       "passed": false,
+       "claim": 3.9775532937598026,
+       "ws": -0.027553293759802575,
+       "ws_r2r": 0.043292,
+       "hold": 0.09700329702940948,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 164.6,
+       "retried": null,
+       "pins": null
+      }
+     ]
+    },
+    "script": {
+     "kept": 4.0,
+     "truncated": null,
+     "plan_sha256": "2b3a085a55b3bf7c234acf36a84bba8023930600fc71ccf5b0292df2e74be926",
+     "n_moves_in_plan": 4,
+     "first_rebuild_passed": true,
+     "builds": [
+      {
+       "tag": "io-c01-script-r0",
+       "kind": "source",
+       "clock": 4.6,
+       "passed": true,
+       "claim": 4.098220478974651,
+       "ws": 0.5017795210253487,
+       "ws_r2r": 0.501779,
+       "hold": 0.0783919062962859,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 174.1,
+       "retried": null,
+       "pins": {
+        "moved_groups": 4,
+        "placed_pins": 4,
+        "pins_off_stock_position": 4,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c01-script-r1",
+       "kind": "rebuild",
+       "clock": 4.1,
+       "passed": true,
+       "claim": 4.031086234466453,
+       "ws": 0.06891376553354711,
+       "ws_r2r": 0.068914,
+       "hold": 0.08584561082751696,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 241.8,
+       "retried": null,
+       "pins": {
+        "moved_groups": 4,
+        "placed_pins": 4,
+        "pins_off_stock_position": 4,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c01-script-r2",
+       "kind": "rebuild",
+       "clock": 4.05,
+       "passed": true,
+       "claim": 3.9747644023408384,
+       "ws": 0.0752355976591613,
+       "ws_r2r": 0.151659,
+       "hold": 0.09261464080009779,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 241.0,
+       "retried": null,
+       "pins": {
+        "moved_groups": 4,
+        "placed_pins": 4,
+        "pins_off_stock_position": 4,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c01-script-r3",
+       "kind": "rebuild",
+       "clock": 4.0,
+       "passed": true,
+       "claim": 3.8940101134659066,
+       "ws": 0.10598988653409346,
+       "ws_r2r": 0.110785,
+       "hold": 0.08754236472403908,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 285.2,
+       "retried": null,
+       "pins": {
+        "moved_groups": 4,
+        "placed_pins": 4,
+        "pins_off_stock_position": 4,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c01-script-r4",
+       "kind": "rebuild",
+       "clock": 3.9,
+       "passed": false,
+       "claim": 3.9988165133245084,
+       "ws": -0.09881651332450854,
+       "ws_r2r": -0.064145,
+       "hold": 0.08359801976174835,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 334.1,
+       "retried": null,
+       "pins": {
+        "moved_groups": 4,
+        "placed_pins": 4,
+        "pins_off_stock_position": 4,
+        "dropped_groups": []
+       }
+      }
+     ]
+    },
+    "claude": {
+     "kept": 4.1,
+     "truncated": null,
+     "plan_sha256": "5ba5eff8ac59874d429f9530591fb32e19e4989349de151677d41288c81f5d7b",
+     "n_moves_in_plan": 0,
+     "first_rebuild_passed": true,
+     "builds": [
+      {
+       "tag": "io-c01-claude-r0",
+       "kind": "source",
+       "clock": 4.6,
+       "passed": true,
+       "claim": 4.095178023711922,
+       "ws": 0.504821976288078,
+       "ws_r2r": 0.522645,
+       "hold": 0.08039291682131149,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 93.5,
+       "retried": null,
+       "pins": {
+        "moved_groups": 0,
+        "placed_pins": 0,
+        "pins_off_stock_position": 0,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c01-claude-r1",
+       "kind": "rebuild",
+       "clock": 4.1,
+       "passed": true,
+       "claim": 3.9298385546938617,
+       "ws": 0.17016144530613792,
+       "ws_r2r": 0.227637,
+       "hold": 0.08252504468925356,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 135.0,
+       "retried": null,
+       "pins": {
+        "moved_groups": 0,
+        "placed_pins": 0,
+        "pins_off_stock_position": 0,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c01-claude-r2",
+       "kind": "rebuild",
+       "clock": 3.95,
+       "passed": false,
+       "claim": 3.9775532937598026,
+       "ws": -0.027553293759802575,
+       "ws_r2r": 0.043292,
+       "hold": 0.09700329702940948,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 175.9,
+       "retried": null,
+       "pins": {
+        "moved_groups": 0,
+        "placed_pins": 0,
+        "pins_off_stock_position": 0,
+        "dropped_groups": []
+       }
+      }
+     ]
+    }
+   },
+   "g_claude_stock": 0.0,
+   "g_claude_script": -0.024390243902438935,
+   "g_script_stock": 0.02499999999999991,
+   "g_stock_record": 0.0,
+   "claude_moved": false
+  },
+  {
+   "case": "c02",
+   "design": "xtea",
+   "T0": 11.71,
+   "record_claim0": 6.212760292073042,
+   "record_kept": 4.6,
+   "arms": {
+    "stock": {
+     "kept": 4.6,
+     "truncated": null,
+     "plan_sha256": null,
+     "n_moves_in_plan": 0,
+     "first_rebuild_passed": true,
+     "builds": [
+      {
+       "tag": "io-c02-stock-r0",
+       "kind": "source",
+       "clock": 11.71,
+       "passed": true,
+       "claim": 6.212760292073042,
+       "ws": 5.497239707926959,
+       "ws_r2r": 7.419761,
+       "hold": 0.09583278886144295,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 75.6,
+       "retried": null,
+       "pins": null
+      },
+      {
+       "tag": "io-c02-stock-r1",
+       "kind": "rebuild",
+       "clock": 6.25,
+       "passed": true,
+       "claim": 5.120761487561228,
+       "ws": 1.1292385124387725,
+       "ws_r2r": 1.959761,
+       "hold": 0.09583278886144295,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 74.7,
+       "retried": null,
+       "pins": null
+      },
+      {
+       "tag": "io-c02-stock-r2",
+       "kind": "rebuild",
+       "clock": 5.15,
+       "passed": true,
+       "claim": 4.851291378152077,
+       "ws": 0.29870862184792407,
+       "ws_r2r": 0.853952,
+       "hold": 0.09776138508763935,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 77.5,
+       "retried": null,
+       "pins": null
+      },
+      {
+       "tag": "io-c02-stock-r3",
+       "kind": "rebuild",
+       "clock": 4.9,
+       "passed": true,
+       "claim": 4.586171694441302,
+       "ws": 0.3138283055586981,
+       "ws_r2r": 0.603758,
+       "hold": 0.0982373654673334,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 78.0,
+       "retried": null,
+       "pins": null
+      },
+      {
+       "tag": "io-c02-stock-r4",
+       "kind": "rebuild",
+       "clock": 4.6,
+       "passed": true,
+       "claim": 4.293113919210622,
+       "ws": 0.30688608078937746,
+       "ws_r2r": 0.380396,
+       "hold": 0.09787454457262464,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 79.0,
+       "retried": null,
+       "pins": null
+      }
+     ]
+    },
+    "script": {
+     "kept": 4.8,
+     "truncated": null,
+     "plan_sha256": "4ed6f4be667259c95b6c6d29bc042eec67284d2590302cbdf60bb772887a68da",
+     "n_moves_in_plan": 2,
+     "first_rebuild_passed": true,
+     "builds": [
+      {
+       "tag": "io-c02-script-r0",
+       "kind": "source",
+       "clock": 11.71,
+       "passed": true,
+       "claim": 6.518529044378836,
+       "ws": 5.191470955621165,
+       "ws_r2r": 7.487408,
+       "hold": 0.09931317160862106,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 61.4,
+       "retried": null,
+       "pins": {
+        "moved_groups": 2,
+        "placed_pins": 64,
+        "pins_off_stock_position": 64,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c02-script-r1",
+       "kind": "rebuild",
+       "clock": 6.55,
+       "passed": true,
+       "claim": 5.486530213221668,
+       "ws": 1.0634697867783314,
+       "ws_r2r": 2.327408,
+       "hold": 0.09931317160862106,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 61.0,
+       "retried": null,
+       "pins": {
+        "moved_groups": 2,
+        "placed_pins": 64,
+        "pins_off_stock_position": 64,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c02-script-r2",
+       "kind": "rebuild",
+       "clock": 5.5,
+       "passed": true,
+       "claim": 5.008951895034183,
+       "ws": 0.4910481049658168,
+       "ws_r2r": 1.273211,
+       "hold": 0.09930262448958883,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 61.2,
+       "retried": null,
+       "pins": {
+        "moved_groups": 2,
+        "placed_pins": 64,
+        "pins_off_stock_position": 64,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c02-script-r3",
+       "kind": "rebuild",
+       "clock": 5.05,
+       "passed": true,
+       "claim": 4.757752654293527,
+       "ws": 0.29224734570647326,
+       "ws_r2r": 0.820918,
+       "hold": 0.09931322711977386,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 61.5,
+       "retried": null,
+       "pins": {
+        "moved_groups": 2,
+        "placed_pins": 64,
+        "pins_off_stock_position": 64,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c02-script-r4",
+       "kind": "rebuild",
+       "clock": 4.8,
+       "passed": true,
+       "claim": 4.512861012618906,
+       "ws": 0.2871389873810937,
+       "ws_r2r": 0.565497,
+       "hold": 0.09931322711977386,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 61.8,
+       "retried": null,
+       "pins": {
+        "moved_groups": 2,
+        "placed_pins": 64,
+        "pins_off_stock_position": 64,
+        "dropped_groups": []
+       }
+      }
+     ]
+    },
+    "claude": {
+     "kept": 4.6,
+     "truncated": null,
+     "plan_sha256": "8eab968c253e9e454f38ea965c007549b387800edeb5ae8f38e9c40902e8889b",
+     "n_moves_in_plan": 0,
+     "first_rebuild_passed": true,
+     "builds": [
+      {
+       "tag": "io-c02-claude-r0",
+       "kind": "source",
+       "clock": 11.71,
+       "passed": true,
+       "claim": 6.212760292073042,
+       "ws": 5.497239707926959,
+       "ws_r2r": 7.419761,
+       "hold": 0.09583278886144295,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 60.5,
+       "retried": null,
+       "pins": {
+        "moved_groups": 0,
+        "placed_pins": 0,
+        "pins_off_stock_position": 0,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c02-claude-r1",
+       "kind": "rebuild",
+       "clock": 6.25,
+       "passed": true,
+       "claim": 5.120761487561228,
+       "ws": 1.1292385124387725,
+       "ws_r2r": 1.959761,
+       "hold": 0.09583278886144295,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 60.5,
+       "retried": null,
+       "pins": {
+        "moved_groups": 0,
+        "placed_pins": 0,
+        "pins_off_stock_position": 0,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c02-claude-r2",
+       "kind": "rebuild",
+       "clock": 5.15,
+       "passed": true,
+       "claim": 4.851291378152077,
+       "ws": 0.29870862184792407,
+       "ws_r2r": 0.853952,
+       "hold": 0.09776138508763935,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 62.2,
+       "retried": null,
+       "pins": {
+        "moved_groups": 0,
+        "placed_pins": 0,
+        "pins_off_stock_position": 0,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c02-claude-r3",
+       "kind": "rebuild",
+       "clock": 4.9,
+       "passed": true,
+       "claim": 4.586171694441302,
+       "ws": 0.3138283055586981,
+       "ws_r2r": 0.603758,
+       "hold": 0.0982373654673334,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 62.8,
+       "retried": null,
+       "pins": {
+        "moved_groups": 0,
+        "placed_pins": 0,
+        "pins_off_stock_position": 0,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c02-claude-r4",
+       "kind": "rebuild",
+       "clock": 4.6,
+       "passed": true,
+       "claim": 4.293113919210622,
+       "ws": 0.30688608078937746,
+       "ws_r2r": 0.380396,
+       "hold": 0.09787454457262464,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 64.7,
+       "retried": null,
+       "pins": {
+        "moved_groups": 0,
+        "placed_pins": 0,
+        "pins_off_stock_position": 0,
+        "dropped_groups": []
+       }
+      }
+     ]
+    }
+   },
+   "g_claude_stock": 0.0,
+   "g_claude_script": 0.04347826086956519,
+   "g_script_stock": -0.04166666666666674,
+   "g_stock_record": 0.0,
+   "claude_moved": false
+  },
+  {
+   "case": "c03",
+   "design": "usb_cdc_core",
+   "T0": 7.02,
+   "record_claim0": 6.186652363292961,
+   "record_kept": 5.9,
+   "arms": {
+    "stock": {
+     "kept": 5.9,
+     "truncated": null,
+     "plan_sha256": null,
+     "n_moves_in_plan": 0,
+     "first_rebuild_passed": true,
+     "builds": [
+      {
+       "tag": "io-c03-stock-r0",
+       "kind": "source",
+       "clock": 7.02,
+       "passed": true,
+       "claim": 6.186652363292961,
+       "ws": 0.8333476367070385,
+       "ws_r2r": 0.883009,
+       "hold": 0.08719042401527934,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 202.9,
+       "retried": null,
+       "pins": null
+      },
+      {
+       "tag": "io-c03-stock-r1",
+       "kind": "rebuild",
+       "clock": 6.2,
+       "passed": true,
+       "claim": 5.879156639039506,
+       "ws": 0.32084336096049393,
+       "ws_r2r": 0.627968,
+       "hold": 0.08363321383262433,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 220.7,
+       "retried": null,
+       "pins": null
+      },
+      {
+       "tag": "io-c03-stock-r2",
+       "kind": "rebuild",
+       "clock": 5.9,
+       "passed": true,
+       "claim": 5.867887020149105,
+       "ws": 0.03211297985089482,
+       "ws_r2r": 0.549944,
+       "hold": 0.04352612837797855,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 269.5,
+       "retried": null,
+       "pins": null
+      }
+     ]
+    },
+    "script": {
+     "kept": 5.85,
+     "truncated": null,
+     "plan_sha256": "bc219001a1e31eb6864f28451cbb7a53641080e000fdce9aa2da00ac7446e7f6",
+     "n_moves_in_plan": 4,
+     "first_rebuild_passed": true,
+     "builds": [
+      {
+       "tag": "io-c03-script-r0",
+       "kind": "source",
+       "clock": 7.02,
+       "passed": true,
+       "claim": 6.3143373406094385,
+       "ws": 0.7056626593905608,
+       "ws_r2r": 0.732977,
+       "hold": 0.09020839885962328,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 166.6,
+       "retried": null,
+       "pins": {
+        "moved_groups": 4,
+        "placed_pins": 11,
+        "pins_off_stock_position": 11,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c03-script-r1",
+       "kind": "rebuild",
+       "clock": 6.35,
+       "passed": true,
+       "claim": 5.96770490471011,
+       "ws": 0.3822950952898898,
+       "ws_r2r": 0.38748,
+       "hold": 0.07807654743722216,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 180.2,
+       "retried": null,
+       "pins": {
+        "moved_groups": 4,
+        "placed_pins": 11,
+        "pins_off_stock_position": 11,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c03-script-r2",
+       "kind": "rebuild",
+       "clock": 6.0,
+       "passed": true,
+       "claim": 5.807542833238169,
+       "ws": 0.19245716676183128,
+       "ws_r2r": 0.526026,
+       "hold": 0.07455014594437183,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 169.8,
+       "retried": null,
+       "pins": {
+        "moved_groups": 4,
+        "placed_pins": 11,
+        "pins_off_stock_position": 11,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c03-script-r3",
+       "kind": "rebuild",
+       "clock": 5.85,
+       "passed": true,
+       "claim": 5.82654587180765,
+       "ws": 0.023454128192349252,
+       "ws_r2r": 0.528955,
+       "hold": 0.08790579624142866,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 160.7,
+       "retried": null,
+       "pins": {
+        "moved_groups": 4,
+        "placed_pins": 11,
+        "pins_off_stock_position": 11,
+        "dropped_groups": []
+       }
+      }
+     ]
+    },
+    "claude": {
+     "kept": 5.8,
+     "truncated": null,
+     "plan_sha256": "7b0d9ba1be2d497698f38d6d4ef030df49de1cf0db31df1984dafc15f0474019",
+     "n_moves_in_plan": 3,
+     "first_rebuild_passed": true,
+     "builds": [
+      {
+       "tag": "io-c03-claude-r0",
+       "kind": "source",
+       "clock": 7.02,
+       "passed": true,
+       "claim": 6.3040313620249755,
+       "ws": 0.7159686379750242,
+       "ws_r2r": 0.75287,
+       "hold": 0.0900273214791857,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 206.3,
+       "retried": null,
+       "pins": {
+        "moved_groups": 3,
+        "placed_pins": 10,
+        "pins_off_stock_position": 9,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c03-claude-r1",
+       "kind": "rebuild",
+       "clock": 6.35,
+       "passed": true,
+       "claim": 6.050587052645334,
+       "ws": 0.29941294735466595,
+       "ws_r2r": 0.623061,
+       "hold": 0.08957468353924455,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 238.9,
+       "retried": null,
+       "pins": {
+        "moved_groups": 3,
+        "placed_pins": 10,
+        "pins_off_stock_position": 9,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c03-claude-r2",
+       "kind": "rebuild",
+       "clock": 6.1,
+       "passed": true,
+       "claim": 5.879047404193024,
+       "ws": 0.22095259580697618,
+       "ws_r2r": 0.588703,
+       "hold": 0.06401290789733856,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 282.7,
+       "retried": null,
+       "pins": {
+        "moved_groups": 3,
+        "placed_pins": 10,
+        "pins_off_stock_position": 9,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c03-claude-r3",
+       "kind": "rebuild",
+       "clock": 5.9,
+       "passed": true,
+       "claim": 5.785246900840095,
+       "ws": 0.11475309915990532,
+       "ws_r2r": 0.447117,
+       "hold": 0.07778133912662527,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 314.5,
+       "retried": null,
+       "pins": {
+        "moved_groups": 3,
+        "placed_pins": 10,
+        "pins_off_stock_position": 9,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c03-claude-r4",
+       "kind": "rebuild",
+       "clock": 5.8,
+       "passed": true,
+       "claim": 5.773488317511359,
+       "ws": 0.026511682488640474,
+       "ws_r2r": 0.301055,
+       "hold": 0.08917927759784146,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 276.8,
+       "retried": null,
+       "pins": {
+        "moved_groups": 3,
+        "placed_pins": 10,
+        "pins_off_stock_position": 9,
+        "dropped_groups": []
+       }
+      }
+     ]
+    }
+   },
+   "g_claude_stock": 0.017241379310344973,
+   "g_claude_script": 0.008620689655172376,
+   "g_script_stock": 0.008547008547008739,
+   "g_stock_record": 0.0,
+   "claude_moved": true
+  },
+  {
+   "case": "c04",
+   "design": "usb_cdc_core",
+   "T0": 7.02,
+   "record_claim0": 6.340679825104341,
+   "record_kept": 5.7,
+   "arms": {
+    "stock": {
+     "kept": 5.7,
+     "truncated": null,
+     "plan_sha256": null,
+     "n_moves_in_plan": 0,
+     "first_rebuild_passed": true,
+     "builds": [
+      {
+       "tag": "io-c04-stock-r0",
+       "kind": "source",
+       "clock": 7.02,
+       "passed": true,
+       "claim": 6.340679825104341,
+       "ws": 0.6793201748956584,
+       "ws_r2r": 0.908876,
+       "hold": 0.08449546856908569,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 131.6,
+       "retried": null,
+       "pins": null
+      },
+      {
+       "tag": "io-c04-stock-r1",
+       "kind": "rebuild",
+       "clock": 6.35,
+       "passed": true,
+       "claim": 6.026041353144302,
+       "ws": 0.3239586468556984,
+       "ws_r2r": 0.380084,
+       "hold": 0.08879924824576431,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 132.7,
+       "retried": null,
+       "pins": null
+      },
+      {
+       "tag": "io-c04-stock-r2",
+       "kind": "rebuild",
+       "clock": 6.05,
+       "passed": true,
+       "claim": 5.881556513850754,
+       "ws": 0.16844348614924573,
+       "ws_r2r": 0.336803,
+       "hold": 0.08079104280920184,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 147.9,
+       "retried": null,
+       "pins": null
+      },
+      {
+       "tag": "io-c04-stock-r3",
+       "kind": "rebuild",
+       "clock": 5.9,
+       "passed": true,
+       "claim": 5.659495932087212,
+       "ws": 0.24050406791278842,
+       "ws_r2r": 0.265863,
+       "hold": 0.08554751593697442,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 136.2,
+       "retried": null,
+       "pins": null
+      },
+      {
+       "tag": "io-c04-stock-r4",
+       "kind": "rebuild",
+       "clock": 5.7,
+       "passed": true,
+       "claim": 5.655851758132578,
+       "ws": 0.04414824186742183,
+       "ws_r2r": 0.172204,
+       "hold": 0.04126504810207924,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 153.3,
+       "retried": null,
+       "pins": null
+      }
+     ]
+    },
+    "script": {
+     "kept": 5.75,
+     "truncated": null,
+     "plan_sha256": "e74f71c0243df49cde76cb987f2ef14f37186a4ae504ef88d9f43ba4657a9c13",
+     "n_moves_in_plan": 4,
+     "first_rebuild_passed": true,
+     "builds": [
+      {
+       "tag": "io-c04-script-r0",
+       "kind": "source",
+       "clock": 7.02,
+       "passed": true,
+       "claim": 6.40250814709434,
+       "ws": 0.6174918529056591,
+       "ws_r2r": 0.684257,
+       "hold": 0.08624834424108982,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 202.7,
+       "retried": null,
+       "pins": {
+        "moved_groups": 4,
+        "placed_pins": 11,
+        "pins_off_stock_position": 10,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c04-script-r1",
+       "kind": "rebuild",
+       "clock": 6.45,
+       "passed": true,
+       "claim": 6.15245666827168,
+       "ws": 0.29754333172832087,
+       "ws_r2r": 0.431363,
+       "hold": 0.09086753828798498,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 206.2,
+       "retried": null,
+       "pins": {
+        "moved_groups": 4,
+        "placed_pins": 11,
+        "pins_off_stock_position": 10,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c04-script-r2",
+       "kind": "rebuild",
+       "clock": 6.2,
+       "passed": true,
+       "claim": 5.971284280496079,
+       "ws": 0.22871571950392125,
+       "ws_r2r": 0.305938,
+       "hold": 0.09250994676591469,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 219.8,
+       "retried": null,
+       "pins": {
+        "moved_groups": 4,
+        "placed_pins": 11,
+        "pins_off_stock_position": 10,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c04-script-r3",
+       "kind": "rebuild",
+       "clock": 6.0,
+       "passed": true,
+       "claim": 5.748594429855497,
+       "ws": 0.2514055701445033,
+       "ws_r2r": 0.309998,
+       "hold": 0.08310197210031664,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 208.1,
+       "retried": null,
+       "pins": {
+        "moved_groups": 4,
+        "placed_pins": 11,
+        "pins_off_stock_position": 10,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c04-script-r4",
+       "kind": "rebuild",
+       "clock": 5.75,
+       "passed": true,
+       "claim": 5.654670919339075,
+       "ws": 0.09532908066092467,
+       "ws_r2r": 0.194052,
+       "hold": 0.07822748226168867,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 237.9,
+       "retried": null,
+       "pins": {
+        "moved_groups": 4,
+        "placed_pins": 11,
+        "pins_off_stock_position": 10,
+        "dropped_groups": []
+       }
+      }
+     ]
+    },
+    "claude": {
+     "kept": 5.7,
+     "truncated": null,
+     "plan_sha256": "78133e2088b3267a98c02660a701748f33435241c122d78e3198e8978a9f43fd",
+     "n_moves_in_plan": 1,
+     "first_rebuild_passed": true,
+     "builds": [
+      {
+       "tag": "io-c04-claude-r0",
+       "kind": "source",
+       "clock": 7.02,
+       "passed": true,
+       "claim": 6.358103665745588,
+       "ws": 0.6618963342544114,
+       "ws_r2r": 0.930586,
+       "hold": 0.09350898098287826,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 198.0,
+       "retried": null,
+       "pins": {
+        "moved_groups": 1,
+        "placed_pins": 1,
+        "pins_off_stock_position": 1,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c04-claude-r1",
+       "kind": "rebuild",
+       "clock": 6.4,
+       "passed": true,
+       "claim": 6.092963817053448,
+       "ws": 0.307036182946552,
+       "ws_r2r": 0.356405,
+       "hold": 0.09120765512119805,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 208.5,
+       "retried": null,
+       "pins": {
+        "moved_groups": 1,
+        "placed_pins": 1,
+        "pins_off_stock_position": 1,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c04-claude-r2",
+       "kind": "rebuild",
+       "clock": 6.1,
+       "passed": true,
+       "claim": 5.8327622049873655,
+       "ws": 0.2672377950126338,
+       "ws_r2r": 0.368375,
+       "hold": 0.077277630926107,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 215.8,
+       "retried": null,
+       "pins": {
+        "moved_groups": 1,
+        "placed_pins": 1,
+        "pins_off_stock_position": 1,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c04-claude-r3",
+       "kind": "rebuild",
+       "clock": 5.85,
+       "passed": true,
+       "claim": 5.651420175128805,
+       "ws": 0.1985798248711947,
+       "ws_r2r": 0.258031,
+       "hold": 0.08228029601655298,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 229.1,
+       "retried": null,
+       "pins": {
+        "moved_groups": 1,
+        "placed_pins": 1,
+        "pins_off_stock_position": 1,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c04-claude-r4",
+       "kind": "rebuild",
+       "clock": 5.7,
+       "passed": true,
+       "claim": 5.6953579353581505,
+       "ws": 0.004642064641849258,
+       "ws_r2r": 0.209474,
+       "hold": 0.09081713416124147,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 247.1,
+       "retried": null,
+       "pins": {
+        "moved_groups": 1,
+        "placed_pins": 1,
+        "pins_off_stock_position": 1,
+        "dropped_groups": []
+       }
+      }
+     ]
+    }
+   },
+   "g_claude_stock": 0.0,
+   "g_claude_script": 0.00877192982456143,
+   "g_script_stock": -0.008695652173912993,
+   "g_stock_record": 0.0,
+   "claude_moved": true
+  },
+  {
+   "case": "c05",
+   "design": "usb_cdc_core",
+   "T0": 7.02,
+   "record_claim0": 6.302018305579792,
+   "record_kept": 5.85,
+   "arms": {
+    "stock": {
+     "kept": 5.85,
+     "truncated": null,
+     "plan_sha256": null,
+     "n_moves_in_plan": 0,
+     "first_rebuild_passed": true,
+     "builds": [
+      {
+       "tag": "io-c05-stock-r0",
+       "kind": "source",
+       "clock": 7.02,
+       "passed": true,
+       "claim": 6.302018305579792,
+       "ws": 0.7179816944202077,
+       "ws_r2r": 0.894384,
+       "hold": 0.09486428577852005,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 195.9,
+       "retried": null,
+       "pins": null
+      },
+      {
+       "tag": "io-c05-stock-r1",
+       "kind": "rebuild",
+       "clock": 6.35,
+       "passed": true,
+       "claim": 5.885312587187204,
+       "ws": 0.46468741281279563,
+       "ws_r2r": 0.619096,
+       "hold": 0.09600509547973793,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 218.1,
+       "retried": null,
+       "pins": null
+      },
+      {
+       "tag": "io-c05-stock-r2",
+       "kind": "rebuild",
+       "clock": 5.9,
+       "passed": true,
+       "claim": 5.812667633967008,
+       "ws": 0.08733236603299205,
+       "ws_r2r": 0.316713,
+       "hold": 0.053906713951806774,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 270.0,
+       "retried": null,
+       "pins": null
+      },
+      {
+       "tag": "io-c05-stock-r3",
+       "kind": "rebuild",
+       "clock": 5.85,
+       "passed": true,
+       "claim": 5.778044223292945,
+       "ws": 0.071955776707054,
+       "ws_r2r": 0.412403,
+       "hold": 0.06965767049223627,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 279.7,
+       "retried": null,
+       "pins": null
+      },
+      {
+       "tag": "io-c05-stock-r4",
+       "kind": "rebuild",
+       "clock": 5.8,
+       "passed": false,
+       "claim": 5.841232796122301,
+       "ws": -0.041232796122301726,
+       "ws_r2r": 0.181721,
+       "hold": 0.05210199086308629,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 291.2,
+       "retried": null,
+       "pins": null
+      }
+     ]
+    },
+    "script": {
+     "kept": 5.8,
+     "truncated": null,
+     "plan_sha256": "c8708541c497f670e41fdb7193d1585e997163bfd9a0b423c5baf523ca6c5b28",
+     "n_moves_in_plan": 4,
+     "first_rebuild_passed": true,
+     "builds": [
+      {
+       "tag": "io-c05-script-r0",
+       "kind": "source",
+       "clock": 7.02,
+       "passed": true,
+       "claim": 6.341383262432638,
+       "ws": 0.6786167375673614,
+       "ws_r2r": 0.979852,
+       "hold": 0.09148465577367615,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 198.5,
+       "retried": null,
+       "pins": {
+        "moved_groups": 4,
+        "placed_pins": 11,
+        "pins_off_stock_position": 11,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c05-script-r1",
+       "kind": "rebuild",
+       "clock": 6.35,
+       "passed": true,
+       "claim": 5.9244612725887364,
+       "ws": 0.4255387274112629,
+       "ws_r2r": 0.635374,
+       "hold": 0.09021889046750271,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 217.4,
+       "retried": null,
+       "pins": {
+        "moved_groups": 4,
+        "placed_pins": 11,
+        "pins_off_stock_position": 11,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c05-script-r2",
+       "kind": "rebuild",
+       "clock": 5.95,
+       "passed": true,
+       "claim": 5.7736601633870865,
+       "ws": 0.17633983661291375,
+       "ws_r2r": 0.619463,
+       "hold": 0.04960743067850505,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 236.3,
+       "retried": null,
+       "pins": {
+        "moved_groups": 4,
+        "placed_pins": 11,
+        "pins_off_stock_position": 11,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c05-script-r3",
+       "kind": "rebuild",
+       "clock": 5.8,
+       "passed": true,
+       "claim": 5.73311661039131,
+       "ws": 0.06688338960868967,
+       "ws_r2r": 0.523088,
+       "hold": 0.04285322218372215,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 262.4,
+       "retried": null,
+       "pins": {
+        "moved_groups": 4,
+        "placed_pins": 11,
+        "pins_off_stock_position": 11,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c05-script-r4",
+       "kind": "rebuild",
+       "clock": 5.75,
+       "passed": false,
+       "claim": 5.784971138086324,
+       "ws": -0.034971138086324065,
+       "ws_r2r": 0.442628,
+       "hold": 0.06730982628450864,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 257.4,
+       "retried": null,
+       "pins": {
+        "moved_groups": 4,
+        "placed_pins": 11,
+        "pins_off_stock_position": 11,
+        "dropped_groups": []
+       }
+      }
+     ]
+    },
+    "claude": {
+     "kept": 5.85,
+     "truncated": null,
+     "plan_sha256": "f3d3684c2ccddd7f8469148c3a141fb3388139b22c17ef2ebe8fd7abe090bee5",
+     "n_moves_in_plan": 0,
+     "first_rebuild_passed": true,
+     "builds": [
+      {
+       "tag": "io-c05-claude-r0",
+       "kind": "source",
+       "clock": 7.02,
+       "passed": true,
+       "claim": 6.302018305579792,
+       "ws": 0.7179816944202077,
+       "ws_r2r": 0.894384,
+       "hold": 0.09486428577852005,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 196.7,
+       "retried": null,
+       "pins": {
+        "moved_groups": 0,
+        "placed_pins": 0,
+        "pins_off_stock_position": 0,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c05-claude-r1",
+       "kind": "rebuild",
+       "clock": 6.35,
+       "passed": true,
+       "claim": 5.885312587187204,
+       "ws": 0.46468741281279563,
+       "ws_r2r": 0.619096,
+       "hold": 0.09600509547973793,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 219.4,
+       "retried": null,
+       "pins": {
+        "moved_groups": 0,
+        "placed_pins": 0,
+        "pins_off_stock_position": 0,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c05-claude-r2",
+       "kind": "rebuild",
+       "clock": 5.9,
+       "passed": true,
+       "claim": 5.812667633967008,
+       "ws": 0.08733236603299205,
+       "ws_r2r": 0.316713,
+       "hold": 0.053906713951806774,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 278.3,
+       "retried": null,
+       "pins": {
+        "moved_groups": 0,
+        "placed_pins": 0,
+        "pins_off_stock_position": 0,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c05-claude-r3",
+       "kind": "rebuild",
+       "clock": 5.85,
+       "passed": true,
+       "claim": 5.778044223292945,
+       "ws": 0.071955776707054,
+       "ws_r2r": 0.412403,
+       "hold": 0.06965767049223627,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 283.0,
+       "retried": null,
+       "pins": {
+        "moved_groups": 0,
+        "placed_pins": 0,
+        "pins_off_stock_position": 0,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c05-claude-r4",
+       "kind": "rebuild",
+       "clock": 5.8,
+       "passed": false,
+       "claim": 5.841232796122301,
+       "ws": -0.041232796122301726,
+       "ws_r2r": 0.181721,
+       "hold": 0.05210199086308629,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 291.6,
+       "retried": null,
+       "pins": {
+        "moved_groups": 0,
+        "placed_pins": 0,
+        "pins_off_stock_position": 0,
+        "dropped_groups": []
+       }
+      }
+     ]
+    }
+   },
+   "g_claude_stock": 0.0,
+   "g_claude_script": -0.008547008547008517,
+   "g_script_stock": 0.008620689655172376,
+   "g_stock_record": 0.0,
+   "claude_moved": false
+  },
+  {
+   "case": "c06",
+   "design": "xtea",
+   "T0": 11.71,
+   "record_claim0": 5.927190938048555,
+   "record_kept": 4.25,
+   "arms": {
+    "stock": {
+     "kept": 4.25,
+     "truncated": null,
+     "plan_sha256": null,
+     "n_moves_in_plan": 0,
+     "first_rebuild_passed": true,
+     "builds": [
+      {
+       "tag": "io-c06-stock-r0",
+       "kind": "source",
+       "clock": 11.71,
+       "passed": true,
+       "claim": 5.927190938048555,
+       "ws": 5.782809061951446,
+       "ws_r2r": 7.485865,
+       "hold": 0.10433260106721301,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 81.2,
+       "retried": null,
+       "pins": null
+      },
+      {
+       "tag": "io-c06-stock-r1",
+       "kind": "rebuild",
+       "clock": 5.95,
+       "passed": true,
+       "claim": 4.775191716092872,
+       "ws": 1.174808283907128,
+       "ws_r2r": 1.725865,
+       "hold": 0.10433260106721301,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 80.8,
+       "retried": null,
+       "pins": null
+      },
+      {
+       "tag": "io-c06-stock-r2",
+       "kind": "rebuild",
+       "clock": 4.8,
+       "passed": true,
+       "claim": 4.45725660108098,
+       "ws": 0.3427433989190202,
+       "ws_r2r": 0.575676,
+       "hold": 0.10445056226691561,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 80.9,
+       "retried": null,
+       "pins": null
+      },
+      {
+       "tag": "io-c06-stock-r3",
+       "kind": "rebuild",
+       "clock": 4.5,
+       "passed": true,
+       "claim": 4.215033053005713,
+       "ws": 0.2849669469942876,
+       "ws_r2r": 0.33237,
+       "hold": 0.10467915719415104,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 80.8,
+       "retried": null,
+       "pins": null
+      },
+      {
+       "tag": "io-c06-stock-r4",
+       "kind": "rebuild",
+       "clock": 4.25,
+       "passed": true,
+       "claim": 4.0686666021257,
+       "ws": 0.18133339787430033,
+       "ws_r2r": 0.441643,
+       "hold": 0.1039045268123864,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 86.5,
+       "retried": null,
+       "pins": null
+      }
+     ]
+    },
+    "script": {
+     "kept": 4.25,
+     "truncated": null,
+     "plan_sha256": "784bc718f921e5af4c7a80b2a0a7fba63202c097a4ddcf9efc1a6d882165e2f3",
+     "n_moves_in_plan": 2,
+     "first_rebuild_passed": true,
+     "builds": [
+      {
+       "tag": "io-c06-script-r0",
+       "kind": "source",
+       "clock": 11.71,
+       "passed": true,
+       "claim": 6.003775900810009,
+       "ws": 5.706224099189992,
+       "ws_r2r": 7.486193,
+       "hold": 0.10177259323347913,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 76.3,
+       "retried": null,
+       "pins": {
+        "moved_groups": 2,
+        "placed_pins": 64,
+        "pins_off_stock_position": 63,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c06-script-r1",
+       "kind": "rebuild",
+       "clock": 6.05,
+       "passed": true,
+       "claim": 4.8717773361063745,
+       "ws": 1.1782226638936255,
+       "ws_r2r": 1.561803,
+       "hold": 0.10177259323347913,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 76.2,
+       "retried": null,
+       "pins": {
+        "moved_groups": 2,
+        "placed_pins": 64,
+        "pins_off_stock_position": 63,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c06-script-r2",
+       "kind": "rebuild",
+       "clock": 4.9,
+       "passed": true,
+       "claim": 4.503450972938424,
+       "ws": 0.39654902706157596,
+       "ws_r2r": 0.412328,
+       "hold": 0.1016568524798886,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 76.3,
+       "retried": null,
+       "pins": {
+        "moved_groups": 2,
+        "placed_pins": 64,
+        "pins_off_stock_position": 63,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c06-script-r3",
+       "kind": "rebuild",
+       "clock": 4.55,
+       "passed": true,
+       "claim": 4.2454715888923955,
+       "ws": 0.30452841110760404,
+       "ws_r2r": 0.32556,
+       "hold": 0.10215453772032793,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 75.8,
+       "retried": null,
+       "pins": {
+        "moved_groups": 2,
+        "placed_pins": 64,
+        "pins_off_stock_position": 63,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c06-script-r4",
+       "kind": "rebuild",
+       "clock": 4.25,
+       "passed": true,
+       "claim": 4.038524268199248,
+       "ws": 0.21147573180075183,
+       "ws_r2r": 0.364488,
+       "hold": 0.10191503485156707,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 77.4,
+       "retried": null,
+       "pins": {
+        "moved_groups": 2,
+        "placed_pins": 64,
+        "pins_off_stock_position": 63,
+        "dropped_groups": []
+       }
+      }
+     ]
+    },
+    "claude": {
+     "kept": 4.25,
+     "truncated": null,
+     "plan_sha256": "ab6f65d8b998db93dec91d708dab6375597c1b6a6e7a341285fb06a3911bf43c",
+     "n_moves_in_plan": 0,
+     "first_rebuild_passed": true,
+     "builds": [
+      {
+       "tag": "io-c06-claude-r0",
+       "kind": "source",
+       "clock": 11.71,
+       "passed": true,
+       "claim": 5.927190938048555,
+       "ws": 5.782809061951446,
+       "ws_r2r": 7.485865,
+       "hold": 0.10433260106721301,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 83.4,
+       "retried": null,
+       "pins": {
+        "moved_groups": 0,
+        "placed_pins": 0,
+        "pins_off_stock_position": 0,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c06-claude-r1",
+       "kind": "rebuild",
+       "clock": 5.95,
+       "passed": true,
+       "claim": 4.775191716092872,
+       "ws": 1.174808283907128,
+       "ws_r2r": 1.725865,
+       "hold": 0.10433260106721301,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 82.8,
+       "retried": null,
+       "pins": {
+        "moved_groups": 0,
+        "placed_pins": 0,
+        "pins_off_stock_position": 0,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c06-claude-r2",
+       "kind": "rebuild",
+       "clock": 4.8,
+       "passed": true,
+       "claim": 4.45725660108098,
+       "ws": 0.3427433989190202,
+       "ws_r2r": 0.575676,
+       "hold": 0.10445056226691561,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 81.7,
+       "retried": null,
+       "pins": {
+        "moved_groups": 0,
+        "placed_pins": 0,
+        "pins_off_stock_position": 0,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c06-claude-r3",
+       "kind": "rebuild",
+       "clock": 4.5,
+       "passed": true,
+       "claim": 4.215033053005713,
+       "ws": 0.2849669469942876,
+       "ws_r2r": 0.33237,
+       "hold": 0.10467915719415104,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 82.8,
+       "retried": null,
+       "pins": {
+        "moved_groups": 0,
+        "placed_pins": 0,
+        "pins_off_stock_position": 0,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c06-claude-r4",
+       "kind": "rebuild",
+       "clock": 4.25,
+       "passed": true,
+       "claim": 4.0686666021257,
+       "ws": 0.18133339787430033,
+       "ws_r2r": 0.441643,
+       "hold": 0.1039045268123864,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 88.7,
+       "retried": null,
+       "pins": {
+        "moved_groups": 0,
+        "placed_pins": 0,
+        "pins_off_stock_position": 0,
+        "dropped_groups": []
+       }
+      }
+     ]
+    }
+   },
+   "g_claude_stock": 0.0,
+   "g_claude_script": 0.0,
+   "g_script_stock": 0.0,
+   "g_stock_record": 0.0,
+   "claude_moved": false
+  },
+  {
+   "case": "c07",
+   "design": "xtea",
+   "T0": 11.71,
+   "record_claim0": 6.007647470650976,
+   "record_kept": 4.2,
+   "arms": {
+    "stock": {
+     "kept": 4.2,
+     "truncated": null,
+     "plan_sha256": null,
+     "n_moves_in_plan": 0,
+     "first_rebuild_passed": true,
+     "builds": [
+      {
+       "tag": "io-c07-stock-r0",
+       "kind": "source",
+       "clock": 11.71,
+       "passed": true,
+       "claim": 6.007647470650976,
+       "ws": 5.7023525293490245,
+       "ws_r2r": 7.444811,
+       "hold": 0.09375256392137,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 77.6,
+       "retried": null,
+       "pins": null
+      },
+      {
+       "tag": "io-c07-stock-r1",
+       "kind": "rebuild",
+       "clock": 6.05,
+       "passed": true,
+       "claim": 4.877135272574748,
+       "ws": 1.1728647274252517,
+       "ws_r2r": 1.60717,
+       "hold": 0.09374928876335474,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 77.8,
+       "retried": null,
+       "pins": null
+      },
+      {
+       "tag": "io-c07-stock-r2",
+       "kind": "rebuild",
+       "clock": 4.9,
+       "passed": true,
+       "claim": 4.539906479250653,
+       "ws": 0.36009352074934725,
+       "ws_r2r": 0.457171,
+       "hold": 0.09331627401592882,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 78.5,
+       "retried": null,
+       "pins": null
+      },
+      {
+       "tag": "io-c07-stock-r3",
+       "kind": "rebuild",
+       "clock": 4.55,
+       "passed": true,
+       "claim": 4.161137047155281,
+       "ws": 0.388862952844719,
+       "ws_r2r": 0.732702,
+       "hold": 0.09678808028999915,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 78.5,
+       "retried": null,
+       "pins": null
+      },
+      {
+       "tag": "io-c07-stock-r4",
+       "kind": "rebuild",
+       "clock": 4.2,
+       "passed": true,
+       "claim": 4.152468020302427,
+       "ws": 0.04753197969757302,
+       "ws_r2r": 0.382702,
+       "hold": 0.09641948623539905,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 81.3,
+       "retried": null,
+       "pins": null
+      }
+     ]
+    },
+    "script": {
+     "kept": 4.2,
+     "truncated": null,
+     "plan_sha256": "345aef6d1407e12cbd0367a5b93e4f0514ae55e0d16386986fd510888f2f3852",
+     "n_moves_in_plan": 2,
+     "first_rebuild_passed": true,
+     "builds": [
+      {
+       "tag": "io-c07-script-r0",
+       "kind": "source",
+       "clock": 11.71,
+       "passed": true,
+       "claim": 5.997304632661053,
+       "ws": 5.712695367338948,
+       "ws_r2r": 7.485673,
+       "hold": 0.0965310358969531,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 60.8,
+       "retried": null,
+       "pins": {
+        "moved_groups": 2,
+        "placed_pins": 64,
+        "pins_off_stock_position": 64,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c07-script-r1",
+       "kind": "rebuild",
+       "clock": 6.0,
+       "passed": true,
+       "claim": 4.8553058503537,
+       "ws": 1.1446941496462997,
+       "ws_r2r": 1.495657,
+       "hold": 0.0965310358969531,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 60.7,
+       "retried": null,
+       "pins": {
+        "moved_groups": 2,
+        "placed_pins": 64,
+        "pins_off_stock_position": 64,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c07-script-r2",
+       "kind": "rebuild",
+       "clock": 4.9,
+       "passed": true,
+       "claim": 4.5043422600078005,
+       "ws": 0.39565773999219955,
+       "ws_r2r": 0.395658,
+       "hold": 0.0965309803858003,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 61.1,
+       "retried": null,
+       "pins": {
+        "moved_groups": 2,
+        "placed_pins": 64,
+        "pins_off_stock_position": 64,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c07-script-r3",
+       "kind": "rebuild",
+       "clock": 4.55,
+       "passed": true,
+       "claim": 4.1553789862975155,
+       "ws": 0.394621013702484,
+       "ws_r2r": 0.612985,
+       "hold": 0.09793491295129596,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 61.8,
+       "retried": null,
+       "pins": {
+        "moved_groups": 2,
+        "placed_pins": 64,
+        "pins_off_stock_position": 64,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c07-script-r4",
+       "kind": "rebuild",
+       "clock": 4.2,
+       "passed": true,
+       "claim": 4.029084491194211,
+       "ws": 0.17091550880578968,
+       "ws_r2r": 0.256958,
+       "hold": 0.09656453687766862,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 63.8,
+       "retried": null,
+       "pins": {
+        "moved_groups": 2,
+        "placed_pins": 64,
+        "pins_off_stock_position": 64,
+        "dropped_groups": []
+       }
+      }
+     ]
+    },
+    "claude": {
+     "kept": 4.2,
+     "truncated": null,
+     "plan_sha256": "5e8ddfc49764c66163e102b81ae550a10c891362dbaf8cbe87464d7a00388543",
+     "n_moves_in_plan": 0,
+     "first_rebuild_passed": true,
+     "builds": [
+      {
+       "tag": "io-c07-claude-r0",
+       "kind": "source",
+       "clock": 11.71,
+       "passed": true,
+       "claim": 6.007647470650976,
+       "ws": 5.7023525293490245,
+       "ws_r2r": 7.444811,
+       "hold": 0.09375256392137,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 56.7,
+       "retried": null,
+       "pins": {
+        "moved_groups": 0,
+        "placed_pins": 0,
+        "pins_off_stock_position": 0,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c07-claude-r1",
+       "kind": "rebuild",
+       "clock": 6.05,
+       "passed": true,
+       "claim": 4.877135272574748,
+       "ws": 1.1728647274252517,
+       "ws_r2r": 1.60717,
+       "hold": 0.09374928876335474,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 57.1,
+       "retried": null,
+       "pins": {
+        "moved_groups": 0,
+        "placed_pins": 0,
+        "pins_off_stock_position": 0,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c07-claude-r2",
+       "kind": "rebuild",
+       "clock": 4.9,
+       "passed": true,
+       "claim": 4.539906479250653,
+       "ws": 0.36009352074934725,
+       "ws_r2r": 0.457171,
+       "hold": 0.09331627401592882,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 57.6,
+       "retried": null,
+       "pins": {
+        "moved_groups": 0,
+        "placed_pins": 0,
+        "pins_off_stock_position": 0,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c07-claude-r3",
+       "kind": "rebuild",
+       "clock": 4.55,
+       "passed": true,
+       "claim": 4.161137047155281,
+       "ws": 0.388862952844719,
+       "ws_r2r": 0.732702,
+       "hold": 0.09678808028999915,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 57.8,
+       "retried": null,
+       "pins": {
+        "moved_groups": 0,
+        "placed_pins": 0,
+        "pins_off_stock_position": 0,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c07-claude-r4",
+       "kind": "rebuild",
+       "clock": 4.2,
+       "passed": true,
+       "claim": 4.152468020302427,
+       "ws": 0.04753197969757302,
+       "ws_r2r": 0.382702,
+       "hold": 0.09641948623539905,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 59.1,
+       "retried": null,
+       "pins": {
+        "moved_groups": 0,
+        "placed_pins": 0,
+        "pins_off_stock_position": 0,
+        "dropped_groups": []
+       }
+      }
+     ]
+    }
+   },
+   "g_claude_stock": 0.0,
+   "g_claude_script": 0.0,
+   "g_script_stock": 0.0,
+   "g_stock_record": 0.0,
+   "claude_moved": false
+  },
+  {
+   "case": "c08",
+   "design": "wbqspiflash",
+   "T0": 8.52,
+   "record_claim0": 8.037585877696273,
+   "record_kept": 7.65,
+   "arms": {
+    "stock": {
+     "kept": 7.65,
+     "truncated": null,
+     "plan_sha256": null,
+     "n_moves_in_plan": 0,
+     "first_rebuild_passed": true,
+     "builds": [
+      {
+       "tag": "io-c08-stock-r0",
+       "kind": "source",
+       "clock": 8.52,
+       "passed": true,
+       "claim": 8.037585877696273,
+       "ws": 0.48241412230372616,
+       "ws_r2r": 0.482414,
+       "hold": 0.09216760948658956,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 289.0,
+       "retried": null,
+       "pins": null
+      },
+      {
+       "tag": "io-c08-stock-r1",
+       "kind": "rebuild",
+       "clock": 8.05,
+       "passed": true,
+       "claim": 7.681342884730315,
+       "ws": 0.368657115269686,
+       "ws_r2r": 0.384069,
+       "hold": 0.0900313182821874,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 242.1,
+       "retried": null,
+       "pins": null
+      },
+      {
+       "tag": "io-c08-stock-r2",
+       "kind": "rebuild",
+       "clock": 7.7,
+       "passed": true,
+       "claim": 7.6165147789007435,
+       "ws": 0.08348522109925627,
+       "ws_r2r": 0.145853,
+       "hold": 0.0909597423127878,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 330.5,
+       "retried": null,
+       "pins": null
+      },
+      {
+       "tag": "io-c08-stock-r3",
+       "kind": "rebuild",
+       "clock": 7.65,
+       "passed": true,
+       "claim": 7.647657873441012,
+       "ws": 0.0023421265589890932,
+       "ws_r2r": 0.321963,
+       "hold": 0.08954415240520389,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 365.8,
+       "retried": null,
+       "pins": null
+      }
+     ]
+    },
+    "script": {
+     "kept": 7.7,
+     "truncated": null,
+     "plan_sha256": "c39ca2347b922d123f0b0cef6cba0ccdbcb3eb6ef6a2d5eb7595238c54f854fb",
+     "n_moves_in_plan": 4,
+     "first_rebuild_passed": true,
+     "builds": [
+      {
+       "tag": "io-c08-script-r0",
+       "kind": "source",
+       "clock": 8.52,
+       "passed": true,
+       "claim": 8.20578822339775,
+       "ws": 0.3142117766022489,
+       "ws_r2r": 0.554958,
+       "hold": 0.08877854258576945,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 363.8,
+       "retried": null,
+       "pins": {
+        "moved_groups": 4,
+        "placed_pins": 23,
+        "pins_off_stock_position": 23,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c08-script-r1",
+       "kind": "rebuild",
+       "clock": 8.25,
+       "passed": true,
+       "claim": 7.975359237649796,
+       "ws": 0.2746407623502045,
+       "ws_r2r": 0.274641,
+       "hold": 0.08934525594471711,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 415.5,
+       "retried": null,
+       "pins": {
+        "moved_groups": 4,
+        "placed_pins": 23,
+        "pins_off_stock_position": 23,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c08-script-r2",
+       "kind": "rebuild",
+       "clock": 8.0,
+       "passed": true,
+       "claim": 7.7670201357825,
+       "ws": 0.2329798642174998,
+       "ws_r2r": 0.478493,
+       "hold": 0.0894903065869867,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 465.4,
+       "retried": null,
+       "pins": {
+        "moved_groups": 4,
+        "placed_pins": 23,
+        "pins_off_stock_position": 23,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c08-script-r3",
+       "kind": "rebuild",
+       "clock": 7.8,
+       "passed": true,
+       "claim": 7.696588495491217,
+       "ws": 0.10341150450878236,
+       "ws_r2r": 0.375755,
+       "hold": 0.09282380682385279,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 438.0,
+       "retried": null,
+       "pins": {
+        "moved_groups": 4,
+        "placed_pins": 23,
+        "pins_off_stock_position": 23,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c08-script-r4",
+       "kind": "rebuild",
+       "clock": 7.7,
+       "passed": true,
+       "claim": 7.6568318630464365,
+       "ws": 0.043168136953563474,
+       "ws_r2r": 0.043168,
+       "hold": 0.090022492008892,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 478.9,
+       "retried": null,
+       "pins": {
+        "moved_groups": 4,
+        "placed_pins": 23,
+        "pins_off_stock_position": 23,
+        "dropped_groups": []
+       }
+      }
+     ]
+    },
+    "claude": {
+     "kept": 7.7,
+     "truncated": null,
+     "plan_sha256": "96a5aabce23ca311b27d08d9584d62fe1e0fc174bce6681161e419e157caca67",
+     "n_moves_in_plan": 1,
+     "first_rebuild_passed": true,
+     "builds": [
+      {
+       "tag": "io-c08-claude-r0",
+       "kind": "source",
+       "clock": 8.52,
+       "passed": true,
+       "claim": 8.203995879296105,
+       "ws": 0.3160041207038947,
+       "ws_r2r": 0.447819,
+       "hold": 0.0903541711468793,
+       "drc": 0,
+       "drv": 2,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 365.2,
+       "retried": null,
+       "pins": {
+        "moved_groups": 1,
+        "placed_pins": 32,
+        "pins_off_stock_position": 32,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c08-claude-r1",
+       "kind": "rebuild",
+       "clock": 8.25,
+       "passed": true,
+       "claim": 7.851689270993124,
+       "ws": 0.3983107290068755,
+       "ws_r2r": 0.49769,
+       "hold": 0.08984735432180414,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 381.7,
+       "retried": null,
+       "pins": {
+        "moved_groups": 1,
+        "placed_pins": 32,
+        "pins_off_stock_position": 32,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c08-claude-r2",
+       "kind": "rebuild",
+       "clock": 7.9,
+       "passed": true,
+       "claim": 7.799820576851916,
+       "ws": 0.1001794231480841,
+       "ws_r2r": 0.401884,
+       "hold": 0.08944323312941126,
+       "drc": 0,
+       "drv": 6,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 406.4,
+       "retried": null,
+       "pins": {
+        "moved_groups": 1,
+        "placed_pins": 32,
+        "pins_off_stock_position": 32,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c08-claude-r3",
+       "kind": "rebuild",
+       "clock": 7.8,
+       "passed": true,
+       "claim": 7.665825546876448,
+       "ws": 0.1341744531235515,
+       "ws_r2r": 0.394039,
+       "hold": 0.08964873541708138,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 426.3,
+       "retried": null,
+       "pins": {
+        "moved_groups": 1,
+        "placed_pins": 32,
+        "pins_off_stock_position": 32,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c08-claude-r4",
+       "kind": "rebuild",
+       "clock": 7.7,
+       "passed": true,
+       "claim": 7.601757694040067,
+       "ws": 0.09824230595993272,
+       "ws_r2r": 0.204856,
+       "hold": 0.08969758523154646,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 440.9,
+       "retried": null,
+       "pins": {
+        "moved_groups": 1,
+        "placed_pins": 32,
+        "pins_off_stock_position": 32,
+        "dropped_groups": []
+       }
+      }
+     ]
+    }
+   },
+   "g_claude_stock": -0.00649350649350644,
+   "g_claude_script": 0.0,
+   "g_script_stock": -0.00649350649350644,
+   "g_stock_record": 0.0,
+   "claude_moved": true
+  },
+  {
+   "case": "c09",
+   "design": "wbqspiflash",
+   "T0": 8.49,
+   "record_claim0": 7.979688192744493,
+   "record_kept": 7.7,
+   "arms": {
+    "stock": {
+     "kept": 7.7,
+     "truncated": null,
+     "plan_sha256": null,
+     "n_moves_in_plan": 0,
+     "first_rebuild_passed": true,
+     "builds": [
+      {
+       "tag": "io-c09-stock-r0",
+       "kind": "source",
+       "clock": 8.49,
+       "passed": true,
+       "claim": 7.979688192744493,
+       "ws": 0.5103118072555075,
+       "ws_r2r": 0.510312,
+       "hold": 0.08529982517317537,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 327.2,
+       "retried": null,
+       "pins": null
+      },
+      {
+       "tag": "io-c09-stock-r1",
+       "kind": "rebuild",
+       "clock": 8.0,
+       "passed": true,
+       "claim": 7.844543903160128,
+       "ws": 0.1554560968398722,
+       "ws_r2r": 0.4523,
+       "hold": 0.08464873486196986,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 329.8,
+       "retried": null,
+       "pins": null
+      },
+      {
+       "tag": "io-c09-stock-r2",
+       "kind": "rebuild",
+       "clock": 7.85,
+       "passed": true,
+       "claim": 7.689846327365477,
+       "ws": 0.16015367263452268,
+       "ws_r2r": 0.39614,
+       "hold": 0.08607509393319722,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 396.4,
+       "retried": null,
+       "pins": null
+      },
+      {
+       "tag": "io-c09-stock-r3",
+       "kind": "rebuild",
+       "clock": 7.7,
+       "passed": true,
+       "claim": 7.667896790111999,
+       "ws": 0.03210320988800181,
+       "ws_r2r": 0.431801,
+       "hold": 0.0864430218539637,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 422.8,
+       "retried": null,
+       "pins": null
+      }
+     ]
+    },
+    "script": {
+     "kept": 7.75,
+     "truncated": null,
+     "plan_sha256": "d2d2ce06e6f28ebb5e3e8957cdac768e7a0b8a2d5effb69aad3a315885aaf8b7",
+     "n_moves_in_plan": 3,
+     "first_rebuild_passed": true,
+     "builds": [
+      {
+       "tag": "io-c09-script-r0",
+       "kind": "source",
+       "clock": 8.49,
+       "passed": true,
+       "claim": 8.041264716145387,
+       "ws": 0.44873528385461453,
+       "ws_r2r": 0.632929,
+       "hold": 0.08476819486279807,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 167.7,
+       "retried": null,
+       "pins": {
+        "moved_groups": 3,
+        "placed_pins": 22,
+        "pins_off_stock_position": 22,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c09-script-r1",
+       "kind": "rebuild",
+       "clock": 8.05,
+       "passed": true,
+       "claim": 7.744745503013757,
+       "ws": 0.305254496986244,
+       "ws_r2r": 0.444222,
+       "hold": 0.08401923838920401,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 178.6,
+       "retried": null,
+       "pins": {
+        "moved_groups": 3,
+        "placed_pins": 22,
+        "pins_off_stock_position": 22,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c09-script-r2",
+       "kind": "rebuild",
+       "clock": 7.75,
+       "passed": true,
+       "claim": 7.741652898975586,
+       "ws": 0.008347101024413916,
+       "ws_r2r": 0.412955,
+       "hold": 0.0849924044089622,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 243.5,
+       "retried": null,
+       "pins": {
+        "moved_groups": 3,
+        "placed_pins": 22,
+        "pins_off_stock_position": 22,
+        "dropped_groups": []
+       }
+      }
+     ]
+    },
+    "claude": {
+     "kept": 7.5,
+     "truncated": null,
+     "plan_sha256": "83d3c89f36e4b8edcb0570330bb2562c7e0d9ac4aa1500d8d4a31dd76e2a2ee9",
+     "n_moves_in_plan": 2,
+     "first_rebuild_passed": true,
+     "builds": [
+      {
+       "tag": "io-c09-claude-r0",
+       "kind": "source",
+       "clock": 8.49,
+       "passed": true,
+       "claim": 8.111484103992817,
+       "ws": 0.3785158960071827,
+       "ws_r2r": 0.378516,
+       "hold": 0.08551337657800166,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 214.5,
+       "retried": null,
+       "pins": {
+        "moved_groups": 2,
+        "placed_pins": 52,
+        "pins_off_stock_position": 52,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c09-claude-r1",
+       "kind": "rebuild",
+       "clock": 8.15,
+       "passed": true,
+       "claim": 7.7758299611233195,
+       "ws": 0.37417003887668077,
+       "ws_r2r": 0.485746,
+       "hold": 0.08650003180789055,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 228.0,
+       "retried": null,
+       "pins": {
+        "moved_groups": 2,
+        "placed_pins": 52,
+        "pins_off_stock_position": 52,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c09-claude-r2",
+       "kind": "rebuild",
+       "clock": 7.8,
+       "passed": true,
+       "claim": 7.515082124864788,
+       "ws": 0.2849178751352113,
+       "ws_r2r": 0.379236,
+       "hold": 0.08379069897312139,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 278.5,
+       "retried": null,
+       "pins": {
+        "moved_groups": 2,
+        "placed_pins": 52,
+        "pins_off_stock_position": 52,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c09-claude-r3",
+       "kind": "rebuild",
+       "clock": 7.55,
+       "passed": true,
+       "claim": 7.499963579132647,
+       "ws": 0.05003642086735288,
+       "ws_r2r": 0.050036,
+       "hold": 0.08477113695389654,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 508.7,
+       "retried": null,
+       "pins": {
+        "moved_groups": 2,
+        "placed_pins": 52,
+        "pins_off_stock_position": 52,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c09-claude-r4",
+       "kind": "rebuild",
+       "clock": 7.5,
+       "passed": true,
+       "claim": 7.489404919331748,
+       "ws": 0.01059508066825214,
+       "ws_r2r": 0.010595,
+       "hold": 0.0839001669664454,
+       "drc": 0,
+       "drv": 0,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 478.3,
+       "retried": null,
+       "pins": {
+        "moved_groups": 2,
+        "placed_pins": 52,
+        "pins_off_stock_position": 52,
+        "dropped_groups": []
+       }
+      }
+     ]
+    }
+   },
+   "g_claude_stock": 0.026666666666666616,
+   "g_claude_script": 0.03333333333333344,
+   "g_script_stock": -0.006451612903225823,
+   "g_stock_record": 0.0,
+   "claude_moved": true
+  },
+  {
+   "case": "c10",
+   "design": "wbqspiflash",
+   "T0": 8.49,
+   "record_claim0": 7.957212837198335,
+   "record_kept": 7.6,
+   "arms": {
+    "stock": {
+     "kept": 7.6,
+     "truncated": null,
+     "plan_sha256": null,
+     "n_moves_in_plan": 0,
+     "first_rebuild_passed": true,
+     "builds": [
+      {
+       "tag": "io-c10-stock-r0",
+       "kind": "source",
+       "clock": 8.49,
+       "passed": true,
+       "claim": 7.957212837198335,
+       "ws": 0.5327871628016656,
+       "ws_r2r": 0.532787,
+       "hold": 0.09321405022804537,
+       "drc": 0,
+       "drv": 37,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 310.5,
+       "retried": null,
+       "pins": null
+      },
+      {
+       "tag": "io-c10-stock-r1",
+       "kind": "rebuild",
+       "clock": 8.0,
+       "passed": true,
+       "claim": 7.6067616580914885,
+       "ws": 0.3932383419085112,
+       "ws_r2r": 0.484832,
+       "hold": 0.09306505829392689,
+       "drc": 0,
+       "drv": 29,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 408.2,
+       "retried": null,
+       "pins": null
+      },
+      {
+       "tag": "io-c10-stock-r2",
+       "kind": "rebuild",
+       "clock": 7.65,
+       "passed": true,
+       "claim": 7.58878141251237,
+       "ws": 0.061218587487630725,
+       "ws_r2r": 0.087983,
+       "hold": 0.09118189794629829,
+       "drc": 0,
+       "drv": 18,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 474.0,
+       "retried": null,
+       "pins": null
+      },
+      {
+       "tag": "io-c10-stock-r3",
+       "kind": "rebuild",
+       "clock": 7.6,
+       "passed": true,
+       "claim": 7.558200546029903,
+       "ws": 0.04179945397009659,
+       "ws_r2r": 0.041799,
+       "hold": 0.08710660217454949,
+       "drc": 0,
+       "drv": 24,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 547.0,
+       "retried": null,
+       "pins": null
+      }
+     ]
+    },
+    "script": {
+     "kept": 7.7,
+     "truncated": null,
+     "plan_sha256": "c2019d5203ac009e7e8ab346af7ee048fa3cc86e55e54ab76da9439861881e3a",
+     "n_moves_in_plan": 3,
+     "first_rebuild_passed": true,
+     "builds": [
+      {
+       "tag": "io-c10-script-r0",
+       "kind": "source",
+       "clock": 8.49,
+       "passed": true,
+       "claim": 8.118713876533649,
+       "ws": 0.37128612346635176,
+       "ws_r2r": 0.371286,
+       "hold": 0.0911732937176141,
+       "drc": 0,
+       "drv": 33,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 294.9,
+       "retried": null,
+       "pins": {
+        "moved_groups": 3,
+        "placed_pins": 22,
+        "pins_off_stock_position": 22,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c10-script-r1",
+       "kind": "rebuild",
+       "clock": 8.15,
+       "passed": true,
+       "claim": 7.886251858097062,
+       "ws": 0.2637481419029379,
+       "ws_r2r": 0.434852,
+       "hold": 0.08339712489976074,
+       "drc": 0,
+       "drv": 51,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 316.0,
+       "retried": null,
+       "pins": {
+        "moved_groups": 3,
+        "placed_pins": 22,
+        "pins_off_stock_position": 22,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c10-script-r2",
+       "kind": "rebuild",
+       "clock": 7.9,
+       "passed": true,
+       "claim": 7.654319184021581,
+       "ws": 0.24568081597841904,
+       "ws_r2r": 0.471915,
+       "hold": 0.08881862163809193,
+       "drc": 0,
+       "drv": 33,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 373.1,
+       "retried": null,
+       "pins": {
+        "moved_groups": 3,
+        "placed_pins": 22,
+        "pins_off_stock_position": 22,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c10-script-r3",
+       "kind": "rebuild",
+       "clock": 7.7,
+       "passed": true,
+       "claim": 7.598888877663301,
+       "ws": 0.10111112233669979,
+       "ws_r2r": 0.440816,
+       "hold": 0.09032719272661789,
+       "drc": 0,
+       "drv": 39,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 513.9,
+       "retried": null,
+       "pins": {
+        "moved_groups": 3,
+        "placed_pins": 22,
+        "pins_off_stock_position": 22,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c10-script-r4",
+       "kind": "rebuild",
+       "clock": 7.6,
+       "passed": false,
+       "claim": 7.62211653145445,
+       "ws": -0.022116531454451045,
+       "ws_r2r": 0.477399,
+       "hold": 0.07789930032632786,
+       "drc": 0,
+       "drv": 11,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 572.4,
+       "retried": null,
+       "pins": {
+        "moved_groups": 3,
+        "placed_pins": 22,
+        "pins_off_stock_position": 22,
+        "dropped_groups": []
+       }
+      }
+     ]
+    },
+    "claude": {
+     "kept": 7.7,
+     "truncated": null,
+     "plan_sha256": "8180302ddaf7347f9d38c96c1b5d24fe3173de953b4a96a9d0fe47aaaa405ea0",
+     "n_moves_in_plan": 3,
+     "first_rebuild_passed": true,
+     "builds": [
+      {
+       "tag": "io-c10-claude-r0",
+       "kind": "source",
+       "clock": 8.49,
+       "passed": true,
+       "claim": 7.896999667710239,
+       "ws": 0.5930003322897607,
+       "ws_r2r": 0.627668,
+       "hold": 0.09184842035798255,
+       "drc": 0,
+       "drv": 28,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 401.6,
+       "retried": null,
+       "pins": {
+        "moved_groups": 3,
+        "placed_pins": 22,
+        "pins_off_stock_position": 22,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c10-claude-r1",
+       "kind": "rebuild",
+       "clock": 7.9,
+       "passed": true,
+       "claim": 7.722043678617515,
+       "ws": 0.17795632138248527,
+       "ws_r2r": 0.443993,
+       "hold": 0.09353118544399874,
+       "drc": 0,
+       "drv": 11,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 544.0,
+       "retried": null,
+       "pins": {
+        "moved_groups": 3,
+        "placed_pins": 22,
+        "pins_off_stock_position": 22,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c10-claude-r2",
+       "kind": "rebuild",
+       "clock": 7.75,
+       "passed": true,
+       "claim": 7.688650850280981,
+       "ws": 0.0613491497190192,
+       "ws_r2r": 0.379838,
+       "hold": 0.0916551305239287,
+       "drc": 0,
+       "drv": 11,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 492.4,
+       "retried": null,
+       "pins": {
+        "moved_groups": 3,
+        "placed_pins": 22,
+        "pins_off_stock_position": 22,
+        "dropped_groups": []
+       }
+      },
+      {
+       "tag": "io-c10-claude-r3",
+       "kind": "rebuild",
+       "clock": 7.7,
+       "passed": true,
+       "claim": 7.658379069897312,
+       "ws": 0.04162093010268786,
+       "ws_r2r": 0.442486,
+       "hold": 0.08429363001750044,
+       "drc": 0,
+       "drv": 28,
+       "flow_completed": true,
+       "status": "completed",
+       "wall_s": 524.3,
+       "retried": null,
+       "pins": {
+        "moved_groups": 3,
+        "placed_pins": 22,
+        "pins_off_stock_position": 22,
+        "dropped_groups": []
+       }
+      }
+     ]
+    }
+   },
+   "g_claude_stock": -0.012987012987013102,
+   "g_claude_script": 0.0,
+   "g_script_stock": -0.012987012987013102,
+   "g_stock_record": 0.0,
+   "claude_moved": true
+  }
+ ],
+ "noop_identity": [
+  {
+   "case": "c01",
+   "clock": 4.6,
+   "stock_has_clock": true,
+   "n_keys": 282,
+   "n_differing": 0,
+   "differing_keys": []
+  },
+  {
+   "case": "c01",
+   "clock": 4.1,
+   "stock_has_clock": true,
+   "n_keys": 283,
+   "n_differing": 0,
+   "differing_keys": []
+  },
+  {
+   "case": "c01",
+   "clock": 3.95,
+   "stock_has_clock": true,
+   "n_keys": 282,
+   "n_differing": 0,
+   "differing_keys": []
+  },
+  {
+   "case": "c02",
+   "clock": 11.71,
+   "stock_has_clock": true,
+   "n_keys": 276,
+   "n_differing": 0,
+   "differing_keys": []
+  },
+  {
+   "case": "c02",
+   "clock": 6.25,
+   "stock_has_clock": true,
+   "n_keys": 276,
+   "n_differing": 0,
+   "differing_keys": []
+  },
+  {
+   "case": "c02",
+   "clock": 5.15,
+   "stock_has_clock": true,
+   "n_keys": 280,
+   "n_differing": 0,
+   "differing_keys": []
+  },
+  {
+   "case": "c02",
+   "clock": 4.9,
+   "stock_has_clock": true,
+   "n_keys": 280,
+   "n_differing": 0,
+   "differing_keys": []
+  },
+  {
+   "case": "c02",
+   "clock": 4.6,
+   "stock_has_clock": true,
+   "n_keys": 281,
+   "n_differing": 0,
+   "differing_keys": []
+  },
+  {
+   "case": "c05",
+   "clock": 7.02,
+   "stock_has_clock": true,
+   "n_keys": 283,
+   "n_differing": 0,
+   "differing_keys": []
+  },
+  {
+   "case": "c05",
+   "clock": 6.35,
+   "stock_has_clock": true,
+   "n_keys": 284,
+   "n_differing": 0,
+   "differing_keys": []
+  },
+  {
+   "case": "c05",
+   "clock": 5.9,
+   "stock_has_clock": true,
+   "n_keys": 285,
+   "n_differing": 0,
+   "differing_keys": []
+  },
+  {
+   "case": "c05",
+   "clock": 5.85,
+   "stock_has_clock": true,
+   "n_keys": 288,
+   "n_differing": 0,
+   "differing_keys": []
+  },
+  {
+   "case": "c05",
+   "clock": 5.8,
+   "stock_has_clock": true,
+   "n_keys": 288,
+   "n_differing": 0,
+   "differing_keys": []
+  },
+  {
+   "case": "c06",
+   "clock": 11.71,
+   "stock_has_clock": true,
+   "n_keys": 280,
+   "n_differing": 0,
+   "differing_keys": []
+  },
+  {
+   "case": "c06",
+   "clock": 5.95,
+   "stock_has_clock": true,
+   "n_keys": 280,
+   "n_differing": 0,
+   "differing_keys": []
+  },
+  {
+   "case": "c06",
+   "clock": 4.8,
+   "stock_has_clock": true,
+   "n_keys": 280,
+   "n_differing": 0,
+   "differing_keys": []
+  },
+  {
+   "case": "c06",
+   "clock": 4.5,
+   "stock_has_clock": true,
+   "n_keys": 281,
+   "n_differing": 0,
+   "differing_keys": []
+  },
+  {
+   "case": "c06",
+   "clock": 4.25,
+   "stock_has_clock": true,
+   "n_keys": 282,
+   "n_differing": 0,
+   "differing_keys": []
+  },
+  {
+   "case": "c07",
+   "clock": 11.71,
+   "stock_has_clock": true,
+   "n_keys": 280,
+   "n_differing": 0,
+   "differing_keys": []
+  },
+  {
+   "case": "c07",
+   "clock": 6.05,
+   "stock_has_clock": true,
+   "n_keys": 280,
+   "n_differing": 0,
+   "differing_keys": []
+  },
+  {
+   "case": "c07",
+   "clock": 4.9,
+   "stock_has_clock": true,
+   "n_keys": 281,
+   "n_differing": 0,
+   "differing_keys": []
+  },
+  {
+   "case": "c07",
+   "clock": 4.55,
+   "stock_has_clock": true,
+   "n_keys": 280,
+   "n_differing": 0,
+   "differing_keys": []
+  },
+  {
+   "case": "c07",
+   "clock": 4.2,
+   "stock_has_clock": true,
+   "n_keys": 281,
+   "n_differing": 0,
+   "differing_keys": []
+  }
+ ],
+ "flow_hours": {
+  "stock": 2.41,
+  "script": 2.78,
+  "claude": 3.0,
+  "total": 8.19
+ },
+ "secondary_moved_only": {
+  "label": "descriptive, NOT registered: the cases where Claude moved pins (its other cases ran a no-op plan)",
+  "cases": [
+   "c03",
+   "c04",
+   "c08",
+   "c09",
+   "c10"
+  ],
+  "n": 5,
+  "claude_beats_stock": 1,
+  "stock_beats_claude": 0,
+  "median_g_claude_stock": 0.0,
+  "claude_beats_script": 1,
+  "script_beats_claude": 0,
+  "median_g_claude_script": 0.008620689655172376,
+  "script_beats_stock": 0,
+  "stock_beats_script": 0,
+  "median_g_script_stock": -0.00649350649350644
+ },
+ "n_builds": {
+  "stock": 43,
+  "script": 47,
+  "claude": 47,
+  "total": 137
+ },
+ "beside_all10": {
+  "script_beats_stock": 1,
+  "stock_beats_script": 1,
+  "median_g_script_stock": -0.0032258064516129115,
+  "stock_kept_vs_record": [
+   [
+    "c01",
+    4.1,
+    4.1
+   ],
+   [
+    "c02",
+    4.6,
+    4.6
+   ],
+   [
+    "c03",
+    5.9,
+    5.9
+   ],
+   [
+    "c04",
+    5.7,
+    5.7
+   ],
+   [
+    "c05",
+    5.85,
+    5.85
+   ],
+   [
+    "c06",
+    4.25,
+    4.25
+   ],
+   [
+    "c07",
+    4.2,
+    4.2
+   ],
+   [
+    "c08",
+    7.65,
+    7.65
+   ],
+   [
+    "c09",
+    7.7,
+    7.7
+   ],
+   [
+    "c10",
+    7.6,
+    7.6
+   ]
+  ]
+ }
+}

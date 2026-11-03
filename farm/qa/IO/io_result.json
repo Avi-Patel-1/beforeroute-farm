@@ -1,0 +1,318 @@
+{
+ "theta": 0.023,
+ "n_cases": 10,
+ "missing_chains": [],
+ "plan_sha_mismatch": [],
+ "claude_beats_stock": 1,
+ "median_g_claude_stock": 0.0,
+ "claude_beats_script": 2,
+ "script_beats_stock": 1,
+ "median_g_script_stock": -0.0032258064516129115,
+ "stock_beats_claude": 0,
+ "P1": false,
+ "P2": false,
+ "P3": false,
+ "prediction_holds": false,
+ "rows": [
+  {
+   "case": "c01",
+   "design": "cic_decimator",
+   "T0": 4.6,
+   "record_kept": 4.1,
+   "stock": {
+    "kept": 4.1,
+    "n_runs": 3,
+    "claim0": 4.095178023711922,
+    "first_rebuild_passed": true,
+    "truncated": null
+   },
+   "script": {
+    "kept": 4.0,
+    "n_runs": 5,
+    "claim0": 4.098220478974651,
+    "first_rebuild_passed": true,
+    "truncated": null
+   },
+   "claude": {
+    "kept": 4.1,
+    "n_runs": 3,
+    "claim0": 4.095178023711922,
+    "first_rebuild_passed": true,
+    "truncated": null
+   },
+   "g_claude_stock": 0.0,
+   "g_claude_script": -0.024390243902438935,
+   "g_script_stock": 0.02499999999999991
+  },
+  {
+   "case": "c02",
+   "design": "xtea",
+   "T0": 11.71,
+   "record_kept": 4.6,
+   "stock": {
+    "kept": 4.6,
+    "n_runs": 5,
+    "claim0": 6.212760292073042,
+    "first_rebuild_passed": true,
+    "truncated": null
+   },
+   "script": {
+    "kept": 4.8,
+    "n_runs": 5,
+    "claim0": 6.518529044378836,
+    "first_rebuild_passed": true,
+    "truncated": null
+   },
+   "claude": {
+    "kept": 4.6,
+    "n_runs": 5,
+    "claim0": 6.212760292073042,
+    "first_rebuild_passed": true,
+    "truncated": null
+   },
+   "g_claude_stock": 0.0,
+   "g_claude_script": 0.04347826086956519,
+   "g_script_stock": -0.04166666666666674
+  },
+  {
+   "case": "c03",
+   "design": "usb_cdc_core",
+   "T0": 7.02,
+   "record_kept": 5.9,
+   "stock": {
+    "kept": 5.9,
+    "n_runs": 3,
+    "claim0": 6.186652363292961,
+    "first_rebuild_passed": true,
+    "truncated": null
+   },
+   "script": {
+    "kept": 5.85,
+    "n_runs": 4,
+    "claim0": 6.3143373406094385,
+    "first_rebuild_passed": true,
+    "truncated": null
+   },
+   "claude": {
+    "kept": 5.8,
+    "n_runs": 5,
+    "claim0": 6.3040313620249755,
+    "first_rebuild_passed": true,
+    "truncated": null
+   },
+   "g_claude_stock": 0.017241379310344973,
+   "g_claude_script": 0.008620689655172376,
+   "g_script_stock": 0.008547008547008739
+  },
+  {
+   "case": "c04",
+   "design": "usb_cdc_core",
+   "T0": 7.02,
+   "record_kept": 5.7,
+   "stock": {
+    "kept": 5.7,
+    "n_runs": 5,
+    "claim0": 6.340679825104341,
+    "first_rebuild_passed": true,
+    "truncated": null
+   },
+   "script": {
+    "kept": 5.75,
+    "n_runs": 5,
+    "claim0": 6.40250814709434,
+    "first_rebuild_passed": true,
+    "truncated": null
+   },
+   "claude": {
+    "kept": 5.7,
+    "n_runs": 5,
+    "claim0": 6.358103665745588,
+    "first_rebuild_passed": true,
+    "truncated": null
+   },
+   "g_claude_stock": 0.0,
+   "g_claude_script": 0.00877192982456143,
+   "g_script_stock": -0.008695652173912993
+  },
+  {
+   "case": "c05",
+   "design": "usb_cdc_core",
+   "T0": 7.02,
+   "record_kept": 5.85,
+   "stock": {
+    "kept": 5.85,
+    "n_runs": 5,
+    "claim0": 6.302018305579792,
+    "first_rebuild_passed": true,
+    "truncated": null
+   },
+   "script": {
+    "kept": 5.8,
+    "n_runs": 5,
+    "claim0": 6.341383262432638,
+    "first_rebuild_passed": true,
+    "truncated": null
+   },
+   "claude": {
+    "kept": 5.85,
+    "n_runs": 5,
+    "claim0": 6.302018305579792,
+    "first_rebuild_passed": true,
+    "truncated": null
+   },
+   "g_claude_stock": 0.0,
+   "g_claude_script": -0.008547008547008517,
+   "g_script_stock": 0.008620689655172376
+  },
+  {
+   "case": "c06",
+   "design": "xtea",
+   "T0": 11.71,
+   "record_kept": 4.25,
+   "stock": {
+    "kept": 4.25,
+    "n_runs": 5,
+    "claim0": 5.927190938048555,
+    "first_rebuild_passed": true,
+    "truncated": null
+   },
+   "script": {
+    "kept": 4.25,
+    "n_runs": 5,
+    "claim0": 6.003775900810009,
+    "first_rebuild_passed": true,
+    "truncated": null
+   },
+   "claude": {
+    "kept": 4.25,
+    "n_runs": 5,
+    "claim0": 5.927190938048555,
+    "first_rebuild_passed": true,
+    "truncated": null
+   },
+   "g_claude_stock": 0.0,
+   "g_claude_script": 0.0,
+   "g_script_stock": 0.0
+  },
+  {
+   "case": "c07",
+   "design": "xtea",
+   "T0": 11.71,
+   "record_kept": 4.2,
+   "stock": {
+    "kept": 4.2,
+    "n_runs": 5,
+    "claim0": 6.007647470650976,
+    "first_rebuild_passed": true,
+    "truncated": null
+   },
+   "script": {
+    "kept": 4.2,
+    "n_runs": 5,
+    "claim0": 5.997304632661053,
+    "first_rebuild_passed": true,
+    "truncated": null
+   },
+   "claude": {
+    "kept": 4.2,
+    "n_runs": 5,
+    "claim0": 6.007647470650976,
+    "first_rebuild_passed": true,
+    "truncated": null
+   },
+   "g_claude_stock": 0.0,
+   "g_claude_script": 0.0,
+   "g_script_stock": 0.0
+  },
+  {
+   "case": "c08",
+   "design": "wbqspiflash",
+   "T0": 8.52,
+   "record_kept": 7.65,
+   "stock": {
+    "kept": 7.65,
+    "n_runs": 4,
+    "claim0": 8.037585877696273,
+    "first_rebuild_passed": true,
+    "truncated": null
+   },
+   "script": {
+    "kept": 7.7,
+    "n_runs": 5,
+    "claim0": 8.20578822339775,
+    "first_rebuild_passed": true,
+    "truncated": null
+   },
+   "claude": {
+    "kept": 7.7,
+    "n_runs": 5,
+    "claim0": 8.203995879296105,
+    "first_rebuild_passed": true,
+    "truncated": null
+   },
+   "g_claude_stock": -0.00649350649350644,
+   "g_claude_script": 0.0,
+   "g_script_stock": -0.00649350649350644
+  },
+  {
+   "case": "c09",
+   "design": "wbqspiflash",
+   "T0": 8.49,
+   "record_kept": 7.7,
+   "stock": {
+    "kept": 7.7,
+    "n_runs": 4,
+    "claim0": 7.979688192744493,
+    "first_rebuild_passed": true,
+    "truncated": null
+   },
+   "script": {
+    "kept": 7.75,
+    "n_runs": 3,
+    "claim0": 8.041264716145387,
+    "first_rebuild_passed": true,
+    "truncated": null
+   },
+   "claude": {
+    "kept": 7.5,
+    "n_runs": 5,
+    "claim0": 8.111484103992817,
+    "first_rebuild_passed": true,
+    "truncated": null
+   },
+   "g_claude_stock": 0.026666666666666616,
+   "g_claude_script": 0.03333333333333344,
+   "g_script_stock": -0.006451612903225823
+  },
+  {
+   "case": "c10",
+   "design": "wbqspiflash",
+   "T0": 8.49,
+   "record_kept": 7.6,
+   "stock": {
+    "kept": 7.6,
+    "n_runs": 4,
+    "claim0": 7.957212837198335,
+    "first_rebuild_passed": true,
+    "truncated": null
+   },
+   "script": {
+    "kept": 7.7,
+    "n_runs": 5,
+    "claim0": 8.118713876533649,
+    "first_rebuild_passed": true,
+    "truncated": null
+   },
+   "claude": {
+    "kept": 7.7,
+    "n_runs": 4,
+    "claim0": 7.896999667710239,
+    "first_rebuild_passed": true,
+    "truncated": null
+   },
+   "g_claude_stock": -0.012987012987013102,
+   "g_claude_script": 0.0,
+   "g_script_stock": -0.012987012987013102
+  }
+ ]
+}
