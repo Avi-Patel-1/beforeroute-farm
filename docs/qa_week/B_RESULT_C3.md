@@ -70,7 +70,9 @@ failed, one chain kept 355), aes 003/005/001 (382.5/383.7/383.9; all failed, non
 (913.7/914.7/925.1; kept 920/915/930). Freezing the budget changed which runs AutoTuner ranks first on gcd and ibex
 (it raised the claims at tight targets), so the picks are not the same runs. The causal contrast for the budget is
 the paired grid table below (same setting, same target, only the I/O delay changed); pick-to-pick comparisons mix the
-budget change with a different selection. For aes, "no kept clock" means no rebuild in the chain passed at ≤ 395 ps;
+budget change with a different selection. Unique settings among the picks: 2 per design (S0 twice at different
+targets, plus S1 on gcd and aes and S2 on ibex); the S0 picks at P0 (gcd-003, aes-003, ibex-003) are the stock-identical
+control configurations, and aes picks 1 and 3 share their S0 rebuild at 385 ps (identical results). For aes, "no kept clock" means no rebuild in the chain passed at ≤ 395 ps;
 it is not the setting's attainable clock (aes settings pass at the grid's 455–550 ps targets).
 
 ## Every grid run, frozen vs E5's stock budget (paired by grid position)
