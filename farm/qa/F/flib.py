@@ -1,4 +1,4 @@
-"""F (Addendum 42): shared helpers. Read one run's result directory (either harness), judge it, step a rebuild chain.
+"""F (overnight workstream F): shared helpers. Read one run's result directory (either harness), judge it, step a rebuild chain.
 
 Two harnesses, each the one its publication used:
   orfsagent - ORFS-agent's AutoTuner-integration job script (github.com/ABKGroup/ORFS-Agent @ 730f1fa,

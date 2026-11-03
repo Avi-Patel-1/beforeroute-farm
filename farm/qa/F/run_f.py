@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""F (Addendum 42): run one group of farm/qa/F/dispatch.json on a GitHub runner.
+"""F (overnight workstream F): run one group of farm/qa/F/dispatch.json on a GitHub runner.
 
 A group holds "items", each {"config": <id in configs.json>, "tag_prefix": ..., "mode": "chain" | "single",
 "periods": [...] (single mode only)}. Chain mode = the registered protocol, stepped here with flib.chain_next so
@@ -86,23 +86,45 @@ def run_one(cfg: dict, tag: str, period: float, kind: str, src: str, results: st
     return r
 
 
-def run_chain(cfg: dict, item: dict, src: str, results: str, timeout_s: int, budget_s: int) -> dict:
+def run_chain(cfg: dict, item: dict, src: str, results: str, timeout_s: int, budget_s: int, phase: str) -> dict:
+    """phase "primary": the replay and the first rebuild only; "continue": resume from results/chains/<id>.json
+    (downloaded from the primary job) and finish the chain; "all": both in one go."""
     pre = item["tag_prefix"]
     pub = cfg["published"]
     grid = cfg["grid"]
-    w = run_one(cfg, pre + "0", float(pub["T0"]), "replay", src, results, timeout_s)
-    state = [{"tag": w["tag"], "period": float(pub["T0"]), "claim": w["claim"], "pass": w["pass"]}]
-    log, k, truncated = [], 0, False
+    cpath = os.path.join(results, "chains", pre.rstrip("-") + ".json")
+    if phase == "continue":
+        if not os.path.exists(cpath):
+            print(f"[F] chain {cfg['id']}: no primary chain file; nothing to continue", flush=True)
+            return {}
+        prev = json.load(open(cpath))
+        if prev.get("complete"):
+            print(f"[F] chain {cfg['id']}: already complete in the primary phase", flush=True)
+            return prev
+        state, log = prev["chain"], prev["steps"]
+        log = [s for s in log if s.get("why") not in ("primary phase ends here", "truncated by job budget")]
+        k = len(state) - 1
+    else:
+        w = run_one(cfg, pre + "0", float(pub["T0"]), "replay", src, results, timeout_s)
+        state = [{"tag": w["tag"], "period": float(pub["T0"]), "claim": w["claim"], "pass": w["pass"]}]
+        log, k = [], 0
+    truncated = False
     while True:
         nxt, why = flib.chain_next(state, grid)
-        log.append({"after": state[-1]["tag"], "next": nxt, "why": why})
-        print(f"[F] chain {cfg['id']}: next={nxt} ({why})", flush=True)
         if nxt is None:
+            log.append({"after": state[-1]["tag"], "next": None, "why": why})
+            print(f"[F] chain {cfg['id']}: ends ({why})", flush=True)
+            break
+        if phase == "primary" and len(state) >= 2:
+            log.append({"after": state[-1]["tag"], "next": nxt, "why": "primary phase ends here"})
+            print(f"[F] chain {cfg['id']}: primary phase done; next would be {nxt} ({why})", flush=True)
             break
         if time.time() - T_START > budget_s:
             truncated = True
-            log.append({"after": state[-1]["tag"], "next": None, "why": "truncated by job budget"})
+            log.append({"after": state[-1]["tag"], "next": nxt, "why": "truncated by job budget"})
             break
+        log.append({"after": state[-1]["tag"], "next": nxt, "why": why})
+        print(f"[F] chain {cfg['id']}: next={nxt} ({why})", flush=True)
         k += 1
         reuse = next((s for s in state if abs(s["period"] - nxt) < 1e-9), None)
         if reuse is not None:   # same configuration, same clock: deterministic flow, reuse the result
@@ -110,12 +132,12 @@ def run_chain(cfg: dict, item: dict, src: str, results: str, timeout_s: int, bud
             continue
         r = run_one(cfg, f"{pre}{k}", nxt, "rebuild", src, results, timeout_s)
         state.append({"tag": r["tag"], "period": float(nxt), "claim": r["claim"], "pass": r["pass"]})
+    done = not truncated and not (log and log[-1]["why"] == "primary phase ends here")
     res = {"config": cfg["id"], "source": cfg["source"], "design": cfg["design"], "platform": cfg["platform"],
            "grid": grid, "published": pub, "replay": state[0], "chain": state, "steps": log,
-           "kept_clock": flib.kept_clock(state),
-           "truncated": truncated}
+           "kept_clock": flib.kept_clock(state), "complete": done, "truncated": truncated, "phase": phase}
     os.makedirs(os.path.join(results, "chains"), exist_ok=True)
-    json.dump(res, open(os.path.join(results, "chains", pre.rstrip("-") + ".json"), "w"), indent=1)
+    json.dump(res, open(cpath, "w"), indent=1)
     return res
 
 
@@ -125,6 +147,7 @@ def main() -> int:
     ap.add_argument("--group", required=True)
     ap.add_argument("--src", required=True, help="fetched sources (fetch_sources.sh)")
     ap.add_argument("--results", default="results")
+    ap.add_argument("--phase", default="all", choices=["all", "primary", "continue"])
     a = ap.parse_args()
     spec = json.load(open(a.spec))
     cfgs = {c["id"]: c for c in json.load(open(os.path.join(HERE, "configs.json")))["configs"]}
@@ -139,7 +162,9 @@ def main() -> int:
     for it in grp["items"]:
         cfg = cfgs[it["config"]]
         if it.get("mode", "chain") == "chain":
-            run_chain(cfg, it, os.path.abspath(a.src), results, to, budget)
+            run_chain(cfg, it, os.path.abspath(a.src), results, to, budget, a.phase)
+        elif a.phase == "continue":
+            continue
         else:
             for i, p in enumerate(it["periods"]):
                 if time.time() - T_START > budget:

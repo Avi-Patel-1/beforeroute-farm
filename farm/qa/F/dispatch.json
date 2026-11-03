@@ -1,6 +1,6 @@
 {
- "batch": "smoke-s01",
- "about": "F smoke batch s01 (plumbing only; not part of any analysis): EDA-env evaluator path (task 004, an area task, not a registered winner) as a replay at its eval clock (400 ps) and in rebuild mode at 420 ps (tests the SDC edit and the bind mount); ORFS-agent harness (image ce8d36a7) on the second-best aes/asap7 row of output.json (not registered) at its own target 263.597 ps.",
+ "batch": "smoke-s02",
+ "about": "F smoke batch s02 (plumbing only; not part of any analysis). EDA-env evaluator path after the s01 driver fix: task 004 (aes area task) in rebuild mode at 420 ps (image-SDC bind mount), task 018 (mult16 completion task) replayed at its eval clock 900 ps and in rebuild mode at 700 ps (workspace-SDC edit). ORFS-agent harness on sky130hd (image ce8d36a7): the second-best aes/sky130hd row of output.json (not registered) at its own target 0.91 ns.",
  "groups": [
   {
    "name": "smk-ee",
@@ -9,11 +9,19 @@
    "budget_s": 12000,
    "items": [
     {
-     "config": "smk-ee004",
-     "tag_prefix": "smoke-f-ee004-",
+     "config": "smk-ee018",
+     "tag_prefix": "smoke-f-ee018-",
      "mode": "single",
      "periods": [
-      400,
+      900,
+      700
+     ]
+    },
+    {
+     "config": "smk-ee004",
+     "tag_prefix": "smoke-f-ee004b-",
+     "mode": "single",
+     "periods": [
       420
      ]
     }
@@ -26,11 +34,11 @@
    "budget_s": 12000,
    "items": [
     {
-     "config": "smk-oa-aes-a7-2",
-     "tag_prefix": "smoke-f-oa2-",
+     "config": "smk-oa-aes-s130-2",
+     "tag_prefix": "smoke-f-oas2-",
      "mode": "single",
      "periods": [
-      263.597
+      0.91
      ]
     }
    ]

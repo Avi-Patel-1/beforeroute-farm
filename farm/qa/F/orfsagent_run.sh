@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# F (Addendum 42): one ORFS-agent-harness flow run, inside openroad/orfs:v3.0-1548-gce8d36a7 (ORFS ce8d36a7).
+# F (overnight workstream F): one ORFS-agent-harness flow run, inside openroad/orfs:v3.0-1548-gce8d36a7 (ORFS ce8d36a7).
 # Reproduces ORFS-agent's AutoTuner-integration job script (github.com/ABKGroup/ORFS-Agent @ 730f1fa,
 # AutoTuner-integration/AutoTuner/run_or_job.sh) line for line: every knob is EXPORTED to the environment (not a make
 # command-line override), the clock goes to CLK_PERIOD (read by their SDC template) and ABC_CLOCK_PERIOD_IN_PS, the
@@ -49,7 +49,7 @@ RESD=$WORK_HOME/results/$TECH/$DESIGN/base
 
 cp "$RUN_DIR/${DESIGN}_${TECH}.mk" "$OUT/config.mk"
 cp "$RUN_DIR/${DNAME}.sdc" "$OUT/template.sdc"
-env | grep -E '^(CLK_PERIOD|ABC_CLOCK_PERIOD_IN_PS|CORE_|PLACE_DENSITY|TNS_END|RECOVER_POWER|SYNTH_HIER|CELL_PAD|ENABLE_DPO|GPL_|CTS_CLUSTER|PIN_LAYER|UP_LAYER|NUM_CORES|FASTROUTE_TCL|RUN_DIR|FLOW_VARIANT)=' \
+env | grep -E '^(CLK_PERIOD|ABC_CLOCK_PERIOD_IN_PS|CORE_[A-Z_]*|PLACE_DENSITY[A-Z_]*|TNS_END_PERCENT|RECOVER_POWER|SYNTH_HIERARCHICAL|CELL_PAD_[A-Z_]*|ENABLE_DPO|GPL_[A-Z_]*|CTS_CLUSTER_[A-Z_]*|PIN_LAYER_ADJUST|UP_LAYER_ADJUST|NUM_CORES|FASTROUTE_TCL|RUN_DIR|FLOW_VARIANT)=' \
   | sort > "$OUT/env_exports.txt"
 { openroad -version 2>&1 | head -1; yosys -V 2>&1 | head -1; } > "$OUT/tool_versions.txt" || true
 

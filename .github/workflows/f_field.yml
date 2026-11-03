@@ -1,6 +1,6 @@
 name: F field winners rebuilt (ORFS)
 
-# Addendum 42 (F): the field's own published ORFS winners (ORFS-agent, EDA-env) rebuilt at the clocks they claimed.
+# Workstream F: the field's own published ORFS winners (ORFS-agent, EDA-env) rebuilt at the clocks they claimed.
 # Runs only on pushes to qa-f-field that change farm/qa/F/dispatch.json. One matrix job per group, at most 2 at once
 # (this workstream's share of the farm). Each group fetches the published materials (pinned, hash-checked), prepares
 # its harness's pinned image, and runs its items with farm/qa/F/run_f.py: the replay of each published configuration
@@ -80,10 +80,11 @@ jobs:
           docker image inspect eda-env-evaluator:iccad26 --format '{{.Id}} {{.Size}}'
           df -h / | tail -1
 
-      - name: Run group
+      - name: Run group (primary phase - replay and first rebuild - unless the batch says "all")
         run: |
+          PHASE=$(python3 -c "import json; print(json.load(open('farm/qa/F/dispatch.json')).get('phase1', 'all'))")
           python3 farm/qa/F/run_f.py --spec farm/qa/F/dispatch.json --group "${{ matrix.group }}" \
-            --src "$RUNNER_TEMP/src" --results results
+            --src "$RUNNER_TEMP/src" --results results --phase "$PHASE"
 
       - name: Fix ownership
         if: always()
@@ -97,5 +98,82 @@ jobs:
           path: |
             results/
             !results/.work/
+          retention-days: 30
+          if-no-files-found: warn
+
+  # Second pass, only for batches with "phase1": "primary": once every group's replay and first rebuild have landed,
+  # each chain continues (E5's rule) from its chain file, on the runner.
+  cont:
+    needs: [plan, run]
+    if: ${{ !cancelled() && needs.plan.outputs.groups != '[]' }}
+    name: ${{ needs.plan.outputs.batch }} ${{ matrix.group }} cont
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        group: ${{ fromJSON(needs.plan.outputs.groups) }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Needed?
+        id: need
+        run: |
+          python3 -c "import json; d=json.load(open('farm/qa/F/dispatch.json')); print('go=' + ('1' if d.get('phase1') == 'primary' else '0'))" >> "$GITHUB_OUTPUT"
+      - uses: actions/download-artifact@v4
+        if: steps.need.outputs.go == '1'
+        with:
+          name: f-${{ needs.plan.outputs.batch }}-${{ matrix.group }}
+          path: results
+      - name: Chain finished in the primary phase?
+        id: open
+        if: steps.need.outputs.go == '1'
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import glob, json
+          fs = glob.glob("results/chains/*.json")
+          left = [f for f in fs if not json.load(open(f)).get("complete")]
+          print("go=" + ("1" if left else "0"))
+          PY
+          cat "$GITHUB_OUTPUT"
+      - name: Free disk
+        if: steps.open.outputs.go == '1'
+        run: sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL || true
+      - name: Harness of this group
+        id: h
+        if: steps.open.outputs.go == '1'
+        run: |
+          python3 -c "import json; d=json.load(open('farm/qa/F/dispatch.json')); g=next(x for x in d['groups'] if x['name']=='${{ matrix.group }}'); print('harness='+g['harness'])" >> "$GITHUB_OUTPUT"
+      - name: Fetch published materials (pinned, sha256-checked)
+        if: steps.open.outputs.go == '1'
+        run: bash farm/qa/F/fetch_sources.sh "$RUNNER_TEMP/src" ${{ steps.h.outputs.harness }}
+      - name: Prepare image (orfsagent)
+        if: steps.open.outputs.go == '1' && steps.h.outputs.harness == 'orfsagent'
+        run: |
+          IMG=openroad/orfs@sha256:6fe655d0d5f33e2f344ec4ce1641b613b7bb90ec4cda279d2407386ed78ff6b3
+          for i in 1 2 3 4 5; do docker pull -q "$IMG" && break; echo "pull failed ($i)"; sleep $((60 * i)); done
+      - name: Prepare image (edaenv)
+        if: steps.open.outputs.go == '1' && steps.h.outputs.harness == 'edaenv'
+        run: |
+          cd "$RUNNER_TEMP/src/EDA-env"
+          for i in 1 2 3 4; do docker build -q --platform linux/amd64 -t eda-env-evaluator:iccad26 . && break; echo "build failed ($i)"; sleep $((60 * i)); done
+      - name: Continue chains
+        if: steps.open.outputs.go == '1'
+        run: |
+          mkdir -p results-cont
+          cp -r results/chains results-cont/
+          python3 farm/qa/F/run_f.py --spec farm/qa/F/dispatch.json --group "${{ matrix.group }}" \
+            --src "$RUNNER_TEMP/src" --results results-cont --phase continue
+      - name: Fix ownership
+        if: always() && steps.open.outputs.go == '1'
+        run: sudo chown -R "$(id -u):$(id -g)" results-cont || true
+      - name: Upload results
+        if: always() && steps.open.outputs.go == '1'
+        uses: actions/upload-artifact@v4
+        with:
+          name: f-${{ needs.plan.outputs.batch }}-${{ matrix.group }}-cont
+          path: |
+            results-cont/
+            !results-cont/.work/
           retention-days: 30
           if-no-files-found: warn

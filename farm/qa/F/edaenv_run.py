@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""F (Addendum 42): one EDA-env flow + measurement on the runner, with EDA-env's own evaluator code.
+"""F (overnight workstream F): one EDA-env flow + measurement on the runner, with EDA-env's own evaluator code.
 
 Replay  (period == the task's evaluation clock): the task package exactly as published; the evaluator's worker.py
         runs the flow phase (applies the published submission.diff, sanitizes config.mk, runs ORFS `finish` with
@@ -126,6 +126,7 @@ def main():
             mounts.append((mod, where))
             info["mounted_sdc"] = where
     case = os.path.join(work, "case")
+    os.makedirs(case)
     t0 = time.time()
     flow = docker(a.image, task, case, "flow", submission=sub, mounts=mounts)
     t1 = time.time()

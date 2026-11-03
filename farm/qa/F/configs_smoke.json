@@ -1,5 +1,5 @@
 {
- "about": "F smoke configs (plumbing only; never analyzed). smk-ee004: EDA-env task 004 (aes/asap7 area task, not a registered timing winner). smk-oa-aes-a7-2: the second-best aes/asap7 row (1564) of ORFS-agent's output.json, not registered.",
+ "about": "F smoke configs (plumbing only; never analyzed). smk-ee004: EDA-env task 004 (aes/asap7 area task, not a registered timing winner). smk-oa-aes-a7-2: the second-best aes/asap7 row (1564) of ORFS-agent's output.json, not registered. smk-ee018: EDA-env task 018 (mult16/asap7 completion task, workspace-SDC mode, not registered). smk-oa-aes-s130-2: the second-best aes/sky130hd row (2322) of output.json, not registered.",
  "configs": [
   {
    "id": "smk-ee004",
@@ -44,6 +44,50 @@
     "ws": -166.407
    },
    "grid": 5.0
+  },
+  {
+   "id": "smk-ee018",
+   "source": "EDA-env",
+   "harness": "edaenv",
+   "platform": "asap7",
+   "design": "mult16",
+   "task": "eda-env-018-mult16-asap7-impl",
+   "submission": "submissions/eda-env-018-mult16-asap7-impl/submission.diff",
+   "published": {
+    "T0": 900.0
+   },
+   "grid": 5.0
+  },
+  {
+   "id": "smk-oa-aes-s130-2",
+   "source": "ORFS-agent",
+   "harness": "orfsagent",
+   "platform": "sky130hd",
+   "design": "aes",
+   "knobs": {
+    "CLK": 0.91,
+    "UTIL": 45.81,
+    "LB_ADDON": 0.081,
+    "TNS_End_Percent": 1,
+    "HIER_SYNTH": 1,
+    "GP_PAD": 0,
+    "DP_PAD": 0,
+    "DPO": 1,
+    "CTS_CSIZE": 34,
+    "CTS_CDIA": 101,
+    "PIN_ADJ": 0.125,
+    "UP_ADJ": 0.213,
+    "AR": 1,
+    "POWER_EFFORT": 0,
+    "RD": 1,
+    "TD": 1
+   },
+   "published": {
+    "T0": 0.91,
+    "claim": 3.82079,
+    "ws": -2.91079
+   },
+   "grid": 0.05
   }
  ]
 }

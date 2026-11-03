@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# F (Addendum 42): fetch the published materials on the runner, pinned and hash-checked. Nothing third-party is
+# F (overnight workstream F): fetch the published materials on the runner, pinned and hash-checked. Nothing third-party is
 # committed to this repo. Usage: fetch_sources.sh <dest_dir> [orfsagent] [edaenv]
 #   orfsagent: ORFS-agent's AutoTuner-integration job configs, github.com/ABKGroup/ORFS-Agent @ 730f1fa (BSD-3)
 #   edaenv:    the EDA-env ICCAD'26 artifact, Zenodo doi:10.5281/zenodo.22990248 (BSD-3; third-party parts keep theirs)
