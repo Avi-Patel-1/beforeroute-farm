@@ -124,6 +124,30 @@ def c1_groups(plan, settings, cap=12000.0):
     return groups
 
 
+def c2b_groups(plan):
+    """C2b: the 10 Addendum-35 races (5 designs x 2 seeds), plain TPE as arm b, frozen I/O. Start sets and DRV
+    references are read from the landed record with the farm's own functions (farm/tune_a32.py start_set, ref_drv_x8)."""
+    import sys as _s
+    _s.path.insert(0, os.path.join(ROOT, "farm"))
+    import tune_a35 as X                          # ROOT /home/claude/eda: reads results/tune_x6 (start sets)
+    fb = plan["fbest"]
+    groups = []
+    for r in plan["c2b"]["races"]:
+        d, s = r["design"], r["seed"]
+        f = fb[d]
+        start = []
+        for t, v, params in X.B.start_set(d):
+            start.append({"tag": t, "spec": f"farm/jobs/{t}.json", "params": params,
+                          "T": v["overrides"]["CLOCK_PERIOD"]})
+        ref = X.B.ref_drv_x8(d)
+        name = f"c2b-{d}-s{s}"
+        groups.append({"name": name, "timeout_s": 16000, "budget_s": BUDGET_S, "est_flow_s": 900,
+                       "race": {"design": d, "seed": s, "seed35": X.seed35(d, s), "D": f["D"], "io0": f["io0"],
+                                "F_best": f["F_best"], "drv_ref": ref, "tag_prefix": f"b2b-{d}-s{s}-",
+                                "start": start}})
+    return groups
+
+
 def smoke_groups(plan):
     fb = plan["fbest"]
     x = fb["xtea"]
@@ -140,7 +164,7 @@ def smoke_groups(plan):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--batch", required=True)
-    ap.add_argument("--kind", required=True, choices=["smoke", "c2a", "s", "c1"])
+    ap.add_argument("--kind", required=True, choices=["smoke", "c2a", "s", "c1", "c2b"])
     ap.add_argument("--settings", default="", help="C1: setting indices, e.g. 0-9,12,15-20")
     ap.add_argument("--max-parallel", type=int, default=4)
     ap.add_argument("--note", default="")
@@ -156,7 +180,7 @@ def main():
                 sel.add(int(part))
         groups = c1_groups(plan, sel)
     else:
-        groups = {"smoke": smoke_groups, "c2a": c2a_groups, "s": s_groups}[a.kind](plan)
+        groups = {"smoke": smoke_groups, "c2a": c2a_groups, "s": s_groups, "c2b": c2b_groups}[a.kind](plan)
     spec = {"batch": a.batch, "kind": a.kind, "max_parallel": a.max_parallel,
             "about": f"workstream B {a.kind} batch {a.batch} (docs/qa_week/B_PREREG.md). {a.note}".strip(),
             "groups": groups}

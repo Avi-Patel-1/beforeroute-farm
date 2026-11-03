@@ -28,6 +28,7 @@ jobs:
       groups: ${{ steps.p.outputs.groups }}
       batch: ${{ steps.p.outputs.batch }}
       max_parallel: ${{ steps.p.outputs.max_parallel }}
+      kind: ${{ steps.p.outputs.kind }}
     steps:
       - uses: actions/checkout@v4
       - id: p
@@ -42,6 +43,7 @@ jobs:
               f.write("groups=" + json.dumps(groups) + "\n")
               f.write("batch=" + d["batch"] + "\n")
               f.write("max_parallel=" + str(mp) + "\n")
+              f.write("kind=" + str(d.get("kind", "")) + "\n")
           print(d["batch"], mp, groups)
           PY
 
@@ -74,6 +76,11 @@ jobs:
           mkdir -p pdk
           docker run --rm -v "$PWD:/work" -w /work -e PDK_ROOT=/work/pdk "$IMAGE" \
             ciel enable --pdk-family sky130 "$PDK_VERSION"
+      - name: Install Optuna (arm C2b only; the version Addendum 35 ran)
+        if: needs.plan.outputs.kind == 'c2b'
+        run: |
+          python3 -m pip install --user --quiet optuna==5.0.0 || python3 -m pip install --user --quiet --break-system-packages optuna==5.0.0
+          python3 -c "import optuna; print('optuna', optuna.__version__)"
       - name: Run group
         run: |
           python3 farm/qa/B/run_group.py --spec farm/qa/B/dispatch.json --group "${{ matrix.group }}" \

@@ -191,6 +191,11 @@ def main() -> int:
         print(f"[b] done {r['tag']}: ws={x['ws']} r2r={x['ws_r2r']} hold={x['hold_ws']} claim={x['claim']}", flush=True)
     for ch in grp.get("chains") or []:
         run_chain(ch, a.image, results, to, budget, est, a.stage)
+    if grp.get("race"):                          # arm C2b: one fresh TPE race with frozen I/O (farm/qa/B/c2b_race.py)
+        import c2b_race
+        c2b_race.run_race(dict(grp["race"], name=grp["name"], group_params={k: grp.get(k) for k in
+                                                                            ("timeout_s", "budget_s", "est_flow_s")}),
+                          a.image, results, to, run_flow, run_chain, budget, est)
     return 0
 
 
