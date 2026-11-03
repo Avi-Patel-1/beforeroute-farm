@@ -54,8 +54,10 @@ def run_one(cfg: dict, tag: str, period: float, kind: str, src: str, results: st
                "GP_PAD": k["GP_PAD"], "DP_PAD": k["DP_PAD"], "DPO": k["DPO"], "CTS_CSIZE": k["CTS_CSIZE"],
                "CTS_CDIA": k["CTS_CDIA"], "PIN_ADJ": k["PIN_ADJ"], "UP_ADJ": k["UP_ADJ"], "AR": k["AR"],
                "POWER_EFFORT": k["POWER_EFFORT"], "RD": k["RD"], "TD": k["TD"], "RUN_TIMEOUT": timeout_s,
-               "CFG_DIR": "/src/orfsagent/autotune_configs"}
-        cmd = ["docker", "run", "--rm", "--name", tag, "-v", f"{REPO}:/work", "-v", f"{src}:/src:ro"]
+               "CFG_DIR": "/src/orfsagent/autotune_configs", "OUTROOT": "/outroot"}
+        # the results directory is mounted explicitly: the continuation phase writes to results-cont, not results
+        cmd = ["docker", "run", "--rm", "--name", tag, "-v", f"{REPO}:/work", "-v", f"{src}:/src:ro",
+               "-v", f"{results}:/outroot"]
         for kk, v in env.items():
             cmd += ["-e", f"{kk}={v}"]
         cmd += [IMAGES["orfsagent"], "bash", "/work/farm/qa/F/orfsagent_run.sh"]

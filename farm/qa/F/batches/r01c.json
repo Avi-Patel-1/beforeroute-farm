@@ -1,0 +1,55 @@
+{
+ "batch": "r01c",
+ "phase1": "primary",
+ "about": "F chain continuation (descriptive), third dispatch: in r01b's continuation phase the ORFS-agent harness wrote its flow outputs to results/ instead of the continuation's results-cont/, so the three ORFS-agent chain steps produced no uploaded result and their chains were wrongly ended (fail-closed). Fixed (results directory mounted explicitly); the three chains are continued again from their primary state (run 41575196054), same tags.",
+ "groups": [
+  {
+   "name": "oa-aes-s130",
+   "harness": "orfsagent",
+   "timeout_s": 14400,
+   "budget_s": 12000,
+   "items": [
+    {
+     "config": "oa-aes-s130",
+     "tag_prefix": "f-oa-aes-s130-",
+     "mode": "chain"
+    }
+   ],
+   "cont_only": true,
+   "primary_batch": "r01",
+   "primary_run_id": 41575196054
+  },
+  {
+   "name": "oa-ibex-a7",
+   "harness": "orfsagent",
+   "timeout_s": 14400,
+   "budget_s": 14400,
+   "items": [
+    {
+     "config": "oa-ibex-a7",
+     "tag_prefix": "f-oa-ibex-a7-",
+     "mode": "chain"
+    }
+   ],
+   "cont_only": true,
+   "primary_batch": "r01",
+   "primary_run_id": 41575196054
+  },
+  {
+   "name": "oa-aes-a7",
+   "harness": "orfsagent",
+   "timeout_s": 14400,
+   "budget_s": 14400,
+   "items": [
+    {
+     "config": "oa-aes-a7",
+     "tag_prefix": "f-oa-aes-a7-",
+     "mode": "chain"
+    }
+   ],
+   "cont_only": true,
+   "primary_batch": "r01",
+   "primary_run_id": 41575196054
+  }
+ ]
+}

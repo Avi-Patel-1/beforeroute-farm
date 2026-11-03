@@ -10,7 +10,8 @@
 #                 AR POWER_EFFORT RD TD RUN_TIMEOUT CFG_DIR (their autotune_configs, fetched and hash-checked)
 set -uo pipefail
 
-OUT=/work/results/$TAG
+# OUTROOT: the results directory as mounted in the container (run_f.py sets it; the primary phase used /work/results)
+OUT=${OUTROOT:-/work/results}/$TAG
 mkdir -p "$OUT/logs" "$OUT/reports"
 cd /OpenROAD-flow-scripts/flow || { echo '{"status": "no_flow_dir"}' > "$OUT/run.json"; exit 2; }
 # shellcheck disable=SC1091

@@ -27,3 +27,14 @@
   3. Retry batch r01b, per the PREREG's infrastructure rule: the seven EDA-env groups whose flows never ran, with the
      same tags (ee013 is its one retry; the other six never started), then the chain continuations of all 14 groups.
 - 03:16 Zenodo answering again (HTTP 200); the fallback stays as insurance.
+- 03:22 retry batch r01b dispatched (2605db9), run 41602153382: the seven EDA-env primaries landed by 04:25 ET.
+- 04:25 **registered verdict computed** (all 14 replays and first rebuilds landed): P2 holds (6/14 fail at R1), P1
+  fails (median d1 −1.5 %) → the plan's prediction fails. F_RESULT.md (61b063c); independent audit
+  (AUDIT_RESULT_F.md) confirmed the counts; wording fixed (e8d3fab).
+- 05:52 **Bug in the continuation phase (descriptive chains only):** the ORFS-agent harness script wrote its outputs to
+  results/<tag> (hard-coded) while the continuation phase reads and uploads results-cont/, so oa-aes-s130's step-back
+  run at 4.05 ns (flow completed, docker rc 0, 26 min) left no readable result and its chain was ended as a failure
+  (fail-closed, but wrong). oa-ibex-a7's and oa-aes-a7's continuations in r01b are affected the same way. EDA-env
+  chains are not affected (their driver takes the results path), nor is any primary-phase result (which used
+  results/). Fixed: the results directory is mounted explicitly (OUTROOT). The three ORFS-agent chains are continued
+  again from their primary state in batch r01c (same tags) once r01b finishes (one workflow run at a time).
