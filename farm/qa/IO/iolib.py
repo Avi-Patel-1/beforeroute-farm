@@ -16,7 +16,7 @@ EDGES = ("N", "E", "S", "W")
 SEGMENTS = (1, 2, 3)
 OPTIONS = ("KEEP",) + tuple(f"{e}{k}" for e in EDGES for k in SEGMENTS)
 PITCH_TRACKS = 2          # minimum centre-to-centre distance between pins on one edge, in routing tracks (ppl default)
-CORNER_MARGIN_UM = 5.0    # no moved pin centre within 5 um of a die corner
+CORNER_MARGIN_UM = 1.5    # no moved pin centre within 1.5 um of a die corner (the stock placer came to 1.7 um)
 RESET_RX = re.compile(r"^(i_|in_)?(rst|reset)(_?n|_i|_ni)?$", re.I)
 BIT_RX = re.compile(r"^(.*)\[(\d+)\]$")
 
@@ -73,14 +73,20 @@ def edge_span(floor, edge):
 
 
 def lattice(floor, edge):
-    """Candidate slot positions on an edge: every PITCH_TRACKS-th routing track of the edge's pin layer (V layer tracks
-    for N/S, H layer tracks for E/W), keeping CORNER_MARGIN_UM clear of each corner."""
+    """Candidate slot positions on an edge: the even-numbered routing tracks of the edge's pin layer (V layer tracks for
+    N/S, H layer tracks for E/W; numbered from the track-grid origin, which is where the stock placer puts its pins,
+    PITCH_TRACKS apart), keeping CORNER_MARGIN_UM clear of each corner."""
     t = floor["tracks"]["V" if edge in ("N", "S") else "H"]
     lo, hi = edge_span(floor, edge)
     m = int(round(CORNER_MARGIN_UM * floor["dbu"]))
-    pos = [t["origin"] + i * t["step"] for i in range(t["count"])]
-    pos = [p for p in pos if lo + m <= p <= hi - m]
-    return pos[::PITCH_TRACKS]
+    pos = [t["origin"] + i * t["step"] for i in range(0, t["count"], PITCH_TRACKS)]
+    return [p for p in pos if lo + m <= p <= hi - m]
+
+
+def free_slots(floor, edge, occupied):
+    step = floor["tracks"]["V" if edge in ("N", "S") else "H"]["step"]
+    need = PITCH_TRACKS * step
+    return [s for s in lattice(floor, edge) if all(abs(s - q) >= need for q in occupied)]
 
 
 def segment_range(floor, edge, k):
@@ -89,45 +95,54 @@ def segment_range(floor, edge, k):
     return lo + (k - 1) * L / 3.0, lo + k * L / 3.0
 
 
-def place_groups(floor, moves):
+def place_groups(floor, moves, lenient=False):
     """Deterministic legal placement of moved groups.
     floor: {"dbu", "die", "tracks": {"V": {origin,count,step}, "H": {...}}, "pins": {name: {"edge", "pos"}}}
     moves: [{"group", "pins": [bus order], "option": "W2"}...] in priority order; KEEP entries are ignored.
-    Every pin not listed in a move keeps its stock position and blocks slots within PITCH_TRACKS tracks of it.
-    Each move takes the window of len(pins) consecutive free lattice slots on its edge whose mean is nearest the
-    segment centre (ties: lower coordinate); bus order ascends with the coordinate. Returns
-    {"ok": bool, "error": str|None, "placed": {pin: {"edge", "pos"}}}."""
-    moving = {p for mv in moves if mv["option"] != "KEEP" for p in mv["pins"]}
+    Every pin not in a move keeps its stock position and blocks slots closer than PITCH_TRACKS tracks; the stock
+    positions of moved pins are freed first, so groups can trade places. Each move, in order, takes the window of
+    len(pins) consecutive free slots on its edge whose mean is nearest the segment centre (ties: lower coordinate);
+    bus order ascends with the coordinate.
+    strict (validation): any group that does not fit makes the plan infeasible.
+    lenient (inside a build): a group that does not fit keeps its stock pins, and the placement is redone without it.
+    Returns {"ok", "error", "placed": {pin: {"edge", "pos"}}, "dropped": [groups kept at stock because they did not fit]}"""
+    moves = [mv for mv in moves if mv["option"] != "KEEP"]
+    seen = set()
+    for mv in moves:
+        if mv["option"] not in OPTIONS:
+            return {"ok": False, "error": f"unknown option {mv['option']!r} for {mv['group']}", "placed": {}, "dropped": []}
+        if mv["group"] in seen:
+            return {"ok": False, "error": f"group {mv['group']} listed twice", "placed": {}, "dropped": []}
+        seen.add(mv["group"])
+    dropped = []
+    while True:
+        res = _place(floor, [mv for mv in moves if mv["group"] not in dropped])
+        if res["ok"] or not lenient:
+            res["dropped"] = dropped
+            return res
+        dropped.append(res["failed"])
+
+
+def _place(floor, moves):
+    moving = {p for mv in moves for p in mv["pins"]}
     occupied = {e: [] for e in EDGES}
     for name, p in floor["pins"].items():
         if name in moving or p.get("edge") is None:
             continue
         occupied[p["edge"]].append(p["pos"])
     placed = {}
-    seen = set()
     for mv in moves:
-        opt = mv["option"]
-        if opt == "KEEP":
-            continue
-        if opt not in OPTIONS:
-            return {"ok": False, "error": f"unknown option {opt!r} for {mv['group']}", "placed": placed}
-        if mv["group"] in seen:
-            return {"ok": False, "error": f"group {mv['group']} listed twice", "placed": placed}
-        seen.add(mv["group"])
-        e, k = opt[0], int(opt[1])
-        step = floor["tracks"]["V" if e in ("N", "S") else "H"]["step"]
-        need = PITCH_TRACKS * step
-        free = [s for s in lattice(floor, e) if all(abs(s - q) >= need for q in occupied[e])]
+        e, k = mv["option"][0], int(mv["option"][1])
+        free = free_slots(floor, e, occupied[e])
         n = len(mv["pins"])
         if n > len(free):
             return {"ok": False, "error": f"{mv['group']}: {n} pins but edge {e} has {len(free)} free slots",
-                    "placed": placed}
+                    "placed": placed, "failed": mv["group"]}
         a, b = segment_range(floor, e, k)
         c = (a + b) / 2.0
         best = None
         for i in range(0, len(free) - n + 1):
-            w = free[i:i + n]
-            d = abs(sum(w) / n - c)
+            d = abs(sum(free[i:i + n]) / n - c)
             if best is None or d < best[0] - 1e-9:
                 best = (d, i)
         win = free[best[1]:best[1] + n]

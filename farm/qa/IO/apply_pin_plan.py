@@ -78,9 +78,11 @@ def apply_plan(reader, plan_path, hor_layer, ver_layer, hor_width_mult, ver_widt
         missing = [p for p in m["pins"] if p not in names]
         if missing:
             raise SystemExit(f"[iopins] plan group {m['group']}: pins not in design: {missing[:5]}")
-    res = iolib.place_groups(floor, moves)
+    res = iolib.place_groups(floor, moves, lenient=True)
     if not res["ok"]:
         raise SystemExit(f"[iopins] plan infeasible: {res['error']}")
+    if res["dropped"]:
+        print(f"[iopins] groups that did not fit in this floorplan keep their stock pins: {res['dropped']}")
     layer_of = {"V": tech.findLayer(ver_layer), "H": tech.findLayer(hor_layer)}
     moved = {}
     for pin, slot in res["placed"].items():
@@ -107,7 +109,8 @@ def apply_plan(reader, plan_path, hor_layer, ver_layer, hor_width_mult, ver_widt
         if close:
             raise SystemExit(f"[iopins] edge {e}: pins closer than {iolib.PITCH_TRACKS} tracks: {close[:3]}")
     rep = {"plan": os.path.abspath(plan_path), "plan_sha256": hashlib.sha256(open(plan_path, "rb").read()).hexdigest(),
-           "case": plan.get("case"), "arm": plan.get("arm"), "n_moved_groups": len(moves), "n_moved_pins": len(moved),
+           "case": plan.get("case"), "arm": plan.get("arm"), "n_moved_groups": len(moves) - len(res["dropped"]), "n_moved_pins": len(moved),
+           "dropped_groups": res["dropped"],
            "floor": {k: floor[k] for k in ("dbu", "die", "tracks", "layers", "shape", "templates")},
            "stock": floor["pins"], "moved": moved}
     json.dump(rep, open(report_path, "w"), indent=1)

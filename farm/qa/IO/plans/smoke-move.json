@@ -39,7 +39,7 @@
     "data_out1[30]",
     "data_out1[31]"
    ],
-   "option": "N2"
+   "option": "W2"
   },
   {
    "group": "mode",
@@ -53,7 +53,7 @@
    "pins": [
     "all_done"
    ],
-   "option": "E3"
+   "option": "N1"
   }
  ]
 }
