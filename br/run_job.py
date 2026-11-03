@@ -35,6 +35,47 @@ def load_config(path):
     return yaml.safe_load(open(path))
 
 
+def _gz_copy(src, dst):
+    os.makedirs(os.path.dirname(dst), exist_ok=True)
+    with open(src, "rb") as fi, gzip.open(dst, "wb", compresslevel=6) as fo:
+        shutil.copyfileobj(fi, fo)
+
+
+def capture(run_dir, results, max_bytes=400 * 1024 * 1024):
+    """Experiment E full capture (spec "capture": true), read-only on the finished run: final DEF, SPEF per RC corner,
+    mapped netlist, signoff SDC, the post-route and post-GRT STA report trees; all gzipped under <results>/capture/.
+    Returns {relative path: bytes} of what was kept."""
+    import glob
+
+    cap = os.path.join(results, "capture")
+    got = {}
+
+    def keep(src, rel):
+        if os.path.getsize(src) > max_bytes:
+            got[rel] = f"skipped: {os.path.getsize(src)} bytes"
+            return
+        dst = os.path.join(cap, rel + ".gz")
+        _gz_copy(src, dst)
+        got[rel + ".gz"] = os.path.getsize(dst)
+
+    fin = os.path.join(run_dir, "final")
+    for f in sorted(glob.glob(os.path.join(fin, "def", "*.def"))):
+        keep(f, "final.def")
+    for f in sorted(glob.glob(os.path.join(fin, "nl", "*.nl.v"))):
+        keep(f, "final.nl.v")
+    for f in sorted(glob.glob(os.path.join(fin, "sdc", "*.sdc"))):
+        keep(f, "final.sdc")
+    for f in sorted(glob.glob(os.path.join(fin, "spef", "*", "*.spef"))):
+        keep(f, os.path.join("spef", os.path.basename(os.path.dirname(f)) + ".spef"))
+    for step, name in (("*-openroad-stapostpnr", "sta_postpnr"), ("*-openroad-stamidpnr-3", "sta_postgrt")):
+        steps = sorted(glob.glob(os.path.join(run_dir, step)))
+        if not steps:
+            continue
+        for f in sorted(glob.glob(os.path.join(steps[-1], "**", "*.rpt"), recursive=True)):
+            keep(f, os.path.join(name, os.path.relpath(f, steps[-1])))
+    return got
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--job-spec", default=None, help="JSON file with design, config, tag, overrides (overrides CLI values)")
@@ -207,6 +248,19 @@ def main() -> int:
             corner = os.path.basename(os.path.dirname(rpt))
             os.makedirs(os.path.join(results, "checks"), exist_ok=True)
             shutil.copy2(rpt, os.path.join(results, "checks", f"{corner}.checks.rpt"))
+        if spec.get("capture"):
+            t3 = time.time()
+            try:
+                manifest["capture"] = capture(run_dir, results)
+            except Exception as e:  # never lose the run's own results to a capture problem
+                manifest["capture_error"] = f"{type(e).__name__}: {e}"
+            manifest["capture_seconds"] = round(time.time() - t3, 1)
+        for f in ("nets.jsonl", "nets_signoff.jsonl", "final_nets.json"):
+            p = os.path.join(results, f)
+            if spec.get("capture") and os.path.exists(p):   # keep artifacts small: gzip the per-net dumps
+                with open(p, "rb") as fi, gzip.open(p + ".gz", "wb", compresslevel=6) as fo:
+                    shutil.copyfileobj(fi, fo)
+                os.remove(p)
     # gzip the flow log
     with open(flow_log, "rb") as fi, gzip.open(flow_log + ".gz", "wb") as fo:
         shutil.copyfileobj(fi, fo)
