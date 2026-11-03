@@ -51,7 +51,7 @@ def main():
             if r.get("landed_replay") else "not landed"
         print(f"| {r['config']} | {c['design']} / {c['platform']} | {r['T0']:g} | {f(r['C0_pub'], nd)} | {repro} | "
               f"{f(r.get('R1'), 2 if nd == 3 else 0)} | {f(slack, nd)} | {f(r.get('C1'), nd)} | {f(r.get('d1'), 1, True)} | "
-              f"{judge} | {chain or '–'} | {f(r.get('kept_clock'), 2 if nd == 3 else 0)} |")
+              f"{judge} | {chain or '–'} | {('–' if r.get('kept_clock') is None else format(r['kept_clock'], 'g'))} |")
     print()
     print("verdict:", sc["verdict"])
     for k in ("n_registered", "n_replay_landed", "n_reproduced", "n_first_rebuild_landed", "median_d1",
