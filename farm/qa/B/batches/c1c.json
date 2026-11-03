@@ -1,0 +1,782 @@
+{
+ "batch": "c1c",
+ "kind": "c1",
+ "max_parallel": 4,
+ "about": "workstream B c1 batch c1c (docs/qa_week/B_PREREG.md). Arm C1 (registered) chunk C: 8 settings (longest flows); replays; top-ups in the resume stages.",
+ "groups": [
+  {
+   "name": "c1-01",
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 13124,
+   "est_total_s": 13124,
+   "runs": [
+    {
+     "tag": "b1r-sha512-001",
+     "kind": "c1r",
+     "setting": 47,
+     "design": "sha512",
+     "base_spec": "farm/jobs/x4e-sha512-005.json",
+     "source": "x4e-sha512-005",
+     "period": 19.64,
+     "D": 6.012,
+     "io0": 0.2,
+     "F_best": 30.06,
+     "est_s": 13124
+    }
+   ]
+  },
+  {
+   "name": "c1-02",
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 11694,
+   "est_total_s": 11694,
+   "runs": [
+    {
+     "tag": "b1r-bm64-013",
+     "kind": "c1r",
+     "setting": 13,
+     "design": "bm64",
+     "base_spec": "farm/jobs/x4l-bm64-004.json",
+     "source": "x4l-bm64-004",
+     "period": 9.93,
+     "D": 2.28,
+     "io0": 0.2,
+     "F_best": 11.4,
+     "est_s": 11694
+    }
+   ]
+  },
+  {
+   "name": "c1-03",
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 10409,
+   "est_total_s": 11958,
+   "runs": [
+    {
+     "tag": "b1r-bm64-001",
+     "kind": "c1r",
+     "setting": 11,
+     "design": "bm64",
+     "base_spec": "farm/jobs/x2f-bm64-005.json",
+     "source": "x2f-bm64-005",
+     "period": 10.0,
+     "D": 2.28,
+     "io0": 0.2,
+     "F_best": 11.4,
+     "est_s": 10409
+    },
+    {
+     "tag": "b1r-md5-021",
+     "kind": "c1r",
+     "setting": 35,
+     "design": "md5",
+     "base_spec": "farm/jobs/x2f-md5-004.json",
+     "source": "x2f-md5-004",
+     "period": 22.23,
+     "D": 3.1,
+     "io0": 0.2,
+     "F_best": 15.5,
+     "est_s": 1549
+    }
+   ]
+  },
+  {
+   "name": "c1-04",
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 9588,
+   "est_total_s": 10963,
+   "runs": [
+    {
+     "tag": "b1r-chacha-001",
+     "kind": "c1r",
+     "setting": 14,
+     "design": "chacha",
+     "base_spec": "farm/jobs/x4z-chacha-005.json",
+     "source": "x4z-chacha-005",
+     "period": 12.92,
+     "D": 3.53,
+     "io0": 0.2,
+     "F_best": 17.65,
+     "est_s": 9588
+    },
+    {
+     "tag": "b1r-md5-022",
+     "kind": "c1r",
+     "setting": 35,
+     "design": "md5",
+     "base_spec": "farm/jobs/x2f-md5-003.json",
+     "source": "x2f-md5-003",
+     "period": 25.93,
+     "D": 3.1,
+     "io0": 0.2,
+     "F_best": 15.5,
+     "est_s": 1375
+    }
+   ]
+  },
+  {
+   "name": "c1-05",
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 9294,
+   "est_total_s": 11914,
+   "runs": [
+    {
+     "tag": "b1r-bm64-003",
+     "kind": "c1r",
+     "setting": 11,
+     "design": "bm64",
+     "base_spec": "farm/jobs/x7k-bm64-003.json",
+     "source": "x7k-bm64-003",
+     "period": 13.6,
+     "D": 2.28,
+     "io0": 0.2,
+     "F_best": 11.4,
+     "est_s": 9294
+    },
+    {
+     "tag": "b1r-bm64-007",
+     "kind": "c1r",
+     "setting": 11,
+     "design": "bm64",
+     "base_spec": "farm/jobs/x2f-bm64-002.json",
+     "source": "x2f-bm64-002",
+     "period": 17.0,
+     "D": 2.28,
+     "io0": 0.2,
+     "F_best": 11.4,
+     "est_s": 2620
+    }
+   ]
+  },
+  {
+   "name": "c1-06",
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 8828,
+   "est_total_s": 11688,
+   "runs": [
+    {
+     "tag": "b1r-bm64-008",
+     "kind": "c1r",
+     "setting": 11,
+     "design": "bm64",
+     "base_spec": "farm/jobs/x2f-bm64-001.json",
+     "source": "x2f-bm64-001",
+     "period": 20.0,
+     "D": 2.28,
+     "io0": 0.2,
+     "F_best": 11.4,
+     "est_s": 2860
+    },
+    {
+     "tag": "b1r-chacha-002",
+     "kind": "c1r",
+     "setting": 14,
+     "design": "chacha",
+     "base_spec": "farm/jobs/x4c-chacha-001.json",
+     "source": "x4c-chacha-001",
+     "period": 17.0,
+     "D": 3.53,
+     "io0": 0.2,
+     "F_best": 17.65,
+     "est_s": 8828
+    }
+   ]
+  },
+  {
+   "name": "c1-07",
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 8709,
+   "est_total_s": 11968,
+   "runs": [
+    {
+     "tag": "b1r-bm64-009",
+     "kind": "c1r",
+     "setting": 12,
+     "design": "bm64",
+     "base_spec": "farm/jobs/x2r-bm64-017.json",
+     "source": "x2r-bm64-017",
+     "period": 9.18,
+     "D": 2.28,
+     "io0": 0.2,
+     "F_best": 11.4,
+     "est_s": 8709
+    },
+    {
+     "tag": "b1r-sha512-003",
+     "kind": "c1r",
+     "setting": 47,
+     "design": "sha512",
+     "base_spec": "farm/jobs/x4e-sha512-002.json",
+     "source": "x4e-sha512-002",
+     "period": 33.38,
+     "D": 6.012,
+     "io0": 0.2,
+     "F_best": 30.06,
+     "est_s": 3259
+    }
+   ]
+  },
+  {
+   "name": "c1-08",
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 8590,
+   "est_total_s": 11884,
+   "runs": [
+    {
+     "tag": "b1r-bm64-002",
+     "kind": "c1r",
+     "setting": 11,
+     "design": "bm64",
+     "base_spec": "farm/jobs/x2f-bm64-004.json",
+     "source": "x2f-bm64-004",
+     "period": 12.0,
+     "D": 2.28,
+     "io0": 0.2,
+     "F_best": 11.4,
+     "est_s": 8590
+    },
+    {
+     "tag": "b1r-md5-018",
+     "kind": "c1r",
+     "setting": 35,
+     "design": "md5",
+     "base_spec": "farm/jobs/x7k-md5-003.json",
+     "source": "x7k-md5-003",
+     "period": 18.85,
+     "D": 3.1,
+     "io0": 0.2,
+     "F_best": 15.5,
+     "est_s": 3294
+    }
+   ]
+  },
+  {
+   "name": "c1-09",
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 8043,
+   "est_total_s": 11970,
+   "runs": [
+    {
+     "tag": "b1r-bm64-014",
+     "kind": "c1r",
+     "setting": 13,
+     "design": "bm64",
+     "base_spec": "farm/jobs/x4c-bm64-003.json",
+     "source": "x4c-bm64-003",
+     "period": 11.2,
+     "D": 2.28,
+     "io0": 0.2,
+     "F_best": 11.4,
+     "est_s": 8043
+    },
+    {
+     "tag": "b1r-chacha-007",
+     "kind": "c1r",
+     "setting": 15,
+     "design": "chacha",
+     "base_spec": "farm/jobs/x4d-chacha-001.json",
+     "source": "x4d-chacha-001",
+     "period": 26.01,
+     "D": 3.53,
+     "io0": 0.2,
+     "F_best": 17.65,
+     "est_s": 3927
+    }
+   ]
+  },
+  {
+   "name": "c1-10",
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 7971,
+   "est_total_s": 11867,
+   "runs": [
+    {
+     "tag": "b1r-bm64-010",
+     "kind": "c1r",
+     "setting": 12,
+     "design": "bm64",
+     "base_spec": "farm/jobs/x7k-bm64-006.json",
+     "source": "x7k-bm64-006",
+     "period": 11.4,
+     "D": 2.28,
+     "io0": 0.2,
+     "F_best": 11.4,
+     "est_s": 7971
+    },
+    {
+     "tag": "b1r-chacha-009",
+     "kind": "c1r",
+     "setting": 15,
+     "design": "chacha",
+     "base_spec": "farm/jobs/x7k-chacha-003.json",
+     "source": "x7k-chacha-003",
+     "period": 47.35,
+     "D": 3.53,
+     "io0": 0.2,
+     "F_best": 17.65,
+     "est_s": 3896
+    }
+   ]
+  },
+  {
+   "name": "c1-11",
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 7709,
+   "est_total_s": 11972,
+   "runs": [
+    {
+     "tag": "b1r-bm64-004",
+     "kind": "c1r",
+     "setting": 11,
+     "design": "bm64",
+     "base_spec": "farm/jobs/x2f-bm64-003.json",
+     "source": "x2f-bm64-003",
+     "period": 14.0,
+     "D": 2.28,
+     "io0": 0.2,
+     "F_best": 11.4,
+     "est_s": 7709
+    },
+    {
+     "tag": "b1r-salsa20-008",
+     "kind": "c1r",
+     "setting": 46,
+     "design": "salsa20",
+     "base_spec": "farm/jobs/x7k-salsa20-005.json",
+     "source": "x7k-salsa20-005",
+     "period": 49.25,
+     "D": 3.71,
+     "io0": 0.2,
+     "F_best": 18.55,
+     "est_s": 4263
+    }
+   ]
+  },
+  {
+   "name": "c1-12",
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 7059,
+   "est_total_s": 11928,
+   "runs": [
+    {
+     "tag": "b1r-bm64-012",
+     "kind": "c1r",
+     "setting": 12,
+     "design": "bm64",
+     "base_spec": "farm/jobs/x7k-bm64-015.json",
+     "source": "x7k-bm64-015",
+     "period": 11.55,
+     "D": 2.28,
+     "io0": 0.2,
+     "F_best": 11.4,
+     "est_s": 7059
+    },
+    {
+     "tag": "b1r-salsa20-002",
+     "kind": "c1r",
+     "setting": 46,
+     "design": "salsa20",
+     "base_spec": "farm/jobs/x4d-salsa20-004.json",
+     "source": "x4d-salsa20-004",
+     "period": 22.8,
+     "D": 3.71,
+     "io0": 0.2,
+     "F_best": 18.55,
+     "est_s": 4869
+    }
+   ]
+  },
+  {
+   "name": "c1-13",
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 7056,
+   "est_total_s": 11847,
+   "runs": [
+    {
+     "tag": "b1r-bm64-011",
+     "kind": "c1r",
+     "setting": 12,
+     "design": "bm64",
+     "base_spec": "farm/jobs/x7k-bm64-013.json",
+     "source": "x7k-bm64-013",
+     "period": 11.45,
+     "D": 2.28,
+     "io0": 0.2,
+     "F_best": 11.4,
+     "est_s": 7056
+    },
+    {
+     "tag": "b1r-md5-017",
+     "kind": "c1r",
+     "setting": 35,
+     "design": "md5",
+     "base_spec": "farm/jobs/x2f-md5-005.json",
+     "source": "x2f-md5-005",
+     "period": 18.52,
+     "D": 3.1,
+     "io0": 0.2,
+     "F_best": 15.5,
+     "est_s": 4791
+    }
+   ]
+  },
+  {
+   "name": "c1-14",
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 6353,
+   "est_total_s": 11712,
+   "runs": [
+    {
+     "tag": "b1r-chacha-003",
+     "kind": "c1r",
+     "setting": 14,
+     "design": "chacha",
+     "base_spec": "farm/jobs/x7k-chacha-002.json",
+     "source": "x7k-chacha-002",
+     "period": 17.65,
+     "D": 3.53,
+     "io0": 0.2,
+     "F_best": 17.65,
+     "est_s": 6353
+    },
+    {
+     "tag": "b1r-sha512-002",
+     "kind": "c1r",
+     "setting": 47,
+     "design": "sha512",
+     "base_spec": "farm/jobs/x4e-sha512-004.json",
+     "source": "x4e-sha512-004",
+     "period": 23.56,
+     "D": 6.012,
+     "io0": 0.2,
+     "F_best": 30.06,
+     "est_s": 5359
+    }
+   ]
+  },
+  {
+   "name": "c1-15",
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 6073,
+   "est_total_s": 11800,
+   "runs": [
+    {
+     "tag": "b1r-bm64-005",
+     "kind": "c1r",
+     "setting": 11,
+     "design": "bm64",
+     "base_spec": "farm/jobs/x7k-bm64-014.json",
+     "source": "x7k-bm64-014",
+     "period": 14.4,
+     "D": 2.28,
+     "io0": 0.2,
+     "F_best": 11.4,
+     "est_s": 5727
+    },
+    {
+     "tag": "b1r-bm64-006",
+     "kind": "c1r",
+     "setting": 11,
+     "design": "bm64",
+     "base_spec": "farm/jobs/x7k-bm64-016.json",
+     "source": "x7k-bm64-016",
+     "period": 14.55,
+     "D": 2.28,
+     "io0": 0.2,
+     "F_best": 11.4,
+     "est_s": 6073
+    }
+   ]
+  },
+  {
+   "name": "c1-16",
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 6026,
+   "est_total_s": 11747,
+   "runs": [
+    {
+     "tag": "b1r-chacha-006",
+     "kind": "c1r",
+     "setting": 15,
+     "design": "chacha",
+     "base_spec": "farm/jobs/x4d-chacha-002.json",
+     "source": "x4d-chacha-002",
+     "period": 22.11,
+     "D": 3.53,
+     "io0": 0.2,
+     "F_best": 17.65,
+     "est_s": 6026
+    },
+    {
+     "tag": "b1r-salsa20-003",
+     "kind": "c1r",
+     "setting": 46,
+     "design": "salsa20",
+     "base_spec": "farm/jobs/x4d-salsa20-003.json",
+     "source": "x4d-salsa20-003",
+     "period": 26.6,
+     "D": 3.71,
+     "io0": 0.2,
+     "F_best": 18.55,
+     "est_s": 5721
+    }
+   ]
+  },
+  {
+   "name": "c1-17",
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 6015,
+   "est_total_s": 11041,
+   "runs": [
+    {
+     "tag": "b1r-bm64-015",
+     "kind": "c1r",
+     "setting": 13,
+     "design": "bm64",
+     "base_spec": "farm/jobs/x7k-bm64-005.json",
+     "source": "x7k-bm64-005",
+     "period": 11.4,
+     "D": 2.28,
+     "io0": 0.2,
+     "F_best": 11.4,
+     "est_s": 5026
+    },
+    {
+     "tag": "b1r-salsa20-001",
+     "kind": "c1r",
+     "setting": 46,
+     "design": "salsa20",
+     "base_spec": "farm/jobs/x4d-salsa20-005.json",
+     "source": "x4d-salsa20-005",
+     "period": 19.0,
+     "D": 3.71,
+     "io0": 0.2,
+     "F_best": 18.55,
+     "est_s": 6015
+    }
+   ]
+  },
+  {
+   "name": "c1-18",
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 6009,
+   "est_total_s": 11758,
+   "runs": [
+    {
+     "tag": "b1r-chacha-004",
+     "kind": "c1r",
+     "setting": 15,
+     "design": "chacha",
+     "base_spec": "farm/jobs/x4d-chacha-004.json",
+     "source": "x4d-chacha-004",
+     "period": 15.61,
+     "D": 3.53,
+     "io0": 0.2,
+     "F_best": 17.65,
+     "est_s": 6009
+    },
+    {
+     "tag": "b1r-md5-024",
+     "kind": "c1r",
+     "setting": 35,
+     "design": "md5",
+     "base_spec": "farm/jobs/x2f-md5-001.json",
+     "source": "x2f-md5-001",
+     "period": 37.05,
+     "D": 3.1,
+     "io0": 0.2,
+     "F_best": 15.5,
+     "est_s": 1221
+    },
+    {
+     "tag": "b1r-salsa20-004",
+     "kind": "c1r",
+     "setting": 46,
+     "design": "salsa20",
+     "base_spec": "farm/jobs/x4d-salsa20-002.json",
+     "source": "x4d-salsa20-002",
+     "period": 32.3,
+     "D": 3.71,
+     "io0": 0.2,
+     "F_best": 18.55,
+     "est_s": 4528
+    }
+   ]
+  },
+  {
+   "name": "c1-19",
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 4494,
+   "est_total_s": 11550,
+   "runs": [
+    {
+     "tag": "b1r-chacha-005",
+     "kind": "c1r",
+     "setting": 15,
+     "design": "chacha",
+     "base_spec": "farm/jobs/x4d-chacha-003.json",
+     "source": "x4d-chacha-003",
+     "period": 18.21,
+     "D": 3.53,
+     "io0": 0.2,
+     "F_best": 17.65,
+     "est_s": 4494
+    },
+    {
+     "tag": "b1r-chacha-008",
+     "kind": "c1r",
+     "setting": 15,
+     "design": "chacha",
+     "base_spec": "farm/jobs/x7k-chacha-001.json",
+     "source": "x7k-chacha-001",
+     "period": 37.15,
+     "D": 3.53,
+     "io0": 0.2,
+     "F_best": 17.65,
+     "est_s": 4491
+    },
+    {
+     "tag": "b1r-md5-020",
+     "kind": "c1r",
+     "setting": 35,
+     "design": "md5",
+     "base_spec": "farm/jobs/x7k-md5-010.json",
+     "source": "x7k-md5-010",
+     "period": 19.2,
+     "D": 3.1,
+     "io0": 0.2,
+     "F_best": 15.5,
+     "est_s": 2565
+    }
+   ]
+  },
+  {
+   "name": "c1-20",
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 4460,
+   "est_total_s": 11950,
+   "runs": [
+    {
+     "tag": "b1r-chacha-010",
+     "kind": "c1r",
+     "setting": 15,
+     "design": "chacha",
+     "base_spec": "farm/jobs/x7k-chacha-004.json",
+     "source": "x7k-chacha-004",
+     "period": 57.55,
+     "D": 3.53,
+     "io0": 0.2,
+     "F_best": 17.65,
+     "est_s": 3859
+    },
+    {
+     "tag": "b1r-md5-019",
+     "kind": "c1r",
+     "setting": 35,
+     "design": "md5",
+     "base_spec": "farm/jobs/x7k-md5-008.json",
+     "source": "x7k-md5-008",
+     "period": 19.15,
+     "D": 3.1,
+     "io0": 0.2,
+     "F_best": 15.5,
+     "est_s": 4460
+    },
+    {
+     "tag": "b1r-salsa20-005",
+     "kind": "c1r",
+     "setting": 46,
+     "design": "salsa20",
+     "base_spec": "farm/jobs/x7k-salsa20-002.json",
+     "source": "x7k-salsa20-002",
+     "period": 33.4,
+     "D": 3.71,
+     "io0": 0.2,
+     "F_best": 18.55,
+     "est_s": 3631
+    }
+   ]
+  },
+  {
+   "name": "c1-21",
+   "timeout_s": 16000,
+   "budget_s": 15000,
+   "est_flow_s": 3509,
+   "est_total_s": 10632,
+   "runs": [
+    {
+     "tag": "b1r-md5-023",
+     "kind": "c1r",
+     "setting": 35,
+     "design": "md5",
+     "base_spec": "farm/jobs/x2f-md5-002.json",
+     "source": "x2f-md5-002",
+     "period": 31.49,
+     "D": 3.1,
+     "io0": 0.2,
+     "F_best": 15.5,
+     "est_s": 1124
+    },
+    {
+     "tag": "b1r-salsa20-006",
+     "kind": "c1r",
+     "setting": 46,
+     "design": "salsa20",
+     "base_spec": "farm/jobs/x4d-salsa20-001.json",
+     "source": "x4d-salsa20-001",
+     "period": 38.0,
+     "D": 3.71,
+     "io0": 0.2,
+     "F_best": 18.55,
+     "est_s": 2541
+    },
+    {
+     "tag": "b1r-salsa20-007",
+     "kind": "c1r",
+     "setting": 46,
+     "design": "salsa20",
+     "base_spec": "farm/jobs/x7k-salsa20-003.json",
+     "source": "x7k-salsa20-003",
+     "period": 46.6,
+     "D": 3.71,
+     "io0": 0.2,
+     "F_best": 18.55,
+     "est_s": 3509
+    },
+    {
+     "tag": "b1r-sha512-004",
+     "kind": "c1r",
+     "setting": 47,
+     "design": "sha512",
+     "base_spec": "farm/jobs/x4e-sha512-001.json",
+     "source": "x4e-sha512-001",
+     "period": 39.27,
+     "D": 6.012,
+     "io0": 0.2,
+     "F_best": 30.06,
+     "est_s": 3458
+    }
+   ]
+  }
+ ]
+}
