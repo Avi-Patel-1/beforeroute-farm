@@ -38,7 +38,12 @@ def main() -> int:
     ap.add_argument("--pred", required=True)
     ap.add_argument("--score", required=True)
     ap.add_argument("--chains-index", default=os.path.join(HERE, "chains.json"))
+    ap.add_argument("--aggregate-only", action="store_true",
+                    help="aggregate rows only (no packet ids, no per-source or per-pair rows): for anything a baseline "
+                         "author can see (Codex's audit); with --evidence, the lock lineage is printed first")
+    ap.add_argument("--evidence", default=None, help="phase2.py evidence --json output (lock lineage)")
     a = ap.parse_args()
+    AGG = a.aggregate_only
     res = json.load(open(a.score))
     key = json.load(open(a.key))
     tag_of = {c["source"]: c["tag"] for c in json.load(open(a.chains_index))["chains"]}
@@ -67,30 +72,44 @@ def main() -> int:
         oks[arm] = dict(zip([r["pid"] for r in sub], ok))
     A = res["arms"]
 
+    if a.evidence:
+        ev = json.load(open(a.evidence))
+        print("## Lock lineage")
+        print(f"- lock commit {ev['lock_commit']} (committer {ev['lock_commit_time']}), server push "
+              f"{ev['lock_push_time_server']}; chain runs " + ", ".join(f"{r['run']} (created {r['created_at']}, head "
+              f"{r['head_sha'][:7]}, contains the lock: {r['contains_lock_commit']})" for r in ev["chain_runs"]) +
+              f"; earliest matching creation {ev['earliest_matching_chain_run_created_at']}; valid chronology "
+              f"{ev.get('valid_chronology')}; distinct chain tags {ev['distinct_erk_tags']}/35; duplicate or "
+              f"re-dispatched tags {len(ev['tags_with_more_than_one_job'])}.\n")
     print("## Label states")
     print(f"- checked: {res['n_checked']} of 35; not checked (no chain record after the registered re-dispatch): "
-          f"{len(res['not_checked'])} {res['not_checked'] or ''}")
+          f"{len(res['not_checked'])}" + ("" if AGG else f" {res['not_checked'] or ''}"))
     print(f"- first rebuild passed: {sum(r['pass1'] for r in rows)} of {len(rows)}; first rebuild without final "
           f"metrics (fail, slope undefined): {len(res['first_rebuild_no_metrics'])}; slope undefined: "
           f"{len(res['slope_undefined'])}")
     print(f"- kept clock: {sum(r['kept'] is not None for r in rows)} chains kept a clock ({len(res['kept_source_only'])} "
           f"only the source's own target); {len(res['kept_null'])} kept none")
     miss = [r for r in rows if r["missing"]]
-    print(f"- rebuilds with a missing judge field (failed by the fail-closed judge): {len(miss)}"
-          + (f" {[(r['source'], r['missing']) for r in miss]}" if miss else ""))
+    print(f"- sources with a rebuild missing a judge field (failed by the fail-closed judge): {len(miss)}"
+          + (f" {[(r['source'], r['missing']) for r in miss]}" if miss and not AGG else ""))
+    print("- design families: 4 (zipdiv, cic_decimator, wbqspiflash, picorv32), 8–9 sources each; sources within a "
+          "family are not independent, so the families are the replication units.")
 
-    print("\n## Scoreboard (35 sources; two-point line on its 19)")
-    print("| arm | n | valid | false pass / called pass | missed / actual pass | abstain | correct | Brier | slope err median "
-          "(mean) | kept err median (p90) | kept n | kept-vs-none agree |")
-    print("|---|---|---|---|---|---|---|---|---|---|---|---|")
+    print(f"\n## Scoreboard (checked sources of 35; the two-point line is its own tier: the 19 sources with a record "
+          f"second point)")
+    print("| arm | checked n | valid records | false pass / called pass | missed / actual pass | abstain | correct / n | "
+          "Brier | slope err median (mean) [scored / defined] | kept err median (p90) [n] | kept-vs-none agree / scored |")
+    print("|---|---|---|---|---|---|---|---|---|---|---|")
     for arm in ORDER:
-        if arm not in A:
+        if arm not in A or arm == "two_point":
             continue
         r = A[arm]
+        sl_n = r["slope_defined"] - r["slope_missing"]
+        kv_n = r["n"] - r["kept_missing"]
         print(f"| {arm} | {r['n']} | {r.get('valid', '–')} | {r['false_passes']}/{r['predicted_passes']} | "
-              f"{r['missed_passes']}/{r['actual_passes']} | {r['abstentions']} | {r['correct']} | {r['brier']:.3f} | "
-              f"{f3(r['slope_err_median'])} ({f3(r['slope_err_mean'])}) | {pct(r['kept_err_median'])} "
-              f"({pct(r['kept_err_p90'])}) | {r['kept_n']} | {r['kept_vs_none_agree']} |")
+              f"{r['missed_passes']}/{r['actual_passes']} | {r['abstentions']} | {r['correct']}/{r['n']} | {r['brier']:.3f} | "
+              f"{f3(r['slope_err_median'])} ({f3(r['slope_err_mean'])}) [{sl_n}/{r['slope_defined']}] | "
+              f"{pct(r['kept_err_median'])} ({pct(r['kept_err_p90'])}) [{r['kept_n']}] | {r['kept_vs_none_agree']}/{kv_n} |")
     print("Slope missing (abstention without a slope, or invalid file): "
           + ", ".join(f"{arm} {A[arm]['slope_missing']}" for arm in ORDER if arm in A and A[arm]["slope_missing"]))
 
@@ -139,27 +158,43 @@ def main() -> int:
             print(f"| {arm} | " + " | ".join(f3(bf.get(f)) for f in fams) +
                   f" | {f3(A[arm]['slope_err_equal_family'])} | {f3(A[arm]['slope_err_median'])} |")
 
-    print("\n## The 19 two-point sources (every arm on the same subset)")
-    print("| arm | false pass / called pass | correct | slope err median |")
-    print("|---|---|---|---|")
+    print("\n## Two-point tier: the 19 sources with a record second point (every arm on the same subset; the two-point "
+          "line uses one more record run than any other arm, so it is scored only here)")
+    print("| arm | n | false pass / called pass | missed / actual pass | abstain | correct / n | Brier | slope err median "
+          "[scored / defined] | kept err median [n] |")
+    print("|---|---|---|---|---|---|---|---|---|")
     for arm in ORDER:
         if arm in A:
             r = A[arm] if arm == "two_point" else A[arm].get("on_two_point_subset")
             if r and r.get("n"):
-                print(f"| {arm} | {r['false_passes']}/{r['predicted_passes']} | {r['correct']} | "
-                      f"{f3(r['slope_err_median'])} |")
+                print(f"| {arm} | {r['n']} | {r['false_passes']}/{r['predicted_passes']} | {r['missed_passes']}/"
+                      f"{r['actual_passes']} | {r['abstentions']} | {r['correct']}/{r['n']} | {r['brier']:.3f} | "
+                      f"{f3(r['slope_err_median'])} [{r['slope_defined'] - r['slope_missing']}/{r['slope_defined']}] | "
+                      f"{pct(r['kept_err_median'])} [{r['kept_n']}] |")
 
     for ctl, what in (("controls_rung2_rename", "Renaming control (same packet, different salt; fresh reader)"),
                       ("controls_rung2_shuffle", "Shuffled-view diagnostic (per-net fields permuted, layout withheld)")):
         if res.get(ctl):
-            print(f"\n## {what}: control minus main rung-2 prediction")
-            print("| main | control | Δp_pass | same call | Δslope | slope err main | slope err control |")
-            print("|---|---|---|---|---|---|---|")
-            for d in res[ctl]:
-                print(f"| {d['main']} | {d['control']} | {d['d_p_pass']:+.2f} | {d['same_call']} | {f3(d['d_slope'])} | "
-                      f"{f3(d['slope_err_main'])} | {f3(d['slope_err_control'])} |")
+            ds = res[ctl]
+            dp = [abs(d["d_p_pass"]) for d in ds]
+            dsl = [abs(d["d_slope"]) for d in ds if d["d_slope"] is not None]
+            em = [d["slope_err_main"] for d in ds if d["slope_err_main"] is not None]
+            ec = [d["slope_err_control"] for d in ds if d["slope_err_control"] is not None]
+            print(f"\n## {what}: control vs the main rung-2 reading of the same source (n = {len(ds)} pairs)")
+            print(f"- same call: {sum(d['same_call'] for d in ds)}/{len(ds)}; |Δp_pass| median "
+                  f"{f3(st.median(dp) if dp else None)} (max {f3(max(dp) if dp else None)}); |Δslope| median "
+                  f"{f3(st.median(dsl) if dsl else None)} [{len(dsl)} pairs with both slopes]; slope error median: main "
+                  f"{f3(st.median(em) if em else None)}, control {f3(st.median(ec) if ec else None)} [{len(em)} pairs]")
+            if not AGG:
+                print("| main | control | Δp_pass | same call | Δslope | slope err main | slope err control |")
+                print("|---|---|---|---|---|---|---|")
+                for d in ds:
+                    print(f"| {d['main']} | {d['control']} | {d['d_p_pass']:+.2f} | {d['same_call']} | {f3(d['d_slope'])} | "
+                          f"{f3(d['slope_err_main'])} | {f3(d['slope_err_control'])} |")
 
-    print("\n## Per-source labels")
+    if AGG:
+        return 0
+    print("\n## Per-source labels (PRIVATE: per-case rows; not for a baseline author)")
     print("| source | packet | stratum (T0/C0) | T0 | C0 | R1 | pass1 | C1 | slope | kept | rebuilds |")
     print("|---|---|---|---|---|---|---|---|---|---|---|")
     for r in sorted(rows, key=lambda r: r["source"]):

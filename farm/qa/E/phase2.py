@@ -435,15 +435,26 @@ def evidence(a):
                      "pinned_at_head": pinned_files(r["head_sha"])})
     match = [r for r in runs if r["contains_lock_commit"]]
     dup = {t: v for t, v in seen.items() if len(v) > 1}
+    expected = {c["tag"] for c in json.load(open(os.path.join(HERE, "chains.json")))["chains"]}
+    # attempts the registration allows: one job per tag, plus ONE re-dispatch (a later run) after an infrastructure
+    # loss; a re-run inside a run (attempt > 1), a third job, or a job for an unregistered tag is unexpected
+    unexpected = {t: v for t, v in seen.items() if t not in expected or len(v) > 2
+                  or len({x["run"] for x in v}) != len(v) or any((x["attempt"] or 1) > 1 for x in v)}
+    earliest = min((r["created_at"] for r in match), default=None)
     out = {"lock_commit": a.lock_commit, "lock_commit_time": ct, "lock_push_time_server": pt, "chain_runs": runs,
-           "earliest_matching_chain_run_created_at": min((r["created_at"] for r in match), default=None),
-           "all_chain_runs_created_after_lock_push": bool(pt) and all(r["created_at"] > pt for r in runs),
+           "earliest_matching_chain_run_created_at": earliest,
+           # all([]) is True: an empty run list must not pass, hence the explicit non-empty conditions below
+           "all_chain_runs_created_after_lock_push": bool(pt) and bool(runs) and all(r["created_at"] > pt for r in runs),
            "chain_runs_not_containing_lock": [r["run"] for r in runs if not r["contains_lock_commit"]],
-           "tags_with_more_than_one_job": dup, "distinct_erk_tags": len(seen)}
+           "tags_with_more_than_one_job": dup, "unexpected_attempts": unexpected, "distinct_erk_tags": len(seen),
+           "missing_tags": sorted(expected - set(seen))}
+    out["valid_chronology"] = bool(pt and match and earliest and earliest > pt and set(seen) == expected
+                                   and len(expected) == 35 and out["all_chain_runs_created_after_lock_push"]
+                                   and not out["chain_runs_not_containing_lock"] and not unexpected)
     print(json.dumps(out, indent=1))
     if a.json:
         json.dump(out, open(a.json, "w"), indent=1)
-    return 0 if out["all_chain_runs_created_after_lock_push"] and not out["chain_runs_not_containing_lock"] else 1
+    return 0 if out["valid_chronology"] else 1
 
 
 def collect(a):
