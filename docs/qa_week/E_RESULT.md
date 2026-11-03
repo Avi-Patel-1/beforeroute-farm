@@ -127,8 +127,9 @@ Actions API. Committer timestamps are given only beside them.
 - **Claim** C = asked period T − worst setup slack over the 9 corners (AutoTuner's `effective_clk_period`). ceil05 =
   round up to 0.05 ns.
 - **Judge (pass):** the flow completed; setup and hold worst slack ≥ 0 at all 9 corners; detailed-route DRC 0;
-  max-slew + max-cap count (9 corners) ≤ the family's stock bar (zipdiv 295, cic_decimator 89, wbqspiflash 953,
-  picorv32 2881). It is fail-closed: a missing field is never a pass.
+  LibreLane's aggregate max-slew + max-cap violation counts (on this data, the worst corner's count of each; see the
+  erratum) ≤ the family's stock bar (zipdiv 295, cic_decimator 89, wbqspiflash 953, picorv32 2881). It is
+  fail-closed: a missing field is never a pass.
 - **Chain** (runner-side):
   - The first rebuild is at R1 = ceil05(C0).
   - After a pass, rebuild at ceil05(own claim) while that is below the smallest passing clock and above every failed
@@ -304,6 +305,35 @@ Rung 2's slope error there (0.071) is the lowest.
 - Re-running `baselines.py` for the reproducibility check rewrote `private/baselines_meta.json` with the same fit
   (a = 0.4288, b = −0.9036, n = 343).
 - `score.py`'s console summary would crash if no source were checked (its JSON is written first). It was not triggered.
+
+## Erratum / notes (Nov 3, after scoring)
+- **Independent re-score.** An independent verifier re-scored E from the locked files with its own code (not score.py,
+  report.py or elib.py). It reproduced every registered number: the lock MANIFEST (323/323), the labels (24/35 first
+  rebuilds passing, 28 kept clocks, 73 of 99 rebuilds passing), every scoreboard cell, all McNemar p-values, the
+  R1/R2/R3 verdicts and the per-family medians.
+- **DRV wording (erratum).** The pre-registration and the readers' contract.json describe the electrical gate as
+  "max-slew + max-cap violation count (9 corners summed)". That wording is wrong.
+  - The judge the pre-registration cites, and the one the chains ran, is `farm/tune.py` `drv_count`. It adds
+    LibreLane's aggregate counts `design__max_slew_violation__count` + `design__max_cap_violation__count`.
+  - In all 134 runs here (35 sources, 99 rebuilds), each aggregate equals the worst corner's count.
+  - The registered bars (295 / 89 / 953 / 2881) are the stock runs' values under that aggregate. Under a literal
+    9-corner sum the stock runs score 701 / 201 / 2659 / 9734 and would fail their own bars.
+  - So the implemented judge is the cited function, and "9 corners summed" is a wording error. The same phrase is in
+    code comments (`br/run_job.py`). The setup line above is corrected.
+- **Sensitivity to the literal reading.** The observed runs were re-judged with the 9-corner sum against the same
+  bars. The chains were not re-simulated; a flipped verdict would have changed their later targets.
+  - 8 rebuild verdicts and 2 source verdicts flip.
+  - First rebuilds passing: 21/35 (registered 24/35). Chains keeping a clock: 24 (28). Rebuilds passing: 65/99 (73).
+  - Slope errors are unchanged, since the slope does not depend on the judge.
+  - R1 still does not hold: pass/fail still ties (p = 0.0625), rung 1 still beats the law on kept clock, and false
+    passes are still 0 vs 0.
+  - R2 still holds: p = 1.0 against rung 1, p = 0.125 against the law, slope ratio 0.72.
+  - R3 still does not hold: 1.42×.
+  - All three McNemar tests still tie. This was re-checked here with score.py on re-judged chain records.
+- **p90 method.** The kept-error p90 is the nearest-rank value (the ⌈0.9n⌉-th of n = 28), as score.py states.
+  - With linear interpolation it would be 25.1% (raw claim), 17.9% (I/O rule) and 21.3% (rung 2), against 25.8%,
+    19.9% and 24.8% above.
+  - The arms at 100% are unchanged. No registered test uses p90.
 
 ## Files
 - docs/qa_week/E_PREREG.md, E_SMOKE.md, E_RESULT.md (this file).
