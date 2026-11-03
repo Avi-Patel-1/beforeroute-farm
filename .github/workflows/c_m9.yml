@@ -1,0 +1,127 @@
+name: C m9 open-model rule-writer
+
+# Experiment C, arm m9 (docs/qa_week/C_PREREG.md). Runs when farm/qa/C/m9/dispatch.json changes on branch qa-c-method.
+# dispatch.json: {"batch": "<name>", "max_parallel": N, "items": [{"id": "...", "prompt": "<repo path>"}]}
+# Everything that decides a reply (model file, llama.cpp commit and build flags, server and request settings) is pinned in
+# farm/qa/C/m9/config.json. Batches whose name starts with "smoke" test plumbing only and are excluded from every analysis.
+
+on:
+  push:
+    branches: [qa-c-method]
+    paths: [farm/qa/C/m9/dispatch.json]
+
+concurrency:
+  group: c-m9-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      items: ${{ steps.p.outputs.items }}
+      max_parallel: ${{ steps.p.outputs.max_parallel }}
+      batch: ${{ steps.p.outputs.batch }}
+      key: ${{ steps.p.outputs.key }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: farm/qa/C/m9
+      - id: p
+        run: |
+          python3 - >> "$GITHUB_OUTPUT" <<'PY'
+          import hashlib, json
+          d = json.load(open("farm/qa/C/m9/dispatch.json"))
+          c = json.load(open("farm/qa/C/m9/config.json"))
+          print("items=" + json.dumps(d["items"]))
+          print("max_parallel=" + str(int(d["max_parallel"])))
+          print("batch=" + d["batch"])
+          print("key=llama-server-" + c["llama_cpp"]["commit"][:12] + "-" + hashlib.sha256(json.dumps(c["llama_cpp"]["cmake"]).encode()).hexdigest()[:12])
+          PY
+
+  build:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: farm/qa/C/m9
+      - id: cache
+        uses: actions/cache/restore@v4
+        with:
+          path: llama-bin
+          key: ${{ needs.plan.outputs.key }}
+      - name: Build llama-server at the pinned commit
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          set -euo pipefail
+          t0=$(date +%s)
+          sudo apt-get install -y -q ninja-build > /dev/null
+          COMMIT=$(python3 -c "import json; print(json.load(open('farm/qa/C/m9/config.json'))['llama_cpp']['commit'])")
+          mkdir -p /tmp/llama-src && cd /tmp/llama-src
+          git init -q . && git remote add origin https://github.com/ggml-org/llama.cpp
+          git fetch -q --depth 1 origin "$COMMIT" && git checkout -q FETCH_HEAD
+          test "$(git rev-parse HEAD)" = "$COMMIT"
+          cd "$GITHUB_WORKSPACE"
+          mapfile -t FLAGS < <(python3 -c "import json; print('\n'.join(json.load(open('farm/qa/C/m9/config.json'))['llama_cpp']['cmake']))")
+          cmake -S /tmp/llama-src -B /tmp/llama-build "${FLAGS[@]}" > /tmp/cmake.log
+          cmake --build /tmp/llama-build --target llama-server -j 4 > /tmp/build.log
+          mkdir -p llama-bin && cp /tmp/llama-build/bin/llama-server llama-bin/
+          echo "{\"build_s\": $(( $(date +%s) - t0 )), \"commit\": \"$COMMIT\", \"cpu\": \"$(grep -m1 'model name' /proc/cpuinfo | cut -d: -f2 | xargs)\"}" > llama-bin/build.json
+          ./llama-bin/llama-server --version > llama-bin/version.txt 2>&1 || true
+          cat llama-bin/build.json llama-bin/version.txt
+      - if: steps.cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: llama-bin
+          key: ${{ needs.plan.outputs.key }}
+
+  call:
+    needs: [plan, build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      max-parallel: ${{ fromJSON(needs.plan.outputs.max_parallel) }}
+      matrix:
+        item: ${{ fromJSON(needs.plan.outputs.items) }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: farm
+      - uses: actions/cache/restore@v4
+        with:
+          path: llama-bin
+          key: ${{ needs.plan.outputs.key }}
+          fail-on-cache-miss: true
+      - name: Download the pinned GGUF and check it
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          read -r REPO REV FILE SHA < <(python3 -c "import json; m=json.load(open('farm/qa/C/m9/config.json'))['model']; print(m['repo'], m['revision'], m['file'], m['sha256'])")
+          df -h / | tail -1
+          t0=$(date +%s.%N)
+          curl -sS -L --retry 3 -o /tmp/model.gguf "https://huggingface.co/$REPO/resolve/$REV/$FILE"
+          t1=$(date +%s.%N)
+          GOT=$(sha256sum /tmp/model.gguf | cut -d' ' -f1)
+          t2=$(date +%s.%N)
+          SIZE=$(stat -c %s /tmp/model.gguf)
+          python3 -c "import json,sys; json.dump({'download_s': round($t1-$t0,1), 'sha256_s': round($t2-$t1,1), 'bytes': $SIZE, 'MB_per_s': round($SIZE/1e6/($t1-$t0),1), 'sha256': '$GOT', 'sha256_ok': '$GOT'=='$SHA'}, open('out/download.json','w'))"
+          cat out/download.json
+          test "$GOT" = "$SHA"
+      - name: One rule-writing call
+        run: |
+          set -euo pipefail
+          t0=$(date +%s)
+          python3 farm/qa/C/m9/run_m9.py --config farm/qa/C/m9/config.json --server llama-bin/llama-server \
+            --model /tmp/model.gguf --prompt "${{ matrix.item.prompt }}" --item "${{ matrix.item.id }}" --out out
+          echo "{\"step_s\": $(( $(date +%s) - t0 ))}" > out/step.json
+          cp llama-bin/build.json out/build.json || true
+          gzip -9 out/server.log || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: c-m9-${{ needs.plan.outputs.batch }}-${{ matrix.item.id }}
+          path: out
+          retention-days: 30
+          if-no-files-found: warn

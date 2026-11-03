@@ -1,0 +1,40 @@
+{
+ "about": "Experiment C, arm m9 (docs/qa_week/C_PREREG.md): an open-weights ~9B model writes A35's rule on a GitHub-hosted runner. Everything that decides its reply is pinned here.",
+ "model": {
+  "name": "Qwen3.5-9B (instruct, Apache-2.0)",
+  "base": "Qwen/Qwen3.5-9B@c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+  "repo": "lmstudio-community/Qwen3.5-9B-GGUF",
+  "revision": "1379f25c6b505a3fc737bd7818cb09389cf807c1",
+  "file": "Qwen3.5-9B-Q4_K_M.gguf",
+  "size": 5627044256,
+  "sha256": "cd76ec205963b3b33350093e6904d9de16c4e666fd104e1f632d25c7f15f2a13",
+  "license": "apache-2.0",
+  "why_this_file": "its embedded chat template equals Qwen's official template byte for byte (checked 2026-11-03 via the Hub's GGUF metadata); unsloth's GGUF alters the thinking switch"
+ },
+ "llama_cpp": {
+  "repo": "https://github.com/ggml-org/llama.cpp",
+  "tag": "b11700",
+  "commit": "23f7aabc16c72f6f707dba227251c35d7bd1ed96",
+  "commit_date": "2026-10-16T20:00:41+02:00",
+  "cmake": ["-G", "Ninja", "-DCMAKE_BUILD_TYPE=Release", "-DGGML_NATIVE=OFF", "-DGGML_AVX=ON", "-DGGML_AVX2=ON",
+            "-DGGML_FMA=ON", "-DGGML_F16C=ON", "-DGGML_BMI2=ON", "-DGGML_AVX512=OFF", "-DLLAMA_BUILD_TESTS=OFF",
+            "-DLLAMA_BUILD_EXAMPLES=OFF", "-DLLAMA_BUILD_TOOLS=ON", "-DLLAMA_BUILD_SERVER=ON", "-DLLAMA_OPENSSL=OFF",
+            "-DBUILD_SHARED_LIBS=OFF"],
+  "target": "llama-server",
+  "why_these_flags": "one fixed AVX2 kernel set on every runner CPU (EPYC 7763 has no AVX-512; 9V74 does), so a greedy reply does not depend on which machine the job drew"
+ },
+ "server": {"threads": 4, "threads_batch": 4, "ctx_size": 16384, "parallel": 1, "args": ["--jinja", "--reasoning", "off"]},
+ "request": {
+  "messages": "one user message whose content is the prompt file's bytes (UTF-8), no system message",
+  "temperature": 0.0, "top_k": 1, "top_p": 1.0, "min_p": 0.0, "repeat_penalty": 1.0, "presence_penalty": 0.0,
+  "frequency_penalty": 0.0, "seed": 0, "max_tokens": 2048, "chat_template_kwargs": {"enable_thinking": false}
+ },
+ "reask": {
+  "when": "the first reply cannot be read as a policy by tune_a35.parse_policy (greedy decoding would repeat the same reply, so the one registered re-ask constrains the output to the reply's JSON form)",
+  "response_format": {"type": "json_schema", "json_schema": {"name": "policy", "schema": {
+   "type": "object", "properties": {"rationale": {"type": "string", "maxLength": 1500}, "pins": {"type": "object"}},
+   "required": ["rationale", "pins"], "additionalProperties": false}}},
+  "then": "if the re-ask cannot be read either, the race's policy is empty ({} = plain TPE), logged"
+ },
+ "timeouts_s": {"server_load": 1200, "request": 7200}
+}
