@@ -1,0 +1,3631 @@
+{
+ "judge": "failclosed",
+ "rejudge_discrepancies": [],
+ "landed_chains": 48,
+ "complete_chains": 44,
+ "first_rebuilds_landed": 48,
+ "expected": 48,
+ "no_claim": [],
+ "C2a_i": {
+  "original_failures_landed": 3,
+  "still_fail": 2,
+  "which": [
+   [
+    "x1t-picorv32-014",
+    false
+   ],
+   [
+    "x1t-y_huff-005",
+    true
+   ],
+   [
+    "x2t-bm64-007",
+    true
+   ]
+  ],
+  "verdict": "PASS"
+ },
+ "C2a_ii": {
+  "fails": 3,
+  "of": 48,
+  "which": [
+   "x1t-y_huff-005",
+   "x2t-bm64-007",
+   "xaf1-cic_decimator-006"
+  ],
+  "verdict": "PASS"
+ },
+ "C2a_iii": {
+  "n": 42,
+  "median_g": 1.0948655952211634,
+  "over_1.02": 33,
+  "verdict": "pending"
+ },
+ "rows": [
+  {
+   "design": "aes_cipher",
+   "set": "A24/A25 (Bayesian, TPE)",
+   "source": "x1t-aes_cipher-017",
+   "T0": 25.84,
+   "drv_ref": 14,
+   "claim_orig": 17.974737558257566,
+   "orig_first_pass": true,
+   "D": 2.06,
+   "landed": true,
+   "chain_id": "b2a-aes_cipher-01",
+   "complete": false,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-aes_cipher-01-0",
+    "period": 25.84,
+    "claim": 14.978471127372671,
+    "pass": true,
+    "port": true,
+    "ws": 10.861528872627328,
+    "ws_r2r": 12.551512,
+    "io_pct": 7.972136
+   },
+   "claim_frozen": 14.978471127372671,
+   "first_rebuild": {
+    "tag": "b2a-aes_cipher-01-1",
+    "period": 15.0,
+    "claim": 13.431569237006975,
+    "pass": true,
+    "port": false,
+    "ws": 1.5684307629930236,
+    "ws_r2r": 1.568431,
+    "hold_ws": 0.021400104516398493,
+    "drc": 0.0,
+    "drv": 13.0
+   },
+   "first_fails": false,
+   "K": 15.0,
+   "T1": 15.0,
+   "chain": [
+    [
+     "b2a-aes_cipher-01-0",
+     25.84,
+     14.978471127372671,
+     true
+    ],
+    [
+     "b2a-aes_cipher-01-1",
+     15.0,
+     13.431569237006975,
+     true
+    ]
+   ],
+   "g": 1.0
+  },
+  {
+   "design": "picorv32",
+   "set": "A24/A25 (Bayesian, TPE)",
+   "source": "x1t-picorv32-014",
+   "T0": 13.06,
+   "drv_ref": 2881,
+   "claim_orig": 9.849927257075146,
+   "orig_first_pass": false,
+   "D": 1.86,
+   "landed": true,
+   "chain_id": "b2a-picorv32-01",
+   "complete": false,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-picorv32-01-0",
+    "period": 13.06,
+    "claim": 10.243258413631143,
+    "pass": true,
+    "port": false,
+    "ws": 2.8167415863688587,
+    "ws_r2r": 2.816742,
+    "io_pct": 14.24196
+   },
+   "claim_frozen": 10.243258413631143,
+   "first_rebuild": {
+    "tag": "b2a-picorv32-01-1",
+    "period": 10.25,
+    "claim": 10.036327358815987,
+    "pass": true,
+    "port": false,
+    "ws": 0.2136726411840129,
+    "ws_r2r": 0.213673,
+    "hold_ws": 0.10617551582906073,
+    "drc": 0.0,
+    "drv": 854.0
+   },
+   "first_fails": false,
+   "K": 10.25,
+   "T1": 10.25,
+   "chain": [
+    [
+     "b2a-picorv32-01-0",
+     13.06,
+     10.243258413631143,
+     true
+    ],
+    [
+     "b2a-picorv32-01-1",
+     10.25,
+     10.036327358815987,
+     true
+    ]
+   ],
+   "g": 1.0
+  },
+  {
+   "design": "y_huff",
+   "set": "A24/A25 (Bayesian, TPE)",
+   "source": "x1t-y_huff-005",
+   "T0": 10.97,
+   "drv_ref": 3751,
+   "claim_orig": 10.239824059621643,
+   "orig_first_pass": false,
+   "D": 1.402,
+   "landed": true,
+   "chain_id": "b2a-y_huff-01",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, fail (setup+hold)",
+   "R1_status": "completed, fail (hold)",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-y_huff-01-0",
+    "period": 10.97,
+    "claim": 11.3527906988621,
+    "pass": false,
+    "port": false,
+    "ws": -0.3827906988620991,
+    "ws_r2r": -0.382791,
+    "io_pct": 12.78031
+   },
+   "claim_frozen": 11.3527906988621,
+   "first_rebuild": {
+    "tag": "b2a-y_huff-01-1",
+    "period": 11.4,
+    "claim": 11.125564406870549,
+    "pass": false,
+    "port": true,
+    "ws": 0.2744355931294512,
+    "ws_r2r": 1.310601,
+    "hold_ws": -0.4837157478146092,
+    "drc": 0.0,
+    "drv": 1218.0
+   },
+   "first_fails": true,
+   "K": null,
+   "T1": null,
+   "chain": [
+    [
+     "b2a-y_huff-01-0",
+     10.97,
+     11.3527906988621,
+     false
+    ],
+    [
+     "b2a-y_huff-01-1",
+     11.4,
+     11.125564406870549,
+     false
+    ],
+    [
+     "b2a-y_huff-01-2",
+     11.45,
+     11.007736872472785,
+     false
+    ]
+   ]
+  },
+  {
+   "design": "des",
+   "set": "A24/A25 (Bayesian, TPE)",
+   "source": "x2t-des-008",
+   "T0": 10.55,
+   "drv_ref": 2240,
+   "claim_orig": 9.087991666443697,
+   "orig_first_pass": true,
+   "D": 1.65,
+   "landed": true,
+   "chain_id": "b2a-des-01",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-des-01-0",
+    "period": 10.55,
+    "claim": 8.722239782867016,
+    "pass": true,
+    "port": true,
+    "ws": 1.8277602171329843,
+    "ws_r2r": 3.010902,
+    "io_pct": 15.63981
+   },
+   "claim_frozen": 8.722239782867016,
+   "first_rebuild": {
+    "tag": "b2a-des-01-1",
+    "period": 8.75,
+    "claim": 8.730543562987783,
+    "pass": true,
+    "port": true,
+    "ws": 0.01945643701221656,
+    "ws_r2r": 1.225168,
+    "hold_ws": 0.08387513143653204,
+    "drc": 0.0,
+    "drv": 32.0
+   },
+   "first_fails": false,
+   "K": 8.75,
+   "T1": 8.75,
+   "chain": [
+    [
+     "b2a-des-01-0",
+     10.55,
+     8.722239782867016,
+     true
+    ],
+    [
+     "b2a-des-01-1",
+     8.75,
+     8.730543562987783,
+     true
+    ]
+   ],
+   "g": 1.0
+  },
+  {
+   "design": "md5",
+   "set": "A24/A25 (Bayesian, TPE)",
+   "source": "x2t-md5-012",
+   "T0": 17.19,
+   "drv_ref": 1629,
+   "claim_orig": 18.501089940391015,
+   "orig_first_pass": true,
+   "D": 3.1,
+   "landed": true,
+   "chain_id": "b2a-md5-01",
+   "complete": false,
+   "stage": 1,
+   "W_status": "completed, fail (setup)",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-md5-01-0",
+    "period": 17.19,
+    "claim": 18.501089940391015,
+    "pass": false,
+    "port": false,
+    "ws": -1.311089940391014,
+    "ws_r2r": -1.31109,
+    "io_pct": 18.033741
+   },
+   "claim_frozen": 18.501089940391015,
+   "first_rebuild": {
+    "tag": "b2a-md5-01-1",
+    "period": 18.55,
+    "claim": 18.426509445389183,
+    "pass": true,
+    "port": false,
+    "ws": 0.12349055461081741,
+    "ws_r2r": 0.123491,
+    "hold_ws": 0.09782153142169947,
+    "drc": 0.0,
+    "drv": 34.0
+   },
+   "first_fails": false,
+   "K": 18.55,
+   "T1": 18.55,
+   "chain": [
+    [
+     "b2a-md5-01-0",
+     17.19,
+     18.501089940391015,
+     false
+    ],
+    [
+     "b2a-md5-01-1",
+     18.55,
+     18.426509445389183,
+     true
+    ]
+   ],
+   "g": 1.0
+  },
+  {
+   "design": "bm64",
+   "set": "A24/A25 (Bayesian, TPE)",
+   "source": "x2t-bm64-007",
+   "T0": 10.08,
+   "drv_ref": 2155,
+   "claim_orig": 13.406548020089264,
+   "orig_first_pass": false,
+   "D": 2.28,
+   "landed": true,
+   "chain_id": "b2a-bm64-01",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, fail (setup)",
+   "R1_status": "completed, fail (setup)",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-bm64-01-0",
+    "period": 10.08,
+    "claim": 13.198115631729687,
+    "pass": false,
+    "port": false,
+    "ws": -3.1181156317296863,
+    "ws_r2r": -3.118116,
+    "io_pct": 22.619048
+   },
+   "claim_frozen": 13.198115631729687,
+   "first_rebuild": {
+    "tag": "b2a-bm64-01-1",
+    "period": 13.2,
+    "claim": 13.638651793970578,
+    "pass": false,
+    "port": false,
+    "ws": -0.4386517939705784,
+    "ws_r2r": -0.438652,
+    "hold_ws": 0.07548206717759871,
+    "drc": 0.0,
+    "drv": 5.0
+   },
+   "first_fails": true,
+   "K": null,
+   "T1": null,
+   "chain": [
+    [
+     "b2a-bm64-01-0",
+     10.08,
+     13.198115631729687,
+     false
+    ],
+    [
+     "b2a-bm64-01-1",
+     13.2,
+     13.638651793970578,
+     false
+    ],
+    [
+     "b2a-bm64-01-2",
+     13.65,
+     14.152073064001362,
+     false
+    ]
+   ]
+  },
+  {
+   "design": "ocs_blitter",
+   "set": "A24/A25 (Bayesian, TPE)",
+   "source": "x2t-ocs_blitter-022",
+   "T0": 11.23,
+   "drv_ref": 3669,
+   "claim_orig": 11.04981079800724,
+   "orig_first_pass": true,
+   "D": 2.2,
+   "landed": true,
+   "chain_id": "b2a-ocs_blitter-01",
+   "complete": false,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-ocs_blitter-01-0",
+    "period": 11.23,
+    "claim": 10.947152468819663,
+    "pass": true,
+    "port": false,
+    "ws": 0.28284753118033695,
+    "ws_r2r": 0.282848,
+    "io_pct": 19.590383
+   },
+   "claim_frozen": 10.947152468819663,
+   "first_rebuild": {
+    "tag": "b2a-ocs_blitter-01-1",
+    "period": 10.95,
+    "claim": 10.811818973911867,
+    "pass": true,
+    "port": false,
+    "ws": 0.1381810260881324,
+    "ws_r2r": 0.138181,
+    "hold_ws": 0.08636641646309802,
+    "drc": 0.0,
+    "drv": 169.0
+   },
+   "first_fails": false,
+   "K": 10.95,
+   "T1": 10.95,
+   "chain": [
+    [
+     "b2a-ocs_blitter-01-0",
+     11.23,
+     10.947152468819663,
+     true
+    ],
+    [
+     "b2a-ocs_blitter-01-1",
+     10.95,
+     10.811818973911867,
+     true
+    ]
+   ],
+   "g": 1.0
+  },
+  {
+   "design": "blabla",
+   "set": "A24/A25 (Bayesian, TPE)",
+   "source": "x2t-blabla-021",
+   "T0": 60.35,
+   "drv_ref": 3877,
+   "claim_orig": 26.336392884180754,
+   "orig_first_pass": true,
+   "D": 4.38,
+   "landed": true,
+   "chain_id": "b2a-blabla-01",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-blabla-01-0",
+    "period": 60.35,
+    "claim": 25.645084520726144,
+    "pass": true,
+    "port": false,
+    "ws": 34.70491547927386,
+    "ws_r2r": 34.704914,
+    "io_pct": 7.257664
+   },
+   "claim_frozen": 25.645084520726144,
+   "first_rebuild": {
+    "tag": "b2a-blabla-01-1",
+    "period": 25.65,
+    "claim": 25.64508126777259,
+    "pass": true,
+    "port": false,
+    "ws": 0.004918732227410541,
+    "ws_r2r": 0.004919,
+    "hold_ws": 0.09227918690372001,
+    "drc": 0.0,
+    "drv": 66.0
+   },
+   "first_fails": false,
+   "K": 25.65,
+   "T1": 25.65,
+   "chain": [
+    [
+     "b2a-blabla-01-0",
+     60.35,
+     25.645084520726144,
+     true
+    ],
+    [
+     "b2a-blabla-01-1",
+     25.65,
+     25.64508126777259,
+     true
+    ]
+   ],
+   "g": 1.0
+  },
+  {
+   "design": "xtea",
+   "set": "A35 race b1",
+   "source": "xab1-xtea-005",
+   "T0": 11.9,
+   "drv_ref": 0,
+   "claim_orig": 6.515273849284334,
+   "orig_first_pass": true,
+   "D": 0.84,
+   "landed": true,
+   "chain_id": "b2a-xtea-01",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-xtea-01-0",
+    "period": 11.9,
+    "claim": 6.515331580883247,
+    "pass": true,
+    "port": false,
+    "ws": 5.384668419116753,
+    "ws_r2r": 5.384668,
+    "io_pct": 7.058824
+   },
+   "claim_frozen": 6.515331580883247,
+   "first_rebuild": {
+    "tag": "b2a-xtea-01-1",
+    "period": 6.55,
+    "claim": 5.415487483955889,
+    "pass": true,
+    "port": false,
+    "ws": 1.134512516044111,
+    "ws_r2r": 1.134513,
+    "hold_ws": 0.11176299091426757,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": false,
+   "K": 4.85,
+   "T1": 6.55,
+   "chain": [
+    [
+     "b2a-xtea-01-0",
+     11.9,
+     6.515331580883247,
+     true
+    ],
+    [
+     "b2a-xtea-01-1",
+     6.55,
+     5.415487483955889,
+     true
+    ],
+    [
+     "b2a-xtea-01-2",
+     5.45,
+     5.179762382289988,
+     true
+    ],
+    [
+     "b2a-xtea-01-3",
+     5.2,
+     4.810107204248513,
+     true
+    ],
+    [
+     "b2a-xtea-01-4",
+     4.85,
+     4.689951576511188,
+     true
+    ]
+   ],
+   "g": 1.3505154639175259
+  },
+  {
+   "design": "xtea",
+   "set": "A35 race f1",
+   "source": "xaf1-xtea-004",
+   "T0": 11.71,
+   "drv_ref": 0,
+   "claim_orig": 6.212760292073042,
+   "orig_first_pass": true,
+   "D": 0.84,
+   "landed": true,
+   "chain_id": "b2a-xtea-02",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-xtea-02-0",
+    "period": 11.71,
+    "claim": 4.7094707566691945,
+    "pass": true,
+    "port": true,
+    "ws": 7.000529243330806,
+    "ws_r2r": 7.413354,
+    "io_pct": 7.173356
+   },
+   "claim_frozen": 4.7094707566691945,
+   "first_rebuild": {
+    "tag": "b2a-xtea-02-1",
+    "period": 4.75,
+    "claim": 4.451031363912355,
+    "pass": true,
+    "port": true,
+    "ws": 0.298968636087645,
+    "ws_r2r": 0.451592,
+    "hold_ws": 0.09811829404457478,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": false,
+   "K": 4.2,
+   "T1": 4.75,
+   "chain": [
+    [
+     "b2a-xtea-02-0",
+     11.71,
+     4.7094707566691945,
+     true
+    ],
+    [
+     "b2a-xtea-02-1",
+     4.75,
+     4.451031363912355,
+     true
+    ],
+    [
+     "b2a-xtea-02-2",
+     4.5,
+     4.181766995488831,
+     true
+    ],
+    [
+     "b2a-xtea-02-3",
+     4.2,
+     3.9355810613266122,
+     true
+    ],
+    [
+     "b2a-xtea-02-4",
+     3.95,
+     3.986632253822748,
+     false
+    ]
+   ],
+   "g": 1.130952380952381
+  },
+  {
+   "design": "xtea",
+   "set": "A35 race g1",
+   "source": "xag1-xtea-003",
+   "T0": 11.71,
+   "drv_ref": 0,
+   "claim_orig": 6.367383277531673,
+   "orig_first_pass": true,
+   "D": 0.84,
+   "landed": true,
+   "chain_id": "b2a-xtea-03",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-xtea-03-0",
+    "period": 11.71,
+    "claim": 4.864961048379191,
+    "pass": true,
+    "port": true,
+    "ws": 6.845038951620809,
+    "ws_r2r": 7.476676,
+    "io_pct": 7.173356
+   },
+   "claim_frozen": 4.864961048379191,
+   "first_rebuild": {
+    "tag": "b2a-xtea-03-1",
+    "period": 4.9,
+    "claim": 4.509057821415959,
+    "pass": true,
+    "port": true,
+    "ws": 0.3909421785840415,
+    "ws_r2r": 0.663497,
+    "hold_ws": 0.09596063104634416,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": false,
+   "K": 4.15,
+   "T1": 4.9,
+   "chain": [
+    [
+     "b2a-xtea-03-0",
+     11.71,
+     4.864961048379191,
+     true
+    ],
+    [
+     "b2a-xtea-03-1",
+     4.9,
+     4.509057821415959,
+     true
+    ],
+    [
+     "b2a-xtea-03-2",
+     4.55,
+     4.2837003434697065,
+     true
+    ],
+    [
+     "b2a-xtea-03-3",
+     4.3,
+     4.149920047286621,
+     true
+    ],
+    [
+     "b2a-xtea-03-4",
+     4.15,
+     4.053829814351832,
+     true
+    ]
+   ],
+   "g": 1.180722891566265
+  },
+  {
+   "design": "xtea",
+   "set": "A35 race h1",
+   "source": "xah1-xtea-007",
+   "T0": 11.71,
+   "drv_ref": 0,
+   "claim_orig": 6.007647470650976,
+   "orig_first_pass": true,
+   "D": 0.84,
+   "landed": true,
+   "chain_id": "b2a-xtea-04",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [
+    4.1,
+    4.15,
+    4.55,
+    11.71
+   ],
+   "W": {
+    "tag": "b2a-xtea-04-0",
+    "period": 11.71,
+    "claim": 4.507037125525928,
+    "pass": true,
+    "port": true,
+    "ws": 7.202962874474073,
+    "ws_r2r": 7.26717,
+    "io_pct": 7.173356
+   },
+   "claim_frozen": 4.507037125525928,
+   "first_rebuild": {
+    "tag": "b2a-xtea-04-1",
+    "period": 4.55,
+    "claim": 4.148994759636153,
+    "pass": true,
+    "port": true,
+    "ws": 0.4010052403638467,
+    "ws_r2r": 0.73308,
+    "hold_ws": 0.09740231119574465,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": false,
+   "K": 4.1,
+   "T1": 4.55,
+   "chain": [
+    [
+     "b2a-xtea-04-0",
+     11.71,
+     4.507037125525928,
+     true
+    ],
+    [
+     "b2a-xtea-04-1",
+     4.55,
+     4.148994759636153,
+     true
+    ],
+    [
+     "b2a-xtea-04-2",
+     4.15,
+     4.08190580112641,
+     true
+    ],
+    [
+     "b2a-xtea-04-3",
+     4.1,
+     4.081905806677525,
+     true
+    ]
+   ],
+   "g": 1.1097560975609757
+  },
+  {
+   "design": "xtea",
+   "set": "A35 race b2",
+   "source": "xab2-xtea-008",
+   "T0": 14.23,
+   "drv_ref": 0,
+   "claim_orig": 6.7315596968602565,
+   "orig_first_pass": true,
+   "D": 0.84,
+   "landed": true,
+   "chain_id": "b2a-xtea-05",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-xtea-05-0",
+    "period": 14.23,
+    "claim": 4.722957466577569,
+    "pass": true,
+    "port": true,
+    "ws": 9.507042533422432,
+    "ws_r2r": 10.020969,
+    "io_pct": 5.903022
+   },
+   "claim_frozen": 4.722957466577569,
+   "first_rebuild": {
+    "tag": "b2a-xtea-05-1",
+    "period": 4.75,
+    "claim": 4.432775522112923,
+    "pass": true,
+    "port": true,
+    "ws": 0.31722447788707675,
+    "ws_r2r": 0.537678,
+    "hold_ws": 0.09752959826911785,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": false,
+   "K": 4.25,
+   "T1": 4.75,
+   "chain": [
+    [
+     "b2a-xtea-05-0",
+     14.23,
+     4.722957466577569,
+     true
+    ],
+    [
+     "b2a-xtea-05-1",
+     4.75,
+     4.432775522112923,
+     true
+    ],
+    [
+     "b2a-xtea-05-2",
+     4.45,
+     4.311786111309409,
+     true
+    ],
+    [
+     "b2a-xtea-05-3",
+     4.35,
+     4.239912946299953,
+     true
+    ],
+    [
+     "b2a-xtea-05-4",
+     4.25,
+     4.234785503240241,
+     true
+    ]
+   ],
+   "g": 1.1176470588235294
+  },
+  {
+   "design": "xtea",
+   "set": "A35 race f2",
+   "source": "xaf2-xtea-006",
+   "T0": 11.71,
+   "drv_ref": 0,
+   "claim_orig": 6.239382996867285,
+   "orig_first_pass": true,
+   "D": 0.84,
+   "landed": true,
+   "chain_id": "b2a-xtea-06",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-xtea-06-0",
+    "period": 11.71,
+    "claim": 5.1849433203374335,
+    "pass": true,
+    "port": false,
+    "ws": 6.525056679662567,
+    "ws_r2r": 6.525057,
+    "io_pct": 7.173356
+   },
+   "claim_frozen": 5.1849433203374335,
+   "first_rebuild": {
+    "tag": "b2a-xtea-06-1",
+    "period": 5.2,
+    "claim": 5.015915691437483,
+    "pass": true,
+    "port": false,
+    "ws": 0.1840843085625176,
+    "ws_r2r": 0.184084,
+    "hold_ws": 0.10272111230139358,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": false,
+   "K": 4.65,
+   "T1": 5.2,
+   "chain": [
+    [
+     "b2a-xtea-06-0",
+     11.71,
+     5.1849433203374335,
+     true
+    ],
+    [
+     "b2a-xtea-06-1",
+     5.2,
+     5.015915691437483,
+     true
+    ],
+    [
+     "b2a-xtea-06-2",
+     5.05,
+     4.736197007526979,
+     true
+    ],
+    [
+     "b2a-xtea-06-3",
+     4.75,
+     4.607040351834128,
+     true
+    ],
+    [
+     "b2a-xtea-06-4",
+     4.65,
+     4.512048568039853,
+     true
+    ]
+   ],
+   "g": 1.118279569892473
+  },
+  {
+   "design": "xtea",
+   "set": "A35 race g2",
+   "source": "xag2-xtea-004",
+   "T0": 11.71,
+   "drv_ref": 0,
+   "claim_orig": 5.927190938048555,
+   "orig_first_pass": true,
+   "D": 0.84,
+   "landed": true,
+   "chain_id": "b2a-xtea-07",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-xtea-07-0",
+    "period": 11.71,
+    "claim": 4.427192547871987,
+    "pass": true,
+    "port": true,
+    "ws": 7.282807452128014,
+    "ws_r2r": 7.485866,
+    "io_pct": 7.173356
+   },
+   "claim_frozen": 4.427192547871987,
+   "first_rebuild": {
+    "tag": "b2a-xtea-07-1",
+    "period": 4.45,
+    "claim": 4.168664592621968,
+    "pass": true,
+    "port": false,
+    "ws": 0.28133540737803175,
+    "ws_r2r": 0.281335,
+    "hold_ws": 0.10467615959189977,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": false,
+   "K": 4.1,
+   "T1": 4.45,
+   "chain": [
+    [
+     "b2a-xtea-07-0",
+     11.71,
+     4.427192547871987,
+     true
+    ],
+    [
+     "b2a-xtea-07-1",
+     4.45,
+     4.168664592621968,
+     true
+    ],
+    [
+     "b2a-xtea-07-2",
+     4.2,
+     4.058099060540353,
+     true
+    ],
+    [
+     "b2a-xtea-07-3",
+     4.1,
+     4.04858756867701,
+     true
+    ],
+    [
+     "b2a-xtea-07-4",
+     4.05,
+     4.052111644252558,
+     false
+    ]
+   ],
+   "g": 1.0853658536585367
+  },
+  {
+   "design": "xtea",
+   "set": "A35 race h2",
+   "source": "xah2-xtea-001",
+   "T0": 11.71,
+   "drv_ref": 0,
+   "claim_orig": 5.947449400196444,
+   "orig_first_pass": true,
+   "D": 0.84,
+   "landed": true,
+   "chain_id": "b2a-xtea-08",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-xtea-08-0",
+    "period": 11.71,
+    "claim": 4.46941344251415,
+    "pass": true,
+    "port": false,
+    "ws": 7.240586557485851,
+    "ws_r2r": 7.240587,
+    "io_pct": 7.173356
+   },
+   "claim_frozen": 4.46941344251415,
+   "first_rebuild": {
+    "tag": "b2a-xtea-08-1",
+    "period": 4.5,
+    "claim": 4.186570708607637,
+    "pass": true,
+    "port": true,
+    "ws": 0.3134292913923629,
+    "ws_r2r": 0.594149,
+    "hold_ws": 0.06184192222243563,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": false,
+   "K": 3.95,
+   "T1": 4.5,
+   "chain": [
+    [
+     "b2a-xtea-08-0",
+     11.71,
+     4.46941344251415,
+     true
+    ],
+    [
+     "b2a-xtea-08-1",
+     4.5,
+     4.186570708607637,
+     true
+    ],
+    [
+     "b2a-xtea-08-2",
+     4.2,
+     4.084664477824904,
+     true
+    ],
+    [
+     "b2a-xtea-08-3",
+     4.1,
+     3.9151676231423327,
+     true
+    ],
+    [
+     "b2a-xtea-08-4",
+     3.95,
+     3.9112869661256515,
+     true
+    ]
+   ],
+   "g": 1.1392405063291138
+  },
+  {
+   "design": "cic_decimator",
+   "set": "A35 race b1",
+   "source": "xab1-cic_decimator-007",
+   "T0": 4.97,
+   "drv_ref": 89,
+   "claim_orig": 4.830745166172081,
+   "orig_first_pass": true,
+   "D": 0.78,
+   "landed": true,
+   "chain_id": "b2a-cic_decimator-01",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-cic_decimator-01-0",
+    "period": 4.97,
+    "claim": 4.721532968240182,
+    "pass": true,
+    "port": false,
+    "ws": 0.2484670317598179,
+    "ws_r2r": 0.248467,
+    "io_pct": 15.694165
+   },
+   "claim_frozen": 4.721532968240182,
+   "first_rebuild": {
+    "tag": "b2a-cic_decimator-01-1",
+    "period": 4.75,
+    "claim": 4.589563442530802,
+    "pass": true,
+    "port": false,
+    "ws": 0.1604365574691977,
+    "ws_r2r": 0.160437,
+    "hold_ws": 0.09521539381998777,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": false,
+   "K": 4.75,
+   "T1": 4.75,
+   "chain": [
+    [
+     "b2a-cic_decimator-01-0",
+     4.97,
+     4.721532968240182,
+     true
+    ],
+    [
+     "b2a-cic_decimator-01-1",
+     4.75,
+     4.589563442530802,
+     true
+    ],
+    [
+     "b2a-cic_decimator-01-2",
+     4.6,
+     4.622449598371258,
+     false
+    ]
+   ],
+   "g": 1.0
+  },
+  {
+   "design": "cic_decimator",
+   "set": "A35 race f1",
+   "source": "xaf1-cic_decimator-006",
+   "T0": 4.5,
+   "drv_ref": 89,
+   "claim_orig": 4.239938686821508,
+   "orig_first_pass": false,
+   "D": 0.78,
+   "landed": true,
+   "chain_id": "b2a-cic_decimator-02",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, fail (setup)",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-cic_decimator-02-0",
+    "period": 4.5,
+    "claim": 4.299333843961924,
+    "pass": true,
+    "port": false,
+    "ws": 0.20066615603807578,
+    "ws_r2r": 0.200666,
+    "io_pct": 17.333333
+   },
+   "claim_frozen": 4.299333843961924,
+   "first_rebuild": {
+    "tag": "b2a-cic_decimator-02-1",
+    "period": 4.3,
+    "claim": 4.309878764752505,
+    "pass": false,
+    "port": false,
+    "ws": -0.00987876475250519,
+    "ws_r2r": -0.009879,
+    "hold_ws": 0.08867956620032487,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": true,
+   "K": 4.35,
+   "T1": 4.35,
+   "chain": [
+    [
+     "b2a-cic_decimator-02-0",
+     4.5,
+     4.299333843961924,
+     true
+    ],
+    [
+     "b2a-cic_decimator-02-1",
+     4.3,
+     4.309878764752505,
+     false
+    ],
+    [
+     "b2a-cic_decimator-02-2",
+     4.35,
+     4.300452077277297,
+     true
+    ]
+   ],
+   "g": 1.0
+  },
+  {
+   "design": "cic_decimator",
+   "set": "A35 race g1",
+   "source": "xag1-cic_decimator-006",
+   "T0": 4.7,
+   "drv_ref": 89,
+   "claim_orig": 4.1280650399752465,
+   "orig_first_pass": true,
+   "D": 0.78,
+   "landed": true,
+   "chain_id": "b2a-cic_decimator-03",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-cic_decimator-03-0",
+    "period": 4.7,
+    "claim": 4.223474500785428,
+    "pass": true,
+    "port": false,
+    "ws": 0.4765254992145727,
+    "ws_r2r": 0.476525,
+    "io_pct": 16.595745
+   },
+   "claim_frozen": 4.223474500785428,
+   "first_rebuild": {
+    "tag": "b2a-cic_decimator-03-1",
+    "period": 4.25,
+    "claim": 3.9343884541687153,
+    "pass": true,
+    "port": false,
+    "ws": 0.31561154583128453,
+    "ws_r2r": 0.315612,
+    "hold_ws": 0.08484529985403898,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": false,
+   "K": 3.95,
+   "T1": 4.25,
+   "chain": [
+    [
+     "b2a-cic_decimator-03-0",
+     4.7,
+     4.223474500785428,
+     true
+    ],
+    [
+     "b2a-cic_decimator-03-1",
+     4.25,
+     3.9343884541687153,
+     true
+    ],
+    [
+     "b2a-cic_decimator-03-2",
+     3.95,
+     3.8720241497939596,
+     true
+    ],
+    [
+     "b2a-cic_decimator-03-3",
+     3.9,
+     3.933012704615497,
+     false
+    ]
+   ],
+   "g": 1.0759493670886076
+  },
+  {
+   "design": "cic_decimator",
+   "set": "A35 race h1",
+   "source": "xah1-cic_decimator-005",
+   "T0": 4.5,
+   "drv_ref": 89,
+   "claim_orig": 3.9523633817793966,
+   "orig_first_pass": true,
+   "D": 0.78,
+   "landed": true,
+   "chain_id": "b2a-cic_decimator-04",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-cic_decimator-04-0",
+    "period": 4.5,
+    "claim": 3.9954973238628346,
+    "pass": true,
+    "port": false,
+    "ws": 0.5045026761371654,
+    "ws_r2r": 0.504503,
+    "io_pct": 17.333333
+   },
+   "claim_frozen": 3.9954973238628346,
+   "first_rebuild": {
+    "tag": "b2a-cic_decimator-04-1",
+    "period": 4.0,
+    "claim": 3.9780229125613857,
+    "pass": true,
+    "port": false,
+    "ws": 0.02197708743861438,
+    "ws_r2r": 0.021977,
+    "hold_ws": 0.0947298932775883,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": false,
+   "K": 4.0,
+   "T1": 4.0,
+   "chain": [
+    [
+     "b2a-cic_decimator-04-0",
+     4.5,
+     3.9954973238628346,
+     true
+    ],
+    [
+     "b2a-cic_decimator-04-1",
+     4.0,
+     3.9780229125613857,
+     true
+    ]
+   ],
+   "g": 1.0
+  },
+  {
+   "design": "cic_decimator",
+   "set": "A35 race b2",
+   "source": "xab2-cic_decimator-005",
+   "T0": 5.07,
+   "drv_ref": 89,
+   "claim_orig": 4.783653933925519,
+   "orig_first_pass": true,
+   "D": 0.78,
+   "landed": true,
+   "chain_id": "b2a-cic_decimator-05",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-cic_decimator-05-0",
+    "period": 5.07,
+    "claim": 4.8524011660006625,
+    "pass": true,
+    "port": true,
+    "ws": 0.21759883399933763,
+    "ws_r2r": 0.285765,
+    "io_pct": 15.384615
+   },
+   "claim_frozen": 4.8524011660006625,
+   "first_rebuild": {
+    "tag": "b2a-cic_decimator-05-1",
+    "period": 4.9,
+    "claim": 4.654594075250253,
+    "pass": true,
+    "port": false,
+    "ws": 0.2454059247497474,
+    "ws_r2r": 0.245406,
+    "hold_ws": 0.10004342082372111,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": false,
+   "K": 4.45,
+   "T1": 4.9,
+   "chain": [
+    [
+     "b2a-cic_decimator-05-0",
+     5.07,
+     4.8524011660006625,
+     true
+    ],
+    [
+     "b2a-cic_decimator-05-1",
+     4.9,
+     4.654594075250253,
+     true
+    ],
+    [
+     "b2a-cic_decimator-05-2",
+     4.7,
+     4.551957084549814,
+     true
+    ],
+    [
+     "b2a-cic_decimator-05-3",
+     4.6,
+     4.445641247628702,
+     true
+    ],
+    [
+     "b2a-cic_decimator-05-4",
+     4.45,
+     4.320559982076559,
+     true
+    ]
+   ],
+   "g": 1.101123595505618
+  },
+  {
+   "design": "cic_decimator",
+   "set": "A35 race f2",
+   "source": "xaf2-cic_decimator-007",
+   "T0": 4.5,
+   "drv_ref": 89,
+   "claim_orig": 4.2299231425885,
+   "orig_first_pass": true,
+   "D": 0.78,
+   "landed": true,
+   "chain_id": "b2a-cic_decimator-06",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-cic_decimator-06-0",
+    "period": 4.5,
+    "claim": 4.21772312347046,
+    "pass": true,
+    "port": false,
+    "ws": 0.2822768765295404,
+    "ws_r2r": 0.282277,
+    "io_pct": 17.333333
+   },
+   "claim_frozen": 4.21772312347046,
+   "first_rebuild": {
+    "tag": "b2a-cic_decimator-06-1",
+    "period": 4.25,
+    "claim": 4.016615126411662,
+    "pass": true,
+    "port": false,
+    "ws": 0.2333848735883375,
+    "ws_r2r": 0.233385,
+    "hold_ws": 0.09129341985227594,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": false,
+   "K": 4.05,
+   "T1": 4.25,
+   "chain": [
+    [
+     "b2a-cic_decimator-06-0",
+     4.5,
+     4.21772312347046,
+     true
+    ],
+    [
+     "b2a-cic_decimator-06-1",
+     4.25,
+     4.016615126411662,
+     true
+    ],
+    [
+     "b2a-cic_decimator-06-2",
+     4.05,
+     3.894725091562871,
+     true
+    ],
+    [
+     "b2a-cic_decimator-06-3",
+     3.9,
+     3.941135984671816,
+     false
+    ]
+   ],
+   "g": 1.0493827160493827
+  },
+  {
+   "design": "cic_decimator",
+   "set": "A35 race g2",
+   "source": "xag2-cic_decimator-004",
+   "T0": 4.6,
+   "drv_ref": 89,
+   "claim_orig": 4.095178023711922,
+   "orig_first_pass": true,
+   "D": 0.78,
+   "landed": true,
+   "chain_id": "b2a-cic_decimator-07",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-cic_decimator-07-0",
+    "period": 4.6,
+    "claim": 4.107048528626935,
+    "pass": true,
+    "port": false,
+    "ws": 0.49295147137306505,
+    "ws_r2r": 0.492951,
+    "io_pct": 16.956522
+   },
+   "claim_frozen": 4.107048528626935,
+   "first_rebuild": {
+    "tag": "b2a-cic_decimator-07-1",
+    "period": 4.15,
+    "claim": 3.9044832749892615,
+    "pass": true,
+    "port": true,
+    "ws": 0.24551672501073862,
+    "ws_r2r": 0.26637,
+    "hold_ws": 0.08294243304716593,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": false,
+   "K": 3.95,
+   "T1": 4.15,
+   "chain": [
+    [
+     "b2a-cic_decimator-07-0",
+     4.6,
+     4.107048528626935,
+     true
+    ],
+    [
+     "b2a-cic_decimator-07-1",
+     4.15,
+     3.9044832749892615,
+     true
+    ],
+    [
+     "b2a-cic_decimator-07-2",
+     3.95,
+     3.929068298590938,
+     true
+    ]
+   ],
+   "g": 1.0506329113924051
+  },
+  {
+   "design": "cic_decimator",
+   "set": "A35 race h2",
+   "source": "xah2-cic_decimator-008",
+   "T0": 4.5,
+   "drv_ref": 89,
+   "claim_orig": 3.951633299097755,
+   "orig_first_pass": true,
+   "D": 0.78,
+   "landed": true,
+   "chain_id": "b2a-cic_decimator-08",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-cic_decimator-08-0",
+    "period": 4.5,
+    "claim": 3.944853388939225,
+    "pass": true,
+    "port": false,
+    "ws": 0.5551466110607748,
+    "ws_r2r": 0.555147,
+    "io_pct": 17.333333
+   },
+   "claim_frozen": 3.944853388939225,
+   "first_rebuild": {
+    "tag": "b2a-cic_decimator-08-1",
+    "period": 3.95,
+    "claim": 3.861718171209496,
+    "pass": true,
+    "port": false,
+    "ws": 0.08828182879050413,
+    "ws_r2r": 0.088282,
+    "hold_ws": 0.07993789190179988,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": false,
+   "K": 3.9,
+   "T1": 3.95,
+   "chain": [
+    [
+     "b2a-cic_decimator-08-0",
+     4.5,
+     3.944853388939225,
+     true
+    ],
+    [
+     "b2a-cic_decimator-08-1",
+     3.95,
+     3.861718171209496,
+     true
+    ],
+    [
+     "b2a-cic_decimator-08-2",
+     3.9,
+     3.857363881934883,
+     true
+    ]
+   ],
+   "g": 1.012820512820513
+  },
+  {
+   "design": "zipdiv",
+   "set": "A35 race b1",
+   "source": "xab1-zipdiv-008",
+   "T0": 11.7,
+   "drv_ref": 295,
+   "claim_orig": 7.534793924282121,
+   "orig_first_pass": true,
+   "D": 1.12,
+   "landed": true,
+   "chain_id": "b2a-zipdiv-01",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-zipdiv-01-0",
+    "period": 11.7,
+    "claim": 7.306352651917649,
+    "pass": true,
+    "port": false,
+    "ws": 4.39364734808235,
+    "ws_r2r": 4.393647,
+    "io_pct": 9.57265
+   },
+   "claim_frozen": 7.306352651917649,
+   "first_rebuild": {
+    "tag": "b2a-zipdiv-01-1",
+    "period": 7.35,
+    "claim": 6.890605686629106,
+    "pass": true,
+    "port": false,
+    "ws": 0.45939431337089365,
+    "ws_r2r": 0.459394,
+    "hold_ws": 0.09265372065166985,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": false,
+   "K": 6.15,
+   "T1": 7.35,
+   "chain": [
+    [
+     "b2a-zipdiv-01-0",
+     11.7,
+     7.306352651917649,
+     true
+    ],
+    [
+     "b2a-zipdiv-01-1",
+     7.35,
+     6.890605686629106,
+     true
+    ],
+    [
+     "b2a-zipdiv-01-2",
+     6.9,
+     6.498938582349519,
+     true
+    ],
+    [
+     "b2a-zipdiv-01-3",
+     6.5,
+     6.125133185133358,
+     true
+    ],
+    [
+     "b2a-zipdiv-01-4",
+     6.15,
+     5.84243535087878,
+     true
+    ]
+   ],
+   "g": 1.1951219512195121
+  },
+  {
+   "design": "zipdiv",
+   "set": "A35 race f1",
+   "source": "xaf1-zipdiv-005",
+   "T0": 8.59,
+   "drv_ref": 295,
+   "claim_orig": 7.182620858049211,
+   "orig_first_pass": true,
+   "D": 1.12,
+   "landed": true,
+   "chain_id": "b2a-zipdiv-02",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-zipdiv-02-0",
+    "period": 8.59,
+    "claim": 7.641121663904617,
+    "pass": true,
+    "port": false,
+    "ws": 0.9488783360953833,
+    "ws_r2r": 0.948878,
+    "io_pct": 13.038417
+   },
+   "claim_frozen": 7.641121663904617,
+   "first_rebuild": {
+    "tag": "b2a-zipdiv-02-1",
+    "period": 7.65,
+    "claim": 6.8614600776556625,
+    "pass": true,
+    "port": false,
+    "ws": 0.7885399223443381,
+    "ws_r2r": 0.78854,
+    "hold_ws": 0.0823950930805459,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": false,
+   "K": 5.85,
+   "T1": 7.65,
+   "chain": [
+    [
+     "b2a-zipdiv-02-0",
+     8.59,
+     7.641121663904617,
+     true
+    ],
+    [
+     "b2a-zipdiv-02-1",
+     7.65,
+     6.8614600776556625,
+     true
+    ],
+    [
+     "b2a-zipdiv-02-2",
+     6.9,
+     6.22749082150844,
+     true
+    ],
+    [
+     "b2a-zipdiv-02-3",
+     6.25,
+     5.846925081815113,
+     true
+    ],
+    [
+     "b2a-zipdiv-02-4",
+     5.85,
+     5.575487579435071,
+     true
+    ]
+   ],
+   "g": 1.307692307692308
+  },
+  {
+   "design": "zipdiv",
+   "set": "A35 race g1",
+   "source": "xag1-zipdiv-005",
+   "T0": 8.59,
+   "drv_ref": 295,
+   "claim_orig": 7.228449089445009,
+   "orig_first_pass": true,
+   "D": 1.12,
+   "landed": true,
+   "chain_id": "b2a-zipdiv-03",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-zipdiv-03-0",
+    "period": 8.59,
+    "claim": 7.39262176954234,
+    "pass": true,
+    "port": false,
+    "ws": 1.1973782304576595,
+    "ws_r2r": 1.197378,
+    "io_pct": 13.038417
+   },
+   "claim_frozen": 7.39262176954234,
+   "first_rebuild": {
+    "tag": "b2a-zipdiv-03-1",
+    "period": 7.4,
+    "claim": 6.790694931909465,
+    "pass": true,
+    "port": false,
+    "ws": 0.6093050680905351,
+    "ws_r2r": 0.609305,
+    "hold_ws": 0.09594625365776864,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": false,
+   "K": 6.0,
+   "T1": 7.4,
+   "chain": [
+    [
+     "b2a-zipdiv-03-0",
+     8.59,
+     7.39262176954234,
+     true
+    ],
+    [
+     "b2a-zipdiv-03-1",
+     7.4,
+     6.790694931909465,
+     true
+    ],
+    [
+     "b2a-zipdiv-03-2",
+     6.8,
+     6.358180517605972,
+     true
+    ],
+    [
+     "b2a-zipdiv-03-3",
+     6.4,
+     5.975415620327696,
+     true
+    ],
+    [
+     "b2a-zipdiv-03-4",
+     6.0,
+     5.621008928524839,
+     true
+    ]
+   ],
+   "g": 1.2333333333333334
+  },
+  {
+   "design": "zipdiv",
+   "set": "A35 race h1",
+   "source": "xah1-zipdiv-005",
+   "T0": 8.59,
+   "drv_ref": 295,
+   "claim_orig": 6.674545040028537,
+   "orig_first_pass": true,
+   "D": 1.12,
+   "landed": true,
+   "chain_id": "b2a-zipdiv-04",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-zipdiv-04-0",
+    "period": 8.59,
+    "claim": 6.6803728228942205,
+    "pass": true,
+    "port": false,
+    "ws": 1.9096271771057796,
+    "ws_r2r": 1.909627,
+    "io_pct": 13.038417
+   },
+   "claim_frozen": 6.6803728228942205,
+   "first_rebuild": {
+    "tag": "b2a-zipdiv-04-1",
+    "period": 6.7,
+    "claim": 6.268189844589867,
+    "pass": true,
+    "port": false,
+    "ws": 0.4318101554101336,
+    "ws_r2r": 0.43181,
+    "hold_ws": 0.0855418537993887,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": false,
+   "K": 5.7,
+   "T1": 6.7,
+   "chain": [
+    [
+     "b2a-zipdiv-04-0",
+     8.59,
+     6.6803728228942205,
+     true
+    ],
+    [
+     "b2a-zipdiv-04-1",
+     6.7,
+     6.268189844589867,
+     true
+    ],
+    [
+     "b2a-zipdiv-04-2",
+     6.3,
+     5.900210897971722,
+     true
+    ],
+    [
+     "b2a-zipdiv-04-3",
+     5.95,
+     5.676624003755219,
+     true
+    ],
+    [
+     "b2a-zipdiv-04-4",
+     5.7,
+     5.562771989383159,
+     true
+    ]
+   ],
+   "g": 1.1754385964912282
+  },
+  {
+   "design": "zipdiv",
+   "set": "A35 race b2",
+   "source": "xab2-zipdiv-006",
+   "T0": 10.88,
+   "drv_ref": 295,
+   "claim_orig": 7.700297186728084,
+   "orig_first_pass": true,
+   "D": 1.12,
+   "landed": true,
+   "chain_id": "b2a-zipdiv-05",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-zipdiv-05-0",
+    "period": 10.88,
+    "claim": 7.061789255461105,
+    "pass": true,
+    "port": false,
+    "ws": 3.818210744538896,
+    "ws_r2r": 3.818211,
+    "io_pct": 10.294118
+   },
+   "claim_frozen": 7.061789255461105,
+   "first_rebuild": {
+    "tag": "b2a-zipdiv-05-1",
+    "period": 7.1,
+    "claim": 6.6851176375696815,
+    "pass": true,
+    "port": false,
+    "ws": 0.41488236243031823,
+    "ws_r2r": 0.414882,
+    "hold_ws": 0.09039363957652095,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": false,
+   "K": 6.0,
+   "T1": 7.1,
+   "chain": [
+    [
+     "b2a-zipdiv-05-0",
+     10.88,
+     7.061789255461105,
+     true
+    ],
+    [
+     "b2a-zipdiv-05-1",
+     7.1,
+     6.6851176375696815,
+     true
+    ],
+    [
+     "b2a-zipdiv-05-2",
+     6.7,
+     6.263186735410198,
+     true
+    ],
+    [
+     "b2a-zipdiv-05-3",
+     6.3,
+     5.992948273930663,
+     true
+    ],
+    [
+     "b2a-zipdiv-05-4",
+     6.0,
+     5.751326910840984,
+     true
+    ]
+   ],
+   "g": 1.1833333333333333
+  },
+  {
+   "design": "zipdiv",
+   "set": "A35 race f2",
+   "source": "xaf2-zipdiv-008",
+   "T0": 8.59,
+   "drv_ref": 295,
+   "claim_orig": 6.986725108438261,
+   "orig_first_pass": true,
+   "D": 1.12,
+   "landed": true,
+   "chain_id": "b2a-zipdiv-06",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-zipdiv-06-0",
+    "period": 8.59,
+    "claim": 7.33418051605166,
+    "pass": true,
+    "port": false,
+    "ws": 1.2558194839483396,
+    "ws_r2r": 1.255819,
+    "io_pct": 13.038417
+   },
+   "claim_frozen": 7.33418051605166,
+   "first_rebuild": {
+    "tag": "b2a-zipdiv-06-1",
+    "period": 7.35,
+    "claim": 7.205274875130437,
+    "pass": true,
+    "port": false,
+    "ws": 0.14472512486956268,
+    "ws_r2r": 0.144725,
+    "hold_ws": 0.09356155004458101,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": false,
+   "K": 7.05,
+   "T1": 7.35,
+   "chain": [
+    [
+     "b2a-zipdiv-06-0",
+     8.59,
+     7.33418051605166,
+     true
+    ],
+    [
+     "b2a-zipdiv-06-1",
+     7.35,
+     7.205274875130437,
+     true
+    ],
+    [
+     "b2a-zipdiv-06-2",
+     7.25,
+     7.143015353607709,
+     true
+    ],
+    [
+     "b2a-zipdiv-06-3",
+     7.15,
+     7.023961261430996,
+     true
+    ],
+    [
+     "b2a-zipdiv-06-4",
+     7.05,
+     6.96262944229388,
+     true
+    ]
+   ],
+   "g": 1.0425531914893618
+  },
+  {
+   "design": "zipdiv",
+   "set": "A35 race g2",
+   "source": "xag2-zipdiv-004",
+   "T0": 8.59,
+   "drv_ref": 295,
+   "claim_orig": 7.223977110975343,
+   "orig_first_pass": true,
+   "D": 1.12,
+   "landed": true,
+   "chain_id": "b2a-zipdiv-07",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-zipdiv-07-0",
+    "period": 8.59,
+    "claim": 7.2349212457724095,
+    "pass": true,
+    "port": false,
+    "ws": 1.3550787542275906,
+    "ws_r2r": 1.355079,
+    "io_pct": 13.038417
+   },
+   "claim_frozen": 7.2349212457724095,
+   "first_rebuild": {
+    "tag": "b2a-zipdiv-07-1",
+    "period": 7.25,
+    "claim": 6.786767867569041,
+    "pass": true,
+    "port": false,
+    "ws": 0.46323213243095884,
+    "ws_r2r": 0.463232,
+    "hold_ws": 0.09613238255311113,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": false,
+   "K": 5.9,
+   "T1": 7.25,
+   "chain": [
+    [
+     "b2a-zipdiv-07-0",
+     8.59,
+     7.2349212457724095,
+     true
+    ],
+    [
+     "b2a-zipdiv-07-1",
+     7.25,
+     6.786767867569041,
+     true
+    ],
+    [
+     "b2a-zipdiv-07-2",
+     6.8,
+     6.189043364091322,
+     true
+    ],
+    [
+     "b2a-zipdiv-07-3",
+     6.2,
+     5.874660235662607,
+     true
+    ],
+    [
+     "b2a-zipdiv-07-4",
+     5.9,
+     5.598187194487432,
+     true
+    ]
+   ],
+   "g": 1.2288135593220337
+  },
+  {
+   "design": "zipdiv",
+   "set": "A35 race h2",
+   "source": "xah2-zipdiv-005",
+   "T0": 8.59,
+   "drv_ref": 295,
+   "claim_orig": 6.81241831228554,
+   "orig_first_pass": true,
+   "D": 1.12,
+   "landed": true,
+   "chain_id": "b2a-zipdiv-08",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-zipdiv-08-0",
+    "period": 8.59,
+    "claim": 6.81241831228554,
+    "pass": true,
+    "port": false,
+    "ws": 1.7775816877144603,
+    "ws_r2r": 1.777582,
+    "io_pct": 13.038417
+   },
+   "claim_frozen": 6.81241831228554,
+   "first_rebuild": {
+    "tag": "b2a-zipdiv-08-1",
+    "period": 6.85,
+    "claim": 6.405517314539181,
+    "pass": true,
+    "port": false,
+    "ws": 0.4444826854608186,
+    "ws_r2r": 0.444483,
+    "hold_ws": 0.061640028159697595,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": false,
+   "K": 5.6,
+   "T1": 6.85,
+   "chain": [
+    [
+     "b2a-zipdiv-08-0",
+     8.59,
+     6.81241831228554,
+     true
+    ],
+    [
+     "b2a-zipdiv-08-1",
+     6.85,
+     6.405517314539181,
+     true
+    ],
+    [
+     "b2a-zipdiv-08-2",
+     6.45,
+     5.9320303181932585,
+     true
+    ],
+    [
+     "b2a-zipdiv-08-3",
+     5.95,
+     5.5609445344773665,
+     true
+    ],
+    [
+     "b2a-zipdiv-08-4",
+     5.6,
+     5.439058957174145,
+     true
+    ]
+   ],
+   "g": 1.2232142857142858
+  },
+  {
+   "design": "usb_cdc_core",
+   "set": "A35 race b1",
+   "source": "xab1-usb_cdc_core-005",
+   "T0": 7.36,
+   "drv_ref": 309,
+   "claim_orig": 6.644426157343698,
+   "orig_first_pass": true,
+   "D": 1.11,
+   "landed": true,
+   "chain_id": "b2a-usb_cdc_core-01",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-usb_cdc_core-01-0",
+    "period": 7.36,
+    "claim": 6.655350308125756,
+    "pass": true,
+    "port": true,
+    "ws": 0.7046496918742442,
+    "ws_r2r": 1.196826,
+    "io_pct": 15.081522
+   },
+   "claim_frozen": 6.655350308125756,
+   "first_rebuild": {
+    "tag": "b2a-usb_cdc_core-01-1",
+    "period": 6.7,
+    "claim": 6.1007229106407,
+    "pass": true,
+    "port": false,
+    "ws": 0.5992770893593002,
+    "ws_r2r": 0.599277,
+    "hold_ws": 0.08831169379071119,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": false,
+   "K": 5.7,
+   "T1": 6.7,
+   "chain": [
+    [
+     "b2a-usb_cdc_core-01-0",
+     7.36,
+     6.655350308125756,
+     true
+    ],
+    [
+     "b2a-usb_cdc_core-01-1",
+     6.7,
+     6.1007229106407,
+     true
+    ],
+    [
+     "b2a-usb_cdc_core-01-2",
+     6.15,
+     5.6671262453510804,
+     true
+    ],
+    [
+     "b2a-usb_cdc_core-01-3",
+     5.7,
+     5.6168007723599755,
+     true
+    ],
+    [
+     "b2a-usb_cdc_core-01-4",
+     5.65,
+     5.657166267782027,
+     false
+    ]
+   ],
+   "g": 1.1754385964912282
+  },
+  {
+   "design": "usb_cdc_core",
+   "set": "A35 race f1",
+   "source": "xaf1-usb_cdc_core-001",
+   "T0": 7.02,
+   "drv_ref": 309,
+   "claim_orig": 6.340679825104341,
+   "orig_first_pass": true,
+   "D": 1.11,
+   "landed": true,
+   "chain_id": "b2a-usb_cdc_core-02",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-usb_cdc_core-02-0",
+    "period": 7.02,
+    "claim": 6.357169302021638,
+    "pass": true,
+    "port": false,
+    "ws": 0.6628306979783616,
+    "ws_r2r": 0.662831,
+    "io_pct": 15.811966
+   },
+   "claim_frozen": 6.357169302021638,
+   "first_rebuild": {
+    "tag": "b2a-usb_cdc_core-02-1",
+    "period": 6.4,
+    "claim": 6.064709528456072,
+    "pass": true,
+    "port": true,
+    "ws": 0.3352904715439284,
+    "ws_r2r": 0.39353,
+    "hold_ws": 0.09242995519472813,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": false,
+   "K": 5.7,
+   "T1": 6.4,
+   "chain": [
+    [
+     "b2a-usb_cdc_core-02-0",
+     7.02,
+     6.357169302021638,
+     true
+    ],
+    [
+     "b2a-usb_cdc_core-02-1",
+     6.4,
+     6.064709528456072,
+     true
+    ],
+    [
+     "b2a-usb_cdc_core-02-2",
+     6.1,
+     5.921401969691132,
+     true
+    ],
+    [
+     "b2a-usb_cdc_core-02-3",
+     5.95,
+     5.6636907933309795,
+     true
+    ],
+    [
+     "b2a-usb_cdc_core-02-4",
+     5.7,
+     5.581028053227202,
+     true
+    ]
+   ],
+   "g": 1.1228070175438596
+  },
+  {
+   "design": "usb_cdc_core",
+   "set": "A35 race g1",
+   "source": "xag1-usb_cdc_core-007",
+   "T0": 7.02,
+   "drv_ref": 309,
+   "claim_orig": 6.320187327936242,
+   "orig_first_pass": true,
+   "D": 1.11,
+   "landed": true,
+   "chain_id": "b2a-usb_cdc_core-03",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-usb_cdc_core-03-0",
+    "period": 7.02,
+    "claim": 6.455730908132484,
+    "pass": true,
+    "port": true,
+    "ws": 0.5642690918675162,
+    "ws_r2r": 0.848306,
+    "io_pct": 15.811966
+   },
+   "claim_frozen": 6.455730908132484,
+   "first_rebuild": {
+    "tag": "b2a-usb_cdc_core-03-1",
+    "period": 6.5,
+    "claim": 5.856567119256497,
+    "pass": true,
+    "port": true,
+    "ws": 0.643432880743503,
+    "ws_r2r": 0.670845,
+    "hold_ws": 0.09160822359981166,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": false,
+   "K": 5.6,
+   "T1": 6.5,
+   "chain": [
+    [
+     "b2a-usb_cdc_core-03-0",
+     7.02,
+     6.455730908132484,
+     true
+    ],
+    [
+     "b2a-usb_cdc_core-03-1",
+     6.5,
+     5.856567119256497,
+     true
+    ],
+    [
+     "b2a-usb_cdc_core-03-2",
+     5.9,
+     5.581051123662307,
+     true
+    ],
+    [
+     "b2a-usb_cdc_core-03-3",
+     5.6,
+     5.5795017296720095,
+     true
+    ]
+   ],
+   "g": 1.1607142857142858
+  },
+  {
+   "design": "usb_cdc_core",
+   "set": "A35 race h1",
+   "source": "xah1-usb_cdc_core-008",
+   "T0": 7.02,
+   "drv_ref": 309,
+   "claim_orig": 6.186652363292961,
+   "orig_first_pass": true,
+   "D": 1.11,
+   "landed": true,
+   "chain_id": "b2a-usb_cdc_core-04",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-usb_cdc_core-04-0",
+    "period": 7.02,
+    "claim": 6.211103027700398,
+    "pass": true,
+    "port": true,
+    "ws": 0.8088969722996017,
+    "ws_r2r": 0.840218,
+    "io_pct": 15.811966
+   },
+   "claim_frozen": 6.211103027700398,
+   "first_rebuild": {
+    "tag": "b2a-usb_cdc_core-04-1",
+    "period": 6.25,
+    "claim": 5.750547506500078,
+    "pass": true,
+    "port": true,
+    "ws": 0.49945249349992155,
+    "ws_r2r": 0.616315,
+    "hold_ws": 0.07670708729761605,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": false,
+   "K": 5.8,
+   "T1": 6.25,
+   "chain": [
+    [
+     "b2a-usb_cdc_core-04-0",
+     7.02,
+     6.211103027700398,
+     true
+    ],
+    [
+     "b2a-usb_cdc_core-04-1",
+     6.25,
+     5.750547506500078,
+     true
+    ],
+    [
+     "b2a-usb_cdc_core-04-2",
+     5.8,
+     5.778492314869473,
+     true
+    ]
+   ],
+   "g": 1.0775862068965518
+  },
+  {
+   "design": "usb_cdc_core",
+   "set": "A35 race b2",
+   "source": "xab2-usb_cdc_core-005",
+   "T0": 7.22,
+   "drv_ref": 309,
+   "claim_orig": 7.325664813223289,
+   "orig_first_pass": true,
+   "D": 1.11,
+   "landed": true,
+   "chain_id": "b2a-usb_cdc_core-05",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, fail (setup)",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-usb_cdc_core-05-0",
+    "period": 7.22,
+    "claim": 7.332771128960291,
+    "pass": false,
+    "port": false,
+    "ws": -0.11277112896029054,
+    "ws_r2r": -0.112771,
+    "io_pct": 15.373961
+   },
+   "claim_frozen": 7.332771128960291,
+   "first_rebuild": {
+    "tag": "b2a-usb_cdc_core-05-1",
+    "period": 7.35,
+    "claim": 7.34406607981016,
+    "pass": true,
+    "port": false,
+    "ws": 0.005933920189839261,
+    "ws_r2r": 0.005934,
+    "hold_ws": 0.08178885578080378,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": false,
+   "K": 7.35,
+   "T1": 7.35,
+   "chain": [
+    [
+     "b2a-usb_cdc_core-05-0",
+     7.22,
+     7.332771128960291,
+     false
+    ],
+    [
+     "b2a-usb_cdc_core-05-1",
+     7.35,
+     7.34406607981016,
+     true
+    ]
+   ],
+   "g": 1.0
+  },
+  {
+   "design": "usb_cdc_core",
+   "set": "A35 race f2",
+   "source": "xaf2-usb_cdc_core-004",
+   "T0": 7.02,
+   "drv_ref": 309,
+   "claim_orig": 6.328443390670063,
+   "orig_first_pass": true,
+   "D": 1.11,
+   "landed": true,
+   "chain_id": "b2a-usb_cdc_core-06",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-usb_cdc_core-06-0",
+    "period": 7.02,
+    "claim": 6.336180757192108,
+    "pass": true,
+    "port": true,
+    "ws": 0.6838192428078917,
+    "ws_r2r": 0.755659,
+    "io_pct": 15.811966
+   },
+   "claim_frozen": 6.336180757192108,
+   "first_rebuild": {
+    "tag": "b2a-usb_cdc_core-06-1",
+    "period": 6.35,
+    "claim": 5.799914673807029,
+    "pass": true,
+    "port": false,
+    "ws": 0.5500853261929708,
+    "ws_r2r": 0.550085,
+    "hold_ws": 0.09281747855243344,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": false,
+   "K": 5.6,
+   "T1": 6.35,
+   "chain": [
+    [
+     "b2a-usb_cdc_core-06-0",
+     7.02,
+     6.336180757192108,
+     true
+    ],
+    [
+     "b2a-usb_cdc_core-06-1",
+     6.35,
+     5.799914673807029,
+     true
+    ],
+    [
+     "b2a-usb_cdc_core-06-2",
+     5.8,
+     5.576079555919659,
+     true
+    ],
+    [
+     "b2a-usb_cdc_core-06-3",
+     5.6,
+     5.459626061331607,
+     true
+    ],
+    [
+     "b2a-usb_cdc_core-06-4",
+     5.5,
+     5.529199754551887,
+     false
+    ]
+   ],
+   "g": 1.1339285714285714
+  },
+  {
+   "design": "usb_cdc_core",
+   "set": "A35 race g2",
+   "source": "xag2-usb_cdc_core-002",
+   "T0": 7.02,
+   "drv_ref": 309,
+   "claim_orig": 6.327487710663437,
+   "orig_first_pass": true,
+   "D": 1.11,
+   "landed": true,
+   "chain_id": "b2a-usb_cdc_core-07",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-usb_cdc_core-07-0",
+    "period": 7.02,
+    "claim": 6.10860457063289,
+    "pass": true,
+    "port": true,
+    "ws": 0.9113954293671096,
+    "ws_r2r": 0.992188,
+    "io_pct": 15.811966
+   },
+   "claim_frozen": 6.10860457063289,
+   "first_rebuild": {
+    "tag": "b2a-usb_cdc_core-07-1",
+    "period": 6.15,
+    "claim": 5.669674429309267,
+    "pass": true,
+    "port": true,
+    "ws": 0.48032557069073306,
+    "ws_r2r": 0.572254,
+    "hold_ws": 0.08663880968989361,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": false,
+   "K": 6.15,
+   "T1": 6.15,
+   "chain": [
+    [
+     "b2a-usb_cdc_core-07-0",
+     7.02,
+     6.10860457063289,
+     true
+    ],
+    [
+     "b2a-usb_cdc_core-07-1",
+     6.15,
+     5.669674429309267,
+     true
+    ],
+    [
+     "b2a-usb_cdc_core-07-2",
+     5.7,
+     5.74920286539689,
+     false
+    ]
+   ],
+   "g": 1.0
+  },
+  {
+   "design": "usb_cdc_core",
+   "set": "A35 race h2",
+   "source": "xah2-usb_cdc_core-002",
+   "T0": 7.02,
+   "drv_ref": 309,
+   "claim_orig": 6.327487710663437,
+   "orig_first_pass": true,
+   "D": 1.11,
+   "landed": true,
+   "chain_id": "b2a-usb_cdc_core-08",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-usb_cdc_core-08-0",
+    "period": 7.02,
+    "claim": 6.10860457063289,
+    "pass": true,
+    "port": true,
+    "ws": 0.9113954293671096,
+    "ws_r2r": 0.992188,
+    "io_pct": 15.811966
+   },
+   "claim_frozen": 6.10860457063289,
+   "first_rebuild": {
+    "tag": "b2a-usb_cdc_core-08-1",
+    "period": 6.15,
+    "claim": 5.669674429309267,
+    "pass": true,
+    "port": true,
+    "ws": 0.48032557069073306,
+    "ws_r2r": 0.572254,
+    "hold_ws": 0.08663880968989361,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": false,
+   "K": 6.15,
+   "T1": 6.15,
+   "chain": [
+    [
+     "b2a-usb_cdc_core-08-0",
+     7.02,
+     6.10860457063289,
+     true
+    ],
+    [
+     "b2a-usb_cdc_core-08-1",
+     6.15,
+     5.669674429309267,
+     true
+    ],
+    [
+     "b2a-usb_cdc_core-08-2",
+     5.7,
+     5.74920286539689,
+     false
+    ]
+   ],
+   "g": 1.0
+  },
+  {
+   "design": "wbqspiflash",
+   "set": "A35 race b1",
+   "source": "xab1-wbqspiflash-006",
+   "T0": 10.29,
+   "drv_ref": 953,
+   "claim_orig": 8.541488392784482,
+   "orig_first_pass": true,
+   "D": 1.29,
+   "landed": true,
+   "chain_id": "b2a-wbqspiflash-01",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-wbqspiflash-01-0",
+    "period": 10.29,
+    "claim": 8.445930162084794,
+    "pass": true,
+    "port": false,
+    "ws": 1.8440698379152054,
+    "ws_r2r": 1.84407,
+    "io_pct": 12.536443
+   },
+   "claim_frozen": 8.445930162084794,
+   "first_rebuild": {
+    "tag": "b2a-wbqspiflash-01-1",
+    "period": 8.45,
+    "claim": 7.861981460607232,
+    "pass": true,
+    "port": false,
+    "ws": 0.5880185393927679,
+    "ws_r2r": 0.588019,
+    "hold_ws": 0.08854306427558667,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": false,
+   "K": 6.85,
+   "T1": 8.45,
+   "chain": [
+    [
+     "b2a-wbqspiflash-01-0",
+     10.29,
+     8.445930162084794,
+     true
+    ],
+    [
+     "b2a-wbqspiflash-01-1",
+     8.45,
+     7.861981460607232,
+     true
+    ],
+    [
+     "b2a-wbqspiflash-01-2",
+     7.9,
+     7.248194261057184,
+     true
+    ],
+    [
+     "b2a-wbqspiflash-01-3",
+     7.25,
+     6.822579222464165,
+     true
+    ],
+    [
+     "b2a-wbqspiflash-01-4",
+     6.85,
+     6.577502412237145,
+     true
+    ]
+   ],
+   "g": 1.2335766423357664
+  },
+  {
+   "design": "wbqspiflash",
+   "set": "A35 race f1",
+   "source": "xaf1-wbqspiflash-007",
+   "T0": 8.49,
+   "drv_ref": 953,
+   "claim_orig": 7.941919292556987,
+   "orig_first_pass": true,
+   "D": 1.29,
+   "landed": true,
+   "chain_id": "b2a-wbqspiflash-02",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-wbqspiflash-02-0",
+    "period": 8.49,
+    "claim": 7.961209640200022,
+    "pass": true,
+    "port": false,
+    "ws": 0.5287903597999778,
+    "ws_r2r": 0.52879,
+    "io_pct": 15.194346
+   },
+   "claim_frozen": 7.961209640200022,
+   "first_rebuild": {
+    "tag": "b2a-wbqspiflash-02-1",
+    "period": 8.0,
+    "claim": 7.429628678127351,
+    "pass": true,
+    "port": false,
+    "ws": 0.5703713218726487,
+    "ws_r2r": 0.570371,
+    "hold_ws": 0.09300510624890157,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": false,
+   "K": 6.45,
+   "T1": 8.0,
+   "chain": [
+    [
+     "b2a-wbqspiflash-02-0",
+     8.49,
+     7.961209640200022,
+     true
+    ],
+    [
+     "b2a-wbqspiflash-02-1",
+     8.0,
+     7.429628678127351,
+     true
+    ],
+    [
+     "b2a-wbqspiflash-02-2",
+     7.45,
+     6.826667485641208,
+     true
+    ],
+    [
+     "b2a-wbqspiflash-02-3",
+     6.85,
+     6.419575402963784,
+     true
+    ],
+    [
+     "b2a-wbqspiflash-02-4",
+     6.45,
+     6.185564407980772,
+     true
+    ]
+   ],
+   "g": 1.2403100775193798
+  },
+  {
+   "design": "wbqspiflash",
+   "set": "A35 race g1",
+   "source": "xag1-wbqspiflash-003",
+   "T0": 8.49,
+   "drv_ref": 953,
+   "claim_orig": 7.971729225700465,
+   "orig_first_pass": true,
+   "D": 1.29,
+   "landed": true,
+   "chain_id": "b2a-wbqspiflash-03",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-wbqspiflash-03-0",
+    "period": 8.49,
+    "claim": 8.114067815088797,
+    "pass": true,
+    "port": false,
+    "ws": 0.37593218491120267,
+    "ws_r2r": 0.375932,
+    "io_pct": 15.194346
+   },
+   "claim_frozen": 8.114067815088797,
+   "first_rebuild": {
+    "tag": "b2a-wbqspiflash-03-1",
+    "period": 8.15,
+    "claim": 7.958621525959402,
+    "pass": true,
+    "port": false,
+    "ws": 0.19137847404059796,
+    "ws_r2r": 0.191378,
+    "hold_ws": 0.09285045217719737,
+    "drc": 0.0,
+    "drv": 20.0
+   },
+   "first_fails": false,
+   "K": 7.55,
+   "T1": 8.15,
+   "chain": [
+    [
+     "b2a-wbqspiflash-03-0",
+     8.49,
+     8.114067815088797,
+     true
+    ],
+    [
+     "b2a-wbqspiflash-03-1",
+     8.15,
+     7.958621525959402,
+     true
+    ],
+    [
+     "b2a-wbqspiflash-03-2",
+     8.0,
+     7.694213484125309,
+     true
+    ],
+    [
+     "b2a-wbqspiflash-03-3",
+     7.7,
+     7.5331334746795315,
+     true
+    ],
+    [
+     "b2a-wbqspiflash-03-4",
+     7.55,
+     7.461732826153836,
+     true
+    ]
+   ],
+   "g": 1.0794701986754967
+  },
+  {
+   "design": "wbqspiflash",
+   "set": "A35 race h1",
+   "source": "xah1-wbqspiflash-003",
+   "T0": 8.49,
+   "drv_ref": 953,
+   "claim_orig": 7.957212837198335,
+   "orig_first_pass": true,
+   "D": 1.29,
+   "landed": true,
+   "chain_id": "b2a-wbqspiflash-04",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-wbqspiflash-04-0",
+    "period": 8.49,
+    "claim": 7.983105015221714,
+    "pass": true,
+    "port": false,
+    "ws": 0.5068949847782868,
+    "ws_r2r": 0.506895,
+    "io_pct": 15.194346
+   },
+   "claim_frozen": 7.983105015221714,
+   "first_rebuild": {
+    "tag": "b2a-wbqspiflash-04-1",
+    "period": 8.0,
+    "claim": 7.601670619245783,
+    "pass": true,
+    "port": false,
+    "ws": 0.3983293807542167,
+    "ws_r2r": 0.398329,
+    "hold_ws": 0.09345047222782576,
+    "drc": 0.0,
+    "drv": 26.0
+   },
+   "first_fails": false,
+   "K": 7.6,
+   "T1": 8.0,
+   "chain": [
+    [
+     "b2a-wbqspiflash-04-0",
+     8.49,
+     7.983105015221714,
+     true
+    ],
+    [
+     "b2a-wbqspiflash-04-1",
+     8.0,
+     7.601670619245783,
+     true
+    ],
+    [
+     "b2a-wbqspiflash-04-2",
+     7.65,
+     7.583010028977933,
+     true
+    ],
+    [
+     "b2a-wbqspiflash-04-3",
+     7.6,
+     7.543639748605532,
+     true
+    ],
+    [
+     "b2a-wbqspiflash-04-4",
+     7.55,
+     7.616135543358151,
+     false
+    ]
+   ],
+   "g": 1.0526315789473684
+  },
+  {
+   "design": "wbqspiflash",
+   "set": "A35 race b2",
+   "source": "xab2-wbqspiflash-008",
+   "T0": 8.83,
+   "drv_ref": 953,
+   "claim_orig": 8.542402490496768,
+   "orig_first_pass": true,
+   "D": 1.29,
+   "landed": true,
+   "chain_id": "b2a-wbqspiflash-05",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-wbqspiflash-05-0",
+    "period": 8.83,
+    "claim": 8.588990114462886,
+    "pass": true,
+    "port": false,
+    "ws": 0.24100988553711314,
+    "ws_r2r": 0.24101,
+    "io_pct": 14.609287
+   },
+   "claim_frozen": 8.588990114462886,
+   "first_rebuild": {
+    "tag": "b2a-wbqspiflash-05-1",
+    "period": 8.6,
+    "claim": 8.273652153127736,
+    "pass": true,
+    "port": false,
+    "ws": 0.3263478468722629,
+    "ws_r2r": 0.326348,
+    "hold_ws": 0.09065159990358823,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": false,
+   "K": 7.9,
+   "T1": 8.6,
+   "chain": [
+    [
+     "b2a-wbqspiflash-05-0",
+     8.83,
+     8.588990114462886,
+     true
+    ],
+    [
+     "b2a-wbqspiflash-05-1",
+     8.6,
+     8.273652153127736,
+     true
+    ],
+    [
+     "b2a-wbqspiflash-05-2",
+     8.3,
+     8.11672970698216,
+     true
+    ],
+    [
+     "b2a-wbqspiflash-05-3",
+     8.15,
+     7.894755278527764,
+     true
+    ],
+    [
+     "b2a-wbqspiflash-05-4",
+     7.9,
+     7.753867112295398,
+     true
+    ]
+   ],
+   "g": 1.0886075949367087
+  },
+  {
+   "design": "wbqspiflash",
+   "set": "A35 race f2",
+   "source": "xaf2-wbqspiflash-008",
+   "T0": 8.49,
+   "drv_ref": 953,
+   "claim_orig": 8.247339878912413,
+   "orig_first_pass": true,
+   "D": 1.29,
+   "landed": true,
+   "chain_id": "b2a-wbqspiflash-06",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-wbqspiflash-06-0",
+    "period": 8.49,
+    "claim": 8.220196257460282,
+    "pass": true,
+    "port": false,
+    "ws": 0.2698037425397174,
+    "ws_r2r": 0.269804,
+    "io_pct": 15.194346
+   },
+   "claim_frozen": 8.220196257460282,
+   "first_rebuild": {
+    "tag": "b2a-wbqspiflash-06-1",
+    "period": 8.25,
+    "claim": 8.005515560386753,
+    "pass": true,
+    "port": false,
+    "ws": 0.24448443961324715,
+    "ws_r2r": 0.244484,
+    "hold_ws": 0.09532513936907579,
+    "drc": 0.0,
+    "drv": 221.0
+   },
+   "first_fails": false,
+   "K": 7.85,
+   "T1": 8.25,
+   "chain": [
+    [
+     "b2a-wbqspiflash-06-0",
+     8.49,
+     8.220196257460282,
+     true
+    ],
+    [
+     "b2a-wbqspiflash-06-1",
+     8.25,
+     8.005515560386753,
+     true
+    ],
+    [
+     "b2a-wbqspiflash-06-2",
+     8.05,
+     7.909267237239902,
+     true
+    ],
+    [
+     "b2a-wbqspiflash-06-3",
+     7.95,
+     7.817343443838645,
+     true
+    ],
+    [
+     "b2a-wbqspiflash-06-4",
+     7.85,
+     7.84569144636418,
+     true
+    ]
+   ],
+   "g": 1.0509554140127388
+  },
+  {
+   "design": "wbqspiflash",
+   "set": "A35 race g2",
+   "source": "xag2-wbqspiflash-008",
+   "T0": 8.49,
+   "drv_ref": 953,
+   "claim_orig": 7.979688192744493,
+   "orig_first_pass": true,
+   "D": 1.29,
+   "landed": true,
+   "chain_id": "b2a-wbqspiflash-07",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-wbqspiflash-07-0",
+    "period": 8.49,
+    "claim": 7.979688192744493,
+    "pass": true,
+    "port": false,
+    "ws": 0.5103118072555075,
+    "ws_r2r": 0.510312,
+    "io_pct": 15.194346
+   },
+   "claim_frozen": 7.979688192744493,
+   "first_rebuild": {
+    "tag": "b2a-wbqspiflash-07-1",
+    "period": 8.0,
+    "claim": 7.780057707174006,
+    "pass": true,
+    "port": false,
+    "ws": 0.21994229282599395,
+    "ws_r2r": 0.219942,
+    "hold_ws": 0.08464873486196986,
+    "drc": 0.0,
+    "drv": 0.0
+   },
+   "first_fails": false,
+   "K": 7.7,
+   "T1": 8.0,
+   "chain": [
+    [
+     "b2a-wbqspiflash-07-0",
+     8.49,
+     7.979688192744493,
+     true
+    ],
+    [
+     "b2a-wbqspiflash-07-1",
+     8.0,
+     7.780057707174006,
+     true
+    ],
+    [
+     "b2a-wbqspiflash-07-2",
+     7.8,
+     7.705860190276688,
+     true
+    ],
+    [
+     "b2a-wbqspiflash-07-3",
+     7.75,
+     7.663026902147937,
+     true
+    ],
+    [
+     "b2a-wbqspiflash-07-4",
+     7.7,
+     7.646713734203052,
+     true
+    ]
+   ],
+   "g": 1.0389610389610389
+  },
+  {
+   "design": "wbqspiflash",
+   "set": "A35 race h2",
+   "source": "xah2-wbqspiflash-003",
+   "T0": 8.49,
+   "drv_ref": 953,
+   "claim_orig": 7.966484531983806,
+   "orig_first_pass": true,
+   "D": 1.29,
+   "landed": true,
+   "chain_id": "b2a-wbqspiflash-08",
+   "complete": true,
+   "stage": 1,
+   "W_status": "completed, pass",
+   "R1_status": "completed, pass",
+   "smoke_seen": [],
+   "W": {
+    "tag": "b2a-wbqspiflash-08-0",
+    "period": 8.49,
+    "claim": 7.957175533703652,
+    "pass": true,
+    "port": false,
+    "ws": 0.532824466296348,
+    "ws_r2r": 0.532824,
+    "io_pct": 15.194346
+   },
+   "claim_frozen": 7.957175533703652,
+   "first_rebuild": {
+    "tag": "b2a-wbqspiflash-08-1",
+    "period": 8.0,
+    "claim": 7.6542490068222095,
+    "pass": true,
+    "port": false,
+    "ws": 0.34575099317779034,
+    "ws_r2r": 0.345751,
+    "hold_ws": 0.09218687185661158,
+    "drc": 0.0,
+    "drv": 2.0
+   },
+   "first_fails": false,
+   "K": 7.35,
+   "T1": 8.0,
+   "chain": [
+    [
+     "b2a-wbqspiflash-08-0",
+     8.49,
+     7.957175533703652,
+     true
+    ],
+    [
+     "b2a-wbqspiflash-08-1",
+     8.0,
+     7.6542490068222095,
+     true
+    ],
+    [
+     "b2a-wbqspiflash-08-2",
+     7.7,
+     7.408347955896168,
+     true
+    ],
+    [
+     "b2a-wbqspiflash-08-3",
+     7.45,
+     7.347029031999848,
+     true
+    ],
+    [
+     "b2a-wbqspiflash-08-4",
+     7.35,
+     7.333738340853799,
+     true
+    ]
+   ],
+   "g": 1.08843537414966
+  }
+ ],
+ "per_design": {
+  "aes_cipher": {
+   "winners": 1,
+   "landed": 1,
+   "first_fail": 0,
+   "first_pass": 1,
+   "no_claim": 0,
+   "gains": [],
+   "median_g": null
+  },
+  "picorv32": {
+   "winners": 1,
+   "landed": 1,
+   "first_fail": 0,
+   "first_pass": 1,
+   "no_claim": 0,
+   "gains": [],
+   "median_g": null
+  },
+  "y_huff": {
+   "winners": 1,
+   "landed": 1,
+   "first_fail": 1,
+   "first_pass": 0,
+   "no_claim": 0,
+   "gains": [],
+   "median_g": null
+  },
+  "des": {
+   "winners": 1,
+   "landed": 1,
+   "first_fail": 0,
+   "first_pass": 1,
+   "no_claim": 0,
+   "gains": [
+    1.0
+   ],
+   "median_g": 1.0
+  },
+  "md5": {
+   "winners": 1,
+   "landed": 1,
+   "first_fail": 0,
+   "first_pass": 1,
+   "no_claim": 0,
+   "gains": [],
+   "median_g": null
+  },
+  "bm64": {
+   "winners": 1,
+   "landed": 1,
+   "first_fail": 1,
+   "first_pass": 0,
+   "no_claim": 0,
+   "gains": [],
+   "median_g": null
+  },
+  "ocs_blitter": {
+   "winners": 1,
+   "landed": 1,
+   "first_fail": 0,
+   "first_pass": 1,
+   "no_claim": 0,
+   "gains": [],
+   "median_g": null
+  },
+  "blabla": {
+   "winners": 1,
+   "landed": 1,
+   "first_fail": 0,
+   "first_pass": 1,
+   "no_claim": 0,
+   "gains": [
+    1.0
+   ],
+   "median_g": 1.0
+  },
+  "xtea": {
+   "winners": 8,
+   "landed": 8,
+   "first_fail": 0,
+   "first_pass": 8,
+   "no_claim": 0,
+   "gains": [
+    1.3505,
+    1.131,
+    1.1807,
+    1.1098,
+    1.1176,
+    1.1183,
+    1.0854,
+    1.1392
+   ],
+   "median_g": 1.12465
+  },
+  "cic_decimator": {
+   "winners": 8,
+   "landed": 8,
+   "first_fail": 1,
+   "first_pass": 7,
+   "no_claim": 0,
+   "gains": [
+    1.0,
+    1.0,
+    1.0759,
+    1.0,
+    1.1011,
+    1.0494,
+    1.0506,
+    1.0128
+   ],
+   "median_g": 1.0311
+  },
+  "zipdiv": {
+   "winners": 8,
+   "landed": 8,
+   "first_fail": 0,
+   "first_pass": 8,
+   "no_claim": 0,
+   "gains": [
+    1.1951,
+    1.3077,
+    1.2333,
+    1.1754,
+    1.1833,
+    1.0426,
+    1.2288,
+    1.2232
+   ],
+   "median_g": 1.2091500000000002
+  },
+  "usb_cdc_core": {
+   "winners": 8,
+   "landed": 8,
+   "first_fail": 0,
+   "first_pass": 8,
+   "no_claim": 0,
+   "gains": [
+    1.1754,
+    1.1228,
+    1.1607,
+    1.0776,
+    1.0,
+    1.1339,
+    1.0,
+    1.0
+   ],
+   "median_g": 1.1002
+  },
+  "wbqspiflash": {
+   "winners": 8,
+   "landed": 8,
+   "first_fail": 0,
+   "first_pass": 8,
+   "no_claim": 0,
+   "gains": [
+    1.2336,
+    1.2403,
+    1.0795,
+    1.0526,
+    1.0886,
+    1.051,
+    1.039,
+    1.0884
+   ],
+   "median_g": 1.08395
+  }
+ },
+ "status_counts": {
+  "W_status": {
+   "completed, pass": 44,
+   "completed, fail (setup+hold)": 1,
+   "completed, fail (setup)": 3
+  },
+  "R1_status": {
+   "completed, pass": 45,
+   "completed, fail (hold)": 1,
+   "completed, fail (setup)": 2
+  }
+ },
+ "smoke_overlap": {
+  "xah1-xtea-007": [
+   4.1,
+   4.15,
+   4.55,
+   11.71
+  ]
+ },
+ "beside_setup_only": {
+  "first_rebuild_setup_fails": 2,
+  "of": 48,
+  "original_failures_setup_fail": [
+   [
+    "x1t-picorv32-014",
+    false
+   ],
+   [
+    "x1t-y_huff-005",
+    false
+   ],
+   [
+    "x2t-bm64-007",
+    true
+   ]
+  ],
+  "fails_by_reason": {
+   "completed, fail (hold)": 1,
+   "completed, fail (setup)": 2
+  }
+ }
+}
