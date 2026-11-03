@@ -103,10 +103,18 @@ def dispatch(a):
     tags = [c["tag"] for c in json.load(open(os.path.join(HERE, "chains.json")))["chains"]]
     for t in tags:
         assert os.path.exists(os.path.join(WT, "farm", "jobs", t + ".json")), t
+    lock_time = sh(["git", "show", "-s", "--format=%cI", a.lock_commit]).strip()
     out = sh(["gh", "workflow", "run", "farm.yml", "-R", REPO, "--ref", BRANCH, "-f", "tags=" + json.dumps(tags),
               "-f", "max_parallel=4"])
     print(out)
-    print(chain_runs_exist())
+    runs = chain_runs_exist()
+    print(runs)
+    log = os.environ.get("E_PHASE2_LOG", "/home/claude/ideas/overnight/reading/private/phase2_log.txt")
+    with open(log, "a") as f:
+        f.write(json.dumps({"lock_commit": a.lock_commit, "lock_commit_time": lock_time, "dispatch_output": out.strip(),
+                            "runs_after_dispatch": runs.strip()}) + "\n")
+    print(f"[dispatch] lock commit {a.lock_commit} at {lock_time}; dispatch logged to {log}. Record both timestamps "
+          f"(lock commit time and the chain run's createdAt) in E_RESULT.md.")
 
 
 def collect(a):
