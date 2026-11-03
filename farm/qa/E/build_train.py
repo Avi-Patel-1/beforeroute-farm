@@ -32,6 +32,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import epack  # noqa: E402
 
+SKIP_FLAGS = {"RUN_MAGIC_DRC", "RUN_KLAYOUT_DRC", "RUN_LVS", "RUN_KLAYOUT_XOR", "RUN_IRDROP_REPORT", "RUN_LINTER"}
+
 REC = os.environ.get("E_RECORD", "/home/claude/eda")
 REPO = "Avi-Patel-1/beforeroute-farm"
 TEST = {"zipdiv", "cic_decimator", "wbqspiflash", "picorv32"}
@@ -209,7 +211,7 @@ def main() -> int:
                 for f in ("nets_signoff.jsonl", "nets_signoff.jsonl.gz"):
                     if os.path.exists(os.path.join(tmp, f)):
                         os.remove(os.path.join(tmp, f))
-        settings = {k: v for k, v in r["overrides"].items() if k != "CLOCK_PERIOD" and not k.startswith("RUN_")}
+        settings = {k: v for k, v in r["overrides"].items() if k != "CLOCK_PERIOD" and k not in SKIP_FLAGS}
         info = {"packet_id": rid, "T0": r["T"], "drv_bar": bars[d][0], "settings": settings}
         try:
             epack.build_packet(tmp, os.path.join(a.out, "runs", rid), a.salt + rid, info, rung=2, layout=False,

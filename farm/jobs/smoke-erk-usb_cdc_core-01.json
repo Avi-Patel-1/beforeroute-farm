@@ -1,0 +1,22 @@
+{
+ "tag": "smoke-erk-usb_cdc_core-01",
+ "design": "designs/usb_cdc_core",
+ "config": "config_sky130.json",
+ "overrides": {
+  "RUN_MAGIC_DRC": false,
+  "RUN_KLAYOUT_DRC": false,
+  "RUN_LVS": false,
+  "RUN_KLAYOUT_XOR": false,
+  "RUN_IRDROP_REPORT": false,
+  "RUN_LINTER": false,
+  "CLOCK_PERIOD": 7.8
+ },
+ "chain": {
+  "source_tag": "x6d-usb_cdc_core-010",
+  "T0": 7.8,
+  "C0": 8.32772543384464,
+  "source_pass": false,
+  "drv_bar": 309,
+  "max_rebuilds": 4
+ }
+}

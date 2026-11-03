@@ -33,7 +33,7 @@ GENERIC = re.compile(r"^(_\d+_|net\d+|n\d+|clknet_.*|clkbuf_.*|clkload\d+|hold\d
 WORD = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
 ALLOWED_WORDS = set("""clock reset data mode done busy valid ready start enable input output clk rst state count
 counter addr address write read wdata rdata error load shift carry sum diff result value index active idle stall
-flush""".split())
+flush vpwr vgnd vccd1 vssd1 vdd vss""".split())
 
 
 def texts(root):

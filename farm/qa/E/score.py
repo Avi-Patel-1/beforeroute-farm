@@ -129,9 +129,10 @@ def main() -> int:
     ap.add_argument("--key", required=True)
     ap.add_argument("--pred", required=True)
     ap.add_argument("--out", required=True)
+    ap.add_argument("--chains-index", default=os.path.join(HERE, "chains.json"))
     a = ap.parse_args()
     key = json.load(open(a.key))
-    chains = json.load(open(os.path.join(HERE, "chains.json")))["chains"]
+    chains = json.load(open(a.chains_index))["chains"]
     tag_of = {c["source"]: c["tag"] for c in chains}
     rows = []
     for pid, v in sorted(key["packets"].items()):

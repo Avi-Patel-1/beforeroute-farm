@@ -20,6 +20,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import epack  # noqa: E402
 
+SKIP_FLAGS = {"RUN_MAGIC_DRC", "RUN_KLAYOUT_DRC", "RUN_LVS", "RUN_KLAYOUT_XOR", "RUN_IRDROP_REPORT", "RUN_LINTER"}
+
 
 def drv(m):
     return (m.get("design__max_slew_violation__count") or 0) + (m.get("design__max_cap_violation__count") or 0)
@@ -48,7 +50,7 @@ def main() -> int:
 
     def build(s, pid, kind, rung_dirs, salt, shuffle=None, main_pid=None):
         jd = json.load(open(os.path.join(os.path.dirname(HERE), "..", "jobs", s["source"] + ".json")))
-        settings = {k: v for k, v in jd["overrides"].items() if k != "CLOCK_PERIOD" and not k.startswith("RUN_")}
+        settings = {k: v for k, v in jd["overrides"].items() if k != "CLOCK_PERIOD" and k not in SKIP_FLAGS}
         info = {"packet_id": pid, "T0": s["T0"], "drv_bar": s["stock_drv_bar"], "settings": settings}
         res = None
         for rung in rung_dirs:

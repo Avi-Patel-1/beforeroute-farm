@@ -29,6 +29,7 @@ HEX = 10
 TOOLPRE = re.compile(r"^(clkbuf_leaf|clkbuf|clkload|max_cap|max_length|load_slew|hold|input|output|wire|fanout|"
                      r"rebuffer|split|place|delaybuf|ANTENNA|PHY_EDGE_ROW|TAP|FILLER|clone)(?=[_\d]|$)")
 IDX = re.compile(r"((?:\[\d+\])+)$")
+SUPPLY = {"VPWR", "VGND", "VPB", "VNB", "vccd1", "vssd1", "vccd2", "vssd2", "vdda1", "vssa1", "VDD", "VSS", "vdd", "vss"}
 CHAIN_RULE = ("Same settings, only the clock changes. Rebuild at R1 = ceil05(C0) (C0 rounded up to 0.05 ns). After a "
               "passing rebuild with claim C: rebuild at ceil05(C) while that is below the chain's smallest passing clock "
               "and above every failed clock of the chain below it. If the first rebuild fails: step back once, to "
@@ -100,8 +101,8 @@ class Namer:
 
     def add(self, name, kind, direction=None):
         """Register a full (possibly escaped, possibly indexed) name; the base (name minus trailing [i] groups) gets a
-        pseudonym of the kind's class."""
-        if not name:
+        pseudonym of the kind's class. Supply nets/pins (VPWR, VGND, ...) are generic and kept."""
+        if not name or canon(name) in SUPPLY:
             return
         c = canon(name)
         b, _ = split_idx(c)
