@@ -1,0 +1,99 @@
+{
+ "item": "rule-wbqspiflash-s1",
+ "prompt": "farm/agent_a35/wbqspiflash/s1/round1_prompt.md",
+ "prompt_sha256": "69efda2841f3d11b8d3d06d2ac88ebc4fed89d86d9c44cac7c293ff1b0dfc159",
+ "prompt_chars": 13914,
+ "model": {
+  "name": "Qwen3.5-9B (instruct, Apache-2.0)",
+  "base": "Qwen/Qwen3.5-9B@c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+  "repo": "lmstudio-community/Qwen3.5-9B-GGUF",
+  "revision": "1379f25c6b505a3fc737bd7818cb09389cf807c1",
+  "file": "Qwen3.5-9B-Q4_K_M.gguf",
+  "size": 5627044256,
+  "sha256": "cd76ec205963b3b33350093e6904d9de16c4e666fd104e1f632d25c7f15f2a13",
+  "license": "apache-2.0",
+  "why_this_file": "its embedded chat template equals Qwen's official template byte for byte (checked 2026-11-03 via the Hub's GGUF metadata); unsloth's GGUF alters the thinking switch"
+ },
+ "llama_cpp": {
+  "tag": "b11700",
+  "commit": "23f7aabc16c72f6f707dba227251c35d7bd1ed96"
+ },
+ "cpu": {
+  "machine": "x86_64",
+  "nproc": 4,
+  "model": "AMD EPYC 9V45 96-Core Processor",
+  "avx512f": true,
+  "mem_gb": 15.6
+ },
+ "started_utc": "2026-11-03T03:32:48Z",
+ "server_args": [
+  "-m",
+  "/tmp/model.gguf",
+  "--host",
+  "127.0.0.1",
+  "--port",
+  "8080",
+  "-t",
+  "4",
+  "-tb",
+  "4",
+  "-c",
+  "16384",
+  "-np",
+  "1",
+  "--jinja",
+  "--reasoning",
+  "off"
+ ],
+ "server_load_s": 4.0,
+ "call": {
+  "wall_s": 318.3,
+  "prompt_tokens": 5347,
+  "prompt_tokens_per_s": 20.677612196522684,
+  "reply_tokens": 397,
+  "reply_tokens_per_s": 6.63259567033534,
+  "cached_tokens": 0,
+  "finish_reason": "stop",
+  "reasoning_chars": 0
+ },
+ "valid": {
+  "ok": true,
+  "pins": {
+   "SYNTH_STRATEGY": "AREA 3",
+   "FP_CORE_UTIL": 27,
+   "density_delta": 25,
+   "SYNTH_ABC_BUFFERING": true,
+   "SYNTH_SIZING": true,
+   "PL_TIMING_DRIVEN": false,
+   "PL_ROUTABILITY_DRIVEN": true,
+   "RUN_POST_GRT_RESIZER_TIMING": true
+  },
+  "rationale": "Run 001 (T_eff 9.92) is the best feasible result. It uses loose timing (AREA 3), high density (25), and strong post-GRT repair (RUN_POST_GRT_RESIZER_TIMING=true, RUN_POST_GRT_DESIGN_REPAIR=false). It achieves 0 slew/cap violations. Other runs show that enabling both repair steps (e.g., 005, 007) often incurs slew/cap violations or high hold buffer counts. Run 001's setup slack is dominated by I/O ports, which is expected. To improve, we pin the successful configuration of Run 001 to ensure the optimizer explores around this high-quality baseline rather than risking violations with aggressive repair or loose synthesis.",
+  "log": [
+   "RUN_POST_GRT_DESIGN_REPAIR: beyond 8 pins -> dropped",
+   "PL_RESIZER_SETUP_SLACK_MARGIN: beyond 8 pins -> dropped",
+   "GRT_RESIZER_SETUP_SLACK_MARGIN: beyond 8 pins -> dropped",
+   "DESIGN_REPAIR_MAX_SLEW_PCT: beyond 8 pins -> dropped",
+   "DESIGN_REPAIR_MAX_CAP_PCT: beyond 8 pins -> dropped",
+   "RC_MODEL: beyond 8 pins -> dropped"
+  ],
+  "n_pins": 8,
+  "period_frac": null,
+  "pins_period_frac_le_05": false
+ },
+ "rule_file": {
+  "rationale": "Run 001 (T_eff 9.92) is the best feasible result. It uses loose timing (AREA 3), high density (25), and strong post-GRT repair (RUN_POST_GRT_RESIZER_TIMING=true, RUN_POST_GRT_DESIGN_REPAIR=false). It achieves 0 slew/cap violations. Other runs show that enabling both repair steps (e.g., 005, 007) often incurs slew/cap violations or high hold buffer counts. Run 001's setup slack is dominated by I/O ports, which is expected. To improve, we pin the successful configuration of Run 001 to ensure the optimizer explores around this high-quality baseline rather than risking violations with aggressive repair or loose synthesis.",
+  "pins": {
+   "SYNTH_STRATEGY": "AREA 3",
+   "FP_CORE_UTIL": 27,
+   "density_delta": 25,
+   "SYNTH_ABC_BUFFERING": true,
+   "SYNTH_SIZING": true,
+   "PL_TIMING_DRIVEN": false,
+   "PL_ROUTABILITY_DRIVEN": true,
+   "RUN_POST_GRT_RESIZER_TIMING": true
+  }
+ },
+ "rule_file_source": "reply",
+ "finished_utc": "2026-11-03T03:38:11Z"
+}

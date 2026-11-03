@@ -1,0 +1,84 @@
+{
+ "item": "rule-cic_decimator-s2",
+ "prompt": "farm/agent_a35/cic_decimator/s2/round1_prompt.md",
+ "prompt_sha256": "cdfaa4ceb34344ade41dc3db4b216a1795627b8114257d75a395ffa2df814935",
+ "prompt_chars": 13930,
+ "model": {
+  "name": "Qwen3.5-9B (instruct, Apache-2.0)",
+  "base": "Qwen/Qwen3.5-9B@c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+  "repo": "lmstudio-community/Qwen3.5-9B-GGUF",
+  "revision": "1379f25c6b505a3fc737bd7818cb09389cf807c1",
+  "file": "Qwen3.5-9B-Q4_K_M.gguf",
+  "size": 5627044256,
+  "sha256": "cd76ec205963b3b33350093e6904d9de16c4e666fd104e1f632d25c7f15f2a13",
+  "license": "apache-2.0",
+  "why_this_file": "its embedded chat template equals Qwen's official template byte for byte (checked 2026-11-03 via the Hub's GGUF metadata); unsloth's GGUF alters the thinking switch"
+ },
+ "llama_cpp": {
+  "tag": "b11700",
+  "commit": "23f7aabc16c72f6f707dba227251c35d7bd1ed96"
+ },
+ "cpu": {
+  "machine": "x86_64",
+  "nproc": 4,
+  "model": "AMD EPYC 9V45 96-Core Processor",
+  "avx512f": true,
+  "mem_gb": 15.6
+ },
+ "started_utc": "2026-11-03T03:21:25Z",
+ "server_args": [
+  "-m",
+  "/tmp/model.gguf",
+  "--host",
+  "127.0.0.1",
+  "--port",
+  "8080",
+  "-t",
+  "4",
+  "-tb",
+  "4",
+  "-c",
+  "16384",
+  "-np",
+  "1",
+  "--jinja",
+  "--reasoning",
+  "off"
+ ],
+ "server_load_s": 4.0,
+ "call": {
+  "wall_s": 273.3,
+  "prompt_tokens": 5298,
+  "prompt_tokens_per_s": 21.377658378700232,
+  "reply_tokens": 183,
+  "reply_tokens_per_s": 7.156083539961969,
+  "cached_tokens": 0,
+  "finish_reason": "stop",
+  "reasoning_chars": 0
+ },
+ "valid": {
+  "ok": true,
+  "pins": {
+   "SYNTH_STRATEGY": "DELAY 3",
+   "RUN_POST_GRT_DESIGN_REPAIR": true,
+   "PL_ROUTABILITY_DRIVEN": true,
+   "FP_CORE_UTIL": 27
+  },
+  "rationale": "History shows setup slack is the primary bottleneck (worst path touches I/O ports). 'DELAY' synthesis strategies (DELAY 3/4) consistently yield better setup margins than 'AREA' strategies. 'RUN_POST_GRT_DESIGN_REPAIR' is critical for fixing I/O port violations seen in multiple runs. 'PL_ROUTABILITY_DRIVEN' helps reduce wirelength and congestion, improving timing. 'FP_CORE_UTIL' at 27% offers a good balance between density and repairability. Pin these knobs to replicate successful patterns while letting the optimizer tune others.",
+  "log": [],
+  "n_pins": 4,
+  "period_frac": null,
+  "pins_period_frac_le_05": false
+ },
+ "rule_file": {
+  "rationale": "History shows setup slack is the primary bottleneck (worst path touches I/O ports). 'DELAY' synthesis strategies (DELAY 3/4) consistently yield better setup margins than 'AREA' strategies. 'RUN_POST_GRT_DESIGN_REPAIR' is critical for fixing I/O port violations seen in multiple runs. 'PL_ROUTABILITY_DRIVEN' helps reduce wirelength and congestion, improving timing. 'FP_CORE_UTIL' at 27% offers a good balance between density and repairability. Pin these knobs to replicate successful patterns while letting the optimizer tune others.",
+  "pins": {
+   "SYNTH_STRATEGY": "DELAY 3",
+   "RUN_POST_GRT_DESIGN_REPAIR": true,
+   "PL_ROUTABILITY_DRIVEN": true,
+   "FP_CORE_UTIL": 27
+  }
+ },
+ "rule_file_source": "reply",
+ "finished_utc": "2026-11-03T03:26:02Z"
+}

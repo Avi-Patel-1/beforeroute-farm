@@ -1,0 +1,8 @@
+{
+  "rationale": "Run 'md5' achieves the best T_eff (6.955 ns) with zero electrical violations and robust hold slack. It uses 'DELAY 3' synthesis, moderate density (11), and 'cap213' RC model. Pin these knobs to replicate its successful balance of timing and electrical integrity. Avoid 'orfs' RC model (used in 'blabla' with high T_eff) and high density settings that risk congestion.",
+  "pins": {
+    "SYNTH_STRATEGY": "DELAY 3",
+    "density_delta": 11,
+    "RC_MODEL": "cap213"
+  }
+}

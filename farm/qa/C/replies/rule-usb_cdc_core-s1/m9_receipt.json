@@ -1,0 +1,82 @@
+{
+ "item": "rule-usb_cdc_core-s1",
+ "prompt": "farm/agent_a35/usb_cdc_core/s1/round1_prompt.md",
+ "prompt_sha256": "140966f82b9b12110167f2e82f00889060dfb8f315ce882e104e6f1c816eb58a",
+ "prompt_chars": 13985,
+ "model": {
+  "name": "Qwen3.5-9B (instruct, Apache-2.0)",
+  "base": "Qwen/Qwen3.5-9B@c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+  "repo": "lmstudio-community/Qwen3.5-9B-GGUF",
+  "revision": "1379f25c6b505a3fc737bd7818cb09389cf807c1",
+  "file": "Qwen3.5-9B-Q4_K_M.gguf",
+  "size": 5627044256,
+  "sha256": "cd76ec205963b3b33350093e6904d9de16c4e666fd104e1f632d25c7f15f2a13",
+  "license": "apache-2.0",
+  "why_this_file": "its embedded chat template equals Qwen's official template byte for byte (checked 2026-11-03 via the Hub's GGUF metadata); unsloth's GGUF alters the thinking switch"
+ },
+ "llama_cpp": {
+  "tag": "b11700",
+  "commit": "23f7aabc16c72f6f707dba227251c35d7bd1ed96"
+ },
+ "cpu": {
+  "machine": "x86_64",
+  "nproc": 4,
+  "model": "AMD EPYC 7763 64-Core Processor",
+  "avx512f": false,
+  "mem_gb": 15.6
+ },
+ "started_utc": "2026-11-03T03:28:08Z",
+ "server_args": [
+  "-m",
+  "/tmp/model.gguf",
+  "--host",
+  "127.0.0.1",
+  "--port",
+  "8080",
+  "-t",
+  "4",
+  "-tb",
+  "4",
+  "-c",
+  "16384",
+  "-np",
+  "1",
+  "--jinja",
+  "--reasoning",
+  "off"
+ ],
+ "server_load_s": 6.0,
+ "call": {
+  "wall_s": 416.9,
+  "prompt_tokens": 5335,
+  "prompt_tokens_per_s": 13.81267186582022,
+  "reply_tokens": 150,
+  "reply_tokens_per_s": 4.855060953009364,
+  "cached_tokens": 0,
+  "finish_reason": "stop",
+  "reasoning_chars": 0
+ },
+ "valid": {
+  "ok": true,
+  "pins": {
+   "SYNTH_STRATEGY": "DELAY 3",
+   "density_delta": 11,
+   "RC_MODEL": "cap213"
+  },
+  "rationale": "Run 'md5' achieves the best T_eff (6.955 ns) with zero electrical violations and robust hold slack. It uses 'DELAY 3' synthesis, moderate density (11), and 'cap213' RC model. Pin these knobs to replicate its successful balance of timing and electrical integrity. Avoid 'orfs' RC model (used in 'blabla' with high T_eff) and high density settings that risk congestion.",
+  "log": [],
+  "n_pins": 3,
+  "period_frac": null,
+  "pins_period_frac_le_05": false
+ },
+ "rule_file": {
+  "rationale": "Run 'md5' achieves the best T_eff (6.955 ns) with zero electrical violations and robust hold slack. It uses 'DELAY 3' synthesis, moderate density (11), and 'cap213' RC model. Pin these knobs to replicate its successful balance of timing and electrical integrity. Avoid 'orfs' RC model (used in 'blabla' with high T_eff) and high density settings that risk congestion.",
+  "pins": {
+   "SYNTH_STRATEGY": "DELAY 3",
+   "density_delta": 11,
+   "RC_MODEL": "cap213"
+  }
+ },
+ "rule_file_source": "reply",
+ "finished_utc": "2026-11-03T03:35:11Z"
+}
