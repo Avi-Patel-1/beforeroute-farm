@@ -1,0 +1,1443 @@
+{
+ "packets": {
+  "p0ba4e7": {
+   "moved": true,
+   "names_cited": 19,
+   "missing_in_own_packet": [],
+   "names": [
+    {
+     "kind": "inst",
+     "name": "i5920",
+     "own_packet": [
+      "DEF",
+      "dumps",
+      "paths"
+     ],
+     "other_packets_with_name": 5
+    },
+    {
+     "kind": "inst",
+     "name": "i7912",
+     "own_packet": [
+      "DEF",
+      "dumps",
+      "paths"
+     ],
+     "other_packets_with_name": 5
+    },
+    {
+     "kind": "inst",
+     "name": "i8840",
+     "own_packet": [
+      "DEF",
+      "dumps",
+      "paths"
+     ],
+     "other_packets_with_name": 5
+    },
+    {
+     "kind": "inst",
+     "name": "i17576",
+     "own_packet": [
+      "DEF",
+      "dumps",
+      "paths"
+     ],
+     "other_packets_with_name": 1
+    },
+    {
+     "kind": "inst",
+     "name": "i18610",
+     "own_packet": [
+      "DEF",
+      "dumps",
+      "paths"
+     ],
+     "other_packets_with_name": 1
+    },
+    {
+     "kind": "net",
+     "name": "n523",
+     "own_packet": [
+      "DEF",
+      "dumps",
+      "paths"
+     ],
+     "other_packets_with_name": 5
+    },
+    {
+     "kind": "net",
+     "name": "n734",
+     "own_packet": [
+      "DEF",
+      "dumps",
+      "paths"
+     ],
+     "other_packets_with_name": 6
+    },
+    {
+     "kind": "net",
+     "name": "n1278",
+     "own_packet": [
+      "DEF",
+      "dumps",
+      "paths"
+     ],
+     "other_packets_with_name": 6
+    },
+    {
+     "kind": "net",
+     "name": "n1282",
+     "own_packet": [
+      "DEF",
+      "dumps",
+      "paths"
+     ],
+     "other_packets_with_name": 6
+    },
+    {
+     "kind": "net",
+     "name": "n2649",
+     "own_packet": [
+      "DEF",
+      "dumps",
+      "paths"
+     ],
+     "other_packets_with_name": 5
+    },
+    {
+     "kind": "port",
+     "name": "G03",
+     "own_packet": [
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G09",
+     "own_packet": [
+      "menu"
+     ],
+     "other_packets_with_name": 5
+    },
+    {
+     "kind": "port",
+     "name": "G12",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 5
+    },
+    {
+     "kind": "port",
+     "name": "G13",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 5
+    },
+    {
+     "kind": "port",
+     "name": "G03[8]",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G03[9]",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G03[12]",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G09[28]",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 5
+    },
+    {
+     "kind": "port",
+     "name": "G09[31]",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 5
+    }
+   ],
+   "claims": [
+    {
+     "claim": "i17576 starts most of the worst (top) paths",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": []
+    },
+    {
+     "claim": "i5920 is a buffer at about (118,50)",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": []
+    },
+    {
+     "claim": "i7912, i8840, i18610 are registers about 220-243 um (Manhattan) from i5920, endpoint slack 0.63-0.64 ns",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": []
+    },
+    {
+     "claim": "G09 bits 25-28 on edge W, bit 31 on edge N (stock)",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": []
+    },
+    {
+     "claim": "G03 pins spread over edge W, y about 165-260 (stock)",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": []
+    },
+    {
+     "claim": "top paths at T0 have slack 0.51-0.68 ns",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": [
+      "p00d863"
+     ]
+    }
+   ]
+  },
+  "p10bfb9": {
+   "moved": true,
+   "names_cited": 8,
+   "missing_in_own_packet": [],
+   "names": [
+    {
+     "kind": "inst",
+     "name": "i2224",
+     "own_packet": [
+      "DEF",
+      "dumps",
+      "paths"
+     ],
+     "other_packets_with_name": 6
+    },
+    {
+     "kind": "port",
+     "name": "CLK",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G01",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G03",
+     "own_packet": [
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G04",
+     "own_packet": [
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G08",
+     "own_packet": [
+      "menu"
+     ],
+     "other_packets_with_name": 5
+    },
+    {
+     "kind": "port",
+     "name": "G09",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 5
+    },
+    {
+     "kind": "port",
+     "name": "G04[0]",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    }
+   ],
+   "claims": [
+    {
+     "claim": "i2224 is an and3 at about (104,128)",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": []
+    },
+    {
+     "claim": "G01 on edge N, G09 on edge E, G04[0] on edge N (stock)",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": []
+    },
+    {
+     "claim": "worst slack at T0 is reg-to-reg at 0.533 ns",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": []
+    },
+    {
+     "claim": "G04 stock pins: G04[0] on N, the rest on W at y about 143-208",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": []
+    }
+   ]
+  },
+  "p114b56": {
+   "moved": true,
+   "names_cited": 12,
+   "missing_in_own_packet": [],
+   "names": [
+    {
+     "kind": "inst",
+     "name": "i8237",
+     "own_packet": [
+      "DEF",
+      "dumps",
+      "paths"
+     ],
+     "other_packets_with_name": 5
+    },
+    {
+     "kind": "inst",
+     "name": "i9097",
+     "own_packet": [
+      "DEF",
+      "dumps",
+      "paths"
+     ],
+     "other_packets_with_name": 5
+    },
+    {
+     "kind": "inst",
+     "name": "i14705",
+     "own_packet": [
+      "DEF",
+      "dumps",
+      "paths"
+     ],
+     "other_packets_with_name": 3
+    },
+    {
+     "kind": "inst",
+     "name": "i22835",
+     "own_packet": [
+      "DEF",
+      "dumps"
+     ],
+     "other_packets_with_name": 1
+    },
+    {
+     "kind": "inst",
+     "name": "i24017",
+     "own_packet": [
+      "DEF",
+      "dumps",
+      "paths"
+     ],
+     "other_packets_with_name": 1
+    },
+    {
+     "kind": "inst",
+     "name": "i25353",
+     "own_packet": [
+      "DEF",
+      "dumps",
+      "paths"
+     ],
+     "other_packets_with_name": 1
+    },
+    {
+     "kind": "port",
+     "name": "G09",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 5
+    },
+    {
+     "kind": "port",
+     "name": "G10",
+     "own_packet": [
+      "menu"
+     ],
+     "other_packets_with_name": 5
+    },
+    {
+     "kind": "port",
+     "name": "G14",
+     "own_packet": [
+      "menu"
+     ],
+     "other_packets_with_name": 5
+    },
+    {
+     "kind": "port",
+     "name": "G18",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 2
+    },
+    {
+     "kind": "port",
+     "name": "G20",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 2
+    },
+    {
+     "kind": "port",
+     "name": "G10[2]",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 5
+    }
+   ],
+   "claims": [
+    {
+     "claim": "i14705, i22835, i9097, i25353 are registers at x 167-196, y 177-184",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": []
+    },
+    {
+     "claim": "these four registers feed outputs G10/G18/G09/G20 (each reaches one through <= 8 non-flop cells; the worst-path reports name >= 3 of them as launch points of those outputs)",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": []
+    },
+    {
+     "claim": "i8237 is an a22o_4 and i24017 an a21o_4",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": []
+    },
+    {
+     "claim": "G20 sits on E at 179.86 um, G18 on N at x about 216, G10 has 6 bits on E and 2 on N (stock)",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": []
+    }
+   ]
+  },
+  "p6dbefa": {
+   "moved": true,
+   "names_cited": 18,
+   "missing_in_own_packet": [],
+   "names": [
+    {
+     "kind": "inst",
+     "name": "i1488",
+     "own_packet": [
+      "DEF",
+      "dumps",
+      "paths"
+     ],
+     "other_packets_with_name": 8
+    },
+    {
+     "kind": "inst",
+     "name": "i3589",
+     "own_packet": [
+      "DEF",
+      "dumps",
+      "paths"
+     ],
+     "other_packets_with_name": 6
+    },
+    {
+     "kind": "inst",
+     "name": "i4559",
+     "own_packet": [
+      "DEF",
+      "dumps",
+      "paths"
+     ],
+     "other_packets_with_name": 6
+    },
+    {
+     "kind": "inst",
+     "name": "i5663",
+     "own_packet": [
+      "DEF",
+      "dumps",
+      "paths"
+     ],
+     "other_packets_with_name": 5
+    },
+    {
+     "kind": "inst",
+     "name": "i6211",
+     "own_packet": [
+      "DEF",
+      "dumps",
+      "paths"
+     ],
+     "other_packets_with_name": 5
+    },
+    {
+     "kind": "inst",
+     "name": "i7671",
+     "own_packet": [
+      "DEF",
+      "dumps"
+     ],
+     "other_packets_with_name": 5
+    },
+    {
+     "kind": "inst",
+     "name": "i8109",
+     "own_packet": [
+      "DEF",
+      "dumps",
+      "paths"
+     ],
+     "other_packets_with_name": 5
+    },
+    {
+     "kind": "inst",
+     "name": "i8398",
+     "own_packet": [
+      "DEF",
+      "dumps"
+     ],
+     "other_packets_with_name": 5
+    },
+    {
+     "kind": "inst",
+     "name": "i8954",
+     "own_packet": [
+      "DEF",
+      "dumps",
+      "paths"
+     ],
+     "other_packets_with_name": 5
+    },
+    {
+     "kind": "port",
+     "name": "G08",
+     "own_packet": [
+      "menu"
+     ],
+     "other_packets_with_name": 5
+    },
+    {
+     "kind": "port",
+     "name": "G10",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 5
+    },
+    {
+     "kind": "port",
+     "name": "G12",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 5
+    },
+    {
+     "kind": "port",
+     "name": "G15",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 5
+    },
+    {
+     "kind": "port",
+     "name": "RST",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 6
+    },
+    {
+     "kind": "port",
+     "name": "G08[1]",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 5
+    },
+    {
+     "kind": "port",
+     "name": "G08[2]",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 5
+    },
+    {
+     "kind": "port",
+     "name": "G08[5]",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 5
+    },
+    {
+     "kind": "port",
+     "name": "G08[7]",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 5
+    }
+   ],
+   "claims": [
+    {
+     "claim": "i1488, i3589, i8398, i8954 are registers at x about 99-116, y about 125-133",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": []
+    },
+    {
+     "claim": "i5663 is an a21o that drives G15 (through <= 3 cells) and an ~87 um net",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": []
+    },
+    {
+     "claim": "i4559 is an a22o at about (163,131)",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": []
+    },
+    {
+     "claim": "i7671 at about (167,158) and i6211 at about (157,136)",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": []
+    },
+    {
+     "claim": "i8109 is an and2",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": []
+    },
+    {
+     "claim": "G15 on edge N at x about 150 (stock); G08 on E, G10 on W, G12 on E",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": []
+    }
+   ]
+  },
+  "pbae019": {
+   "moved": true,
+   "names_cited": 10,
+   "missing_in_own_packet": [],
+   "names": [
+    {
+     "kind": "inst",
+     "name": "i469",
+     "own_packet": [
+      "DEF",
+      "dumps",
+      "paths"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "inst",
+     "name": "i4564",
+     "own_packet": [
+      "DEF",
+      "dumps",
+      "paths"
+     ],
+     "other_packets_with_name": 6
+    },
+    {
+     "kind": "inst",
+     "name": "i11659",
+     "own_packet": [
+      "DEF",
+      "dumps",
+      "paths"
+     ],
+     "other_packets_with_name": 4
+    },
+    {
+     "kind": "port",
+     "name": "G01",
+     "own_packet": [
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G03",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G05",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G11",
+     "own_packet": [
+      "menu"
+     ],
+     "other_packets_with_name": 5
+    },
+    {
+     "kind": "port",
+     "name": "G12",
+     "own_packet": [
+      "menu"
+     ],
+     "other_packets_with_name": 5
+    },
+    {
+     "kind": "port",
+     "name": "G13",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 5
+    },
+    {
+     "kind": "port",
+     "name": "G15",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 5
+    }
+   ],
+   "claims": [
+    {
+     "claim": "i469 and i11659 start paths to G11 output flops (worst family, about 0.48 ns)",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": []
+    },
+    {
+     "claim": "i4564 starts paths of the next family (0.53-0.74 ns)",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": []
+    },
+    {
+     "claim": "G01 is a 32-bit input group",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": []
+    },
+    {
+     "claim": "G11 is an output group; G15, G13, G12 are inputs",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": [
+      "p0ba4e7"
+     ]
+    }
+   ]
+  },
+  "p00d863": {
+   "moved": false,
+   "names_cited": 13,
+   "missing_in_own_packet": [],
+   "names": [
+    {
+     "kind": "inst",
+     "name": "i372",
+     "own_packet": [
+      "DEF",
+      "dumps",
+      "paths"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "inst",
+     "name": "i1450",
+     "own_packet": [
+      "DEF",
+      "dumps",
+      "paths"
+     ],
+     "other_packets_with_name": 8
+    },
+    {
+     "kind": "inst",
+     "name": "i1907",
+     "own_packet": [
+      "DEF",
+      "dumps",
+      "paths"
+     ],
+     "other_packets_with_name": 6
+    },
+    {
+     "kind": "inst",
+     "name": "i2065",
+     "own_packet": [
+      "DEF",
+      "dumps",
+      "paths"
+     ],
+     "other_packets_with_name": 6
+    },
+    {
+     "kind": "inst",
+     "name": "i4246",
+     "own_packet": [
+      "DEF",
+      "dumps",
+      "paths"
+     ],
+     "other_packets_with_name": 6
+    },
+    {
+     "kind": "port",
+     "name": "G02",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G03",
+     "own_packet": [
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G04",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G05",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G06",
+     "own_packet": [
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G07",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "RST",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 6
+    },
+    {
+     "kind": "port",
+     "name": "G03[3]",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    }
+   ],
+   "claims": [
+    {
+     "claim": "110 flip-flops in the block",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": []
+    },
+    {
+     "claim": "ten-odd top paths at 0.505-0.56 ns include G04 -> i1450, i372 -> registers, G05 -> i4246, G04 -> i2065/i1907",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": []
+    }
+   ]
+  },
+  "p3d0074": {
+   "moved": false,
+   "names_cited": 8,
+   "missing_in_own_packet": [],
+   "names": [
+    {
+     "kind": "port",
+     "name": "G02",
+     "own_packet": [
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G05",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G06",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G07",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G11",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 5
+    },
+    {
+     "kind": "port",
+     "name": "G13",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 5
+    },
+    {
+     "kind": "port",
+     "name": "G16",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 2
+    },
+    {
+     "kind": "port",
+     "name": "G02[5]",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    }
+   ],
+   "claims": [
+    {
+     "claim": "worst slack 0.718 ns on output G02[5]; G02 has 3 bits on N and 5 on E (stock)",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": []
+    }
+   ]
+  },
+  "p7a494d": {
+   "moved": false,
+   "names_cited": 10,
+   "missing_in_own_packet": [],
+   "names": [
+    {
+     "kind": "inst",
+     "name": "i1330",
+     "own_packet": [
+      "DEF",
+      "dumps",
+      "paths"
+     ],
+     "other_packets_with_name": 8
+    },
+    {
+     "kind": "port",
+     "name": "CLK",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G01",
+     "own_packet": [
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G02",
+     "own_packet": [
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G03",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G04",
+     "own_packet": [
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G05",
+     "own_packet": [
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G06",
+     "own_packet": [
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G07",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "RST",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 6
+    }
+   ],
+   "claims": [
+    {
+     "claim": "every top path at T0 starts at i1330 (a flop); worst slack 5.70 ns",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": []
+    },
+    {
+     "claim": "i1330 reaches all 64 bits of G01 and G05",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": []
+    },
+    {
+     "claim": "G02, G04, G06 unconnected; G03 driven by a tie cell; G07 slack about 7 ns",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": []
+    }
+   ]
+  },
+  "p89c9e8": {
+   "moved": false,
+   "names_cited": 9,
+   "missing_in_own_packet": [],
+   "names": [
+    {
+     "kind": "inst",
+     "name": "i976",
+     "own_packet": [
+      "DEF",
+      "dumps",
+      "paths"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G01",
+     "own_packet": [
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G02",
+     "own_packet": [
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G03",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G04",
+     "own_packet": [
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G05",
+     "own_packet": [
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G06",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G07",
+     "own_packet": [
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "RST",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 6
+    }
+   ],
+   "claims": [
+    {
+     "claim": "i976 is a dfrtp_2 and starts every critical (top, within 50 ps of worst) path",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": []
+    },
+    {
+     "claim": "i976 reaches all 64 bits of G01 and G04",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": []
+    },
+    {
+     "claim": "G02, G05, G07 unconnected; G03 driven by a tie cell",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": []
+    }
+   ]
+  },
+  "pdc9e8d": {
+   "moved": false,
+   "names_cited": 8,
+   "missing_in_own_packet": [],
+   "names": [
+    {
+     "kind": "inst",
+     "name": "i394",
+     "own_packet": [
+      "DEF",
+      "dumps",
+      "paths"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G01",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G02",
+     "own_packet": [
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G03",
+     "own_packet": [
+      "DEF",
+      "ports.json",
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G04",
+     "own_packet": [
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G05",
+     "own_packet": [
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G06",
+     "own_packet": [
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    },
+    {
+     "kind": "port",
+     "name": "G07",
+     "own_packet": [
+      "menu"
+     ],
+     "other_packets_with_name": 9
+    }
+   ],
+   "claims": [
+    {
+     "claim": "i394 starts every critical (top, within 50 ps of worst) path; worst slack 5.78 ns",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": []
+    },
+    {
+     "claim": "i394 reaches all 64 bits of G06 and G07",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": []
+    },
+    {
+     "claim": "G02, G04, G05 unconnected; G01 driven by a tie cell; G03 slack about 8.2 ns",
+     "holds_in_own_packet": true,
+     "holds_in_other_packets": []
+    }
+   ]
+  }
+ },
+ "summary": {
+  "p0ba4e7": {
+   "names_cited": 19,
+   "missing": 0,
+   "claims_hold_own": 6,
+   "claims_total": 6,
+   "claims_holding_elsewhere": [
+    "p00d863"
+   ]
+  },
+  "p10bfb9": {
+   "names_cited": 8,
+   "missing": 0,
+   "claims_hold_own": 4,
+   "claims_total": 4,
+   "claims_holding_elsewhere": []
+  },
+  "p114b56": {
+   "names_cited": 12,
+   "missing": 0,
+   "claims_hold_own": 4,
+   "claims_total": 4,
+   "claims_holding_elsewhere": []
+  },
+  "p6dbefa": {
+   "names_cited": 18,
+   "missing": 0,
+   "claims_hold_own": 6,
+   "claims_total": 6,
+   "claims_holding_elsewhere": []
+  },
+  "pbae019": {
+   "names_cited": 10,
+   "missing": 0,
+   "claims_hold_own": 4,
+   "claims_total": 4,
+   "claims_holding_elsewhere": [
+    "p0ba4e7"
+   ]
+  },
+  "p00d863": {
+   "names_cited": 13,
+   "missing": 0,
+   "claims_hold_own": 2,
+   "claims_total": 2,
+   "claims_holding_elsewhere": []
+  },
+  "p3d0074": {
+   "names_cited": 8,
+   "missing": 0,
+   "claims_hold_own": 1,
+   "claims_total": 1,
+   "claims_holding_elsewhere": []
+  },
+  "p7a494d": {
+   "names_cited": 10,
+   "missing": 0,
+   "claims_hold_own": 3,
+   "claims_total": 3,
+   "claims_holding_elsewhere": []
+  },
+  "p89c9e8": {
+   "names_cited": 9,
+   "missing": 0,
+   "claims_hold_own": 3,
+   "claims_total": 3,
+   "claims_holding_elsewhere": []
+  },
+  "pdc9e8d": {
+   "names_cited": 8,
+   "missing": 0,
+   "claims_hold_own": 3,
+   "claims_total": 3,
+   "claims_holding_elsewhere": []
+  }
+ }
+}

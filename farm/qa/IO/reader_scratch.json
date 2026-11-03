@@ -1,0 +1,254 @@
+{
+ "readers": {
+  "p00d863": {
+   "agent": "ab502356cdc35a082",
+   "tool_calls": 31,
+   "models": [
+    "claude-opus-5-5"
+   ],
+   "scratch_paths": [
+    "",
+    "model.py",
+    "p00d863_w7q3x",
+    "paths.py"
+   ],
+   "listed_scratch_root": [
+    "ls -la"
+   ],
+   "case_design_names_in_tool_outputs": {},
+   "other_design_names_in_tool_outputs": {
+    "md5": 1
+   }
+  },
+  "p0ba4e7": {
+   "agent": "a260efc19d8aa8e97",
+   "tool_calls": 50,
+   "models": [
+    "claude-opus-5-5"
+   ],
+   "scratch_paths": [
+    "",
+    "graph.py",
+    "instinfo.py",
+    "netinfo.py",
+    "parsedef.py",
+    "paths1.py",
+    "paths2.py",
+    "paths3.py",
+    "pb4e7_XXXXXXXX",
+    "pb4e7_nUULXXNz"
+   ],
+   "listed_scratch_root": [
+    "ls -la --time-style=full-iso $SCRATCH/"
+   ],
+   "case_design_names_in_tool_outputs": {},
+   "other_design_names_in_tool_outputs": {
+    "md5": 1
+   }
+  },
+  "p10bfb9": {
+   "agent": "ac24c27342334ba1c",
+   "tool_calls": 44,
+   "models": [
+    "claude-opus-5-5"
+   ],
+   "scratch_paths": [
+    "p10bfb9_own_7f3k",
+    "p10bfb9_own_7f3k/g.py",
+    "work",
+    "work/graph.py",
+    "work/parse_def.py"
+   ],
+   "listed_scratch_root": [],
+   "case_design_names_in_tool_outputs": {},
+   "other_design_names_in_tool_outputs": {}
+  },
+  "p114b56": {
+   "agent": "a34b86619a41fa09e",
+   "tool_calls": 48,
+   "models": [
+    "claude-opus-5-5"
+   ],
+   "scratch_paths": [
+    "",
+    "graph.py",
+    "parse_def.py",
+    "w_p114b56",
+    "w_p114b56/g114.py",
+    "w_p114b56/p114b56_def.pkl",
+    "w_p114b56/pdef.py"
+   ],
+   "listed_scratch_root": [],
+   "case_design_names_in_tool_outputs": {},
+   "other_design_names_in_tool_outputs": {}
+  },
+  "p3d0074": {
+   "agent": "acc4ed76c6db07441",
+   "tool_calls": 47,
+   "models": [
+    "claude-opus-5-5"
+   ],
+   "scratch_paths": [
+    "",
+    "p3d0074_w_$(date",
+    "p3d0074_w_041753",
+    "p3d0074_w_041753/def.pkl",
+    "p3d0074_w_041753/glob.py",
+    "p3d0074_w_041753/graph.py",
+    "p3d0074_w_041753/place.py",
+    "p3d0074_w_041753/qp.py",
+    "paths.py"
+   ],
+   "listed_scratch_root": [
+    "ls -la $SCRATCH/"
+   ],
+   "case_design_names_in_tool_outputs": {},
+   "other_design_names_in_tool_outputs": {
+    "md5": 1
+   }
+  },
+  "p6dbefa": {
+   "agent": "a2908fc6ead3ab1ef",
+   "tool_calls": 39,
+   "models": [
+    "claude-opus-5-5"
+   ],
+   "scratch_paths": [
+    "",
+    "cones.py",
+    "def.pkl",
+    "defparse.py",
+    "graph.py",
+    "showpath.py"
+   ],
+   "listed_scratch_root": [],
+   "case_design_names_in_tool_outputs": {},
+   "other_design_names_in_tool_outputs": {}
+  },
+  "p7a494d": {
+   "agent": "ab2af9b1c3d7bbe28",
+   "tool_calls": 30,
+   "models": [
+    "claude-opus-5-5"
+   ],
+   "scratch_paths": [
+    "p7a494d_q8z3",
+    "work",
+    "work/def.json",
+    "work/parse_def.py",
+    "work/sinks.py",
+    "work/tree.py"
+   ],
+   "listed_scratch_root": [],
+   "case_design_names_in_tool_outputs": {},
+   "other_design_names_in_tool_outputs": {}
+  },
+  "p89c9e8": {
+   "agent": "af1027443930ac39d",
+   "tool_calls": 28,
+   "models": [
+    "claude-opus-5-5"
+   ],
+   "scratch_paths": [
+    "work",
+    "work/try"
+   ],
+   "listed_scratch_root": [],
+   "case_design_names_in_tool_outputs": {},
+   "other_design_names_in_tool_outputs": {}
+  },
+  "pbae019": {
+   "agent": "ab5b72bc44e156a26",
+   "tool_calls": 53,
+   "models": [
+    "claude-opus-5-5"
+   ],
+   "scratch_paths": [
+    "work",
+    "work/back.py",
+    "work/clk.py",
+    "work/clk2.py",
+    "work/conn.py",
+    "work/def.pkl",
+    "work/defparse.py",
+    "work/density.py",
+    "work/dpin.py",
+    "work/dslack.py",
+    "work/fanin.py",
+    "work/ffinfo.py",
+    "work/g01.py",
+    "work/g12.py",
+    "work/graph.py",
+    "work/holdcone.py",
+    "work/hpwl_opts.py",
+    "work/io_cones.py",
+    "work/le.py",
+    "work/lib.py",
+    "work/local.py",
+    "work/ports_an.py",
+    "work/pp.py",
+    "work/qslack.py",
+    "work/tree.py"
+   ],
+   "listed_scratch_root": [],
+   "case_design_names_in_tool_outputs": {},
+   "other_design_names_in_tool_outputs": {}
+  },
+  "pdc9e8d": {
+   "agent": "a66b4aaf018fa6111",
+   "tool_calls": 25,
+   "models": [
+    "claude-opus-5-5"
+   ],
+   "scratch_paths": [
+    "",
+    "defmap.py",
+    "func.json",
+    "paths.py",
+    "tree.py",
+    "tree2.py"
+   ],
+   "listed_scratch_root": [],
+   "case_design_names_in_tool_outputs": {},
+   "other_design_names_in_tool_outputs": {}
+  }
+ },
+ "shared_paths": {
+  "(scratchpad root)": [
+   "p00d863",
+   "p0ba4e7",
+   "p114b56",
+   "p3d0074",
+   "p6dbefa",
+   "pdc9e8d"
+  ],
+  "graph.py": [
+   "p0ba4e7",
+   "p114b56",
+   "p6dbefa"
+  ],
+  "paths.py": [
+   "p00d863",
+   "p3d0074",
+   "pdc9e8d"
+  ],
+  "work": [
+   "p10bfb9",
+   "p7a494d",
+   "p89c9e8",
+   "pbae019"
+  ],
+  "work/graph.py": [
+   "p10bfb9",
+   "pbae019"
+  ],
+  "work/parse_def.py": [
+   "p10bfb9",
+   "p7a494d"
+  ],
+  "work/tree.py": [
+   "p7a494d",
+   "pbae019"
+  ]
+ }
+}
