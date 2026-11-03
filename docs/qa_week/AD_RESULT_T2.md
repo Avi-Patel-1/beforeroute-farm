@@ -3,7 +3,13 @@
 Pre-registration: docs/qa_week/AD_PREREG.md with Amendment 1 (SHA-256 760b49c6…3869c; hash line 753295e in
 farm/prereg_hashes.txt, branch qa-ad-law of Avi-Patel-1/beforeroute-farm), written and hashed before any non-smoke
 run. Scored by the committed script `python3 farm/qa/AD/ad.py analyze` (ad.py at fbed433, adlib.py at 286e4aa);
-numbers in farm/qa/AD/ad_analyze_t2a.json. Workflow run 41574461473 (batch m01).
+numbers in farm/qa/AD/ad_analyze_t2.json (T2a alone, scored first: ad_analyze_t2a.json; identical T2a numbers).
+Workflow run 41574461473 (batch m01). Both halves completed before 07:00 ET Nov 3.
+
+**Bottom line.** Both registered T2 predictions failed, in the same direction: the tight-side slope of the claim is set
+by the node, not by the flow and not (here) by synthesis. Same ORFS flow and image, 130 nm library: s⁻ 0.60
+(LibreLane-at-130-nm's 0.59; ORFS-at-7-nm's 0.20–0.26). Same 7 nm flow with ABC told the clock: s⁻ 0.298, still
+ORFS-at-7-nm-like (registered band edge 0.30), because on two of three designs the target never changed the netlist.
 
 ## Verdicts
 - **T2(a), ORFS on sky130hd — COMPLETE (30 of 30 grid runs), scored 2026-11-03 10:25 UTC (05:25 ET).
@@ -11,7 +17,10 @@ numbers in farm/qa/AD/ad_analyze_t2a.json. Workflow run 41574461473 (batch m01).
   s⁻ = **0.601** (15 runs below their F), s⁺ = **0.579** (15 runs above). Same flow as E5 (ORFS, same image), node
   changed from ASAP7 to sky130hd: the tight-side slope went from ORFS-at-7-nm's 0.20–0.26 to LibreLane-at-130-nm's
   0.59.
-- **T2(b), ORFS on ASAP7 with ABC told the clock — NOT YET COMPLETE at this writing: 20 of 30 grid runs landed (gcd and aes); its 10 ibex runs were still running (expected ~12:10 UTC / 07:10 ET). The partial fit on the 20 (s⁻ 0.300, s⁺ 0.600) is not a verdict.****
+- **T2(b), ORFS on ASAP7 with ABC told the clock — COMPLETE (30 of 30 grid runs), scored 2026-11-03 11:22 UTC (06:22 ET).
+  Registered prediction (s⁻ ≥ 0.35): FAILED. Outcome: "not synthesis" (s⁻ < 0.30), at the edge: s⁻ = **0.298**
+  (18 runs below F; the band edge is 0.30), s⁺ = 0.641 (12 above).** Numbers: farm/qa/AD/ad_analyze_t2.json.
+  The target reached the mapping on only one of the three designs (registered netlist check below).
 
 ## What was run (units ps; one corner per platform; OpenROAD-flow-scripts commit 202c7fccb in one pinned image)
 - **T2a:** ORFS's own sky130hd gcd, aes, ibex configs (sky130_fd_sc_hd, TT 25 °C 1.80 V, OpenRCX), E5's grid shape:
@@ -73,13 +82,35 @@ Every T2a run (target T → claim C; r = T/F; e = claim error):
 3. The sky130hd grids were anchored at a pilot-estimated F (Amendment 1); the shipped periods were not used.
 4. The flow is not monotonic near F (e.g. aes S2: 5030 → 5235 fails, 6075 → 5230 passes).
 
-## T2(b) so far (partial; the verdict needs all 30)
-- The patch reached ABC in every run (the `abc ... -D <target>` command is in each synthesis log; `abc_d_log_hits` ≥ 1
-  in all 20).
-- Registered netlist check: **gcd's mapped netlist is identical at all 10 targets** ("patch ran but ABC's mapping did
-  not depend on the target"); **aes's varied** (4 distinct netlists: different at 265, 305 and 325 ps, the same from
-  380 ps up), so on aes ABC's target bound at the tight asks.
-- Partial fit (gcd + aes, 20 runs, 6 settings bracketed): s⁻ 0.300, s⁺ 0.600; per design gcd 0.137 / 0.439, aes
-  0.472 / 0.825. ibex (10 runs) completes the registered population; smoke showed ibex's netlist does not change with
-  the target, so its runs should reproduce E5's ibex claims.
+## T2(b): ABC told the clock (ASAP7, E5's grid exactly; 30 runs)
+- **Runs:** `adb-*` (workflow run 41574461473). gcd and aes go through Yosys/ABC (`SYNTH_USE_SYN=0`) because their
+  shipped configs use OpenROAD's `syn`, which has no ABC target; ibex already used Yosys/ABC. The patch appends
+  `-D <target ps>` to ABC's arguments and passes ORFS's own ABC script inline with `{D}` on &nf/upsize/dnsize (with a
+  script *file*, Yosys ignores `-D`; see the PREREG). All 30 runs completed, DRC 0, hold met.
+- **Registered check, "did the target reach the mapping?":** the `-D <target>` command is in every synthesis log
+  (30/30). Mapped netlist per design: **gcd identical at all 10 targets; ibex identical at all 10 (and the same cell
+  list as E5's: its 10 claims equal E5's to the digit); aes varied** (4 netlists: distinct at 265, 305 and 325 ps,
+  the same from 380 ps up). So on gcd and ibex the result reads "patch ran but ABC's mapping did not depend on the
+  target": ABC's wire-free delay estimate is already below every grid target, so it maps the same way at all of
+  them.
 
+| population (ASAP7, ORFS) | synthesis | s⁻ (runs) | s⁺ (runs) | tight bin | loose bin |
+|---|---|---|---|---|---|
+| **T2b, pooled (registered)** | Yosys/ABC told the clock | **0.298** (18) | 0.641 (12) | −8.3% (14) | +12.6% (9) |
+| T2b gcd | Yosys, netlist fixed | 0.137 (5) | 0.439 (5) | | |
+| T2b aes | Yosys, **netlist varied** | 0.472 (7) | 0.825 (3) | | |
+| T2b ibex | Yosys, netlist fixed (= E5) | 0.295 (6) | 0.694 (4) | | |
+| E5 grid, pooled (beside) | `syn` (gcd, aes), Yosys (ibex), no target | 0.259 (16) | 0.566 (14) | −7.7% (13) | +12.8% (9) |
+| E5 grid gcd / aes / ibex | | 0.277 / 0.186 / 0.295 | 0.486 / 0.529 / 0.694 | | |
+
+- **Reading (registered meaning of "not synthesis"):** telling ABC the clock did not steepen ORFS's tight-side
+  response to LibreLane's; the pooled slope stayed ORFS-like (0.30 vs E5's 0.26). With T2(a), the tight-side slope
+  follows the node, and in this flow synthesis is not the door.
+- **But the verdict is thin and mostly untested by construction** (say this with it): (i) s⁻ = 0.298 sits 0.002 under
+  the 0.30 line; (ii) the target changed the mapping on aes only, and aes is the design whose slope rose (0.19 under
+  `syn` in E5 → 0.47 here); (iii) aes's rise mixes two changes, `syn`→Yosys and the target; the descriptive control
+  that separates them (Yosys without the target, `adc-*`) was still queued when this was written. For gcd, switching
+  to Yosys alone moved the slope the other way (0.28 → 0.14) with the netlist fixed.
+- Say it as: "Telling the synthesizer the clock didn't make my 7 nm flow behave like the 130 nm one — on two of three
+  designs ABC's own delay model already met every target, so the netlist never changed; on the one where it did, the
+  slope rose. The node, not the synthesis step, sets the tight side."
