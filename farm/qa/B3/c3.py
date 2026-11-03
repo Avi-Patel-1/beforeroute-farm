@@ -26,6 +26,49 @@ import e5lib  # noqa: E402
 import e5  # noqa: E402  (crossing, linfit: copies of agents/analysis/fixedpoint/analyze.py)
 
 DESIGNS = ["gcd", "aes", "ibex"]
+P0 = {"gcd": 310, "aes": 380, "ibex": 900}
+# logical configurations already run in smoke (run 41566736833): gcd S0 (shipped config) at 215 and 310 ps, frozen
+SMOKE_SEEN = {("gcd", "{}", 215), ("gcd", "{}", 310)}
+
+
+def status_class(r):
+    """Audit request: failed completed builds vs flow errors vs runs that never landed."""
+    if r is None or r.get("status") in ("missing", "no_run_json"):
+        return "not landed / infra"
+    if r.get("claim") is None:
+        return f"flow error ({r.get('status')})"
+    if r.get("pass"):
+        return "completed, pass"
+    why = [k for k, ok in (("setup", r.get("pass_setup")), ("hold", r.get("pass_hold")), ("DRC", r.get("pass_drc")))
+           if ok is False]
+    return "completed, fail (" + "+".join(why or ["judge"]) + ")"
+
+
+def evidence(d, design, period):
+    """The constraints the tools loaded (finish report + log): external delays, clock edges, liberty files."""
+    out = {"ext_delays": [], "edges": [], "libs": [], "sdc_io_delay": None}
+    for p in (os.path.join(d, "finish_evidence.txt"),):
+        if os.path.exists(p):
+            for line in open(p):
+                line = line.strip()
+                if "external delay" in line:
+                    out["ext_delays"].append(float(line.split()[0]))
+                elif "(rise edge)" in line:
+                    out["edges"].append(float(line.split()[-5]) if line.split()[-5].replace('.', '', 1).replace('-', '', 1).isdigit() else None)
+                elif line.startswith("read_liberty"):
+                    out["libs"].append(os.path.basename(line.split()[1]))
+    sp = os.path.join(d, "constraint.sdc")
+    if os.path.exists(sp):
+        txt = open(sp).read()
+        import re
+        per = re.search(r"^set clk_period (\S+)", txt, re.M)
+        pct = re.search(r"^set clk_io_pct (\S+)", txt, re.M)
+        if per and pct:
+            out["sdc_io_delay"] = float(per.group(1)) * float(pct.group(1))
+    out["ext_ok"] = (all(abs(abs(x) - 0.2 * P0[design]) < 0.01 for x in out["ext_delays"]) if out["ext_delays"]
+                     else None)
+    out["sdc_ok"] = None if out["sdc_io_delay"] is None else abs(out["sdc_io_delay"] - 0.2 * P0[design]) < 1e-3
+    return out
 BINS = (("tight (<0.9)", 0.0, 0.9), ("near (0.9-1.1)", 0.9, 1.1), ("loose (1.1-1.5)", 1.1, 1.5),
         ("very loose (>1.5)", 1.5, 99.0))
 
@@ -74,6 +117,26 @@ def main():
                "chain": [(x["tag"], x["period"], x.get("claim"), x.get("pass")) for x in st_]}
         picks[c["design"]].append(row)
     out = {"picks": picks}
+    # status classes, constraint evidence and smoke overlap for every frozen run (grid and chains)
+    runs = {}
+    for t, r in sorted(R.items()):
+        ev = evidence(os.path.join(a.results, t), r["design"], r["period"])
+        key = (r["design"], json.dumps(r.get("vars") or {}, sort_keys=True), int(float(r["period"])))
+        runs[t] = {"design": r["design"], "period": r["period"], "status": status_class(r), "claim": r.get("claim"),
+                   "port": r.get("port"), "sdc_io_delay_ps": ev["sdc_io_delay"], "sdc_ok": ev["sdc_ok"],
+                   "loaded_ext_delays_ps": sorted(set(ev["ext_delays"])), "loaded_ok": ev["ext_ok"],
+                   "libs": sorted(set(ev["libs"])), "smoke_seen": key in SMOKE_SEEN}
+    out["runs"] = runs
+    libsets = {tuple(v["libs"]) for v in runs.values() if v["libs"]}
+    out["evidence_summary"] = {
+        "runs": len(runs), "sdc_io_delay_ok": sum(1 for v in runs.values() if v["sdc_ok"]),
+        "loaded_external_delay_ok": sum(1 for v in runs.values() if v["loaded_ok"]),
+        "loaded_external_delay_bad": [t for t, v in runs.items() if v["loaded_ok"] is False],
+        "no_external_delay_in_report": [t for t, v in runs.items() if v["loaded_ok"] is None],
+        "liberty_sets": [list(x) for x in libsets],
+        "status_counts": {k: sum(1 for v in runs.values() if v["status"] == k) for k in
+                          sorted({v["status"] for v in runs.values()})},
+        "smoke_overlap": [t for t, v in runs.items() if v["smoke_seen"]]}
     g = picks["gcd"]
     ok_g = [((r["K_over_C0"] is not None and abs(r["K_over_C0"] - 1) <= 0.02) or (r["R1_port"] is False)) for r in g]
     out["C3_gcd"] = {"n": len(g), "each_ok": ok_g,
@@ -97,6 +160,12 @@ def main():
         diff = sorted(k for k in set(m) | set(mo) if m.get(k) != mo.get(k) and not ("runtime" in k or k.endswith("_s")))
         ctl[d] = {"identical": not diff and bool(m), "diff_keys": diff[:20], "n_keys": len(mo)}
     out["control"] = ctl
+    # a failed control stops the arm (registered): no C3 verdict is reported while any control differs
+    bad = [d for d, c in ctl.items() if isinstance(c, dict) and not c["identical"]]
+    if bad:
+        for k in ("C3_gcd", "C3_aes", "C3_ibex"):
+            out[k]["verdict"] = f"STOPPED (control failed: {bad})"
+    out["control_failed"] = bad
     # beside: claim-error bins with frozen budgets (grid + chain runs), per setting crossing
     pts = {}
     for t, r in R.items():
@@ -131,6 +200,8 @@ def main():
     print("C3-aes :", out["C3_aes"])
     print("C3-ibex:", out["C3_ibex"])
     print("control:", ctl)
+    print("evidence:", {k: v for k, v in out["evidence_summary"].items() if k != "liberty_sets"},
+          "liberty sets:", len(out["evidence_summary"]["liberty_sets"]))
     print("bins   :", out["bins"])
 
 
