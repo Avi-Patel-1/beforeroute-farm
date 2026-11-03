@@ -241,7 +241,7 @@ text above left implicit.
     loose). The table and the selection script govern; only the prose sum was wrong. All 35 capture runs reproduced
     their record runs exactly (worst setup slack identical to every digit); 20 sources pass the judge (all loose ones).
 
-## Clarification 12, 2026-11-03 05:05Z: fail-closed bug fixes, made before any label existed
+## Clarification 12, 2026-11-03 04:59Z (commit e61fc43): fail-closed bug fixes, made before any label existed
 Made after Codex's audit (findings on br/run_job.py, farm/qa/E/make_chains.py, run_predictor.py, verify_packets.py and
 phase2.py). At this time no rebuild-chain job (`erk-*`) had been created: the branch's only workflow runs are the
 capture smoke 41565377087, the 35 sources 41566168637 and the training-design chain smoke 41575897220. **No prediction,
