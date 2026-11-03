@@ -2,13 +2,15 @@
 """IO1: blind reader packets, the nearest-side script arm, pin file -> plan translation, and the leak test.
 
   packet.py build  --captures DIR [--pins PINS]   DIR/<case>/ holds the artifact of job io-cap-<case>
-  packet.py script [--pins PINS]                  nearest-side script arm -> PINS/script/<pseudonym>/pins.txt
+  packet.py script [--pins PINS]                  nearest-side script arm -> PRIVATE/script/<pseudonym>/pins.txt
   packet.py plans  --arm script|claude [--pins PINS] [--allow-missing]
-                                                  validate every PINS/<arm>/<pseudonym>/pins.txt, write
+                                                  validate every PINS/claude/<pseudonym>/pins.txt (claude) or
+                                                  PRIVATE/script/<pseudonym>/pins.txt (script), write
                                                   farm/qa/IO/plans/<case>-<arm>.json and farm/qa/IO/arms/<arm>/
   packet.py leak   [--pins PINS]                  leak test over PINS/packets (exit 1 on any hit)
-PINS defaults to /home/claude/ideas/overnight/pins. PINS/private/ (salt, case <-> pseudonym index, name maps) never
-enters a packet. Pre-registration: docs/qa_week/IO_PREREG.md.
+PINS defaults to /home/claude/ideas/overnight/pins (packets/ = reader input, claude/ = reader output); PRIVATE
+(--private, default /home/claude/qa/io-private: salt, case <-> pseudonym index, name maps, the script arm's answers)
+is outside it and never shown to a reader. Pre-registration: docs/qa_week/IO_PREREG.md.
 """
 from __future__ import annotations
 
@@ -28,7 +30,8 @@ REPO = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
 sys.path.insert(0, HERE)
 import iolib  # noqa: E402
 
-PINS = "/home/claude/ideas/overnight/pins"
+PINS = "/home/claude/ideas/overnight/pins"          # packets/ (reader input) and claude/ (reader output)
+PRIVATE = "/home/claude/qa/io-private"              # salt, index, name maps, script answers: never shown to a reader
 BUF_RX = re.compile(r"__(buf|clkbuf|clkdlybuf\w*|dlygate\w*|dlymetal\w*|dlybuf\w*)_\d+$")
 CRIT_FRAC = 0.10       # script arm: critical = group worst slack within 10% of T0 of the worst port group
 CRIT_MAX = 4           # script arm: at most the 4 most critical groups move
@@ -48,8 +51,8 @@ def unesc(s):
 
 
 # ------------------------------------------------------------------------------------------------ private state
-def private(pins):
-    d = os.path.join(pins, "private")
+def private(pdir):
+    d = pdir
     os.makedirs(os.path.join(d, "maps"), exist_ok=True)
     sp = os.path.join(d, "salt.txt")
     if not os.path.exists(sp):
@@ -393,6 +396,8 @@ there keeps the tool's pins in that build.
   block change with pin positions; anything outside the block is not modeled.
 - Clock uncertainty 0.25 ns; clock transition 0.15 ns; timing derate 5%; max transition 0.75 ns; max capacitance
   0.2 pF; max fanout 10. Corners: {{min, nom, max}} extracted RC x {{tt 25C 1.80V, ss 100C 1.60V, ff -40C 1.95V}}.
+- The tool's own pins come from OpenROAD's pin placer (matching mode): each pin goes to a free slot near the cells it
+  connects to in a preliminary placement made without pins; then all cells are placed again with the pins fixed.
 - The tool buffers every input and output port (the first/last cell on a port net is usually such a buffer).
 - Fixed and never moved: CLK (the clock port) and any RST port. Bus order is fixed: a moved group is placed as one
   run of pins in ascending bit order along the edge (left to right on N/S, bottom to top on E/W). Pins sit on the
@@ -438,7 +443,7 @@ Use only the files in this folder. No network, no other files.
 # ------------------------------------------------------------------------------------------------ build
 def cmd_build(a):
     pins = a.pins
-    pdir, salt = private(pins)
+    pdir, salt = private(a.private)
     cases = load_cases()
     index = {}
     for case, c in sorted(cases.items()):
@@ -591,10 +596,10 @@ def nearest_side_plan(packet_dir):
 
 
 def cmd_script(a):
-    index = json.load(open(os.path.join(a.pins, "private", "index.json")))
+    index = json.load(open(os.path.join(a.private, "index.json")))
     for case, P in sorted(index.items(), key=lambda kv: kv[1]):
         plan, info = nearest_side_plan(os.path.join(a.pins, "packets", P))
-        d = os.path.join(a.pins, "script", P)
+        d = os.path.join(a.private, "script", P)
         os.makedirs(d, exist_ok=True)
         lines = ["# nearest-side script arm (IO1): critical port groups to the die edge nearest their logic"]
         lines += [f"{m['group']} {m['option']}" for m in plan] or ["ABSTAIN"]
@@ -605,19 +610,20 @@ def cmd_script(a):
 
 # ------------------------------------------------------------------------------------------------ plans
 def cmd_plans(a):
-    index = json.load(open(os.path.join(a.pins, "private", "index.json")))
+    index = json.load(open(os.path.join(a.private, "index.json")))
     adir = os.path.join(HERE, "arms", a.arm)
+    src_root = os.path.join(a.pins, "claude") if a.arm == "claude" else os.path.join(a.private, "script")
     os.makedirs(adir, exist_ok=True)
     os.makedirs(os.path.join(HERE, "plans"), exist_ok=True)
     hashes, bad = [], 0
     for case, P in sorted(index.items()):
-        src = os.path.join(a.pins, a.arm, P, "pins.txt")
+        src = os.path.join(src_root, P, "pins.txt")
         if not os.path.exists(src):
             print(f"[plans] {case} {P}: no pins.txt")
             bad += 0 if a.allow_missing else 1
             continue
         text = open(src).read()
-        mp = json.load(open(os.path.join(a.pins, "private", "maps", f"{case}.json")))
+        mp = json.load(open(os.path.join(a.private, "maps", f"{case}.json")))
         inv = {v: k for k, v in mp["groups"].items()}
         menu = json.load(open(os.path.join(a.pins, "packets", P, "menu.json")))
         floor = json.load(open(os.path.join(a.pins, "packets", P, "floor.json")))
@@ -650,7 +656,7 @@ def cmd_plans(a):
         pp = os.path.join(HERE, "plans", f"{case}-{a.arm}.json")
         json.dump(plan, open(pp, "w"), indent=1)
         open(os.path.join(adir, f"{P}.pins.txt"), "w").write(text)
-        rat = os.path.join(a.pins, a.arm, P, "rationale.md")
+        rat = os.path.join(src_root, P, "rationale.md")
         if os.path.exists(rat):
             open(os.path.join(adir, f"{P}.rationale.md"), "w").write(open(rat).read())
         hashes.append(f"{hashlib.sha256(text.encode()).hexdigest()}  {P}.pins.txt  ({case})")
@@ -703,8 +709,8 @@ def json_strings(obj, out, names_keyed):
 def cmd_leak(a):
     cases = load_cases()
     names, tags, pointers = forbidden_strings(cases)
-    index = json.load(open(os.path.join(a.pins, "private", "index.json")))
-    maps = {case: json.load(open(os.path.join(a.pins, "private", "maps", f"{case}.json"))) for case in index}
+    index = json.load(open(os.path.join(a.private, "index.json")))
+    maps = {case: json.load(open(os.path.join(a.private, "maps", f"{case}.json"))) for case in index}
     real_ports = set()
     for mp in maps.values():
         real_ports |= {iolib.base_and_index(p)[0] for p in mp["ports"]}
@@ -748,7 +754,7 @@ def cmd_leak(a):
                     hits.append((P, os.path.basename(f), "real name token in DEF", t))
     rep = {"files_scanned": nfiles, "packets": len(index), "forbidden_design_or_module_names": len(names),
            "tags": len(tags), "pointers": sorted(pointers), "distinctive_port_names": len(distinctive), "hits": hits}
-    json.dump(rep, open(os.path.join(a.pins, "private", "leak_test.json"), "w"), indent=1)
+    json.dump(rep, open(os.path.join(a.private, "leak_test.json"), "w"), indent=1)
     print(f"[leak] scanned {nfiles} files in {len(index)} packets against {len(names)} design/module names, "
           f"{len(tags)} tags, {len(pointers)} pointers, {len(distinctive)} distinctive port names and every real "
           f"instance/net/port name: {len(hits)} hits")
@@ -761,6 +767,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("cmd", choices=["build", "script", "plans", "leak"])
     ap.add_argument("--pins", default=PINS)
+    ap.add_argument("--private", default=PRIVATE)
     ap.add_argument("--captures")
     ap.add_argument("--arm", choices=["script", "claude"])
     ap.add_argument("--allow-missing", action="store_true")
