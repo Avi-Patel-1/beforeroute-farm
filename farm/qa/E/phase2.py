@@ -20,6 +20,10 @@
       file committed in SHA, that the committed PREFLIGHT.json is complete, that no label job and no other active run
       exists on the branch, then dispatches farm.yml on qa-e-reading with the 35 chain tags (farm/qa/E/chains.json),
       max_parallel 4, and records the run's createdAt, which must be later than the lock's server push time.
+  phase2.py evidence --lock-commit SHA [--json OUT]
+      ordering evidence: the lock's commit time and SERVER push time, every run on the branch with a chain job
+      (createdAt, head_sha, contains the lock?, workflow/runner blobs pinned at that head, duplicate or re-dispatched
+      tags) and the earliest creation time among runs matching the lock.
   phase2.py collect --run RUN_ID --dest DIR
       downloads only the result-erk-* artifacts of that workflow run into DIR (chain.json + small per-rebuild files).
 Then: score.py --chains DIR --key <private>/packet_key.json --pred <pred> --out score.json
@@ -306,6 +310,7 @@ def freeze(a):
 
 def dispatch(a):
     sh(["git", "fetch", "-q", "origin", BRANCH])
+    a.lock_commit = sh(["git", "rev-parse", "--verify", a.lock_commit + "^{commit}"]).strip()
     sh(["git", "merge-base", "--is-ancestor", a.lock_commit, f"origin/{BRANCH}"])
     man = sh(["git", "show", f"{a.lock_commit}:farm/qa/E/locked/MANIFEST.sha256"])
     bad = 0
@@ -350,6 +355,13 @@ def dispatch(a):
     if not pt:
         print("[dispatch] refusing: no server push time found for the lock commit")
         return 1
+    head = sh(["git", "rev-parse", f"origin/{BRANCH}"]).strip()
+    if subprocess.run(["git", "diff", "--quiet", head, "--", ".github/workflows/farm.yml", "br/run_job.py",
+                       "farm/jobs", "farm/qa/E/chains.json"], cwd=WT).returncode != 0:
+        print("[dispatch] refusing: the local workflow / runner / chain specs differ from origin")
+        return 1
+    pins = pinned_files(head)
+    print(f"[dispatch] dispatching at origin/{BRANCH} = {head}; pinned {json.dumps(pins)}")
     before = {r["id"] for r in branch_runs()}
     out = sh(["gh", "workflow", "run", "farm.yml", "-R", REPO, "--ref", BRANCH, "-f", "tags=" + json.dumps(tags),
               "-f", "max_parallel=4"])
@@ -362,16 +374,70 @@ def dispatch(a):
             break
         time.sleep(5)
     created = run["created_at"] if run else None
-    order_ok = bool(created and created > pt)
+    run_head = run["head_sha"] if run else None
+    head_ok = run_head == head
+    order_ok = bool(created and created > pt) and head_ok
     log = os.environ.get("E_PHASE2_LOG", os.path.join(R, "private", "phase2_log.txt"))
     with open(log, "a") as f:
         f.write(json.dumps({"lock_commit": a.lock_commit, "lock_commit_time": lock_time, "lock_push_time": pt,
                             "chain_run": run["id"] if run else None, "chain_run_created_at": created,
-                            "created_after_push": order_ok, "job_order": tags, "job_order_rule": order_note,
-                            "dispatch_output": out.strip()}) + "\n")
+                            "chain_run_head_sha": run_head, "chain_run_workflow_path": run.get("path") if run else None,
+                            "pinned_at_head": pins, "created_after_push": order_ok, "job_order": tags,
+                            "job_order_rule": order_note, "dispatch_output": out.strip()}) + "\n")
     print(f"[dispatch] lock commit {a.lock_commit} (commit time {lock_time}, pushed {pt}); chain run "
-          f"{run['id'] if run else '?'} created {created}; created after the lock push: {order_ok}")
+          f"{run['id'] if run else '?'} created {created} at head {run_head} (= dispatched head: {head_ok}); "
+          f"created after the lock push: {order_ok}")
     return 0 if order_ok else 1
+
+
+def pinned_files(commit):
+    """Git blob id and SHA-256 of the files that define a chain job at `commit` (the workflow, the runner, the
+    chain index); the run executes the workflow file of its head_sha."""
+    out = {}
+    for f in (".github/workflows/farm.yml", "br/run_job.py", "farm/qa/E/chains.json"):
+        blob = sh(["git", "rev-parse", f"{commit}:{f}"]).strip()
+        data = subprocess.run(["git", "cat-file", "blob", blob], cwd=WT, capture_output=True).stdout
+        out[f] = {"blob": blob, "sha256": hashlib.sha256(data).hexdigest()}
+    return out
+
+
+def evidence(a):
+    """Ordering evidence for the lock receipt and E_RESULT.md: the lock commit's commit time and SERVER push time,
+    every workflow run on the branch that contains a chain job (erk-*), with createdAt, head_sha, whether its head
+    contains the lock commit, run attempts, its workflow / runner blobs, per-tag job counts (duplicates and
+    re-dispatches listed), and the earliest creation time among the runs that match the lock."""
+    sh(["git", "fetch", "-q", "origin", BRANCH])
+    a.lock_commit = sh(["git", "rev-parse", "--verify", a.lock_commit + "^{commit}"]).strip()
+    ct = sh(["git", "show", "-s", "--format=%cI", a.lock_commit]).strip()
+    pt = push_time(a.lock_commit)
+    runs, seen = [], {}
+    for r in sorted(branch_runs(), key=lambda r: r["created_at"]):
+        jobs = gh_json(f"repos/{REPO}/actions/runs/{r['id']}/jobs?per_page=100&filter=all")["jobs"]
+        erk = [j for j in jobs if re.match(r"^erk-", j["name"])]
+        if not erk:
+            continue
+        contains = subprocess.run(["git", "merge-base", "--is-ancestor", a.lock_commit, r["head_sha"]],
+                                  cwd=WT).returncode == 0
+        starts = sorted(j["started_at"] for j in erk if j.get("started_at"))
+        for j in erk:
+            seen.setdefault(j["name"], []).append({"run": r["id"], "attempt": j.get("run_attempt"),
+                                                    "conclusion": j.get("conclusion"), "status": j.get("status")})
+        runs.append({"run": r["id"], "created_at": r["created_at"], "run_started_at": r.get("run_started_at"),
+                     "head_sha": r["head_sha"], "run_attempt": r.get("run_attempt"), "event": r.get("event"),
+                     "workflow_path": r.get("path"), "contains_lock_commit": contains, "erk_jobs": len(erk),
+                     "first_job_started_at": starts[0] if starts else None,
+                     "pinned_at_head": pinned_files(r["head_sha"])})
+    match = [r for r in runs if r["contains_lock_commit"]]
+    dup = {t: v for t, v in seen.items() if len(v) > 1}
+    out = {"lock_commit": a.lock_commit, "lock_commit_time": ct, "lock_push_time_server": pt, "chain_runs": runs,
+           "earliest_matching_chain_run_created_at": min((r["created_at"] for r in match), default=None),
+           "all_chain_runs_created_after_lock_push": bool(pt) and all(r["created_at"] > pt for r in runs),
+           "chain_runs_not_containing_lock": [r["run"] for r in runs if not r["contains_lock_commit"]],
+           "tags_with_more_than_one_job": dup, "distinct_erk_tags": len(seen)}
+    print(json.dumps(out, indent=1))
+    if a.json:
+        json.dump(out, open(a.json, "w"), indent=1)
+    return 0 if out["all_chain_runs_created_after_lock_push"] and not out["chain_runs_not_containing_lock"] else 1
 
 
 def collect(a):
@@ -431,13 +497,16 @@ def main() -> int:
     p0.add_argument("--note", default=None)
     p2 = sp.add_parser("dispatch")
     p2.add_argument("--lock-commit", required=True)
+    p4 = sp.add_parser("evidence")
+    p4.add_argument("--lock-commit", required=True)
+    p4.add_argument("--json", default=None)
     p3 = sp.add_parser("collect")
     p3.add_argument("--run", required=True)
     p3.add_argument("--dest", required=True)
     p3.add_argument("--tags", nargs="*", help="override the 35 registered chain tags (smoke only)")
     a = ap.parse_args()
     return {"preflight": cmd_preflight, "lock": lock, "freeze": freeze, "dispatch": dispatch,
-            "collect": collect}[a.cmd](a) or 0
+            "collect": collect, "evidence": evidence}[a.cmd](a) or 0
 
 
 if __name__ == "__main__":
