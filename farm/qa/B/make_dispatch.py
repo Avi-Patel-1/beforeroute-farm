@@ -148,6 +148,14 @@ def c2b_groups(plan):
     return groups
 
 
+def smoke_c2b_groups(plan):
+    """Plumbing smoke for C2b (tags smoke-*): one XTEA race with 2 start runs and 1 TPE round, then its chain."""
+    g = c2b_groups(plan)[0]
+    g = dict(g, name="smoke-c2b-xtea-s1")
+    g["race"] = dict(g["race"], tag_prefix="smoke-b2b-xtea-s1-", smoke_start=2, smoke_rounds=1)
+    return [g]
+
+
 def smoke_groups(plan):
     fb = plan["fbest"]
     x = fb["xtea"]
@@ -164,7 +172,7 @@ def smoke_groups(plan):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--batch", required=True)
-    ap.add_argument("--kind", required=True, choices=["smoke", "c2a", "s", "c1", "c2b"])
+    ap.add_argument("--kind", required=True, choices=["smoke", "c2a", "s", "c1", "c2b", "smoke_c2b"])
     ap.add_argument("--settings", default="", help="C1: setting indices, e.g. 0-9,12,15-20")
     ap.add_argument("--max-parallel", type=int, default=4)
     ap.add_argument("--note", default="")
@@ -180,8 +188,9 @@ def main():
                 sel.add(int(part))
         groups = c1_groups(plan, sel)
     else:
-        groups = {"smoke": smoke_groups, "c2a": c2a_groups, "s": s_groups, "c2b": c2b_groups}[a.kind](plan)
-    spec = {"batch": a.batch, "kind": a.kind, "max_parallel": a.max_parallel,
+        groups = {"smoke": smoke_groups, "c2a": c2a_groups, "s": s_groups, "c2b": c2b_groups,
+                  "smoke_c2b": smoke_c2b_groups}[a.kind](plan)
+    spec = {"batch": a.batch, "kind": "c2b" if a.kind == "smoke_c2b" else a.kind, "max_parallel": a.max_parallel,
             "about": f"workstream B {a.kind} batch {a.batch} (docs/qa_week/B_PREREG.md). {a.note}".strip(),
             "groups": groups}
     os.makedirs(os.path.join(HERE, "batches"), exist_ok=True)

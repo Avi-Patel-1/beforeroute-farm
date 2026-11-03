@@ -87,7 +87,9 @@ def run_race(race: dict, image: str, results: str, timeout_s: int, run_flow, run
             teff, cons, m = outcome(results, tag, period, ref)
         return teff, cons, io_value
     # warm start: Addendum 30's 8 start settings, re-run at their own targets with frozen I/O, then enqueued + told
-    for i, st0 in enumerate(race["start"], 1):
+    start = race["start"][: int(race.get("smoke_start", len(race["start"])))]     # smoke only: fewer start runs
+    rounds = int(race.get("smoke_rounds", ROUNDS))                                     # smoke only: fewer rounds
+    for i, st0 in enumerate(start, 1):
         tag = f"{race['tag_prefix']}z{i}"
         base_rel = st0["spec"]
         T0 = float(json.load(open(os.path.join(REPO, base_rel)))["overrides"]["CLOCK_PERIOD"])
@@ -104,7 +106,7 @@ def run_race(race: dict, image: str, results: str, timeout_s: int, run_flow, run
         save()
     # 4 rounds of 2 TPE runs (both asked before either runs: constant liar, as A35 asked a round at once)
     n = 0
-    for k in range(1, ROUNDS + 1):
+    for k in range(1, rounds + 1):
         study.sampler = sampler()
         asked = []
         for j in range(PER_ROUND):
