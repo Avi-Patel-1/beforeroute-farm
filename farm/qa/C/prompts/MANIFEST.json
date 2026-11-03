@@ -356,6 +356,23 @@
    "state": "/home/claude/qa/c-method/results/tune_xn/state.json",
    "original": "farm/qa/C/prompts/prop-wbqspiflash/round2.full.md",
    "leak_check_at_write": "PASS"
+  },
+  {
+   "kind": "prop",
+   "race": "prop-PPU",
+   "call": "round2",
+   "design": "PPU",
+   "seed": null,
+   "round": 2,
+   "repo_path": "farm/qa/C/prompts/prop-PPU/round2.md",
+   "ideas_path": "/home/claude/ideas/overnight/method/opus_prompts/prop-PPU/round2.md",
+   "sha256": "524e2df1f67364a6e143bf8ddb8bdd5f0261e0687737bfb9423f317e6a45c453",
+   "reply_path": "/home/claude/ideas/overnight/method/opus_replies/prop-PPU/round2.json",
+   "reask_path": "/home/claude/ideas/overnight/method/opus_replies/prop-PPU/round2_reask.json",
+   "delivery_note": "Read the file /home/claude/ideas/overnight/method/opus_prompts/prop-PPU/round2.md with the Read tool. That file is your entire task. Do not open any other file, run any command, or search anything. Reply with exactly the JSON the file asks for and nothing else.",
+   "state": "/home/claude/qa/c-method/results/tune_xn/state.json",
+   "original": "farm/qa/C/prompts/prop-PPU/round2.full.md",
+   "leak_check_at_write": "PASS"
   }
  ],
  "delivery_notes": {
