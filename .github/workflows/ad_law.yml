@@ -1,0 +1,86 @@
+name: AD law and nodes (ORFS)
+
+# TrueClock overnight push, workstream AD: experiment A ("slack is not distance": T2a, T2b, T3) and experiment D
+# (three nodes, one flow), on branch qa-ad-law (from qa-e5-asap7). Runs only on pushes to qa-ad-law that change
+# farm/qa/AD/dispatch.json. One matrix job per group, at most 4 at once (this workstream's farm share). A group runs
+# its flows in the pinned ORFS image (farm/qa/AD/run_group.py); a group may also wait for its design's grid (the other
+# groups' uploaded artifacts, read with this job's token) and then pick the top 3 by AutoTuner's score and run E5's
+# rebuild chains, so nothing waits on a person. Artifact ad-<batch>-<group>: metrics JSON, gzipped logs, reports.
+
+on:
+  push:
+    branches: [qa-ad-law]
+    paths: ['farm/qa/AD/dispatch.json']
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  # openroad/orfs:26Q4-244-g202c7fccb (ORFS commit 202c7fccb), pinned by digest; E5's image. It ships the asap7,
+  # sky130hd and gt2n platforms.
+  IMAGE: openroad/orfs@sha256:cba40c1de21f048b545c005210dabe728bf501f4bb7d5ae5f03b33feb52b49fa
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      groups: ${{ steps.p.outputs.groups }}
+      batch: ${{ steps.p.outputs.batch }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: p
+        run: |
+          python3 - <<'PY'
+          import json, os
+          d = json.load(open("farm/qa/AD/dispatch.json"))
+          groups = [g["name"] for g in d["groups"]]
+          assert len(groups) <= 64, "at most 64 groups per batch"
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write("groups=" + json.dumps(groups) + "\n")
+              f.write("batch=" + d["batch"] + "\n")
+          print(d["batch"], groups)
+          PY
+
+  work:
+    needs: plan
+    if: needs.plan.outputs.groups != '[]'
+    name: ${{ needs.plan.outputs.batch }} ${{ matrix.group }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        group: ${{ fromJSON(needs.plan.outputs.groups) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Pull ORFS image
+        run: |
+          for i in 1 2 3 4 5; do
+            docker pull -q "$IMAGE" && break
+            echo "pull failed (attempt $i)"; sleep $((60 * i))
+          done
+          docker image inspect "$IMAGE" --format '{{.Id}} {{.Size}}'
+          df -h / | tail -1
+
+      - name: Run group
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 farm/qa/AD/run_group.py --spec farm/qa/AD/dispatch.json --group "${{ matrix.group }}" \
+            --image "$IMAGE" --results results
+
+      - name: Fix ownership
+        if: always()
+        run: sudo chown -R "$(id -u):$(id -g)" results || true
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ad-${{ needs.plan.outputs.batch }}-${{ matrix.group }}
+          path: results/
+          retention-days: 30
+          if-no-files-found: warn

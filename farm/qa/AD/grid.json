@@ -1,0 +1,63 @@
+{
+ "about": "AD (TrueClock overnight, experiments A and D) registered grids, all in the pinned ORFS image of E5. E5's grid rule on every platform: per design, S0 = the ORFS config as shipped; S1 = sparser floorplan (CORE_UTILIZATION lowered by E5's points: 15 for gcd and aes, 10 for ibex); S2 = denser placement (the design's own density knob: PLACE_DENSITY_LB_ADDON + 0.20 where the design sets it, else PLACE_DENSITY at E5's value, 0.90 for gcd and 0.85 for aes). Targets = multipliers of the design's shipped ORFS period P0 on that platform, rounded to the nearest 5 ps: S0 {0.70, 0.85, 1.00, 1.40}, S1 and S2 {0.80, 1.20, 1.45}. Tags <arm tag>-<design>-<nnn> in listed order. Times in ps (the sky130hd SDC gets ns).",
+ "arms": [
+  {"name": "T2b", "tag": "adb", "platform": "asap7", "abc_d": 1,
+   "about": "T2(b): ORFS on ASAP7 with ABC told the clock. E5's grid exactly; gcd and aes go through Yosys/ABC (SYNTH_USE_SYN=0) because their shipped config uses OpenROAD's syn, which has no ABC delay target to set; ibex already uses Yosys/ABC.",
+   "extra_vars": {"gcd": {"SYNTH_USE_SYN": 0}, "aes": {"SYNTH_USE_SYN": 0}},
+   "designs": [
+    {"design": "gcd", "P0": 310, "settings": [
+     {"setting": "S0", "vars": {}, "targets": [215, 265, 310, 435]},
+     {"setting": "S1", "vars": {"CORE_UTILIZATION": 50}, "targets": [250, 370, 450]},
+     {"setting": "S2", "vars": {"PLACE_DENSITY": 0.90}, "targets": [250, 370, 450]}]},
+    {"design": "aes", "P0": 380, "settings": [
+     {"setting": "S0", "vars": {}, "targets": [265, 325, 380, 530]},
+     {"setting": "S1", "vars": {"CORE_UTILIZATION": 55}, "targets": [305, 455, 550]},
+     {"setting": "S2", "vars": {"PLACE_DENSITY": 0.85}, "targets": [305, 455, 550]}]},
+    {"design": "ibex", "P0": 900, "settings": [
+     {"setting": "S0", "vars": {}, "targets": [630, 765, 900, 1260]},
+     {"setting": "S1", "vars": {"CORE_UTILIZATION": 30}, "targets": [720, 1080, 1305]},
+     {"setting": "S2", "vars": {"PLACE_DENSITY_LB_ADDON": 0.40}, "targets": [720, 1080, 1305]}]}
+   ]},
+  {"name": "T2a", "tag": "ads", "platform": "sky130hd",
+   "about": "T2(a) and D's sky130hd arm: ORFS on sky130hd (shipped configs: gcd CORE_UTILIZATION 38, platform PLACE_DENSITY 0.60; aes CORE_UTILIZATION 35, PLACE_DENSITY_LB_ADDON 0.2; ibex CORE_UTILIZATION 50, PLACE_DENSITY_LB_ADDON 0.25; P0 1.1, 3.6, 8.0 ns). Chains: E5's rule (tags adsk-<design>-<rank>-<k>).",
+   "designs": [
+    {"design": "gcd", "P0": 1100, "settings": [
+     {"setting": "S0", "vars": {}, "targets": [770, 935, 1100, 1540]},
+     {"setting": "S1", "vars": {"CORE_UTILIZATION": 23}, "targets": [880, 1320, 1595]},
+     {"setting": "S2", "vars": {"PLACE_DENSITY": 0.90}, "targets": [880, 1320, 1595]}]},
+    {"design": "aes", "P0": 3600, "settings": [
+     {"setting": "S0", "vars": {}, "targets": [2520, 3060, 3600, 5040]},
+     {"setting": "S1", "vars": {"CORE_UTILIZATION": 20}, "targets": [2880, 4320, 5220]},
+     {"setting": "S2", "vars": {"PLACE_DENSITY_LB_ADDON": 0.40}, "targets": [2880, 4320, 5220]}]},
+    {"design": "ibex", "P0": 8000, "settings": [
+     {"setting": "S0", "vars": {}, "targets": [5600, 6800, 8000, 11200]},
+     {"setting": "S1", "vars": {"CORE_UTILIZATION": 40}, "targets": [6400, 9600, 11600]},
+     {"setting": "S2", "vars": {"PLACE_DENSITY_LB_ADDON": 0.45}, "targets": [6400, 9600, 11600]}]}
+   ]},
+  {"name": "DG", "tag": "adg", "platform": "gt2n",
+   "about": "D's GT2N arm: ORFS's own gt2n platform (shipped in the pinned image; GT2N ships no ibex). Shipped configs: gcd CORE_UTILIZATION 25, PLACE_DENSITY 0.35, P0 170 ps; aes CORE_UTILIZATION 30, PLACE_DENSITY_LB_ADDON 0.20, P0 350 ps. Chains: E5's rule (tags adgk-<design>-<rank>-<k>).",
+   "designs": [
+    {"design": "gcd", "P0": 170, "settings": [
+     {"setting": "S0", "vars": {}, "targets": [120, 145, 170, 240]},
+     {"setting": "S1", "vars": {"CORE_UTILIZATION": 10}, "targets": [135, 205, 245]},
+     {"setting": "S2", "vars": {"PLACE_DENSITY": 0.90}, "targets": [135, 205, 245]}]},
+    {"design": "aes", "P0": 350, "settings": [
+     {"setting": "S0", "vars": {}, "targets": [245, 300, 350, 490]},
+     {"setting": "S1", "vars": {"CORE_UTILIZATION": 15}, "targets": [280, 420, 510]},
+     {"setting": "S2", "vars": {"PLACE_DENSITY_LB_ADDON": 0.40}, "targets": [280, 420, 510]}]}
+   ]},
+  {"name": "C", "tag": "adc", "platform": "asap7", "abc_d": 0,
+   "about": "Descriptive control (no prediction): T2b's gcd and aes runs through Yosys/ABC without the clock target, so a change in T2b can be split into 'switched to Yosys' and 'told ABC the clock'.",
+   "extra_vars": {"gcd": {"SYNTH_USE_SYN": 0}, "aes": {"SYNTH_USE_SYN": 0}},
+   "designs": [
+    {"design": "gcd", "P0": 310, "settings": [
+     {"setting": "S0", "vars": {}, "targets": [215, 265, 310, 435]},
+     {"setting": "S1", "vars": {"CORE_UTILIZATION": 50}, "targets": [250, 370, 450]},
+     {"setting": "S2", "vars": {"PLACE_DENSITY": 0.90}, "targets": [250, 370, 450]}]},
+    {"design": "aes", "P0": 380, "settings": [
+     {"setting": "S0", "vars": {}, "targets": [265, 325, 380, 530]},
+     {"setting": "S1", "vars": {"CORE_UTILIZATION": 55}, "targets": [305, 455, 550]},
+     {"setting": "S2", "vars": {"PLACE_DENSITY": 0.85}, "targets": [305, 455, 550]}]}
+   ]}
+ ]
+}

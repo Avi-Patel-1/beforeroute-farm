@@ -1,0 +1,165 @@
+{
+ "batch": "smoke01",
+ "about": "AD smoke (plumbing only; tags smoke-*; excluded from every analysis)",
+ "groups": [
+  {
+   "name": "sm-sky",
+   "num_cores": 4,
+   "timeout_s": 3600,
+   "runs": [
+    {
+     "tag": "smoke-ads-gcd",
+     "design": "gcd",
+     "platform": "sky130hd",
+     "period": 1100,
+     "vars": {},
+     "setting": "S0",
+     "kind": "smoke",
+     "arm": "smoke"
+    }
+   ]
+  },
+  {
+   "name": "sm-abc",
+   "num_cores": 4,
+   "timeout_s": 3600,
+   "parallel": 2,
+   "runs": [
+    {
+     "tag": "smoke-adb-gcd-215",
+     "design": "gcd",
+     "platform": "asap7",
+     "period": 215,
+     "vars": {
+      "SYNTH_USE_SYN": 0
+     },
+     "setting": "S0",
+     "kind": "smoke",
+     "arm": "smoke",
+     "abc_d": 1
+    },
+    {
+     "tag": "smoke-adb-gcd-450",
+     "design": "gcd",
+     "platform": "asap7",
+     "period": 450,
+     "vars": {
+      "SYNTH_USE_SYN": 0
+     },
+     "setting": "S0",
+     "kind": "smoke",
+     "arm": "smoke",
+     "abc_d": 1
+    },
+    {
+     "tag": "smoke-adc-gcd-215",
+     "design": "gcd",
+     "platform": "asap7",
+     "period": 215,
+     "vars": {
+      "SYNTH_USE_SYN": 0
+     },
+     "setting": "S0",
+     "kind": "smoke",
+     "arm": "smoke"
+    },
+    {
+     "tag": "smoke-adr-gcd-1",
+     "design": "gcd",
+     "platform": "asap7",
+     "period": 215,
+     "vars": {},
+     "setting": "S0",
+     "kind": "smoke",
+     "arm": "smoke",
+     "retime": 1
+    }
+   ]
+  },
+  {
+   "name": "sm-ibex",
+   "num_cores": 4,
+   "timeout_s": 3600,
+   "parallel": 3,
+   "runs": [
+    {
+     "tag": "smoke-adb-ibex-630",
+     "design": "ibex",
+     "platform": "asap7",
+     "period": 630,
+     "vars": {},
+     "setting": "S0",
+     "kind": "smoke",
+     "arm": "smoke",
+     "abc_d": 1,
+     "stop": "synth"
+    },
+    {
+     "tag": "smoke-adb-ibex-1305",
+     "design": "ibex",
+     "platform": "asap7",
+     "period": 1305,
+     "vars": {},
+     "setting": "S0",
+     "kind": "smoke",
+     "arm": "smoke",
+     "abc_d": 1,
+     "stop": "synth"
+    },
+    {
+     "tag": "smoke-adc-ibex-630",
+     "design": "ibex",
+     "platform": "asap7",
+     "period": 630,
+     "vars": {},
+     "setting": "S0",
+     "kind": "smoke",
+     "arm": "smoke",
+     "stop": "synth"
+    }
+   ]
+  },
+  {
+   "name": "sm-gt2n",
+   "num_cores": 4,
+   "timeout_s": 3600,
+   "runs": [
+    {
+     "tag": "smoke-adg-gcd",
+     "design": "gcd",
+     "platform": "gt2n",
+     "period": 170,
+     "vars": {},
+     "setting": "S0",
+     "kind": "smoke",
+     "arm": "smoke"
+    }
+   ]
+  },
+  {
+   "name": "sm-chain",
+   "num_cores": 4,
+   "timeout_s": 3600,
+   "await_chains": [
+    {
+     "key": "smoke/sky130hd/gcd",
+     "design": "gcd",
+     "platform": "sky130hd",
+     "grid_tags": [
+      "smoke-ads-gcd"
+     ],
+     "grid_groups": [
+      "sm-sky"
+     ],
+     "ranks": [
+      1
+     ],
+     "chain_prefix": "smoke-adsk-gcd",
+     "arm": "smoke",
+     "max_rebuilds": 1,
+     "max_wait_s": 2400
+    }
+   ]
+  }
+ ]
+}
