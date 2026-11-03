@@ -1,0 +1,75 @@
+{
+ "critical": [
+  "G10",
+  "G18",
+  "G09",
+  "G20"
+ ],
+ "worst_slack_ns": 0.8333,
+ "notes": [
+  {
+   "group": "G10",
+   "slack_ns": 0.8333,
+   "logic_cells": 8,
+   "centroid_um": [
+    302.85,
+    229.5
+   ],
+   "edge_distance_um": {
+    "N": 125.75,
+    "E": 41.67,
+    "S": 229.5,
+    "W": 302.85
+   },
+   "option": "E2"
+  },
+  {
+   "group": "G18",
+   "slack_ns": 0.8375,
+   "logic_cells": 1,
+   "centroid_um": [
+    231.84,
+    225.76
+   ],
+   "edge_distance_um": {
+    "N": 129.49,
+    "E": 112.69,
+    "S": 225.76,
+    "W": 231.84
+   },
+   "option": "E2"
+  },
+  {
+   "group": "G09",
+   "slack_ns": 0.9667,
+   "logic_cells": 1,
+   "centroid_um": [
+    167.9,
+    187.68
+   ],
+   "edge_distance_um": {
+    "N": 167.56,
+    "E": 176.62,
+    "S": 187.68,
+    "W": 167.9
+   },
+   "option": "N2"
+  },
+  {
+   "group": "G20",
+   "slack_ns": 1.0693,
+   "logic_cells": 1,
+   "centroid_um": [
+    234.6,
+    190.4
+   ],
+   "edge_distance_um": {
+    "N": 164.84,
+    "E": 109.92,
+    "S": 190.4,
+    "W": 234.6
+   },
+   "option": "E2"
+  }
+ ]
+}

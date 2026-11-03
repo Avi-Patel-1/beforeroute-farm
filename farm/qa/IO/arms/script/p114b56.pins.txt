@@ -1,0 +1,5 @@
+# nearest-side script arm (IO1): critical port groups to the die edge nearest their logic
+G10 E2
+G18 E2
+G09 N2
+G20 E2

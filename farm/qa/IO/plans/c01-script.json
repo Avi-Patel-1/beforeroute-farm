@@ -1,0 +1,41 @@
+{
+ "version": 1,
+ "case": "c01",
+ "arm": "script",
+ "pseudonym": "p00d863",
+ "pin_file_sha256": "f4a9ca3204136f7a19c3222f09f2acf0d8715bcdf803929301e915e3e694068f",
+ "moves": [
+  {
+   "group": "input_tvalid",
+   "pseudonym": "G04",
+   "pins": [
+    "input_tvalid"
+   ],
+   "option": "S2"
+  },
+  {
+   "group": "input_tready",
+   "pseudonym": "G02",
+   "pins": [
+    "input_tready"
+   ],
+   "option": "S2"
+  },
+  {
+   "group": "output_tready",
+   "pseudonym": "G05",
+   "pins": [
+    "output_tready"
+   ],
+   "option": "S2"
+  },
+  {
+   "group": "output_tvalid",
+   "pseudonym": "G07",
+   "pins": [
+    "output_tvalid"
+   ],
+   "option": "S2"
+  }
+ ]
+}

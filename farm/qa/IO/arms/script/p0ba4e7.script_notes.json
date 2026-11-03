@@ -1,0 +1,58 @@
+{
+ "critical": [
+  "G13",
+  "G03",
+  "G12"
+ ],
+ "worst_slack_ns": 0.6331,
+ "notes": [
+  {
+   "group": "G13",
+   "slack_ns": 0.6331,
+   "logic_cells": 16,
+   "centroid_um": [
+    193.43,
+    235.28
+   ],
+   "edge_distance_um": {
+    "N": 119.84,
+    "E": 150.97,
+    "S": 235.28,
+    "W": 193.43
+   },
+   "option": "N2"
+  },
+  {
+   "group": "G03",
+   "slack_ns": 0.6666,
+   "logic_cells": 137,
+   "centroid_um": [
+    68.9,
+    180.93
+   ],
+   "edge_distance_um": {
+    "N": 174.2,
+    "E": 275.51,
+    "S": 180.93,
+    "W": 68.9
+   },
+   "option": "W2"
+  },
+  {
+   "group": "G12",
+   "slack_ns": 0.6876,
+   "logic_cells": 19,
+   "centroid_um": [
+    188.38,
+    233.35
+   ],
+   "edge_distance_um": {
+    "N": 121.78,
+    "E": 156.02,
+    "S": 233.35,
+    "W": 188.38
+   },
+   "option": "N2"
+  }
+ ]
+}

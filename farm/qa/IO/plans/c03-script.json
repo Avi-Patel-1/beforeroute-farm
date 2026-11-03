@@ -1,0 +1,48 @@
+{
+ "version": 1,
+ "case": "c03",
+ "arm": "script",
+ "pseudonym": "p114b56",
+ "pin_file_sha256": "9f6ac7e79135fe3023964fe62ad439c5e38aa1352507c4a3269a181a85fd0f1c",
+ "moves": [
+  {
+   "group": "utmi_data_out_o",
+   "pseudonym": "G10",
+   "pins": [
+    "utmi_data_out_o[0]",
+    "utmi_data_out_o[1]",
+    "utmi_data_out_o[2]",
+    "utmi_data_out_o[3]",
+    "utmi_data_out_o[4]",
+    "utmi_data_out_o[5]",
+    "utmi_data_out_o[6]",
+    "utmi_data_out_o[7]"
+   ],
+   "option": "E2"
+  },
+  {
+   "group": "utmi_txvalid_o",
+   "pseudonym": "G18",
+   "pins": [
+    "utmi_txvalid_o"
+   ],
+   "option": "E2"
+  },
+  {
+   "group": "outport_valid_o",
+   "pseudonym": "G09",
+   "pins": [
+    "outport_valid_o"
+   ],
+   "option": "N2"
+  },
+  {
+   "group": "inport_accept_o",
+   "pseudonym": "G20",
+   "pins": [
+    "inport_accept_o"
+   ],
+   "option": "E2"
+  }
+ ]
+}

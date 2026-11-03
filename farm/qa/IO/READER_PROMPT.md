@@ -23,4 +23,4 @@ Rules (pre-registered, docs/qa_week/IO_PREREG.md):
   and say so in STATUS.md).
 - Readers may abstain.
 
-Packets: PACKET_LIST
+Packets: `p00d863`, `p0ba4e7`, `p10bfb9`, `p114b56`, `p3d0074`, `p6dbefa`, `p7a494d`, `p89c9e8`, `pbae019`, `pdc9e8d` (each under /home/claude/ideas/overnight/pins/packets/; readers write to /home/claude/ideas/overnight/pins/claude/<P>/)

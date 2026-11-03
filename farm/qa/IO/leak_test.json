@@ -1,0 +1,30 @@
+{
+ "files_scanned": 110,
+ "packets": 10,
+ "forbidden_design_or_module_names": 41,
+ "tags": 39,
+ "pointers": [
+  "/home/claude/eda",
+  "/work/",
+  "E2_",
+  "IO_PREREG",
+  "T1_tag",
+  "Tlast",
+  "_RESULT",
+  "beforeroute",
+  "chain.json",
+  "designs/",
+  "farm/qa",
+  "github",
+  "io-cap",
+  "kept_tag",
+  "prereg",
+  "qa-io-pins",
+  "record_chain",
+  "runs/",
+  "smoke-io",
+  "winner_tag"
+ ],
+ "distinctive_port_names": 50,
+ "hits": []
+}

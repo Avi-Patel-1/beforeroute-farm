@@ -1,0 +1,41 @@
+{
+ "critical": [
+  "G06",
+  "G07"
+ ],
+ "worst_slack_ns": 5.7828,
+ "notes": [
+  {
+   "group": "G06",
+   "slack_ns": 5.7828,
+   "logic_cells": 32,
+   "centroid_um": [
+    59.34,
+    48.96
+   ],
+   "edge_distance_um": {
+    "N": 56.81,
+    "E": 35.71,
+    "S": 48.96,
+    "W": 59.34
+   },
+   "option": "W2"
+  },
+  {
+   "group": "G07",
+   "slack_ns": 5.7923,
+   "logic_cells": 32,
+   "centroid_um": [
+    59.34,
+    48.96
+   ],
+   "edge_distance_um": {
+    "N": 56.81,
+    "E": 35.71,
+    "S": 48.96,
+    "W": 59.34
+   },
+   "option": "E2"
+  }
+ ]
+}

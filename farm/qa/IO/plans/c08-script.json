@@ -1,0 +1,60 @@
+{
+ "version": 1,
+ "case": "c08",
+ "arm": "script",
+ "pseudonym": "pbae019",
+ "pin_file_sha256": "715396aa067b796386c1789c7ac35079ec581ff28fa05a92ac2ac224c39aec44",
+ "moves": [
+  {
+   "group": "i_wb_we",
+   "pseudonym": "G15",
+   "pins": [
+    "i_wb_we"
+   ],
+   "option": "N2"
+  },
+  {
+   "group": "i_wb_data_stb",
+   "pseudonym": "G13",
+   "pins": [
+    "i_wb_data_stb"
+   ],
+   "option": "N2"
+  },
+  {
+   "group": "i_wb_addr",
+   "pseudonym": "G12",
+   "pins": [
+    "i_wb_addr[0]",
+    "i_wb_addr[1]",
+    "i_wb_addr[2]",
+    "i_wb_addr[3]",
+    "i_wb_addr[4]",
+    "i_wb_addr[5]",
+    "i_wb_addr[6]",
+    "i_wb_addr[7]",
+    "i_wb_addr[8]",
+    "i_wb_addr[9]",
+    "i_wb_addr[10]",
+    "i_wb_addr[11]",
+    "i_wb_addr[12]",
+    "i_wb_addr[13]",
+    "i_wb_addr[14]",
+    "i_wb_addr[15]",
+    "i_wb_addr[16]",
+    "i_wb_addr[17]",
+    "i_wb_addr[18]",
+    "i_wb_addr[19]"
+   ],
+   "option": "W2"
+  },
+  {
+   "group": "i_wb_cyc",
+   "pseudonym": "G05",
+   "pins": [
+    "i_wb_cyc"
+   ],
+   "option": "S2"
+  }
+ ]
+}
