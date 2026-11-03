@@ -192,7 +192,11 @@ def preflight(a, quiet=False):
                "not_saved": sorted(e["pid"] for e in es if not e.get("saved")),
                "status_not_ok": {e["pid"]: e.get("status") for e in es if e.get("saved") and e.get("status") != "ok"},
                "other_model": {e["pid"]: e.get("models") for e in es if e.get("saved")
-                               and any(m != READER_MODEL for m in (e.get("models") or [READER_MODEL]))}}
+                               and any(m != READER_MODEL for m in (e.get("models") or [READER_MODEL]))},
+               # reads of the harness's overflow copy of the reader's OWN tool output (coordinator-verified benign):
+               # counted and listed, not hidden
+               "own_overflow_reads": sorted(e["pid"] for e in es if e.get("own_overflow_reads")),
+               "audit_notes": {e["pid"]: e["audit_note"] for e in es if e.get("audit_note")}}
         res["readers"][arm] = rep
         if rep["slots"] != len(exp[arm]):
             res["blocking"].append(f"{arm}: {rep['slots']} reader slots for {len(exp[arm])} packets")
@@ -213,7 +217,9 @@ def preflight(a, quiet=False):
             print(f"readers {arm:14s} slots {v['slots']} saved {v['saved']} audit-clean {v['audit_clean']}"
                   + (f" | NOT CLEAN {v['not_clean']}" if v["not_clean"] else "")
                   + (f" | status {v['status_not_ok']}" if v["status_not_ok"] else "")
-                  + (f" | other model {v['other_model']}" if v["other_model"] else ""))
+                  + (f" | other model {v['other_model']}" if v["other_model"] else "")
+                  + (f" | own-overflow reads (benign, verified by the coordinator): {len(v['own_overflow_reads'])}"
+                     if v["own_overflow_reads"] else ""))
         print(f"label jobs on {BRANCH}: {res['label_jobs']}")
         print("PREFLIGHT", "COMPLETE" if res["complete"] else "INCOMPLETE: " + "; ".join(res["blocking"]))
     return res
