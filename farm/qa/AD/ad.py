@@ -279,7 +279,7 @@ def cmd_collect(a):
                         keep = (len(parts) == 2 and parts[1] in KEEP) or \
                                (len(parts) == 3 and parts[1] == "logs" and parts[2].endswith(".json")) or \
                                (len(parts) == 3 and parts[1] == "reports" and parts[2] in KEEP_REPORTS) or \
-                               (len(parts) == 2 and parts[0] == "chains" and parts[1].endswith(".json"))
+                               (len(parts) == 2 and parts[0] in ("chains", "anchors") and parts[1].endswith(".json"))
                         if not keep or nm.endswith("/"):
                             continue
                         dst = os.path.join(a.results, *parts)
@@ -582,7 +582,7 @@ def cmd_analyze(a):
         v = "NODE, NOT FLOW (s- >= 0.45)"
     else:
         v = "NEITHER (prediction not met; s- below 0.45)"
-    t2a["verdict"] = v
+    t2a["verdict"] = v if len(s_grid) >= 30 else f"PARTIAL ({len(s_grid)} of 30 grid runs landed): {v}"
     t2a["with_chains"] = {k: v for k, v in law_block(s_all, "T2a sky130hd grid + chains").items() if k != "points"}
     out["T2a"] = t2a
     # ---- T2b: ORFS on ASAP7 with ABC told the clock, the 30 grid runs
@@ -597,7 +597,7 @@ def cmd_analyze(a):
         v = "NOT SYNTHESIS (s- < 0.30)"
     else:
         v = "INCONCLUSIVE (0.30 <= s- < 0.35)"
-    t2b["verdict"] = v
+    t2b["verdict"] = v if len(b_grid) >= 30 else f"PARTIAL ({len(b_grid)} of 30 grid runs landed): {v}"
     t2b["abc_d_evidence"] = {r["tag"]: {"log_hits": r.get("abc_d_log_hits"), "synth_sha1": r.get("synth_sha1"),
                                         "synth_cells": r.get("synth_cells"), "synth_area": r.get("synth_area_um2")}
                              for r in b_grid}
@@ -684,15 +684,17 @@ def cmd_analyze(a):
             row["replay_of"] = orig["tag"]
             row["replay_identical"] = (r["ws"] is not None and abs(r["ws"] - orig["ws"]) < 0.01 and
                                        abs(r["hold_ws"] - orig["hold_ws"]) < 0.01)
-        ok = isinstance(rt, dict) and "tstar" in rt and isinstance(rt.get("tstar"), (int, float))
+        ok = (isinstance(rt, dict) and isinstance(rt.get("tstar_value"), (int, float)) and
+              isinstance(rt.get("tstar"), dict) and isinstance(rt.get("t0"), dict))
         if ok:
             t0m, tsm = rt["t0"], rt["tstar"]
             row["t0_reproduces_flow"] = (t0m.get("ws_all") is not None and r["ws"] is not None and
-                                         abs(t0m["ws_all"] - r["ws"]) < 0.01)
-            row["Tstar"] = rt["tstar"]
+                                         abs(t0m["ws_all"] - r["ws"]) < 0.01 and
+                                         abs(t0m["hold_ws_all"] - r["hold_ws"]) < 0.01)
+            row["Tstar"] = rt["tstar_value"]
             row["ws_at_Tstar"] = tsm.get("ws_all")
             row["hold_at_Tstar"] = tsm.get("hold_ws_all")
-            row["pass_at_Tstar"] = (tsm.get("ws_all") is not None and tsm["ws_all"] >= 0 and
+            row["pass_at_Tstar"] = (row["t0_reproduces_flow"] and tsm.get("ws_all") is not None and tsm["ws_all"] >= 0 and
                                     tsm.get("hold_ws_all") is not None and tsm["hold_ws_all"] >= 0 and
                                     r["drc"] is not None and int(r["drc"]) == 0)
         else:
@@ -703,9 +705,11 @@ def cmd_analyze(a):
     p3 = sum(1 for x in t3 if x["pass_at_Tstar"])
     aes_s0 = next((x for x in t3 if x.get("replay_of") == "e5g-aes-001"), None)
     aes_ok = bool(aes_s0 and aes_s0.get("Tstar") == 385 and aes_s0.get("pass_at_Tstar"))
-    out["T3"] = {"rows": t3, "n": n3, "pass": p3, "aes_S0_265_meets_385": aes_ok,
-                 "verdict": None if n3 == 0 else ("PREDICTION HELD (>= 8 of 9 pass and aes S0 meets 385 ps)"
-                                                  if (p3 >= 8 and aes_ok) else "PREDICTION FAILED")}
+    v3 = None if n3 == 0 else ("PREDICTION HELD (>= 8 of 9 pass and aes S0 meets 385 ps)"
+                                if (p3 >= 8 and aes_ok) else "PREDICTION FAILED")
+    if 0 < n3 < 9 and v3 == "PREDICTION FAILED" and p3 + (9 - n3) >= 8 and (aes_ok or aes_s0 is None):
+        v3 = f"INCOMPLETE ({n3} of 9 landed; not yet decided)"
+    out["T3"] = {"rows": t3, "n": n3, "pass": p3, "aes_S0_265_meets_385": aes_ok, "verdict": v3}
     json.dump(out, open(a.out, "w"), indent=1, default=float)
     f3 = (lambda x: "-" if x is None else f"{x:.3f}")
     print(f"T2a sky130hd grid: s- {f3(out['T2a']['law']['s_minus'])} (n {out['T2a']['law']['n_minus']}), "

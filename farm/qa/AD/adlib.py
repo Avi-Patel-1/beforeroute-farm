@@ -108,10 +108,32 @@ def load_run(d: str) -> dict:
         r["pass_setup"] = r["pass_hold"] = r["pass_drc"] = r["pass"] = None
         r["port"] = None
         r["t_r2r"] = None
-    rt = _load(os.path.join(d, "reports", "ad_retime.json"))
+    rt = load_retime(os.path.join(d, "reports", "ad_retime.json"))
     if rt is not None:
         r["retime"] = rt
     return r
+
+
+def load_retime(p: str):
+    """ad_hook.tcl writes the key "tstar" twice: first the re-time clock T* (a number), then the measurement at T*
+    (an object). Keep both: "tstar_value" = T*, "tstar" = the measurement."""
+    try:
+        txt = open(p).read()
+    except OSError:
+        return None
+
+    def hook(pairs):
+        out = {}
+        for k, v in pairs:
+            if k == "tstar" and isinstance(v, (int, float)):
+                out["tstar_value"] = v
+            else:
+                out[k] = v
+        return out
+    try:
+        return json.loads(txt, object_pairs_hook=hook)
+    except ValueError:
+        return None
 
 
 def tuner_score(r: dict) -> float:
