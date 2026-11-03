@@ -1,0 +1,7 @@
+19223424790185a6f711ff6cc82a702b511c13e5fa5a8e0b4537d688256f1102  CODEX_DET_FROZEN_E10.tar.gz  (hash only)
+f51630c878fa45ebe7000bdb284d3aeef3da76f8f9497b722040f1705228fa90  baseline.py  (hash only)
+c2c8a7a67e4b304ac79a6003f835f8ed20044e75fab4858189b72f9bff4f2833  packet.py  (hash only)
+dedabbc1372befe6fa91c6aebea6f1f009a8502dc59e7272c367481698e85e78  weights.json  (hash only)
+54bab1ed736ea2d1e2190202a03229bc71adcb77f1fde75840d4de8287a1a0db  SHA256SUMS  (hash only)
+795d0d122717733bc960f4404a26bb02fb5551a875bb35b6898573fb39fa0ecf  FROZEN.md  (hash only)
+# Codex's deterministic comparator E1.0 (local seal 2026-11-02T23:09:46-05:00). Verified here 2026-11-03 05:0xZ: transport tarball SHA-256 as Codex's hand-off states; tar members = exactly these 5 regular files; all 3 SHA256SUMS lines OK (the three inference files baseline.py, packet.py, weights.json; FROZEN.md lists the same digests). Run by farm/qa/E/run_predictor.py, entry baseline.py, function predict, deps packet.py + weights.json, arm codex_det. Files not committed (hash only), as Codex's hand-off asks.
