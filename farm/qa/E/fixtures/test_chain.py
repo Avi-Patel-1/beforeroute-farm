@@ -32,7 +32,8 @@ def fake_flow(C, no_metrics_at=()):
             return types.SimpleNamespace(returncode=1)
         c = C(T)
         json.dump({"timing__setup__ws": T - c, "timing__setup_r2r__ws": T - c, "timing__hold__ws": 0.1,
-                   "route__drc_errors": 0}, open(os.path.join(d, "metrics.json"), "w"))
+                   "route__drc_errors": 0, "design__max_slew_violation__count": 0,
+                   "design__max_cap_violation__count": 0}, open(os.path.join(d, "metrics.json"), "w"))
         json.dump({"flow_exit": 0, "status": "completed"}, open(os.path.join(d, "job.json"), "w"))
         return types.SimpleNamespace(returncode=0)
     return run

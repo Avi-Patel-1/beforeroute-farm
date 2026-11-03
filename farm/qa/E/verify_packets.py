@@ -31,6 +31,7 @@ def check(p):
     if abs(c["source"]["claim_ns"] - (c["source"]["target_ns"] - ws)) > 1e-9 or c["chain"]["R1_ns"] != ceil05(c["source"]["claim_ns"]):
         errs.append("contract claim/R1")
     sets = {}
+    info["dump_corner_rows"] = {}
     for f in ("postgrt", "signoff"):
         fp = os.path.join(p, "nets", f + ".jsonl.gz")
         if os.path.exists(fp):
@@ -41,8 +42,18 @@ def check(p):
                 ck |= set((r.get("net_cap_pf_by_corner") or {}).keys())
             if ck != CORNERS:
                 errs.append(f"{f} corners {sorted(ck)[:3]}")
+            # per-corner POPULATION (clarification 12): every row must carry a finite net cap at every one of the 9
+            # corners; key presence in a single row is not enough
+            pop = {c: sum(1 for r in rows if isinstance((r.get("net_cap_pf_by_corner") or {}).get(c), (int, float))
+                          and math.isfinite((r.get("net_cap_pf_by_corner") or {}).get(c))) for c in sorted(CORNERS)}
+            info["dump_corner_rows"][f] = (min(pop.values()) if pop else 0, len(rows))
+            if not rows or any(v != len(rows) for v in pop.values()):
+                errs.append(f"{f}: corner population {min(pop.values()) if pop else 0}/{len(rows)} rows")
     conn = json.load(gzip.open(os.path.join(p, "nets", "connectivity.json.gz"), "rt"))["nets"]
     sets["connectivity"] = {k.replace("\\", "") for k in conn}
+    # nets that carry a wire: at least one load (fanout >= 1); a missing fanout counts as wired (strict)
+    wired = {k.replace("\\", "") for k, v in conn.items() if not isinstance(v.get("fanout"), int) or v["fanout"] >= 1}
+    info["wired"] = len(wired)
     insts = {pin.rsplit("/", 1)[0].replace("\\", "") for v in conn.values() for pin in v["pins"] + [v["driver"] or ""]
              if "/" in pin and not pin.startswith("PORT:")}
     lay = os.path.join(p, "layout")
@@ -67,8 +78,9 @@ def check(p):
             errs.append(f"DEF units {units}")
         if not insts <= comps:
             errs.append(f"{len(insts - comps)} connectivity instances not in DEF")
+        info["spef"] = {}
         for rc in ("min", "nom", "max"):
-            nm, inmap, dn, u = {}, False, set(), {}
+            nm, inmap, dn, u, populated, total = {}, False, set(), {}, set(), 0.0
             for line in gzip.open(os.path.join(lay, "spef", rc + ".spef.gz"), "rt"):
                 s = line.split()
                 if not s:
@@ -83,10 +95,30 @@ def check(p):
                     continue
                 inmap = False
                 if s[0] == "*D_NET":
-                    dn.add(nm.get(s[1], s[1]).replace("\\", ""))
+                    n = nm.get(s[1], s[1]).replace("\\", "")
+                    dn.add(n)
+                    try:
+                        c = float(s[2])
+                    except (IndexError, ValueError):
+                        c = float("nan")
+                    if math.isfinite(c) and c > 0:
+                        populated.add(n)
+                        total += c
             sets["spef_" + rc] = dn
+            info["spef"][rc] = {"d_nets": len(dn), "populated": len(populated & wired), "wired": len(wired),
+                                "total_cap_pf": round(total, 4)}
             if u != {"*T_UNIT": "1 NS", "*C_UNIT": "1 PF", "*R_UNIT": "1 OHM"}:
                 errs.append(f"SPEF {rc} units {u}")
+            # populated coverage (clarification 12; an empty or partial SPEF with valid units must fail): every net
+            # with at least one load has a D_NET with total capacitance > 0 at this corner
+            if not populated or wired - populated:
+                errs.append(f"SPEF {rc}: populated {len(populated & wired)}/{len(wired)} wired nets")
+        d = [sets["spef_" + rc] for rc in ("min", "nom", "max")]
+        if not d[0] == d[1] == d[2]:
+            errs.append("SPEF corners extract different net sets")
+        tc = [info["spef"][rc]["total_cap_pf"] for rc in ("min", "nom", "max")]
+        if not tc[0] < tc[1] < tc[2]:
+            errs.append(f"SPEF total cap not min < nom < max: {tc}")
     base = sets["connectivity"]
     for k, v in sets.items():
         if k.startswith("spef_"):     # nets without any wire (e.g. unconnected input ports) carry no parasitics
@@ -108,9 +140,14 @@ def main() -> int:
         if not os.path.isdir(p):
             continue
         errs, info = check(p)
+        sp = info.get("spef")
+        cov = ("; SPEF populated/wired " + ", ".join(
+            f"{rc} {v['populated']}/{v['wired']} ({100.0 * v['populated'] / max(1, v['wired']):.1f}%, {v['total_cap_pf']} pF)"
+            for rc, v in sp.items())) if sp else "; SPEF: layout withheld (shuffled view)"
+        dumps = "; dump rows with all 9 corners " + ", ".join(f"{k} {a}/{b}" for k, (a, b) in info["dump_corner_rows"].items())
         print(("FAIL " if errs else "ok   ") + f"{pid}: {info['nets']} nets agree across {', '.join(info['views'])}"
               + (f" ({info['no_parasitics']} without parasitics)" if info.get("no_parasitics") else "")
-              + (f" | {errs}" if errs else ""), flush=True)
+              + cov + dumps + (f" | {errs}" if errs else ""), flush=True)
         bad += bool(errs)
     print(f"[verify] {bad} packets with problems")
     return 1 if bad else 0

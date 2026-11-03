@@ -240,3 +240,43 @@ text above left implicit.
     registered table and `sources.json` give 15 tight, 12 loose and 8 very loose (wbqspiflash: 3 tight, 3 loose, 2 very
     loose). The table and the selection script govern; only the prose sum was wrong. All 35 capture runs reproduced
     their record runs exactly (worst setup slack identical to every digit); 20 sources pass the judge (all loose ones).
+
+## Clarification 12, 2026-11-03 05:05Z: fail-closed bug fixes, made before any label existed
+Made after Codex's audit (findings on br/run_job.py, farm/qa/E/make_chains.py, run_predictor.py, verify_packets.py and
+phase2.py). At this time no rebuild-chain job (`erk-*`) had been created: the branch's only workflow runs are the
+capture smoke 41565377087, the 35 sources 41566168637 and the training-design chain smoke 41575897220. **No prediction,
+test, threshold, source, chain rule or judge definition is changed;** the code is brought in line with the definitions
+above and made fail-closed: missing data is never a pass.
+1. **Judge admission** (`br/run_job.py e_judge`, used by the runner-side chain and by make_chains.py): a run passes only
+   if setup WS, hold WS, route DRC, max-slew count and max-cap count are all present as finite numbers and meet the
+   judge, and the electrical bar is a number. Before the fix a missing DRC or slew/cap count was read as 0, i.e. a pass
+   on missing data. Effect on actual data: none. Every record run with final timing (3,119 on disk at 05:00Z) carries
+   all five fields as finite numbers, and re-running make_chains.py with the fixed judge reproduces all 35 chain specs
+   and chains.json byte for byte (20 passing sources, unchanged). A rebuild that lands its timing but lacks another
+   judge field fails pass1; its claim and slope stay defined (they come from the timing) and the missing field is
+   recorded.
+2. **Label states, executable** (clarification 2): a rebuild with no final setup WS, its flow exit code recorded (a
+   flow failure, including a per-flow timeout, exit −9), is state (ii): fail, slope undefined, step back. A rebuild that
+   leaves neither metrics nor a job record (the worker died; no exit code was ever recorded) is infrastructure, state
+   (iii): the runner writes no chain.json (only chain_partial.json, never scored) and exits 3; the job is re-dispatched
+   once, as registered. A chain spec lacking T0, C0, the bar or source_pass is refused before any build.
+3. **Frozen predictors** (`run_predictor.py`): every inference file is hashed (entry and dependencies; a missing or
+   different digest refuses) and only the verified copies are importable; the expected packets are the 35 main packets
+   of the committed packets_manifest.sha256, each rung-2 view verified file by file against its MANIFEST.json; any
+   error, invalid or non-deterministic output, or file access outside the predictor's copies, its packet and the Python
+   installation exits non-zero and writes nothing to the predictions folder (error records, if promoted, are
+   abstentions by clarification 2). Before, the runner exited 0 with errors and hashed only the entry module.
+4. **Packet verification** (`verify_packets.py`): at each RC corner every net with at least one load must have a SPEF
+   D_NET with total capacitance > 0; the three corners must extract the same nets with total capacitance min < nom <
+   max; every per-net dump row must carry a finite capacitance at all 9 corners; coverage is printed per corner. Before,
+   an empty SPEF with valid units passed. All 47 rung-2 views pass: 100% of wired nets populated at every corner (the
+   picorv32 packets' 67 load-less input ports carry no parasitics; the 6 shuffled views withhold layout by design).
+5. **Lock and dispatch** (`phase2.py`): the lock refuses unless a preflight shows every required record present (35 per
+   main arm, 19 two-point, 6 + 6 controls; invalid replies listed as the registered abstentions; reader audits and
+   models reported, never dropped) and no job named erk-* exists on the branch; it commits PREFLIGHT.json and the
+   predictor receipts and reads the lock commit's server push time (GitHub repository activity API). Dispatch
+   re-verifies the lock commit's files against its manifest, the locked preflight, the absence of label jobs and of any
+   other active run, and records the chain run's createdAt, which must be later than the lock push.
+Fixtures: `farm/qa/E/fixtures/test_failclosed.py` (new; it fails on the pre-fix code), `test_chain.py` (its fake flow
+now writes the slew/cap counts a real flow writes; same expectations), `test_score.py` (unchanged). The runner-side
+chain smoke on training designs is re-run on the fixed code (E_SMOKE.md).

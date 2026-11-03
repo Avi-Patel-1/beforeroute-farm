@@ -82,10 +82,48 @@ def _ceil05(x):
     return round(math.ceil(round(x / 0.05, 6)) * 0.05, 2)
 
 
+# Experiment E judge fields (Addendum 42). FAIL-CLOSED (pre-registration clarification 12): a field that is missing,
+# not a number or not finite is never read as a passing value (before this fix a missing DRC or slew/cap count counted
+# as 0).
+E_JUDGE_KEYS = ("timing__setup__ws", "timing__hold__ws", "route__drc_errors",
+                "design__max_slew_violation__count", "design__max_cap_violation__count")
+
+
+def _num(x):
+    """A finite real number, else None (bools, strings, None, NaN and infinities are not numbers here)."""
+    import math
+
+    if isinstance(x, bool) or not isinstance(x, (int, float)):
+        return None
+    return float(x) if math.isfinite(x) else None
+
+
+def e_judge(m, bar):
+    """The registered judge on one run's final metrics, fail-closed: pass iff every judge field is present and finite,
+    the electrical bar is a finite number, setup WS >= 0, hold WS >= 0 (worst of the 9 corners), route DRC == 0 and
+    max-slew + max-cap count (9 corners) <= bar. Returns (pass, missing fields, drv count or None)."""
+    v = {k: _num((m or {}).get(k)) for k in E_JUDGE_KEYS}
+    missing = [k for k in E_JUDGE_KEYS if v[k] is None]
+    b = _num(bar)
+    if b is None:
+        missing.append("drv_bar")
+    sl, cp = v["design__max_slew_violation__count"], v["design__max_cap_violation__count"]
+    drv = None if sl is None or cp is None else sl + cp
+    ok = (not missing and v["timing__setup__ws"] >= 0 and v["timing__hold__ws"] >= 0
+          and v["route__drc_errors"] == 0 and drv <= b)
+    return bool(ok), missing, drv
+
+
+class ChainInfraLoss(Exception):
+    """A rebuild of the chain left no job record (no recorded flow exit code): infrastructure, not a flow failure."""
+
+
 def run_chain(spec, a):
     """Experiment E (Addendum 42) registered rebuild chain, run on the runner (spec "chain"):
     source S (T0, claim C0); judge = setup WS >= 0 and hold WS >= 0 (9 corners), route DRC 0, max-slew + max-cap count
-    <= drv_bar; a rebuild without metrics fails.
+    <= drv_bar, FAIL-CLOSED (e_judge: a missing or non-finite judge field is never a passing value); a rebuild without
+    metrics fails (flow failure, exit code recorded); a rebuild that leaves neither metrics nor a job record is an
+    infrastructure loss: no chain.json is written (chain_partial.json instead) and the job exits 3.
       1. first rebuild at R1 = ceil05(C0);
       2. after a passing rebuild with claim C: rebuild at ceil05(C) while that is below the chain's smallest passing
          clock and above every failed clock of the chain below it;
@@ -98,16 +136,21 @@ def run_chain(spec, a):
     ch = spec["chain"]
     tag = spec["tag"]
     top = os.path.abspath(os.path.join(a.results, tag))
+    # Fail-closed admission of the chain spec (clarification 12): every field the rule needs must be present and valid;
+    # otherwise nothing is built and no chain record is written (the source is then "not checked", never a pass).
+    bad = [k for k in ("T0", "C0", "drv_bar") if _num(ch.get(k)) is None]
+    if not isinstance(ch.get("source_pass"), bool):
+        bad.append("source_pass")
+    if bad:
+        print(f"[chain] {tag}: invalid chain spec, missing/invalid {bad}: refusing to run (no chain record)", flush=True)
+        return 2
     reb = os.path.join(top, "rebuilds")
     os.makedirs(reb, exist_ok=True)
     cap = int(ch.get("max_rebuilds", 4))
-    bar = ch.get("drv_bar")
+    bar = float(ch["drv_bar"])
     T0, C0 = float(ch["T0"]), float(ch["C0"])
     tried, order = {}, []
     t_start = time.time()
-
-    def drv(m):
-        return (m.get("design__max_slew_violation__count") or 0) + (m.get("design__max_cap_violation__count") or 0)
 
     def build(clk):
         k = len(order) + 1
@@ -120,71 +163,92 @@ def run_chain(spec, a):
         subprocess.run([sys.executable, os.path.abspath(__file__), "--job-spec", sp, "--jobs", str(a.jobs),
                         "--results", reb, "--pdk-root", a.pdk_root, "--timeout", str(a.timeout)])
         d = os.path.join(reb, sub)
-        m = {}
         try:
             m = json.load(open(os.path.join(d, "metrics.json")))
+            m = m if isinstance(m, dict) else {}
         except Exception:
             m = {}
+        try:
+            jj = json.load(open(os.path.join(d, "job.json")))
+            jj = jj if isinstance(jj, dict) else None
+        except Exception:
+            jj = None
         for f in ("nets.jsonl", "nets_signoff.jsonl", "final_nets.json", "nets.jsonl.gz", "nets_signoff.jsonl.gz",
                   "final_nets.json.gz"):
             if os.path.exists(os.path.join(d, f)):
                 os.remove(os.path.join(d, f))
-        ws, wr, hold = m.get("timing__setup__ws"), m.get("timing__setup_r2r__ws"), m.get("timing__hold__ws")
+        ws, wr, hold = _num(m.get("timing__setup__ws")), _num(m.get("timing__setup_r2r__ws")), _num(m.get("timing__hold__ws"))
         drc = m.get("route__drc_errors")
-        ok = (ws is not None and ws >= 0 and hold is not None and hold >= 0 and (drc or 0) == 0
-              and (bar is None or drv(m) <= bar))
-        try:
-            jj = json.load(open(os.path.join(d, "job.json")))
-        except Exception:
-            jj = {}
+        ok, missing, dv = e_judge(m, bar)
+        if ws is None and jj is None:
+            # clarification 2 (iii) / 12: no final metrics AND no job record (the flow's exit code was never recorded,
+            # e.g. the worker process died or the disk filled) is an infrastructure loss, not a flow failure
+            raise ChainInfraLoss(f"{sub} at {clk} ns left neither metrics nor a job record")
         rec = {"k": k, "tag": sub, "clock_ns": clk, "ws_ns": ws, "ws_r2r_ns": wr, "hold_ws_ns": hold, "drc": drc,
-               "drv": drv(m) if m else None, "claim_ns": (clk - ws) if ws is not None else None, "pass": bool(ok),
-               "metrics": ws is not None, "flow_exit": jj.get("flow_exit"), "job_status": jj.get("status"),
+               "drv": dv, "claim_ns": (clk - ws) if ws is not None else None, "pass": ok,
+               "judge_missing": missing, "metrics": ws is not None,
+               "flow_exit": (jj or {}).get("flow_exit"), "job_status": (jj or {}).get("status"),
                "outcome": "landed" if ws is not None else "no_metrics", "seconds": round(time.time() - t1, 1)}
         tried[round(clk, 4)] = rec
         order.append(rec)
-        print(f"[chain] {sub} at {clk} ns: ws {ws} hold {hold} drc {drc} drv {rec['drv']} -> {'PASS' if ok else 'FAIL'}",
-              flush=True)
+        print(f"[chain] {sub} at {clk} ns: ws {ws} hold {hold} drc {drc} drv {dv} missing {missing or '-'} -> "
+              f"{'PASS' if ok else 'FAIL'}", flush=True)
         return rec
 
     def run_or_reuse(clk):
         r = tried.get(round(clk, 4))
         return (r, False) if r is not None else (build(clk), True)
 
-    smallest = T0 if ch.get("source_pass") else None
-    failed = []
     R1 = _ceil05(C0)
-    first = build(R1)
-    last = None
-    if first["pass"]:
-        smallest = R1 if smallest is None else min(smallest, R1)
-        last = first
-    else:
-        failed.append(R1)
-        step = max(_ceil05(first["claim_ns"]) if first["claim_ns"] is not None else round(R1 + 0.05, 2),
-                   round(R1 + 0.05, 2))
-        if (smallest is None or step < smallest - 1e-9) and len(order) < cap:
-            r2, _ = run_or_reuse(step)
-            if r2["pass"]:
-                smallest = step if smallest is None else min(smallest, step)
-                last = r2
-            else:
-                failed.append(step)
-    while last is not None and len(order) < cap:
-        nxt = _ceil05(last["claim_ns"])
-        if smallest is not None and nxt >= smallest - 1e-9:
-            break
-        if any(f >= nxt - 1e-9 and (smallest is None or f < smallest) for f in failed):
-            break
-        r, new = run_or_reuse(nxt)
-        if r["pass"]:
-            smallest = nxt if smallest is None else min(smallest, nxt)
-            last = r
+
+    def rule():
+        smallest = T0 if ch.get("source_pass") else None
+        failed = []
+        first = build(R1)
+        last = None
+        if first["pass"]:
+            smallest = R1 if smallest is None else min(smallest, R1)
+            last = first
         else:
-            failed.append(nxt)
-            break
-        if not new:
-            break
+            failed.append(R1)
+            step = max(_ceil05(first["claim_ns"]) if first["claim_ns"] is not None else round(R1 + 0.05, 2),
+                       round(R1 + 0.05, 2))
+            if (smallest is None or step < smallest - 1e-9) and len(order) < cap:
+                r2, _ = run_or_reuse(step)
+                if r2["pass"]:
+                    smallest = step if smallest is None else min(smallest, step)
+                    last = r2
+                else:
+                    failed.append(step)
+        while last is not None and len(order) < cap:
+            nxt = _ceil05(last["claim_ns"])
+            if smallest is not None and nxt >= smallest - 1e-9:
+                break
+            if any(f >= nxt - 1e-9 and (smallest is None or f < smallest) for f in failed):
+                break
+            r, new = run_or_reuse(nxt)
+            if r["pass"]:
+                smallest = nxt if smallest is None else min(smallest, nxt)
+                last = r
+            else:
+                failed.append(nxt)
+                break
+            if not new:
+                break
+        return first, smallest, failed
+
+    try:
+        first, smallest, failed = rule()
+    except ChainInfraLoss as e:
+        # clarification 2 (iii): infrastructure loss -> NO chain record (the source is "not checked" unless the one
+        # registered re-dispatch lands); what ran is kept in chain_partial.json for the record, never scored
+        part = {"tag": tag, "status": "infra_lost", "reason": str(e), "source_tag": ch.get("source_tag"), "T0_ns": T0,
+                "C0_ns": C0, "R1_ns": R1, "rebuilds": order, "seconds": round(time.time() - t_start, 1)}
+        json.dump(part, open(os.path.join(top, "chain_partial.json"), "w"), indent=1)
+        json.dump({"tag": tag, "status": "chain_infra_lost", "n_rebuilds": len(order)},
+                  open(os.path.join(top, "job.json"), "w"))
+        print(f"[chain] {tag}: INFRASTRUCTURE LOSS ({e}); no chain record written", flush=True)
+        return 3
     out = {"tag": tag, "source_tag": ch.get("source_tag"), "T0_ns": T0, "C0_ns": C0, "R1_ns": R1,
            "source_pass": bool(ch.get("source_pass")), "drv_bar": bar, "rebuilds": order,
            "first_pass": first["pass"], "first_outcome": first["outcome"], "C1_ns": first["claim_ns"],
