@@ -43,7 +43,7 @@ ORFS-at-7-nm-like (registered band edge 0.30), because on two of three designs t
 | ORFS, ASAP7 (E5 grid only, recomputed) | 30 | 9 | 0.259 (16) | 0.566 (14) | −7.7% (13) | +12.8% (9) |
 | ORFS, ASAP7 (E5 grid + rebuilds; the plan's 0.20/0.65) | 44 | 9 | 0.201 (25) | 0.649 (19) | −5.6% (13) | +15.2% (10) |
 
-\* D's bins (grid + the rebuild chains landed so far; E5's S1 method). k = 1/(1 − s): ORFS-sky130hd k⁻ ≈ 2.5,
+\* D's bins (grid + the sky130hd rebuild chains landed by 06:22 ET; E5's S1 method; still moving as chains land). k = 1/(1 − s): ORFS-sky130hd k⁻ ≈ 2.5,
 k⁺ ≈ 2.4 slacks.
 
 Per design (T2a grid): gcd s⁻ 0.398 / s⁺ 0.437; aes 0.748 / 0.675; ibex 0.581 / 0.605. All three designs are above
@@ -78,7 +78,7 @@ Every T2a run (target T → claim C; r = T/F; e = claim error):
 ## Caveats
 1. One corner per platform (sky130hd TT; ASAP7 FF), no SDC margins; LibreLane's record used 9 corners and margins.
 2. Three designs (gcd 222 cells, aes ~11k, ibex ~14k after synthesis), 9 settings; the slopes are least-squares lines
-   through few settings; aes's two non-shipped settings sit at the ends of the spread (s⁻ 0.75 for aes overall).
+   through few settings; aes is the steepest design (s⁻ 0.75), gcd the shallowest (0.40).
 3. The sky130hd grids were anchored at a pilot-estimated F (Amendment 1); the shipped periods were not used.
 4. The flow is not monotonic near F (e.g. aes S2: 5030 → 5235 fails, 6075 → 5230 passes).
 
@@ -109,8 +109,8 @@ Every T2a run (target T → claim C; r = T/F; e = claim error):
 - **But the verdict is thin and mostly untested by construction** (say this with it): (i) s⁻ = 0.298 sits 0.002 under
   the 0.30 line; (ii) the target changed the mapping on aes only, and aes is the design whose slope rose (0.19 under
   `syn` in E5 → 0.47 here); (iii) aes's rise mixes two changes, `syn`→Yosys and the target; the descriptive control
-  that separates them (Yosys without the target, `adc-*`) was still queued when this was written. For gcd, switching
-  to Yosys alone moved the slope the other way (0.28 → 0.14) with the netlist fixed.
+  that separates them (Yosys without the target, `adc-*`) was still queued when this was written. On gcd, whose
+  netlist was the same at every target, the slope went the other way (0.28 under `syn` → 0.14).
 - Say it as: "Telling the synthesizer the clock didn't make my 7 nm flow behave like the 130 nm one — on two of three
   designs ABC's own delay model already met every target, so the netlist never changed; on the one where it did, the
   slope rose. The node, not the synthesis step, sets the tight side."
