@@ -1,0 +1,11 @@
+{
+ "packet_id": "R832dcf",
+ "arm": "rung1",
+ "p_pass": 0.04,
+ "call": "fail",
+ "slope": 0.26,
+ "claim1_ns": 20.999,
+ "kept_clock_ns": null,
+ "rationale": "The worst path touches a port. IO delays are 20% of the period, so that path gains only about 0.8 of any clock relaxation. With unchanged delays at R1=20.3, max_ss slack is about -2.771+0.8*2.8 = -0.53 ns, or -1.09 if the path runs input to output. That gap is larger than typical rebuild noise. A looser target also gets less resizer repair, and max_ss (max RC) runs about 0.5 ns worse than nom_ss. So setup at R1 almost certainly fails. The DRV margin is also thin: 2823 against a bar of 2881. Expected C1 is about 20.8-21.1, so the slope is about 0.2-0.3. The step-back R2 = ceil05(C1), about 20.85-21.0, again recovers only 80% of the remaining gap (expected slack about -0.1 before noise) and must also clear the DRV bar. A failure there ends the chain. P(any run passes) is about 0.15, so the kept clock is null.",
+ "arm_reported_by_reader": "rung1"
+}

@@ -1,0 +1,11 @@
+{
+ "packet_id": "R1efefa",
+ "arm": "rung2_shuffle",
+ "p_pass": 0.93,
+ "call": "pass",
+ "slope": 0.2,
+ "claim1_ns": 12.272,
+ "kept_clock_ns": 13.8,
+ "rationale": "Evidence: metrics.json, checks reports, nets dumps. Source WS 7.488 (max_ss) is an in->out feedthrough (pi -> fanout bufs -> o311a -> clkdlybuf -> po). Its slack = 0.6T-5.26 because IO delays are 20% of period. The worst in->reg group (7.88) scales 0.8T; reg-to-reg WS 8.974 scales 1:1. At R1=13.8: r2r ~+1.52, in->reg ~+1.92, in->out ~+3.02, so the rebuild is r2r-limited with ~1.5 ns margin. Post-GRT slacks are optimistic (r2r 9.42 vs 8.97), so setup repair should not kick in, and the ABC target is loose at either clock. Expected C1 ~12.27, slope ~0.20. Other risks are small: hold 0.107 after 1328 hold buffers, DRC converged to 0, DRV 992 vs bar 2881. Chain: R2=12.30 leaves ~0 r2r margin on a path loaded with hold/max_cap buffers, ~50% pass, so the median kept clock is 13.8.",
+ "arm_reported_by_reader": "rung2"
+}

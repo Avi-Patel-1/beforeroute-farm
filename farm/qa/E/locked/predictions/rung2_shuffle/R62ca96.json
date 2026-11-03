@@ -1,0 +1,11 @@
+{
+ "packet_id": "R62ca96",
+ "arm": "rung2_shuffle",
+ "p_pass": 0.08,
+ "call": "fail",
+ "slope": 0.43,
+ "claim1_ns": 14.5203,
+ "kept_clock_ns": null,
+ "rationale": "Evidence: contract/summary/metrics give C0=14.159, so R1-C0 is only 0.041 ns. DRV is 289 against a bar of 295, and all 27 slew-violating nets are clkdlybuf4s25_1 fanout buffers with about 11 pins each, so one extra net fails. The max_ss checks report shows the critical path is an or4 chain plus 4 unrepaired clkdlybuf fanout buffers. Net dumps put it at +0.227 post-GRT but -0.799 at signoff (a 1.03 ns pre-route underestimate), so it reaches only about +0.04 at R1. Every or4_4/or3_4/or2_4 upsize sits on three GRT-critical OR-chain clusters (-0.113/+0.229/+0.344), and the or3/or2 cells on the worst one were left at _2. So repair_timing stopped at its margin, and that cluster then lost 0.24 ns by signoff (-0.355). At R1 these clusters still need repair, get relaxed to the new target and degrade again, giving WS1 of about -0.2 to -0.5. Setup about 10%, DRV about 50%. The step-back rebuild faces the same tracking.",
+ "arm_reported_by_reader": "rung2"
+}

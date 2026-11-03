@@ -1,0 +1,9 @@
+{
+ "packet_id": "R1f6326",
+ "arm": "two_point",
+ "p_pass": 0.0,
+ "call": "fail",
+ "slope": 1.1647889418733632,
+ "claim1_ns": 15.137567484149107,
+ "kept_clock_ns": null
+}

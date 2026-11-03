@@ -1,0 +1,11 @@
+{
+ "packet_id": "R2d3d8e",
+ "arm": "rung2",
+ "p_pass": 0.88,
+ "call": "pass",
+ "slope": 0.25,
+ "claim1_ns": 6.808,
+ "kept_clock_ns": 6.4,
+ "rationale": "T0 8.59, WS +1.434 (max_ss, reg-to-reg), C0 7.156; R1 7.2 leaves 0.044 ns on the source netlist. The resizer did nothing for setup at T0 (0 setup buffers). The per-net post-GRT dump gives estimated WS 0.844 against signoff 1.434, and GRT wire cap is 1.6x signoff, so near-critical endpoints carry 0.28-0.61 ns of hidden margin. At R1 the post-CTS (0.135) and post-GRT (0.041) setup repair will act on a path of weak cells (buf_2 0.5-0.7 ns, or2_2 0.73, dfxtp_2 0.76). Expected signoff WS is about 0.04+0.28 (hold-buffered u_0db43de85b path) to 0.45, so C1 is about 6.81. Non-setup risk is low: hold WS 0.092 (r2r self-loops), IO hold at least 1.32, IO setup 2.305 shrinking by 0.8 dT, DRC 0, DRV 0 vs 295, 40% utilisation. Modeled chain: 6.85, then about 6.4, then about 6.05. The last rung needs more than 1.1 ns of repair at ss, so kept is about 6.4.",
+ "arm_reported_by_reader": "rung2"
+}

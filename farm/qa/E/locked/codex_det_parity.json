@@ -1,0 +1,20 @@
+{
+ "what": "codex_det run twice through farm/qa/E/run_predictor.py on the same 35 main rung-2 packets",
+ "runtime_A": {
+  "python": "3.13.17",
+  "numpy": "2.5.3",
+  "records": "predictions/codex_det (locked)"
+ },
+ "runtime_B": {
+  "python": "3.12.0",
+  "numpy": "2.4.2",
+  "how": "uv python 3.12.0 + venv numpy==2.4.2 (Codex's seal runtime)"
+ },
+ "records_identical_in_every_prediction_field": 35,
+ "records": 35,
+ "dependencies_sha256": {
+  "baseline.py": "f51630c878fa45ebe7000bdb284d3aeef3da76f8f9497b722040f1705228fa90",
+  "packet.py": "c2c8a7a67e4b304ac79a6003f835f8ed20044e75fab4858189b72f9bff4f2833",
+  "weights.json": "dedabbc1372befe6fa91c6aebea6f1f009a8502dc59e7272c367481698e85e78"
+ }
+}

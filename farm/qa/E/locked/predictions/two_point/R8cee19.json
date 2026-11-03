@@ -1,0 +1,9 @@
+{
+ "packet_id": "R8cee19",
+ "arm": "two_point",
+ "p_pass": 0.0,
+ "call": "fail",
+ "slope": 1.2698810140644168,
+ "claim1_ns": 9.338873000363376,
+ "kept_clock_ns": null
+}

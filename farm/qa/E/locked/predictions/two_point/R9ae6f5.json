@@ -1,0 +1,9 @@
+{
+ "packet_id": "R9ae6f5",
+ "arm": "two_point",
+ "p_pass": 0.0,
+ "call": "fail",
+ "slope": 0.16243227995353426,
+ "claim1_ns": 13.098521470099243,
+ "kept_clock_ns": null
+}

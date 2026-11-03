@@ -1,0 +1,23 @@
+{
+ "arm": "rung3",
+ "entry": "formula.py",
+ "func": "predict",
+ "dependencies_sha256": {
+  "formula.py": "d6a64c8334389bc72c25a9c98411f441c93e9a79cd181329cf292340e40a0e34"
+ },
+ "runtime": {
+  "python": "3.13.17"
+ },
+ "packets_manifest": "farm/qa/E/packets_manifest.sha256",
+ "packets_manifest_sha256": "f22f10df8c8466d4853f8879f4dc1e572b02a25a8f0dbc682a8350c4fb70192d",
+ "expected": 35,
+ "valid": 35,
+ "errors": {},
+ "guard_violations": [],
+ "files_opened_under_guard": 142,
+ "deterministic_double_call": true,
+ "written_to_pred": 35,
+ "promoted_errors": false,
+ "started_utc": "2026-11-03T05:01:22+00:00",
+ "ended_utc": "2026-11-03T05:01:23+00:00"
+}

@@ -1,0 +1,11 @@
+{
+ "packet_id": "R1dd343",
+ "arm": "rung1",
+ "p_pass": 0.12,
+ "call": "fail",
+ "slope": 0.078,
+ "claim1_ns": 7.957,
+ "kept_clock_ns": null,
+ "rationale": "With the DELAY 4 script, synthesis does not use the clock target. Floorplan, untimed placement and CTS also ignore the clock, so only resizer repair changes. The reg-to-reg floor (~7.77 ns) leaves just +0.03 ns at 7.80. The real limit is IO. Input and output delays are 20% of the period, so IO paths get only 0.8*T. At tt/ff the worst slacks are IO (0.939/2.188 vs reg-to-reg 1.336/2.860), and they fit k=0.80 with the same corner scaling. That points to an IO path at about -2.06 ns at max_ss, which the T0 resizer already worked on. At R1 that path gains only 1.88 ns, leaving about -0.18 ns, so C1 is about 7.95-7.98 and the rebuild fails unless the resizer finds ~0.2 ns more. The step-back to ceil05(C1), about 8.00, leaves that IO path near 0 ns because the claim falls short by 0.2*|WS|, so the chain more likely ends with no pass. Hold +0.097, DRC 0 and DRV 0 look safe.",
+ "arm_reported_by_reader": "rung1"
+}

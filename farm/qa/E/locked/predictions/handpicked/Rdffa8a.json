@@ -1,0 +1,9 @@
+{
+ "packet_id": "Rdffa8a",
+ "arm": "handpicked",
+ "p_pass": 0.0,
+ "call": "fail",
+ "slope": 0.4261834637673678,
+ "claim1_ns": 16.32562662826271,
+ "kept_clock_ns": null
+}

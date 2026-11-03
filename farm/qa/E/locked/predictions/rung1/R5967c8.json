@@ -1,0 +1,11 @@
+{
+ "packet_id": "R5967c8",
+ "arm": "rung1",
+ "p_pass": 0.94,
+ "call": "pass",
+ "slope": 0.2,
+ "claim1_ns": 8.7265,
+ "kept_clock_ns": 8.55,
+ "rationale": "The worst path touches a port at every corner. It is a single-port path with factor 0.8, because IO delay is 20% of the period. The tt and ff slacks rule out an input-to-output path. At max_ss its delay is D = 0.8*18.28 - 7.968 = 6.656 ns, and reg-to-reg D = 18.28 - 9.776 = 8.504 ns. The ABC delay target stays loose, placement is not timing-driven and slack is above the resizer margins, so the 10.35 ns rebuild should give nearly the same layout: port WS ~ 8.28 - 6.656 = +1.62 ns (reg-to-reg +1.85), C1 ~ 8.73, slope ~ 0.20. Reg-to-reg hold stays at +0.09 ns. Input-to-reg hold drops by 1.59 ns, but multi-corner hold repair should fix it. DRC and DRV were clean. Remaining risks: hold or DRC changes, or a flow crash. Chain: 10.35 -> 8.75 (WS ~ +0.25, claim 8.504) -> 8.55 (WS ~ +0.05). ceil05 stays 8.55 unless GRT-stage repair (0.279 margin) adds slack; that could reach 8.45-8.50.",
+ "arm_reported_by_reader": "rung1"
+}

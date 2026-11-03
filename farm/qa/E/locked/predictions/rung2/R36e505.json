@@ -1,0 +1,11 @@
+{
+ "packet_id": "R36e505",
+ "arm": "rung2",
+ "p_pass": 0.82,
+ "call": "pass",
+ "slope": 0.19,
+ "claim1_ns": 5.396,
+ "kept_clock_ns": 5.4,
+ "rationale": "The source's worst setup slack (+2.301 ns at max_ss) is on an input-to-register path from pi_c12e0e7380, so it is port-limited. Input and output delays are 20% of the period, so this slack shrinks only by 0.8 times the period cut: about +0.48 ns at 5.85. The worst reg-to-reg slack (2.922) falls to about +0.64, and the min-period data rule out a worse hidden one. The critical paths carry a 1.17 ns dlygate4sd3_1 hold buffer on the flop D pin, added for hold checks sitting near the 0.1 ns repair margin. The main risk is that a rebuild adds such a buffer to a near-critical input endpoint (u_b20bc7ddae and similar, about 0.9-1.1 ns of setup slack at R1 before hold buffering). The source has hold +0.092, route DRC 0, DRV 0 and needed no setup repair. Slope is about the 0.2 input/output-delay share. The chain next goes to about 5.40 (projected slack about +0.12), then about 5.30 (about +0.04, a coin flip).",
+ "arm_reported_by_reader": "rung2"
+}

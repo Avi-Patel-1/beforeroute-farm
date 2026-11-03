@@ -1,0 +1,11 @@
+{
+ "packet_id": "R2bd4fe",
+ "arm": "rung1",
+ "p_pass": 0.93,
+ "call": "pass",
+ "slope": 0.18,
+ "claim1_ns": 12.421,
+ "kept_clock_ns": 12.5,
+ "rationale": "T0=21.25, WS=7.488 at max_ss on a port path; r2r WS 8.974 gives an r2r-limited clock of 12.276. IO delays are 20% of the period, so port slack falls only 0.8 ns per ns. At R1=13.8 both the port (~+1.53) and r2r (~+1.52) paths keep about 1.5 ns of setup margin. The ABC delay target is non-binding, so synthesis should be near-identical and setup is safe. Residual risks: hold (+0.107; input-hold loses 1.49 ns but the resizer repairs it), route DRC (the source converged to 0), and DRV 992 vs a bar of 2881. With frozen delays C1 is about 12.28 (slope 0.20). Two equally critical noisy path families push the median C1 to about 12.42, so slope is about 0.18. Chain: R2=ceil05(C1), about 12.30-12.45, sits at the r2r limit with roughly 60-65% pass odds, and later steps stall near 12.3. If R2 fails, 13.8 is kept (about 1/3). Median kept clock is about 12.5.",
+ "arm_reported_by_reader": "rung1"
+}

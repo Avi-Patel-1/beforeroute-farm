@@ -1,0 +1,11 @@
+{
+ "packet_id": "R8cee19",
+ "arm": "rung1",
+ "p_pass": 0.08,
+ "call": "fail",
+ "slope": 0.25,
+ "claim1_ns": 8.268,
+ "kept_clock_ns": null,
+ "rationale": "Source misses setup by 1.005 ns at max_ss while reg-to-reg slack is +0.763, so the limiter is a port path. Input and output delays are 20% of the period, so going 7.00->8.05 ns recovers only ~0.8*1.05 = 0.84 ns on in->reg/reg->out paths (0.63 on in->out), leaving max_ss WS ~ -0.17 (or -0.38). The resizer already worked these paths (160 repair buffers), so their delay is near its floor; rebuild noise (~0.1 ns) rarely closes 0.17 ns. Hold/DRC look safe; DRV 78 vs bar 89 adds risk. Slope ~0.2 for 0.8-scaling paths, 0.4 if feedthroughs dominate -> ~0.25. Chain: step back to ceil05(C1) ~ 8.25-8.30, where the 0.8 model gives WS ~ 0 (-0.006 at 8.25): below a coin flip after DRV risk, and a sure fail if in->out paths limit. Most likely no run passes: kept clock null.",
+ "arm_reported_by_reader": "rung1"
+}

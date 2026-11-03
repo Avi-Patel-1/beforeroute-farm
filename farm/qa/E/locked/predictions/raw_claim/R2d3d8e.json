@@ -1,0 +1,9 @@
+{
+ "packet_id": "R2d3d8e",
+ "arm": "raw_claim",
+ "p_pass": 1.0,
+ "call": "pass",
+ "slope": -0.0,
+ "claim1_ns": 7.155842277937903,
+ "kept_clock_ns": 7.2
+}

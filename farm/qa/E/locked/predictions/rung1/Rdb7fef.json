@@ -1,0 +1,11 @@
+{
+ "packet_id": "Rdb7fef",
+ "arm": "rung1",
+ "p_pass": 0.55,
+ "call": "abstain",
+ "slope": 0.001,
+ "claim1_ns": 11.3886,
+ "kept_clock_ns": 11.4,
+ "rationale": "Source: T0 19.09, WS +7.694 (max_ss, reg-to-reg), C0 11.3963, so R1 11.40 leaves only 3.7 ps over the source's own critical path. IO budgets scale with period and stay >=1.5 ns positive at R1; hold is reg-to-reg and period-independent; DRV (0 vs bar 295) and DRC have headroom. ABC's tt-based delay target is non-binding at both clocks, so the netlist is likely unchanged, but timing-driven placement weights (IO vs reg-to-reg ranking) and newly active post-CTS/post-GRT repair_timing (~25 ps margin) perturb the layout. Outcome hinges on layout noise (~\u00b10.1 ns at max_ss) versus repair benefit, and on whether GRT estimates are optimistic versus RCX (routed wire +14% over estimate hints yes). Near coin-flip with slight lean to pass; slope ~0. If R1 fails, a step-back at >=11.45 probably passes; most likely kept clock 11.40.",
+ "arm_reported_by_reader": "rung1"
+}

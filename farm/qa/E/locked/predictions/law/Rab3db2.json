@@ -1,0 +1,9 @@
+{
+ "packet_id": "Rab3db2",
+ "arm": "law",
+ "p_pass": 1.0,
+ "call": "pass",
+ "slope": 0.28999999999999926,
+ "claim1_ns": 10.721879067221675,
+ "kept_clock_ns": 10.55
+}

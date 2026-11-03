@@ -1,0 +1,11 @@
+{
+ "packet_id": "Rc8be51",
+ "arm": "rung1",
+ "p_pass": 0.7,
+ "call": "pass",
+ "slope": 0.25,
+ "claim1_ns": 7.9948,
+ "kept_clock_ns": 8.15,
+ "rationale": "Source passes at T0=8.59 with reg-to-reg-limited setup WS +0.485 (max_ss), so C0=8.105 and R1=8.15 leaves only 0.045 ns of cushion. The final slack looks repair-driven, not intrinsic: tuned setup margins (0.294/0.267), inflated LAYERS_RC (pessimistic estimates) and 287 repair buffers. Tightening by 0.44 ns therefore re-engages repair_timing, so the claim should improve partly (slope ~0.25, saturating), not track the target fully. Risks: the rebuild re-rolls timing-driven placement onward (noise ~0.1-0.15 ns on ~7.6 ns ss paths), plus winner's-curse optimism of a tuned run; a saturated resizer would make it near coin-flip. Hold +0.09 with no hold buffers, DRC 0 at 38% utilisation and DRV 0 against a bar of 295 add roughly 6% non-setup risk. Net p_pass ~0.70. The chain descends only if C1 <= 8.10 and the next rung holds; the most likely kept clock is 8.15.",
+ "arm_reported_by_reader": "rung1"
+}

@@ -1,0 +1,11 @@
+{
+ "packet_id": "Rf14f65",
+ "arm": "rung1",
+ "p_pass": 0.18,
+ "call": "fail",
+ "slope": 0.42,
+ "claim1_ns": 16.988,
+ "kept_clock_ns": null,
+ "rationale": "Source fails setup only at the ss corners (worst -0.962 ns at max_ss), reg-to-reg limited, not port-limited. R1=16.6 sits only 0.028 ns above C0, so a pass needs essentially zero slope. Hold WS 0.102 at ff, about the 0.1 ns hold margin, shows LibreLane's post-CTS resizer works on all corners, and repair_timing stops at the target-relative 0.247 ns margin. With post-GRT timing repair off, the estimate-to-route degradation (routed wire +18% over estimate, 994 max_ss slew pins, 0.64 ns min-to-max RC spread) comes back at any target. So relaxing the clock mostly relaxes the repair, and the claim drifts upward (expected slope ~0.4, C1 ~17.0). A slope near zero only happens if the path is floor-limited, and even then it's roughly a coin flip. The step-back to ~17.0 likely fails the same way, so no kept clock. DRV, DRC and hold look safe.",
+ "arm_reported_by_reader": "rung1"
+}

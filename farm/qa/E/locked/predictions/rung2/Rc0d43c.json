@@ -1,0 +1,11 @@
+{
+ "packet_id": "Rc0d43c",
+ "arm": "rung2",
+ "p_pass": 0.8,
+ "call": "pass",
+ "slope": 0.16,
+ "claim1_ns": 11.161,
+ "kept_clock_ns": 11.45,
+ "rationale": "Source worst setup slack is 1.759 ns at max_ss, on an input-to-register path: pi_433\u2026 feeding 12 flops, each through a dlygate hold buffer worth about 1.2 ns. The next groups are pi_53e\u2026 at 1.860 and pi_0450\u2026 at 2.378. Reg-to-reg is 2.961 and reg-to-output is 6.03. IO delay is 20% of the period, so input-to-register slack moves by 0.8 times the period change. Projected slack at 11.45 is about +0.36 ns (pi_53e\u2026 +0.46, reg-to-reg +1.21), which gives a slope of 0.2 with no noise. A Monte Carlo with about 0.25 ns of rebuild noise, taking the worst of the near-critical groups, gives a median slope of 0.15-0.17 and setup pass around 0.85. Hold is fine: worst is reg-to-reg 0.111 at min_ff and does not depend on the clock. DRV is 123 against a bar of 953, and DRC is 0. Signoff is on average 0.22 ns worse than the post-GRT estimate, so the resizer will not rescue marginal rebuilds. The next chain step, around 11.10-11.20, passes about half the time, so 11.45 is the most likely kept clock.",
+ "arm_reported_by_reader": "rung2"
+}

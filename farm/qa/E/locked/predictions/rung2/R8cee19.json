@@ -1,0 +1,11 @@
+{
+ "packet_id": "R8cee19",
+ "arm": "rung2",
+ "p_pass": 0.18,
+ "call": "fail",
+ "slope": 0.2,
+ "claim1_ns": 8.2155,
+ "kept_clock_ns": null,
+ "rationale": "Worst setup path (-1.005 ns, max_ss) is input-to-reg from the high-fanout port pi_fe148130f8, through a cascaded clkdlybuf4s25_1 fanout tree (L1 net 0.109 pF, slew 1.7 ns). Reg-to-reg WS is +0.76 and all 175 violators are input-to-reg. The SDC sets I/O delay to 20% of the period, so input-to-reg slack gains only 0.8*dT. The same tree at R1=8.05 gives WS about -0.166, so slope 0.2 and C1 about 8.216. Passing needs a tree at least 0.17 ns faster. Synthesis looks clock-invariant (all logic cells are _2), so only timing-driven placement and repair change the tree (sigma about 0.25 ns), giving a setup pass chance of about 30%. DRV is 78 against a bar of 89, with about 16 fanout nets at 0.92-1.10 of the max_ss slew limit, adding about 25% risk. Hold (+0.107) and DRC (0) look safe. The step-back to about 8.25 still gives -0.006 ns with identical delays. A Monte Carlo of the chain gives no passing run with probability about 55%.",
+ "arm_reported_by_reader": "rung2"
+}

@@ -1,0 +1,11 @@
+{
+ "packet_id": "R36e505",
+ "arm": "rung1",
+ "p_pass": 0.93,
+ "call": "pass",
+ "slope": 0.19,
+ "claim1_ns": 5.396,
+ "kept_clock_ns": 5.2,
+ "rationale": "The worst path touches an IO port. IO delays are 20% of the period, so IO slack scales as 0.8T. Using the source delays (IO K\u22484.20 ns, reg-to-reg \u22485.21 ns), R1=5.85 gives IO slack \u2248+0.48 ns and reg-to-reg \u2248+0.64 ns, so C0 overstates the clock the design needs. Synthesis should stay essentially unchanged because the ABC area script sees tt delays well below either target. Only timing-driven placement/CTS noise (~0.1 ns) differs, and post-CTS repair (0.283 ns margin) should not trigger. Hold is reg-to-reg, does not depend on the clock and is repaired to ~0.1 ns; IO hold margins stay large. DRC and DRV were clean at 28% utilisation. The remaining risk is hold, DRC or flow noise. C1 \u2248 max(0.2\u00b7R1+4.20, 5.21)+noise \u22485.39, so slope \u22480.19. Chain: R2\u22485.40 (base slack +0.12, repair lifts it to ~+0.24), then R3\u22485.20 (needs a small resizer gain), then R4\u22485.0 (marginal). Median kept clock \u22485.20.",
+ "arm_reported_by_reader": "rung1"
+}

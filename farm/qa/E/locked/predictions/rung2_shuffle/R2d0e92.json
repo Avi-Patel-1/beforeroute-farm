@@ -1,0 +1,11 @@
+{
+ "packet_id": "R2d0e92",
+ "arm": "rung2_shuffle",
+ "p_pass": 0.6,
+ "call": "pass",
+ "slope": 0.004,
+ "claim1_ns": 12.92,
+ "kept_clock_ns": 12.95,
+ "rationale": "Source fails only at ss corners (max_ss WS -4.313, reg-to-reg). C0=12.9025 and R1=12.95 leave 0.0475 ns, so a pass needs slope <= ~0.011. The net dumps and connectivity show the worst path is a 14-stage OR ripple chain. Every OR is already at max _4 drive, side loads are isolated by buf_2, and the path has no buffers, so it is structurally limited. AREA 2 synthesis with ABC buffering and sizing off does not depend on the clock. At R1 the resizer still cannot reach its 0.383 margin on this chain, so it should repair it to the same stall point, giving C1 close to C0. Signoff wire caps match HPWL estimates (~0.19 fF/um), so early stopping is unlikely. IO paths have >=1.7 ns slack. The clock tree is two balanced levels, so the critical pair has small skew. Risks: placement/routing noise (~0.1 ns), hold WS +0.048 at min_ff, DRC.",
+ "arm_reported_by_reader": "rung2"
+}

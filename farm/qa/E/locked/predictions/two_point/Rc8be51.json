@@ -1,0 +1,9 @@
+{
+ "packet_id": "Rc8be51",
+ "arm": "two_point",
+ "p_pass": 1.0,
+ "call": "pass",
+ "slope": 0.22260036582436102,
+ "claim1_ns": 8.00689102808995,
+ "kept_clock_ns": 8.0
+}

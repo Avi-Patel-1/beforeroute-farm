@@ -1,0 +1,11 @@
+{
+ "packet_id": "R9b1591",
+ "arm": "rung2",
+ "p_pass": 0.28,
+ "call": "fail",
+ "slope": 0.25,
+ "claim1_ns": 13.74,
+ "kept_clock_ns": null,
+ "rationale": "Source WS -0.903 (max_ss) comes from a 39-buffer rebuffer pile-up (9.45 ns) on a side branch of a nand4/nor4 counter ripple. Without that artifact, the worst slack is -0.28. The worst path groups sit at nom_ss +0.02..+0.10 but max_ss -0.19..-0.28, and lightly touched ripples stopped there. So post-CTS repair halts at its 0.246 estimated margin, and max-RC signoff lands about 0.45 lower. The worst ripple was heavily upsized for timing (nand4_4/nor4_4/dfxtp_4; all six place buf_6 sit on critical paths), roughly 1-2 ns of repair. At 13.55 it still needs repair and should again end near -0.2, with pile-ups possible. Synthesis sizing is uniform _2, so it is target-insensitive. Hold +0.092, DRC 0 and DRV 0 carry little risk. Expected C1 is about 13.74; the step-back near 13.75 likely fails the same way, so no run passes.",
+ "arm_reported_by_reader": "rung2"
+}

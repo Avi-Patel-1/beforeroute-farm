@@ -1,0 +1,11 @@
+{
+ "packet_id": "Ra1298d",
+ "arm": "rung2",
+ "p_pass": 0.58,
+ "call": "abstain",
+ "slope": -0.003,
+ "claim1_ns": 5.4852,
+ "kept_clock_ns": 5.5,
+ "rationale": "C0 = 4.5+0.988 = 5.488 ns and R1 = 5.5 ns, so there is only 12 ps of headroom. The limiting path is reg-to-reg at max_ss, from the u_02da493ad8 cone. That path is already fully upsized (_4 cells, buf_6 rebuffers; or3b_4+or4_4 alone take 1.7 ns), and RSZ-0062 fired, so the path is at its floor. Several other endpoints are within 0.03-0.07 ns of it. IO paths are at least +0.29 at ss and gain 0.8 ns. ABC's tt delay is far below D and placement is not timing-driven, so synthesis, placement and CTS should repeat. The 0.326 post-CTS margin (paths sitting at +0.32-0.33 show the estimate matches signoff) and the pessimistic post-GRT estimate (-1.13 vs -0.99) keep the R1 repair pushing the same cone to its floor, with slightly lighter side loads. Expect C1 = C0 +/- 0.05 (slope about 0). Hold +0.09, DRC 0 and DRV 0 add about 4% risk. Near coin-flip, so abstain. The chain keeps 5.5, or the 5.55 step-back if R1 fails.",
+ "arm_reported_by_reader": "rung2"
+}

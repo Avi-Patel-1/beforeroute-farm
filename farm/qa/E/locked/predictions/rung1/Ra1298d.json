@@ -1,0 +1,11 @@
+{
+ "packet_id": "Ra1298d",
+ "arm": "rung1",
+ "p_pass": 0.4,
+ "call": "fail",
+ "slope": 0.03,
+ "claim1_ns": 5.518,
+ "kept_clock_ns": 5.55,
+ "rationale": "C0 = 4.5+0.988 = 5.488 and R1 = 5.5, so there is only 0.012 ns of headroom. The rebuild has to essentially match the source. The source was 22% over-constrained and limited by reg-to-reg paths at max_ss. The resizer worked hard (210 repair buffers, utilisation 38 to 56%), which points to saturation. ABC (AREA 1) probably meets its tt -D target at both clocks, so the state before CTS should be similar. At 5.5 the 0.326 ns post-CTS margin is still out of reach, so repair should saturate again and the slope should be near zero. There is a small positive bias: post-GRT repair (0.068 margin) can stop before the saturation the source reached, and the loss from GRT to signoff (detours, coupling, max-RC corner) probably exceeds 0.068. CTS and routing noise (about +/-0.07 ns) is much larger than the margin. IO paths gain only 0.8 ns but have room. Hold (+0.09), DRC and DRV are low risk. I lean fail; the step-back at 5.55 likely passes.",
+ "arm_reported_by_reader": "rung1"
+}

@@ -1,0 +1,11 @@
+{
+ "packet_id": "Rc7ebda",
+ "arm": "rung1",
+ "p_pass": 0.18,
+ "call": "fail",
+ "slope": 0.12,
+ "claim1_ns": 13.298,
+ "kept_clock_ns": null,
+ "rationale": "The source misses by 1.765 ns at max_ss on a reg-to-reg path even after 536 setup buffers, so repair was already at its limit. R1=13.1 leaves only 15 ps over C0. The netlist is probably the same because the ABC target does not bind at tt, so the rebuild depends on repair. Repair stops near its small margin on estimated parasitics, but max-RC signoff is worse: routed wirelength is 14% above the estimate and the min-to-max RC spread at ss is 0.69 ns. IO budgets grow only 0.8x as fast as the period. The tt and ff IO-vs-r2r delay ratios suggest the worst IO path at max_ss sits around -1.5 to -1.7 ns at T0. It gains only 1.42 ns at R1, leaving about -0.1 to -0.3 ns. DRV is 771 against a bar of 953, a risk if less upsizing is done. I expect C1 near 13.3 (slope about 0.12). The step-back to about 13.3-13.35 keeps the same IO shortfall and margin effect, so it likely fails too and the kept clock is null.",
+ "arm_reported_by_reader": "rung1"
+}

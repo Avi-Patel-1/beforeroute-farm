@@ -1,0 +1,11 @@
+{
+ "packet_id": "Rae9a89",
+ "arm": "rung2_rename",
+ "p_pass": 0.34,
+ "call": "fail",
+ "slope": 0.03,
+ "claim1_ns": 14.1843,
+ "kept_clock_ns": 14.2,
+ "rationale": "During PnR, timing was checked only at nom_tt (the post-GRT STA reports that corner alone), where setup slack is +6.8 ns. No setup buffers were inserted and ss slews were left unrepaired, so the clock target does not steer optimization. It only changes timing-driven placement weights: input-port paths (tt slack 6.86) and reg-to-reg paths (6.79) swap rank at R1. The rebuild is therefore a re-placement of the same netlist, C1 = C0 +/- ~0.3 ns, slope ~0. At R1 the max_ss margin is only +0.041 ns. The critical path runs through four weak clkdlybuf4s25_1 fanout buffers whose delay grows ~1 ns from the post-GRT estimate to signoff. P(setup) ~0.55. DRV is 289 against a bar of 295: 27 fanout nets (~11 pins each) violate and a 28th sits at slew ratio 1.000, so one extra net fails (P ~0.57). Hold (+0.108, self-loops) and DRC look safe. Joint ~0.34. In the chain, ~58% chance some run passes; most likely kept clock 14.2.",
+ "arm_reported_by_reader": "rung2"
+}

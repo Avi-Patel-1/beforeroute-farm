@@ -1,0 +1,11 @@
+{
+ "packet_id": "R784df6",
+ "arm": "rung2",
+ "p_pass": 0.93,
+ "call": "pass",
+ "slope": 0.41,
+ "claim1_ns": 8.3752,
+ "kept_clock_ns": 7.9,
+ "rationale": "Evidence: summary/metrics/max_ss max.rpt and contract SDC. The source WS of +1.153 ns comes from an in-to-out path (pi to 3 clkdlybuf4s25_1 fanout buffers, or3_2, output buffer; D about 4.60 ns). Reg-to-reg setup is +inf because all 130 endpoints are port-limited. Input and output delays are each 20% of the period, so in-to-out slack is about 0.6T-0.25-D. At 8.85 that gives about +0.46 ns; the next paths are in-to-reg at +1.17 and reg-to-out at +4.3. So slope is about 0.4 and C1 about 8.38. Hold +0.096 ns is a self-loop reg-to-reg path at ff that does not depend on the clock. Slew/cap DRV is 0 against a bar of 89, and route DRC converged to 0. The post-GRT estimate (0.969) is about 0.18 ns more pessimistic than signoff, so the resizer protects setup. Main risks: a new placement can change the fanout-tree depth (about 0.8 ns), plus DRC/hold noise. Chain is about 8.85, 8.40, 8.15, 7.9, with repair starting below about 8.43.",
+ "arm_reported_by_reader": "rung2"
+}

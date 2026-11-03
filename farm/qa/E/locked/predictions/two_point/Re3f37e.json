@@ -1,0 +1,9 @@
+{
+ "packet_id": "Re3f37e",
+ "arm": "two_point",
+ "p_pass": 1.0,
+ "call": "pass",
+ "slope": 0.6924292423862104,
+ "claim1_ns": 4.661146210913728,
+ "kept_clock_ns": 4.35
+}

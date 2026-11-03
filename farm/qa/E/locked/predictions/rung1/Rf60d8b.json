@@ -1,0 +1,11 @@
+{
+ "packet_id": "Rf60d8b",
+ "arm": "rung1",
+ "p_pass": 0.88,
+ "call": "pass",
+ "slope": 0.25,
+ "claim1_ns": 7.7352,
+ "kept_clock_ns": 7.6,
+ "rationale": "C0=8.49-0.607=7.883, R1=7.90: an unchanged build would leave max_ss reg-to-reg slack +0.017 (IO paths lose only 0.8x the period cut). ABC delay targets sit far above its tt delay, and placement/CTS/routing are not timing-driven, so the clock-sensitive step is resizer repair. LibreLane repairs on nom tt/ss/ff with nom RC. It was idle at T0 (nom_ss slack 0.72 > 0.4 margin) but needs ~0.3 ns at 7.90. Reaching ~0.4 estimated slack should give ~0.15-0.3 ns at max_ss after the ~0.11 max-RC penalty and near-critical spread (slope ~0.3). If repair stays idle, the run is identical and passes at +0.017 (slope 0); the mixture gives ~0.25. Hold (+0.09, guarded), DRC (converged to 0) and DRV (0 vs 953) risks are small. The chain likely steps ~7.90 -> 7.70 -> ~7.5 until repair capacity or noise stops it; median kept ~7.6.",
+ "arm_reported_by_reader": "rung1"
+}

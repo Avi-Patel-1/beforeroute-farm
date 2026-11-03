@@ -1,0 +1,9 @@
+{
+ "packet_id": "Ra1298d",
+ "arm": "io_rule",
+ "p_pass": 1.0,
+ "call": "pass",
+ "slope": 0.0,
+ "claim1_ns": 5.488208653988882,
+ "kept_clock_ns": 5.5
+}

@@ -1,0 +1,11 @@
+{
+ "packet_id": "R34e4d2",
+ "arm": "rung2",
+ "p_pass": 0.49,
+ "call": "abstain",
+ "slope": 0.0,
+ "claim1_ns": 11.9402,
+ "kept_clock_ns": 11.95,
+ "rationale": "Source WS +4.060 (max_ss) is reg-to-reg; worst I/O path 5.08 and I/O delays scale with period, so R1 stays core-limited. Critical path: flop -> 8 serial buf_2 fanout buffers (fo~10, 5.2 ns) -> mux4/mux4/mux2/a22o chain; no setup buffers were ever inserted. Per-net dumps: GRT-estimated worst slack 5.056 vs signoff 4.060 (caps 23-30% low); flow postGRT nom_tt r2r 10.21 vs 9.82. So at R1 the in-flow estimate still shows ~1 ns slack, above PL setup margin 0.246, and post-GRT timing repair is off: no repair will fire. Netlist is uniformly _2 cells (ABC sizing not delay-bound), so only timing-driven placement weights shift (many I/O nets in worst 10%), effectively a placement re-roll around C0 with ~0.2-0.3 ns spread vs a 0.0098 ns margin. Hold 0.111, DRC 0, DRV 723/2881 add ~5% risk. Coin flip; chain mode keeps 11.95.",
+ "arm_reported_by_reader": "rung2"
+}

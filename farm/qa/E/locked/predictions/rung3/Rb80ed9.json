@@ -1,0 +1,12 @@
+{
+ "packet_id": "Rb80ed9",
+ "p_pass": 0.9485,
+ "call": "pass",
+ "slope": 0.5542,
+ "kept_clock_ns": 15.95,
+ "arm": "rung3",
+ "module_sha256": "d6a64c8334389bc72c25a9c98411f441c93e9a79cd181329cf292340e40a0e34",
+ "deps_sha256": {
+  "formula.py": "d6a64c8334389bc72c25a9c98411f441c93e9a79cd181329cf292340e40a0e34"
+ }
+}

@@ -1,0 +1,9 @@
+{
+ "packet_id": "Rf5bc4d",
+ "arm": "law",
+ "p_pass": 0.0,
+ "call": "fail",
+ "slope": 0.5900000000000011,
+ "claim1_ns": 12.957258938933181,
+ "kept_clock_ns": null
+}

@@ -1,0 +1,11 @@
+{
+ "packet_id": "R9b1591",
+ "arm": "rung1",
+ "p_pass": 0.2,
+ "call": "fail",
+ "slope": 0.5,
+ "claim1_ns": 13.978,
+ "kept_clock_ns": null,
+ "rationale": "C0=13.5025 and R1=13.55 leave only 0.0475 ns of headroom, so setup passes only if slope <= 0.05. Timing is limited by the ss corner (tt slack +5.9, ss about 2x tt), so ABC's tt target is loose and the multi-corner post-CTS resizer (margin 0.246) does the closing. Relaxing the target by 0.95 ns lets repair stop earlier, so path delay mostly tracks the target. The bulk endpoints sit at the repair wall: nom_ss shows only the two outliers, and 9 more endpoints fail only at max_ss (avg about -0.15). The gap from estimate to signoff exceeds the margin at max RC and would recur at any target where repair binds. Two outlier endpoints (about 0.6 ns beyond the bulk) set WS, and their regression is the main way to pass. Expected C1 is about 13.98 (WS about -0.43). The step-back R2 near ceil05(C1) faces the same tracking, so most likely no run passes. Hold, DRC and DRV risks are small.",
+ "arm_reported_by_reader": "rung1"
+}

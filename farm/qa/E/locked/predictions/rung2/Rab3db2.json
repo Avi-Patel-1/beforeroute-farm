@@ -1,0 +1,11 @@
+{
+ "packet_id": "Rab3db2",
+ "arm": "rung2",
+ "p_pass": 0.94,
+ "call": "pass",
+ "slope": 0.2,
+ "claim1_ns": 10.8623,
+ "kept_clock_ns": 10.8,
+ "rationale": "Worst setup path is reg-to-out (u_3a48e39e33 to po_87ee3c72fe[23], max_ss, arrival 8.372 ns). SDC input/output delays are 0.2T and r2r WS is 3.159, so slack = 0.8T - 8.622 and C = 0.2T + 8.622. The settings make netlist and layout clock-independent: AREA 3 with ABC buffering/sizing off, placement and GRT not timing-driven, no post-GRT repair, 0 setup buffers. Post-GRT STA is 0.77 ns optimistic vs signoff, so post-CTS setup repair (margin 0.092) should not fire. Hold repair is r2r-only (input-hold >= 1.0 ns at ss). The rebuild should reproduce the layout: WS1 = +0.338 at 11.2, slope 0.2, C1 = 10.862. Hold 0.107, DRC 0 and DRV 2207 <= 2881 stay unchanged. Chain 11.2 -> 10.9 -> 10.85 -> 10.8 gives WS 0.338/0.098/0.058/0.018, all passing, so 10.8 is kept. Residual risk: a clock-dependent netlist change, against a 0.34 ns margin.",
+ "arm_reported_by_reader": "rung2"
+}

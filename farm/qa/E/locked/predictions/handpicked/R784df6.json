@@ -1,0 +1,9 @@
+{
+ "packet_id": "R784df6",
+ "arm": "handpicked",
+ "p_pass": 1.0,
+ "call": "pass",
+ "slope": 0.42431793161735015,
+ "claim1_ns": 8.358704025885546,
+ "kept_clock_ns": 8.1
+}

@@ -1,0 +1,11 @@
+{
+ "packet_id": "R9ae6f5",
+ "arm": "rung1",
+ "p_pass": 0.44,
+ "call": "abstain",
+ "slope": 0.02,
+ "claim1_ns": 12.6256,
+ "kept_clock_ns": 12.6,
+ "rationale": "Source misses by 3.28 ns (35%) at max_ss on a reg-to-reg, gate-dominated path (min/max RC spread only 0.09 ns) after heavy repair (466 buffers), so it sits at the resizer floor. AREA 2 without ABC sizing/buffering makes synthesis clock-independent; the rebuild differs only via timing-driven placement weights and lighter repair. At 12.6 the resizer targets 12.32 (post-CTS) and 12.46 (post-GRT), both below that floor, so it chases to roughly the same floor: C1 ~ C0 +/- 0.2 ns. Small net upward bias (less TNS-repair help, IO paths 0.66 ns relatively tighter, possible selection optimism, partly offset by less congestion). Only 0.041 ns headroom makes setup a near coin flip; hold (+0.094), DRC and DRV add ~6% risk. Chain most likely keeps 12.6, else a step-back near 12.65.",
+ "arm_reported_by_reader": "rung1"
+}

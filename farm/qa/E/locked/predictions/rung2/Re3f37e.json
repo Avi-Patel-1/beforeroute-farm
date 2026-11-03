@@ -1,0 +1,11 @@
+{
+ "packet_id": "Re3f37e",
+ "arm": "rung2",
+ "p_pass": 0.8,
+ "call": "pass",
+ "slope": 0.22,
+ "claim1_ns": 4.888,
+ "kept_clock_ns": 5.0,
+ "rationale": "Source: WS +0.486 at max_ss, worst path input->flop (port-limited); r2r +0.702, in->out +0.499; hold +0.091 from r2r self-loops at ff (cell-dominated, clock-independent); DRC 0, DRV 0 (bar 89). IO delays are 20% of period, so 5.48->5.00 costs in->reg only 0.384, in->out 0.288, r2r 0.48. Same-netlist projection: WS ~+0.10 (in->reg), +0.21, +0.22, so C~4.90, slope ~0.2. Post-GRT nom_tt slacks run 0.11-0.15 below signoff, so the GRT resizer was already working these input paths at T0 (3 rebuffers, RSZ-0062, upsized input buffers). Little extra repair expected. Monte Carlo with rebuild noise ~0.08 ns per path class, small repair gain and ~4% hold/DRC risk gives P(pass)~0.8 and median slope ~0.22. Chain: C1~4.89 -> R2=4.90, roughly a coin-flip, so the kept clock's mode and median is 5.00.",
+ "arm_reported_by_reader": "rung2"
+}

@@ -1,0 +1,160 @@
+{
+ "when_utc": "2026-11-03T06:14:17+00:00",
+ "arms": {
+  "rung1": {
+   "expected": 35,
+   "present": 35,
+   "valid": 35,
+   "invalid": {},
+   "missing": [],
+   "extra": []
+  },
+  "rung2": {
+   "expected": 35,
+   "present": 35,
+   "valid": 35,
+   "invalid": {},
+   "missing": [],
+   "extra": []
+  },
+  "rung3": {
+   "expected": 35,
+   "present": 35,
+   "valid": 35,
+   "invalid": {},
+   "missing": [],
+   "extra": []
+  },
+  "codex_det": {
+   "expected": 35,
+   "present": 35,
+   "valid": 35,
+   "invalid": {},
+   "missing": [],
+   "extra": []
+  },
+  "raw_claim": {
+   "expected": 35,
+   "present": 35,
+   "valid": 35,
+   "invalid": {},
+   "missing": [],
+   "extra": []
+  },
+  "law": {
+   "expected": 35,
+   "present": 35,
+   "valid": 35,
+   "invalid": {},
+   "missing": [],
+   "extra": []
+  },
+  "io_rule": {
+   "expected": 35,
+   "present": 35,
+   "valid": 35,
+   "invalid": {},
+   "missing": [],
+   "extra": []
+  },
+  "handpicked": {
+   "expected": 35,
+   "present": 35,
+   "valid": 35,
+   "invalid": {},
+   "missing": [],
+   "extra": []
+  },
+  "rung2_rename": {
+   "expected": 6,
+   "present": 6,
+   "valid": 6,
+   "invalid": {},
+   "missing": [],
+   "extra": []
+  },
+  "rung2_shuffle": {
+   "expected": 6,
+   "present": 6,
+   "valid": 6,
+   "invalid": {},
+   "missing": [],
+   "extra": []
+  },
+  "two_point": {
+   "expected": 19,
+   "present": 19,
+   "valid": 19,
+   "invalid": {},
+   "missing": [],
+   "extra": []
+  }
+ },
+ "readers": {
+  "rung1": {
+   "slots": 35,
+   "saved": 35,
+   "audit_clean": 35,
+   "not_clean": [],
+   "not_saved": [],
+   "status_not_ok": {},
+   "other_model": {},
+   "own_overflow_reads": [],
+   "audit_notes": {}
+  },
+  "rung2": {
+   "slots": 35,
+   "saved": 35,
+   "audit_clean": 35,
+   "not_clean": [],
+   "not_saved": [],
+   "status_not_ok": {},
+   "other_model": {},
+   "own_overflow_reads": [
+    "R0d781a",
+    "R174858",
+    "R1f6326",
+    "R2bd4fe",
+    "R34e4d2",
+    "R36e505",
+    "R55c04c",
+    "R5967c8",
+    "R6287e4",
+    "Rb80ed9",
+    "Rc8be51"
+   ],
+   "audit_notes": {
+    "R2bd4fe": "only outside read = harness overflow file of its own packet listing (packet_id R2bd4fe), verified by coordinator 00:0x ET"
+   }
+  },
+  "rung2_rename": {
+   "slots": 6,
+   "saved": 6,
+   "audit_clean": 6,
+   "not_clean": [],
+   "not_saved": [],
+   "status_not_ok": {},
+   "other_model": {},
+   "own_overflow_reads": [
+    "R5b8dd8",
+    "Rada6d7"
+   ],
+   "audit_notes": {}
+  },
+  "rung2_shuffle": {
+   "slots": 6,
+   "saved": 6,
+   "audit_clean": 6,
+   "not_clean": [],
+   "not_saved": [],
+   "status_not_ok": {},
+   "other_model": {},
+   "own_overflow_reads": [],
+   "audit_notes": {}
+  }
+ },
+ "blocking": [],
+ "label_jobs": [],
+ "complete": true,
+ "allow_incomplete_reason": null
+}

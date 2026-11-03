@@ -1,0 +1,11 @@
+{
+ "packet_id": "Rab3db2",
+ "arm": "rung1",
+ "p_pass": 0.93,
+ "call": "pass",
+ "slope": 0.2,
+ "claim1_ns": 10.8623,
+ "kept_clock_ns": 10.8,
+ "rationale": "Worst path is port-limited (r2r +3.159 vs +1.586 at max_ss). Corner ratios exclude an in-to-out feedthrough, so it is in-to-reg or reg-to-out: slack = 0.8T - 8.622 ns because IO delays are 20% of T, giving C = 0.2T + 8.622. These settings make the flow almost clock-blind: AREA 3 ABC script without {D}, no ABC buffering/sizing, placement not timing-driven, no post-GRT resizer; post-CTS setup repair stays idle while estimated slack exceeds the 0.092 margin, and hold repair is reg-to-reg. The R1 rebuild should be essentially identical: setup +0.338 (r2r +1.60), hold +0.107, DRC 0, DRV 2207 <= 2881, so pass; C1 = 10.862, slope 0.2. Chain: 11.2 -> 10.9 (+0.098) -> 10.85 (+0.058) -> 10.8 (+0.018), all passing; kept 10.8. Risks: clock-dependent synthesis or repair perturbing layout; thin margins at 10.85/10.8.",
+ "arm_reported_by_reader": "rung1"
+}

@@ -1,0 +1,9 @@
+{
+ "packet_id": "Rc28c57",
+ "arm": "handpicked",
+ "p_pass": 1.0,
+ "call": "pass",
+ "slope": 0.42268981981341147,
+ "claim1_ns": 10.767459123304912,
+ "kept_clock_ns": 10.2
+}

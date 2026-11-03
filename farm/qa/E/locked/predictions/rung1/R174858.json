@@ -1,0 +1,11 @@
+{
+ "packet_id": "R174858",
+ "arm": "rung1",
+ "p_pass": 0.5,
+ "call": "abstain",
+ "slope": 0.004,
+ "claim1_ns": 12.92,
+ "kept_clock_ns": 12.95,
+ "rationale": "C0=12.9025 and R1=12.95, so there is only 0.0475 ns (0.37%) of headroom. The worst path is reg-to-reg at all 9 corners. The ff-corner slack limits how long the IO paths can be, so the IO delays (which scale at 20% of the clock) cannot be the limit at R1. AREA 2 without ABC buffering or sizing makes synthesis effectively independent of the clock. The rebuild differs only through timing-driven placement and how much the post-CTS resizer repairs. At R1 the resizer still cannot reach its 0.383 ns margin, so it again repairs as far as it can: C1 ~ C0 with about 0.15-0.2 ns of layout noise, slope ~0. Setup passes with probability ~0.57. The thin ff hold (+0.048 ns, no hold buffers) and the need for routing DRC to reach zero again add ~12% risk, so p ~0.5: abstain. Chain: a pass keeps 12.95 (a follow-up rebuild at <=12.90 is a long shot). A fail steps back to ~13.0-13.15, which likely passes; otherwise the result is null. 12.95 is both the most likely and the median kept clock.",
+ "arm_reported_by_reader": "rung1"
+}

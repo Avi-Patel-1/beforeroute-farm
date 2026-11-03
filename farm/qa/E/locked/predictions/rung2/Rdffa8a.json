@@ -1,0 +1,11 @@
+{
+ "packet_id": "Rdffa8a",
+ "arm": "rung2",
+ "p_pass": 0.35,
+ "call": "fail",
+ "slope": 0.02,
+ "claim1_ns": 15.282,
+ "kept_clock_ns": 15.3,
+ "rationale": "C0=15.230 against R1=15.25 leaves 0.02 ns. The worst max_ss reg-to-reg path is mostly fanout buffers from design repair (clkdlybuf4s25_1/buf_1) on 100-330 um nets. Its post-GRT estimated slack was +0.96 because GRT caps are about 28% low overall and up to 2x low on long nets, so the resizer never optimized it. With no target-driven change, C1 is about C0 plus routing noise. Pushing it upward: an independent path group at -2.36; at R1 the resizer will not repeat its fixes on the and4_4 carry chain (-1.21) or the or4_4 input-to-register path (-1.50, IO slack grows only 0.8x); and taking the worst of several noisy groups adds bias. IO paths otherwise do not limit. DRV is 2589 vs bar 2881, and about +5% slew reaches the bar. Hold is +0.049 on one self-loop; detailed routing reached 0 DRC. Setup passes with about 0.42, which falls to about 0.35 after DRV, hold and DRC. Likely chain: R1 fails, then the step-back run at 15.30 passes.",
+ "arm_reported_by_reader": "rung2"
+}

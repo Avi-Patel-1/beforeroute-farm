@@ -1,0 +1,11 @@
+{
+ "packet_id": "R34e4d2",
+ "arm": "rung1",
+ "p_pass": 0.5,
+ "call": "abstain",
+ "slope": 0.005,
+ "claim1_ns": 11.9199,
+ "kept_clock_ns": 11.95,
+ "rationale": "Source meets 16 ns with 4.06 ns reg-to-reg slack at max_ss, so no setup optimization ran; R1=11.95 leaves only ~0.01 ns over C0=11.94. DELAY 4 synthesis does not depend on the clock and the area is unchanged, so the rebuild keeps the same netlist and floorplan. Only the timing-driven placement weights, post-CTS repair_timing (0.246 margin on placement parasitics) and the setup-guarded hold repair see the new clock. There is no post-GRT timing repair, and routed max-RC parasitics (max vs nom about 0.26 ns, wirelength +19% over estimate) probably exceed that margin. So repair likely stays idle and the rebuild is a chaotic resample of the ~11.94 ns path. Repair adds some upside; winner's-curse risk on C0 and small hold/DRV (723 vs 2881)/DRC risks offset it. That makes it a coin flip: slope near 0, abstain. Kept clock is most likely 11.95; otherwise a step-back to about 12.0-12.2, or 16.",
+ "arm_reported_by_reader": "rung1"
+}

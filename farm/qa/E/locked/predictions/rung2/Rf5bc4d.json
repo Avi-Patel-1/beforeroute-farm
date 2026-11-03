@@ -1,0 +1,11 @@
+{
+ "packet_id": "Rf5bc4d",
+ "arm": "rung2",
+ "p_pass": 0.67,
+ "call": "pass",
+ "slope": 0.015,
+ "claim1_ns": 12.526,
+ "kept_clock_ns": 12.55,
+ "rationale": "Every max_ss violator, including the worst at -0.715, runs through one 14-stage OR chain launched from u_14f57f847d: 8x or4_4, then or2_4/or3_4/or2_4/or2_4 and an a32o_2. Cell delay dominates (wire is about 5%). Each OR is already at its largest size and every chain net is rebuffered. The resizer clearly sees the ss corner (18 setup buffers, upsized chain), even though mid-PnR STA reports TT +5.4. So repair is stuck. The post-GRT estimate (-0.792) stays below the 0.3 margin at R1, so it stays stuck. AREA 0 synthesis without ABC buffering or sizing does not depend on the clock, and placement net weights depend only on relative slack. So C1 is about C0 plus layout noise of roughly 0.05 ns, against 0.035 ns of headroom. Hold +0.082 (128 hold buffers), DRC 0 and DRV 2 out of 295 carry little risk. The chain most likely stops at 12.55.",
+ "arm_reported_by_reader": "rung2"
+}

@@ -1,0 +1,9 @@
+{
+ "packet_id": "Rf60d8b",
+ "arm": "handpicked",
+ "p_pass": 1.0,
+ "call": "pass",
+ "slope": 0.421497543427929,
+ "claim1_ns": 7.633989798772823,
+ "kept_clock_ns": 7.5
+}

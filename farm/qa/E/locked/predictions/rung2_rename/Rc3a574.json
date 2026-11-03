@@ -1,0 +1,11 @@
+{
+ "packet_id": "Rc3a574",
+ "arm": "rung2_rename",
+ "p_pass": 0.6,
+ "call": "pass",
+ "slope": 0.003,
+ "claim1_ns": 7.7803,
+ "kept_clock_ns": 7.8,
+ "rationale": "Source: T0 5.45, WS -2.323 (max_ss, r2r), C0 7.773, R1 7.80, so only 27 ps margin. The worst cone (u_3953->u_25fd, 14 stages) is floor-limited: or4b_4/or4_4/a2111o/a311o stages take 0.8-1.1 ns at ss, and its cells are already near maximum size plus a rebuffer. The top violators come from four start flops whose paths share no cells. ABC sizes against tt, where r2r slack is +1.36 (comb ~3.4 ns), so -D 7800 vs 5450 likely leaves synthesis unchanged. Floorplan, non-timing-driven placement and CTS then repeat. Post-CTS/post-GRT repair (post-GRT WS -2.543; GRT->signoff +0.22) still cannot reach margin at 7.8, so it grinds to the same floor. Expect slope ~0, with routing/repair-order noise comparable to the margin. I/O paths >=+0.32 (gain ~1.9 ns), hold +0.097, DRC 0 and DRV 0/89 are safe. Kept clock most likely 7.80.",
+ "arm_reported_by_reader": "rung2"
+}

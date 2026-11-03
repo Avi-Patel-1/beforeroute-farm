@@ -1,0 +1,9 @@
+{
+ "packet_id": "Ra1298d",
+ "arm": "law",
+ "p_pass": 0.0,
+ "call": "fail",
+ "slope": 0.5899999999999999,
+ "claim1_ns": 6.078208653988882,
+ "kept_clock_ns": null
+}

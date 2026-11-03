@@ -1,0 +1,11 @@
+{
+ "packet_id": "Rdffa8a",
+ "arm": "rung1",
+ "p_pass": 0.18,
+ "call": "fail",
+ "slope": 0.18,
+ "claim1_ns": 15.693,
+ "kept_clock_ns": null,
+ "rationale": "R1=15.25 leaves only 0.02 ns over C0=15.230, so any upward drift of the claim fails setup. The source is reg-to-reg limited at max_ss (-2.55) while nom_ss is -1.92: the max-RC penalty is ~0.63 ns. LibreLane's resizer works multi-corner but deduplicates by liberty (nom_tt/ss/ff, nominal RC), so the source's heavy repair (2925 repair buffers, utilisation 45->63%) was chasing nom_ss. At R1 it only lifts nom_ss to its small margins (0.173/0.046) and stops, leaving max_ss ~0.4-0.6 ns negative; if no repair triggers, the repair benefit is simply lost (C1~C0+delta). Expected C1~15.6-15.9, slope~0.2. The step-back (~15.7-15.9) likely meets the same nom-vs-max gap, so the chain probably ends without a pass. Residual pass probability comes from the chance the resizer sees only tt (near-identical rebuild). Hold (+0.05 at ff) and DRV (11% under bar) add risk.",
+ "arm_reported_by_reader": "rung1"
+}

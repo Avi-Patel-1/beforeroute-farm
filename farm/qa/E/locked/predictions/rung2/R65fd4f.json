@@ -1,0 +1,11 @@
+{
+ "packet_id": "R65fd4f",
+ "arm": "rung2",
+ "p_pass": 0.95,
+ "call": "pass",
+ "slope": 0.1581,
+ "claim1_ns": 6.7483,
+ "kept_clock_ns": 6.75,
+ "rationale": "Source WS 9.474 is an input-to-reg path (summary, max_ss max.rpt). IO delays are 20% of the period, so this slack scales by 0.8*dT and becomes +1.898 at R1=8.25. Signoff driver slacks on flop Q nets (signoff.jsonl, connectivity) show a reg-to-reg path at 10.972 ns, below the reported r2r 11.097. It runs into a hold-buffered endpoint whose own worst path is an IO path, and it scales 1:1 to +1.502, the new WS. Several parts of the flow ignore the clock period: AREA 3 synthesis, non-timing-driven placement and CTS, and setup margins of 0.373/0.165 well below the slack. So R1 should rebuild the source layout: hold WS 0.094 r2r is unchanged, IO hold of 3.2 ns or more loses 1.9, DRC and DRV are 0. Pass. C1=6.748, slope 0.158. At R2=6.75 that path keeps about 0.002 ns until the resizer acts, so 6.75 is my modal kept clock.",
+ "arm_reported_by_reader": "rung2"
+}

@@ -1,0 +1,11 @@
+{
+ "packet_id": "R3241a9",
+ "arm": "rung2_rename",
+ "p_pass": 0.72,
+ "call": "pass",
+ "slope": 0.002,
+ "claim1_ns": 12.9113,
+ "kept_clock_ns": 12.95,
+ "rationale": "Worst path (max_ss, reg-to-reg) is a 15-stage OR ripple chain (or4_4/or3_4/or2_4, all at max drive, side loads already rebuffered, wire delay about 0, loads 5-9 fF). At T0 the repair could not improve it further. AREA 2 synthesis with ABC buffering and sizing off does not depend on the clock. IO paths are far from critical (worst in-to-reg +1.69, reg-to-out +3.05), so timing-driven placement weights shift uniformly. At R1 the repair target (12.95-0.383) is still out of reach, so the same chain should come back: C1 about C0, slope about 0. The cushion is only 0.0475 ns. The RC-corner spread (0.064 ns) and the 0.028 ns skew penalty suggest noise of about 0.02-0.04 ns. Remaining risks: hold repair, which setup violations blocked at T0 on chain endpoints (hold 0.048-0.10), may now add about 1.1 ns dlygates on near-critical endpoints; hold WS is 0.048; DRC converged 446 to 0. Most likely kept clock: 12.95.",
+ "arm_reported_by_reader": "rung2"
+}

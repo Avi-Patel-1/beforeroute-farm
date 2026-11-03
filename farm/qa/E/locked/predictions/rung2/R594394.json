@@ -1,0 +1,11 @@
+{
+ "packet_id": "R594394",
+ "arm": "rung2",
+ "p_pass": 0.84,
+ "call": "pass",
+ "slope": 0.17,
+ "claim1_ns": 9.712,
+ "kept_clock_ns": 9.5,
+ "rationale": "The source's worst slack is +1.491 ns at max_ss on a reg-to-reg path, so C0=9.959 and R1=10.00. An unchanged design would keep only +0.04 ns. The post-global-route per-net dump gives worst-corner (ss) slacks 0.30-0.40 ns below signoff max_ss on every top endpoint: u_15df04c905 1.168 vs 1.491, u_5715620b74 1.340 vs 1.704. Global-route wire cap is about 1.57x the SPEF max value, and post-GRT nom_tt reg-to-reg slack is 6.515 vs 6.770 at signoff. I infer the resizer works at the ss/ff corners (ff hold slack clusters near 0.095 with 88 hold buffers). With post-GRT timing repair on, it will see about -0.28 ns at 10.0 and over-fix, so signoff should land about +0.25-0.35 ns (C1 about 9.71). Risks: a delay-gate hold buffer on the worst path, hold slack of only 0.094 ns, routing that took 5 iterations to reach 0 DRC. Max slew/cap count is 0 vs bar 295. The chain probably steps 10.0, 9.75, 9.5, 9.4; median kept is about 9.5.",
+ "arm_reported_by_reader": "rung2"
+}

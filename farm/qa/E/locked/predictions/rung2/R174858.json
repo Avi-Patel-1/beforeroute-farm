@@ -1,0 +1,11 @@
+{
+ "packet_id": "R174858",
+ "arm": "rung2",
+ "p_pass": 0.72,
+ "call": "pass",
+ "slope": 0.0,
+ "claim1_ns": 12.9025,
+ "kept_clock_ns": 12.95,
+ "rationale": "Only the ss corners fail setup (max_ss WS -4.3125 at T0 8.59, so C0 is 12.9025). R1 is 12.95, leaving a 0.0475 ns margin. The critical path is a 15-stage OR chain whose gates are already at maximum size (or4_4/or3_4/or2_4), with side loads isolated by buf_2 rebuffers. The multi-corner post-CTS resizer (64 setup rebuffers) also cannot reach its 0.383 margin at R1, so it should max out the same chain again. The AREA 2 ABC flow does not depend on the clock period, so the netlist should be identical. I expect C1 = C0 +/- about 0.06 ns from placement and CTS noise (min-to-max RC spread is only 0.064). IO paths are not critical (worst +3.05). The ff hold WS of +0.048 is structural: hold repair was blocked by setup on same-leaf a32o pairs, which is a small risk if CTS splits a pair. DRV is 0 against a bar of 295, and DRC converged to 0. I expect a pass and the chain to stop at 12.95.",
+ "arm_reported_by_reader": "rung2"
+}

@@ -1,0 +1,11 @@
+{
+ "packet_id": "Re90f41",
+ "arm": "rung2_shuffle",
+ "p_pass": 0.88,
+ "call": "pass",
+ "slope": 0.22,
+ "claim1_ns": 6.85,
+ "kept_clock_ns": 6.85,
+ "rationale": "Source is limited by register-to-register paths at max_ss (WS 1.434); IO and hold are far from binding at R1. R1=7.2 leaves only +0.044 on unchanged paths, but the source did no setup repair (0 setup buffers). Its critical path carries three buf_2 fanout buffers (~1.74 ns) that can easily be upsized. The post-GRT dump shows the flow's own global-route parasitic view is pessimistic: WS 0.844 vs 1.434 at signoff, 0.28-0.59 ns on near-critical endpoints, wire cap 8.7 vs 5.4 pF. At R1 the resizer margins (0.135 post-CTS, 0.041 post-GRT) force ~0.55 ns of repair in that view, so signoff WS should be ~0.3-0.45. The lowest-pessimism endpoint is a hold-buffered D pin (+0.27 before repair), giving C1\u22486.85. Risks: hold/setup interplay (114 hold buffers, hold WS 0.092) and DRC (converged 318\u21920); DRV is 0 vs bar 295. In the chain, R2\u22486.85 likely passes; deeper steps hit hold-buffer setup conflicts. Median kept \u22486.85.",
+ "arm_reported_by_reader": "rung2"
+}

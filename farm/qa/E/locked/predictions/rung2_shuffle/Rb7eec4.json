@@ -1,0 +1,11 @@
+{
+ "packet_id": "Rb7eec4",
+ "arm": "rung2_shuffle",
+ "p_pass": 0.64,
+ "call": "pass",
+ "slope": 0.2,
+ "claim1_ns": 4.1387,
+ "kept_clock_ns": 4.2,
+ "rationale": "Reg-to-reg paths limit the source: WS is +0.301 ns at max_ss with T0 4.5, so R1 4.2 leaves only 0.0013 ns of margin. Per-net dumps show post-GRT slack 0.24-0.27 ns more pessimistic than signoff (WS 0.062 vs 0.301). At 4.2, both the post-CTS (0.339) and post-GRT (0.036) repairs will resize hard. Traced worst endpoints run through weakly sized fanout buffer trees (inv_2 fo8, buf_2 fo6 and fo10 at 63 fF), so sizing headroom is clear. Limits: an RSZ-0062 warning shows post-CTS repair already stalled somewhere. The next path families are a hold-buffered self-loop (two dlygate4sd3_1, 0.349 to about 0.05 at 4.2) and upsized arithmetic chains (0.403). Hold WS is 0.092 and could be squeezed by setup-hold conflicts. DRV 0 (slew/cap ratios at most 0.69/0.55), DRC 0. I expect WS1 near +0.06 with placement noise near 0.09 ns. On a failure the chain steps back to 4.25 or above.",
+ "arm_reported_by_reader": "rung2"
+}

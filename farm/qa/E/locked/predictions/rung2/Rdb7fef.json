@@ -1,0 +1,11 @@
+{
+ "packet_id": "Rdb7fef",
+ "arm": "rung2",
+ "p_pass": 0.6,
+ "call": "pass",
+ "slope": 0.015,
+ "claim1_ns": 11.281,
+ "kept_clock_ns": 11.4,
+ "rationale": "Source: T0 19.09, WS +7.694 at max_ss (reg-to-reg) -> C0 11.396; R1 11.4 leaves only 4 ps. Critical path: or4/nor4 chain plus 4-level buf_2 fanout chain with long nets (nor4 fo1 net 61 um). Same path post-GRT vs signoff: nom_tt -0.22 ns; per-net worst-corner slack 8.307 -> 7.694 (worst-143 nets median drift -0.47). So at R1 the GRT-based resizer sees ~+0.6 ns phantom slack and will not repair; DELAY 0 ABC mapping is target-insensitive, so the netlist is unchanged. Outcome = placement noise (sigma ~0.3 ns) around C0, with a modest favorable tilt: timing-driven GPL re-weights toward this r2r cone once IO paths (which set tt slack at T0) relax. Hold WS 0.105 is a self-loop (period-independent); input hold 3.46-1.54 stays positive; DRC/DRV clean. Chain Monte Carlo: kept mode/median 11.4, ~11% risk of falling back to 19.09.",
+ "arm_reported_by_reader": "rung2"
+}

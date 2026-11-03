@@ -1,0 +1,11 @@
+{
+ "packet_id": "R6287e4",
+ "arm": "rung1",
+ "p_pass": 0.8,
+ "call": "pass",
+ "slope": 0.066,
+ "claim1_ns": 10.7285,
+ "kept_clock_ns": 10.9,
+ "rationale": "The source is port-limited. Its worst path (+2.320 ns at max_ss) touches a port, and the 20% IO delay scales with the period, so at R1=10.9 that path gains back about 0.46 ns (slack about +0.48). The reg-to-reg path then sets the limit: its claim is 13.2-2.472 = 10.728, which gives about +0.17 ns at 10.9 if delays repeat. Synthesis does not effectively depend on the clock. The rebuild mainly changes through timing-driven placement, CTS and routing, adding about 0.1-0.2 ns of noise on the ss critical path. The resizer sees positive slack, so it will not help. Setup fails about 15% of the time. Hold (+0.094, no buffers), DRC (converged to 0) and DRV (0 against a bar of 953) add a few percent. Median C1 is about 10.73 (reg-to-reg limited), so slope is about 0.066. In the chain, R2 = ceil05(C1) (about 10.75-10.85) has almost no margin and is roughly a coin flip. If R1 fails, the step back stays above 10.9. So the single most likely kept clock is 10.9.",
+ "arm_reported_by_reader": "rung1"
+}

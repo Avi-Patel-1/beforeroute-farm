@@ -1,0 +1,11 @@
+{
+ "packet_id": "Rf03358",
+ "arm": "rung2_shuffle",
+ "p_pass": 0.09,
+ "call": "fail",
+ "slope": 0.06,
+ "claim1_ns": 7.914,
+ "kept_clock_ns": null,
+ "rationale": "Source WS -2.323 ns (max_ss, reg-to-reg) gives C0=7.773; at R1=7.8 the r2r path would keep only +0.027. But nets/signoff.jsonl shows input-buffer nets (clkdlybuf4s25_1/dlymetal) at -1.959, -1.944, -1.894 ns; all output-port nets are >=+0.32, so these are input->flop paths. Input delay is 20% of period, so they gain only 0.8*2.35=1.88 ns -> about -0.08 ns at 7.8 (IO-limited clock ~7.90). DELAY 4 (ORFS-style ABC script, likely clock-independent) and non-timing-driven placement make the pre-repair netlist/placement repeat; the resizer was already at max effort (173 repair buffers, post-GRT WS -2.54), so path delays should repeat within noise -> fail, C1~7.91. Step-back to 7.9/7.95 lands near 0 IO slack, and slack grows only 0.8 per ns of target (claim chases target): roughly a coin flip, leaning fail -> null. Hold +0.097, DRC 0, DRV 0 are not limiting.",
+ "arm_reported_by_reader": "rung2"
+}

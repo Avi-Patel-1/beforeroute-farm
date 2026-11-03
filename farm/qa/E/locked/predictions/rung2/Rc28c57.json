@@ -1,0 +1,11 @@
+{
+ "packet_id": "Rc28c57",
+ "arm": "rung2",
+ "p_pass": 0.93,
+ "call": "pass",
+ "slope": 0.2,
+ "claim1_ns": 11.2663,
+ "kept_clock_ns": 11.2,
+ "rationale": "Worst source setup path (max_ss) is reg->output po_*[16], slack 2.276 (r2r 3.668). IO delays are 20% of period, so that path loses only 0.8*dT: frozen arrival 8.666 ns gives WS~0.484 at R1=11.75 (r2r~1.43), so C1~11.266, slope 0.2. Hold WS 0.105 is reg2reg (period-independent); in2reg hold stays >=0.6. Flow looks period-independent: PL_TIMING_DRIVEN off; AREA 3 behaves like the fixed ORFS ABC script (1648 synthesis buffers despite SYNTH_ABC_BUFFERING=false, no {D}); GRT parasitics are optimistic (long-net caps 1.3-2x higher at signoff; nom_tt postgrt WS 6.74 vs signoff 6.38), so the 0.397 post-GRT margin never triggers; 1268 hold buffers are reg2reg-driven. Expect near-identical layout: DRV 2317<=2881, DRC 0. Chain: 11.75 -> 11.30 (WS~0.12) -> 11.20 (WS~0.04) -> stop. Residual risk: synthesis/placement actually changing.",
+ "arm_reported_by_reader": "rung2"
+}

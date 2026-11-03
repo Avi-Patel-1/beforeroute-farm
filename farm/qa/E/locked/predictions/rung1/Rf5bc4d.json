@@ -1,0 +1,11 @@
+{
+ "packet_id": "Rf5bc4d",
+ "arm": "rung1",
+ "p_pass": 0.46,
+ "call": "abstain",
+ "slope": 0.06,
+ "claim1_ns": 12.5598,
+ "kept_clock_ns": 12.55,
+ "rationale": "C0 = 11.8+0.715 = 12.515, so R1 = 12.55 leaves only 0.035 ns of margin. The limit is a reg-to-reg path at max_ss. The resizer checks the ss corner and uses 0.29/0.30 ns margins, and it ran out of fixes at T0: 326 repair buffers, still -0.715. With AREA 0 and ABC sizing/buffering off, synthesis barely depends on the clock, and the timing-driven placement weights do not change when every slack shifts by the same amount. So the rebuild should end near the same best delay. At R1 the resizer still aims for about 12.25, below that delay, so it should work just as hard (slope near 0, slightly positive). Run-to-run noise of about 0.2 ns is much larger than 0.035 ns, so setup is close to a coin flip. Hold +0.08, DRC 0 and DRV 2/295 add about 5% risk. Chain: a pass most likely keeps 12.55. A fail steps back to about 12.6-12.8 with about a 60% pass chance. About 20% chance that nothing passes.",
+ "arm_reported_by_reader": "rung1"
+}

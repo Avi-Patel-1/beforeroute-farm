@@ -1,0 +1,11 @@
+{
+ "packet_id": "R65fd4f",
+ "arm": "rung1",
+ "p_pass": 0.94,
+ "call": "pass",
+ "slope": 0.17137,
+ "claim1_ns": 6.6227,
+ "kept_clock_ns": 6.35,
+ "rationale": "Source is IO-limited: max_ss WS 9.474 on a port path, r2r WS 11.097. IO delays are 20% of period, so IO slack falls only 0.8 ns per ns of target while r2r slack falls 1:1. Synthesis (AREA 3, delay target non-binding), non-timing-driven placement and CTS are clock-insensitive, and at 8.25 ns slack stays far above resizer margins, so R1 should reproduce the source layout: IO slack -> 1.90, r2r -> 1.63 ns. r2r becomes the limiter: C1 ~ 17.72-11.097 = 6.62 ns, slope ~0.171. Hold: r2r unchanged (+0.094); input->reg hold loses ~1.9 ns but resizer hold repair covers it; DRC/DRV unchanged (0). Pass very likely. Chain: R2 = 6.65 (natural r2r slack ~+0.03; margins 0.373/0.165 lift WS to ~0.2), then ~6.45, ~6.3; kept ~6.35, with risk of stopping at 6.45-6.65.",
+ "arm_reported_by_reader": "rung1"
+}

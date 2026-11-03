@@ -1,0 +1,11 @@
+{
+ "packet_id": "Rc28c57",
+ "arm": "rung1",
+ "p_pass": 0.93,
+ "call": "pass",
+ "slope": 0.2,
+ "claim1_ns": 11.2663,
+ "kept_clock_ns": 11.15,
+ "rationale": "The source is port-limited: its worst path touches an IO port, and IO delays are 20% of the period. So port-path slack moves as 0.8*dT and reg-to-reg slack moves as dT. At R1=11.75 (dT=-2.24): port slack ~2.276-1.792=+0.484, r2r ~3.668-2.24=+1.43, so WS ~+0.48, C1 ~11.266 and slope ~0.2. AREA 3 (ORFS-style ABC script with no delay target), non-timing-driven placement, repair_design and CTS do not depend on the clock. Estimated slacks likely stay above the resizer margins (0.051 post-CTS, 0.397 post-GRT), so the rebuild should be nearly identical. Hold 0.105 is reg-to-reg (worse at ff than ss, so not an input path), DRV ~2317 < 2881, DRC 0. Chain: 11.30 (WS ~+0.12) -> 11.20 (~+0.04; post-GRT repair may add margin) -> likely 11.15, otherwise it stops at 11.20.",
+ "arm_reported_by_reader": "rung1"
+}

@@ -1,0 +1,9 @@
+{
+ "packet_id": "Rf14f65",
+ "arm": "handpicked",
+ "p_pass": 0.0,
+ "call": "fail",
+ "slope": 0.4264248271912363,
+ "claim1_ns": 16.99432073547854,
+ "kept_clock_ns": null
+}

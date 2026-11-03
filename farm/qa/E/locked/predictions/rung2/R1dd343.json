@@ -1,0 +1,11 @@
+{
+ "packet_id": "R1dd343",
+ "arm": "rung2",
+ "p_pass": 0.38,
+ "call": "fail",
+ "slope": 0.017,
+ "claim1_ns": 7.8132,
+ "kept_clock_ns": 7.85,
+ "rationale": "Contract/summary/metrics: T0 5.45, WS -2.323 at max_ss (r2r), C0 7.773, so R1 7.80 leaves only +0.027 ns. TT is +0.94, yet 30 post-GRT setup buffers, 83 rebuffers and a mostly _4-upsized critical path with a dfxtp_4 launch show the multi-corner resizer was floor-limited at SS. Baseline slope is ~0 with about +/-0.04 ns rebuild noise. Key point: driver slacks on the input-port buffers in nets/signoff.jsonl reveal hidden in->reg paths at -1.96/-1.94/-1.89 ns. With 20% IO delays (SDC) these gain only 0.8x2.35=1.88 ns, giving -0.08/-0.06/-0.01 at R1 (naive claim 7.88). The resizer can probably swap the pi[0]/pi[1] clkdlybuf4s25_1 buffers (as it did for pi[2]/pi[3], ~0.2 ns gain), but pi[3] stays marginal and the comparator path must not drift more than 0.027. Hold (+0.097), DRC 0 and DRV 0 are safe. Expect a narrow fail; the step-back to 7.85 likely passes.",
+ "arm_reported_by_reader": "rung2"
+}

@@ -1,0 +1,11 @@
+{
+ "packet_id": "R5b8dd8",
+ "arm": "rung2_rename",
+ "p_pass": 0.88,
+ "call": "pass",
+ "slope": 0.196,
+ "claim1_ns": 12.3,
+ "kept_clock_ns": 13.8,
+ "rationale": "Source WS +7.488 (max_ss) is an in->out port path. Its slack scales as 0.6T because the IO delay is 20% per side. The worst in->reg path (+7.88) scales as 0.8T and the worst r2r path (+8.974) as T. Rescaled to R1=13.8: r2r +1.52, in->reg +1.92, in->out +3.0. So C1 is about 12.28-12.30, limited by r2r, and slope is about 0.20. Two cones set the r2r limit: one with 2 dlygate hold buffers and 3 clkdlybuf buffers, and one pure-logic path at +9.000. Hold WS +0.107 is r2r at min_ff, period-independent, repaired to about 0.1 by 1328 hold buffers. DRV is 992, from about 113 fanout-10 nets slewing only at ss, against a bar of 2881. Route DRC is 0 at 47% utilisation. The next rung, R2 of about 12.30, sits near zero max_ss slack, and the resizer sees optimistic nominal-RC/GRT estimates, so it is about 50/50. Median kept clock is 13.8.",
+ "arm_reported_by_reader": "rung2"
+}

@@ -1,0 +1,11 @@
+{
+ "packet_id": "R1f6326",
+ "arm": "rung1",
+ "p_pass": 0.1,
+ "call": "fail",
+ "slope": 0.5,
+ "claim1_ns": 14.579,
+ "kept_clock_ns": null,
+ "rationale": "Source misses only at ss corners, worst max_ss reg-to-reg -0.799 ns; C0=14.159, so R1=14.2 leaves 0.041 ns headroom. A full rebuild at a looser target lets synthesis/resizer relax: LibreLane's repair_timing works on nominal-RC corners with estimated parasitics and stops near its ~0.025 ns margin, while signoff max_ss runs ~0.2 ns worse than nom_ss plus routing/extraction pessimism. Expect rebuild max_ss WS ~ -0.3 to -0.5 ns (slope ~0.5, C1 ~14.58). Electrical count 289 sits just under the 295 bar, all in one corner, so DRV is near a coin flip per rebuild; hold (+0.108, margin-limited) and DRC (converged to 0) are low risk. Joint pass ~10%. The step-back to ~14.6 meets the same target-independent max_ss miss plus the DRV coin flip, so the chain most likely keeps nothing.",
+ "arm_reported_by_reader": "rung1"
+}

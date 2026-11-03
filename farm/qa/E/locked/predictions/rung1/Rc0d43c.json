@@ -1,0 +1,11 @@
+{
+ "packet_id": "Rc0d43c",
+ "arm": "rung1",
+ "p_pass": 0.88,
+ "call": "pass",
+ "slope": 0.2,
+ "claim1_ns": 11.0906,
+ "kept_clock_ns": 11.15,
+ "rationale": "Worst setup path is port-limited (r2r WS 2.961 vs 1.759). With I/O delays at 20% of period, a single-port path has slack = 0.8T - K. This fits all corners (K-0.25 \u2248 8.55/4.16/2.52 ns ss/tt/ff, ratios ~2.06/0.61), while an in-to-out path would need negative ff delay. K \u2248 8.80 ns at max_ss. At R1 = 11.45: port slack \u2248 +0.36, r2r \u2248 +1.21, so C1 \u2248 0.2\u00b7R1 + K \u2248 11.09 and slope \u2248 0.2. The ABC target barely matters (tt logic ~5 ns). The rebuild differs mainly through timing-driven placement/CTS noise (\u03c3 ~0.1-0.2 ns), so setup failure is unlikely. Hold is +0.11 with repair on, DRC 0 at 47% utilisation, DRV 123 \u226a 953. The chain then tries ~11.10 (+0.08) and ~11.05 (+0.04), heading for the zero-slack point ~11.0. Those runs are near coin-flips, so kept \u2248 11.15 (range 11.05-11.45).",
+ "arm_reported_by_reader": "rung1"
+}

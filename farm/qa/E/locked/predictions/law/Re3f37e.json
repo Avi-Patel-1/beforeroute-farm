@@ -1,0 +1,9 @@
+{
+ "packet_id": "Re3f37e",
+ "arm": "law",
+ "p_pass": 1.0,
+ "call": "pass",
+ "slope": 0.28999999999999926,
+ "claim1_ns": 4.854312247259109,
+ "kept_clock_ns": 4.85
+}

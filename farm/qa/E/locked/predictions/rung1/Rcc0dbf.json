@@ -1,0 +1,11 @@
+{
+ "packet_id": "Rcc0dbf",
+ "arm": "rung1",
+ "p_pass": 0.48,
+ "call": "abstain",
+ "slope": 0.05,
+ "claim1_ns": 9.0911,
+ "kept_clock_ns": 9.1,
+ "rationale": "Synthesis (AREA 0, no ABC sizing/buffering), non-timing-driven placement, repair_design and CTS do not depend on the clock, so the rebuild differs only in resizer timing repair. The source ended at -0.57 ns at max_ss despite 0.34-0.38 ns resizer margins. The min-to-max RC spread is only 0.17 ns and slew violations appear only at max_ss, which points to a modest loss from estimate to signoff (~0.2 ns): repair ran out of improving moves rather than stopping at its margin. At 9.10 the worst path should end up the same way, so C1 ~ C0 (slope near 0, slightly positive because less repair happens elsewhere). That leaves only +0.039 ns against ~0.06-0.1 ns of noise from repair order and routing. If repair instead reaches its margin and stops, slope rises and R1 fails. Hold +0.094, DRC 0, DRV 296 vs 953, and IO paths gaining 0.49 ns look low-risk. Near coin flip; kept clock most likely 9.10, otherwise a step-back to 9.15.",
+ "arm_reported_by_reader": "rung1"
+}

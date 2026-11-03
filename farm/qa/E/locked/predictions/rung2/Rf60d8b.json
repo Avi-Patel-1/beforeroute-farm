@@ -1,0 +1,11 @@
+{
+ "packet_id": "Rf60d8b",
+ "arm": "rung2",
+ "p_pass": 0.85,
+ "call": "pass",
+ "slope": 0.85,
+ "claim1_ns": 7.381,
+ "kept_clock_ns": 7.35,
+ "rationale": "Source: T0=8.49 with max_ss worst setup slack +0.607, so R1=7.90 leaves only about +0.02 ns if nothing else changes. The max_ss report shows the two worst paths end through 1.17 ns dlygate4sd3_1 hold buffers (151 inserted in total). The min_ff report shows those endpoints would still have about +0.09 hold slack without the buffers. The next path (0.901) has five slow clkdlybuf4s25_1 wire buffers that are easy to repair, and a wall of 61 endpoints sits at 1.34. The post-GRT net dump shows worst slack 0.417, right at the 0.4 resizer margin, and signoff came out about 0.2 ns better than the GRT estimate. So the resizer should push R1 toward about 0.4-0.6 signoff slack. Main risk: the hold buffer is re-inserted on the shared pair, leaving near-zero slack for post-GRT repair to fix. Worst hold slack (0.091) is on period-independent self-loops, routing DRC converged to 0, and slew/cap violations are 0 against a bar of 953.",
+ "arm_reported_by_reader": "rung2"
+}

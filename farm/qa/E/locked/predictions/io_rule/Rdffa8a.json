@@ -1,0 +1,9 @@
+{
+ "packet_id": "Rdffa8a",
+ "arm": "io_rule",
+ "p_pass": 1.0,
+ "call": "pass",
+ "slope": 0.0,
+ "claim1_ns": 15.230335126380576,
+ "kept_clock_ns": 15.25
+}

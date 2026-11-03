@@ -1,0 +1,11 @@
+{
+ "packet_id": "R2d3d8e",
+ "arm": "rung1",
+ "p_pass": 0.63,
+ "call": "pass",
+ "slope": 0.0,
+ "claim1_ns": 7.1558,
+ "kept_clock_ns": 7.2,
+ "rationale": "Max_ss r2r-limited; IO slack only loses 0.8*dT (stays >= +0.32), so the same layout at 7.2 gives WS 1.434-1.39 = +0.044. AREA 3 ABC mapping is essentially clock-insensitive and timing-driven placement weights are percentile-normalised, so a near-identical rebuild (pass, C1 = C0) is plausible. Otherwise placement/CTS divergence gives C1 ~ C0 +/- 0.17 ns; resizer setup margins (0.135/0.041 on estimated RC, likely optimistic vs max-RC signoff) mostly clip the bad tail rather than guarantee a pass. P(setup >= 0) ~0.68; hold (+0.09 ff), converged DRC at 40% util and 0/295 DRV add ~5% risk; slight trim for possible winner's-curse in the claim. Median slope ~0. If it passes, WS1 is likely < 0.05 or the next rung is near a coin-flip, so the chain most likely keeps 7.2; if it fails, the >= 7.25 step-back probably passes, else 8.59.",
+ "arm_reported_by_reader": "rung1"
+}

@@ -1,0 +1,11 @@
+{
+ "packet_id": "Re3f37e",
+ "arm": "rung1",
+ "p_pass": 0.9,
+ "call": "pass",
+ "slope": 0.5,
+ "claim1_ns": 4.7535,
+ "kept_clock_ns": 4.55,
+ "rationale": "C0=4.9935 so R1=5.00, 0.48 ns tighter. The worst path is port-limited. Its ss/tt/ff delay ratios (~2.0, ~1.6) match the r2r path only if it is an input-to-output feedthrough with 40% of the period as IO budget. So its frozen slack drops just 0.6x0.48 to ~0.20 at max_ss, and r2r drops to ~0.22: frozen slope ~0.4. At T0 both sat above the resizer setup margins (0.297/0.341 at nom_ss), so repair was idle. At 5.0 they fall below, and repair_timing on a loosely mapped netlist (ABC -D non-binding) should lift WS to ~0.24, giving slope ~0.5. Hold (+0.09, period-independent, hold repair on), DRC (converged to 0) and DRV (0 vs 89) are small risks. The chain should track the margin in ~0.2-0.25 ns steps until repair gains saturate around 4.4-4.6 within four rebuilds.",
+ "arm_reported_by_reader": "rung1"
+}

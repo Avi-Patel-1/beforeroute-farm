@@ -1,0 +1,11 @@
+{
+ "packet_id": "R55c04c",
+ "arm": "rung2",
+ "p_pass": 0.87,
+ "call": "pass",
+ "slope": 0.21,
+ "claim1_ns": 5.848,
+ "kept_clock_ns": 6.3,
+ "rationale": "Source: setup WS +2.048 at max_ss is limited by an input-to-register path (pi_aaa26b5055, IO delay 20% of period). Register-to-register WS is +3.143. With the same structure, the slack at 6.3 is 0.8*6.3-4.608 = +0.43 ns for the input path and +1.12 for register-to-register, which gives slope ~0.2. The path runs through a clkdlybuf input buffer, a 4-deep buf_2 fanout tree on a 94-load enable net, and a D-side dlygate4sd3 hold buffer (1.17 ns). Tree depth and hold placement can change between rebuilds in ~0.4 ns steps. Post-GRT STA covers only nom_tt, so the resizer will not repair ss setup. Hold +0.095 comes from structural self-loops, DRV is 0 against a bar of 89, and DRC reached 0. The chain's fixed point is ~5.76 with only ~0.1 ns margin at 5.9/5.8, so the second rebuild often fails, making 6.3 the most likely kept clock.",
+ "arm_reported_by_reader": "rung2"
+}

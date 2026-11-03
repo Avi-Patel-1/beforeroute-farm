@@ -1,0 +1,15 @@
+{
+ "packet_id": "R784df6",
+ "p_pass": 0.8869047619047619,
+ "call": "pass",
+ "slope": 0.6177250665933205,
+ "kept_clock_ns": 10.0,
+ "claim1_ns": 8.13628582066318,
+ "arm": "codex_det",
+ "module_sha256": "f51630c878fa45ebe7000bdb284d3aeef3da76f8f9497b722040f1705228fa90",
+ "deps_sha256": {
+  "baseline.py": "f51630c878fa45ebe7000bdb284d3aeef3da76f8f9497b722040f1705228fa90",
+  "packet.py": "c2c8a7a67e4b304ac79a6003f835f8ed20044e75fab4858189b72f9bff4f2833",
+  "weights.json": "dedabbc1372befe6fa91c6aebea6f1f009a8502dc59e7272c367481698e85e78"
+ }
+}

@@ -1,0 +1,11 @@
+{
+ "packet_id": "Rb06c9e",
+ "arm": "rung1",
+ "p_pass": 0.26,
+ "call": "fail",
+ "slope": 0.11,
+ "claim1_ns": 9.5385,
+ "kept_clock_ns": null,
+ "rationale": "C0=9.433 rounds up to R1=9.45, leaving only 0.017 ns of room, so a pass needs slope <=0.018. The source was heavily over-constrained (WS -0.94 at max_ss, 520 timing buffers, utilisation 42 to 53%), so its resizer was already at its limit. At 9.45 the resizer targets (R1-0.239 post-CTS, R1-0.169 post-GRT) are roughly reachable, so it likely stops at its margin instead of pushing as far as it can. Signoff max_ss trails nom_ss by about 0.25 ns, and 168 slew violations appear at the max RC corner only. That suggests the place-and-route estimates are optimistic there, so a 0.169 margin probably does not cover the gap to signoff: expect C1 around 9.5-9.6. If the resizer stays at its limit instead, C1 is about C0 +/-0.1, a coin flip. Hold (+0.10), DRV (168 vs bar 953) and DRC 0 look safe. The step-back near 9.55 would likely fail the same way, so I predict no kept clock (about 55%).",
+ "arm_reported_by_reader": "rung1"
+}

@@ -1,0 +1,11 @@
+{
+ "packet_id": "R78942e",
+ "arm": "rung2",
+ "p_pass": 0.53,
+ "call": "abstain",
+ "slope": 0.003,
+ "claim1_ns": 7.7867,
+ "kept_clock_ns": 7.8,
+ "rationale": "Synthesis uses DELAY 4 with no clock-dependent ABC target, and placement is not timing-driven, so the rebuild only diverges at the post-CTS and post-GRT resizer. At max_ss, signoff shows a reg-to-reg wall: E1 -2.938, E2 -2.908, and many paths at -2.86 to -2.91 into the same flops. Their cells are mostly _4, side loads are already rebuffered, and RSZ-0062 was raised, so this is a resizer floor. At R1 these paths sit at +0.02 to +0.05. Post-GRT estimates in the per-net dumps are about 0.26 ns pessimistic, so the R1 resizer still sees E1 below margin and repairs it to the same floor. The result hinges on about +/-0.04 ns of noise. The per-net slacks also show hidden in-to-reg paths at -2.444, -2.428 and -2.421 that scale at 0.8x. Left as-is, they would be -0.05 to -0.08 at R1, but their slow input buffers leave room to repair them. Hold is +0.095, DRV 0, DRC 0. Overall, about a coin flip.",
+ "arm_reported_by_reader": "rung2"
+}

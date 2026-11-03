@@ -1,0 +1,11 @@
+{
+ "packet_id": "R6287e4",
+ "arm": "rung2",
+ "p_pass": 0.8,
+ "call": "pass",
+ "slope": 0.08,
+ "claim1_ns": 10.6963,
+ "kept_clock_ns": 10.9,
+ "rationale": "Source WS +2.320 (max_ss) is an input-to-reg path. I/O delays are 20% of the period, so it loses only 0.8 ns per ns of period: projected +0.48 at 10.9. Reg-to-reg WS +2.472 (min_period 10.73) projects to +0.17 at 10.9. That one endpoint carries a dlygate4sd3_1 hold buffer (1.17 ns at ss), inserted because natural hold was 0.096 against the 0.1 margin. The next r2r endpoint is +3.96 (+1.66 at R1). So R1 should be about +0.17 to +0.48 before any resizer repair. Post-GRT timing is slightly more pessimistic than signoff. Hold WS is +0.094 at ff, and every buffered endpoint keeps natural hold of at least 0.015. DRC converged to 0, and DRV is 0 against a bar of 953. The netlist is probably the same (loose ABC target). Slope is bimodal: about 0.066 if the hold buffer reappears, about 0.18 if input-to-reg limited. The next rung (~10.7) is marginal, so the most likely kept clock is 10.9.",
+ "arm_reported_by_reader": "rung2"
+}

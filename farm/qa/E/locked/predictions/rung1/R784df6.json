@@ -1,0 +1,11 @@
+{
+ "packet_id": "R784df6",
+ "arm": "rung1",
+ "p_pass": 0.9,
+ "call": "pass",
+ "slope": 0.38,
+ "claim1_ns": 8.41,
+ "kept_clock_ns": 8.25,
+ "rationale": "Port-limited (r2r +inf). Back-solving X = 0.6T - 0.25 - WS per corner gives ss/tt ~1.99 and ff/tt ~0.64 (pure cell-delay scaling), so the worst path is input->output combinational (X_maxss ~4.60 ns); a 0.8T in2reg/reg2out fit would need ~2 ns of corner-invariant delay. IO delays scale with the target, so that path keeps ~+0.46 ns at 8.85 (register-port paths >= +0.23); ABC's delay target stays far above path delays and the resizer stays idle, so C1 ~8.39-8.41 and slope ~0.4, shaded for a possible register-path takeover. The hold-critical path carries no IO offset (T-independent, resizer-repaired); DRC converged, DRV 0, so residual risk is noise. In2out limit ~8.08 ns: chain ~8.85 -> 8.40/8.45 -> 8.25 -> 8.15 with margin shrinking to ~0.04 ns, so kept ~8.15-8.25 (median 8.25).",
+ "arm_reported_by_reader": "rung1"
+}

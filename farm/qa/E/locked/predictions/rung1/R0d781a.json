@@ -1,0 +1,11 @@
+{
+ "packet_id": "R0d781a",
+ "arm": "rung1",
+ "p_pass": 0.85,
+ "call": "pass",
+ "slope": 0.85,
+ "claim1_ns": 3.9437,
+ "kept_clock_ns": 3.95,
+ "rationale": "Source: 4.5 ns, WS +0.301 at max_ss (reg-to-reg), so C0=4.199 and R1=4.20 leave only ~1 ps if the critical path stayed the same. But this slack comes from the resizer. LibreLane's resizer corners collapse to nom_tt/ss/ff with a single LAYERS_RC, and the final nom_ss slack (0.333) sits right at PL_RESIZER_SETUP_SLACK_MARGIN (0.339). So post-CTS repair stopped because it met its margin, not because it ran out of moves. At 4.2 that margin moves with the target, so repair should recover most of the extra 0.3 ns on an AREA 3, 40%-util, ~1.5k-cell netlist. Expected C1 is ~3.9-4.0 (slope ~0.85; ~1 if the margin is fully met). Hold +0.09 with no buffers, DRC 0, and DRV 0 vs bar 89 are low risk. The main risk is repair saturating near 4.16, plus rebuild noise. The chain likely steps to ~3.95 and saturates around there.",
+ "arm_reported_by_reader": "rung1"
+}

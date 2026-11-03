@@ -1,0 +1,11 @@
+{
+ "packet_id": "R55c04c",
+ "arm": "rung1",
+ "p_pass": 0.94,
+ "call": "pass",
+ "slope": 0.2,
+ "claim1_ns": 5.868,
+ "kept_clock_ns": 5.8,
+ "rationale": "The worst setup path (max_ss, +2.048) touches a port. Two checks back this up. First, the tt/ff worst slacks (+3.80/+4.14) and an ss/tt delay ratio of about 1.95, taken from the hold path, fit a path with one port delay: slack = 0.8T - 4.608. An input-to-output path with both port delays does not fit. Because port delays scale with T, that path has about +0.43 ns at R1=6.30, and reg-to-reg has about +1.12 ns. That gives C1 ~5.87 and slope ~0.2. Second, the worst hold slack (+0.095 at min_ff) fits a reg-to-reg path with 0.25 ns uncertainty. Its slack does not depend on the clock period, and the resizer can repair it. DRC converged to 0, and DRV is 0 against a bar of 89. The remaining risk is rebuild noise in hold or DRC. Chain: R2 ~5.90 (+0.11), R3 ~5.80 (+0.03; the resizer's 0.15 margin helps), R4 ~5.70 marginal. Without resizer repair the one-port limit is ~5.76, so the kept clock is ~5.80.",
+ "arm_reported_by_reader": "rung1"
+}

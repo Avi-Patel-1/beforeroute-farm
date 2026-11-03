@@ -1,0 +1,12 @@
+{
+ "packet_id": "Rc7ebda",
+ "p_pass": 0.0911,
+ "call": "fail",
+ "slope": 0.4398,
+ "kept_clock_ns": null,
+ "arm": "rung3",
+ "module_sha256": "d6a64c8334389bc72c25a9c98411f441c93e9a79cd181329cf292340e40a0e34",
+ "deps_sha256": {
+  "formula.py": "d6a64c8334389bc72c25a9c98411f441c93e9a79cd181329cf292340e40a0e34"
+ }
+}

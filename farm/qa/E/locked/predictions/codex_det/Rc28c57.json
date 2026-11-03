@@ -1,0 +1,15 @@
+{
+ "packet_id": "Rc28c57",
+ "p_pass": 0.9921875000000003,
+ "call": "pass",
+ "slope": 0.25593650617043234,
+ "kept_clock_ns": 13.99,
+ "claim1_ns": 11.140986545865186,
+ "arm": "codex_det",
+ "module_sha256": "f51630c878fa45ebe7000bdb284d3aeef3da76f8f9497b722040f1705228fa90",
+ "deps_sha256": {
+  "baseline.py": "f51630c878fa45ebe7000bdb284d3aeef3da76f8f9497b722040f1705228fa90",
+  "packet.py": "c2c8a7a67e4b304ac79a6003f835f8ed20044e75fab4858189b72f9bff4f2833",
+  "weights.json": "dedabbc1372befe6fa91c6aebea6f1f009a8502dc59e7272c367481698e85e78"
+ }
+}

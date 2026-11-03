@@ -1,0 +1,11 @@
+{
+ "packet_id": "R2bd4fe",
+ "arm": "rung2",
+ "p_pass": 0.93,
+ "call": "pass",
+ "slope": 0.195,
+ "claim1_ns": 12.309,
+ "kept_clock_ns": 13.8,
+ "rationale": "The source is port-limited. Its worst max_ss path is an input-to-output feedthrough. IO delays are 20% of the period, so that slack shrinks by only 0.6 x dT; in2reg (worst 7.883) shrinks 0.8x and reg2reg (8.974) 1x. Projected at 13.8 from the 9-corner STA reports: in2out +3.02, in2reg +1.92, r2r +1.52 ns, and unlisted r2r >= +3.5. So R1 has about 1.5 ns margin, and the real limit is the r2r cone (~12.28 ns). Hold WS 0.107 at ff comes from self-loop paths. Hold repair looks ff-aware (1328 dlygate buffers, slacks cut off near 0.1, tt WS 0.31) and does not depend on the period. DRV is 992 against a bar of 2881; route DRC converged to 0 at 47% utilisation. Critical r2r paths carry about 5.6 ns of placement-dependent buffering, so rebuild noise is about 0.5 ns. C1 is about 12.31, and R2 = 12.30-12.35 is roughly a coin flip (Monte Carlo of the chain), which leaves 13.8 as the most likely kept clock.",
+ "arm_reported_by_reader": "rung2"
+}

@@ -1,0 +1,11 @@
+{
+ "packet_id": "Rb06c9e",
+ "arm": "rung2",
+ "p_pass": 0.62,
+ "call": "pass",
+ "slope": 0.0,
+ "claim1_ns": 9.4329,
+ "kept_clock_ns": 9.45,
+ "rationale": "T0 8.49, WS -0.943 at max_ss, reg-to-reg (port_limited false): C0 9.4329, R1 9.45, dT 0.96. If the layout reproduces, R1 slacks become +0.017 r2r and +0.128 for the worst in2reg path (-0.640 + 0.8*dT, since IO delays scale with the clock). Hold 0.103, DRV 168 (bar 953) and DRC 0 would not change. Reproduction is plausible: the DELAY 4 ABC script has no clock target and placement is not timing-driven. All 520 repair buffers are max_cap, wire, hold or IO cells (no rebuffer, split or clone). The post-GRT net dump matches the final netlist exactly apart from antenna diodes, so the resizer made no edits even though GRT estimates were 1.2 ns optimistic. The critical family (one startpoint, weak synthesized clkbuf_1 stages, D-side dlygate4sd3_1 hold buffers of about 1.19 ns at ss) never got setup repair, so C1 is about C0 and slope about 0. Risk: any divergence in hold repair or synthesis reroutes long nets and turns the 17 ps margin into a coin flip.",
+ "arm_reported_by_reader": "rung2"
+}

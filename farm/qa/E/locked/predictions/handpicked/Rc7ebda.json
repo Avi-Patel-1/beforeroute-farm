@@ -1,0 +1,9 @@
+{
+ "packet_id": "Rc7ebda",
+ "arm": "handpicked",
+ "p_pass": 0.0,
+ "call": "fail",
+ "slope": 0.4226408669409628,
+ "claim1_ns": 13.837133517472434,
+ "kept_clock_ns": null
+}

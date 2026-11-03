@@ -1,0 +1,11 @@
+{
+ "packet_id": "R9ae6f5",
+ "arm": "rung2",
+ "p_pass": 0.72,
+ "call": "pass",
+ "slope": 0.0,
+ "claim1_ns": 12.559,
+ "kept_clock_ns": 12.6,
+ "rationale": "Worst max_ss path (-3.279) is a 9-stage or4_4 OR-chain plus or3_4/or2_4 from u_def721bef0. A second chain from u_784f61e113 sits at -3.186. Every chain cell is already at maximum drive, side loads are isolated by rebuffers, and wire delay is about 0.01 ns, so the path is limited by logic depth, not by repair effort. AREA 2 synthesis without ABC sizing/buffering is period-invariant. IO slacks of at least +2.3 ns sit far from the critical-net set, so timing-driven placement and CTS should repeat. Post-GRT multicorner WS -3.435 vs signoff -3.279 (GRT pessimistic by 0.16 ns). At R1 the chain still misses both the 0.28 and 0.138 margins, so repair saturates as in the source: C1 about C0, slope about 0. The margin is only 0.041 ns, so routing noise could flip the result. Hold +0.094, DRC 0, DRV 0: low risk. If it passes, ceil05(C1)=12.6 ends the chain.",
+ "arm_reported_by_reader": "rung2"
+}

@@ -1,0 +1,11 @@
+{
+ "packet_id": "R594394",
+ "arm": "rung1",
+ "p_pass": 0.63,
+ "call": "pass",
+ "slope": 0.02,
+ "claim1_ns": 9.92956,
+ "kept_clock_ns": 10.0,
+ "rationale": "Source meets T0=11.45 with WS +1.491 ns at max_ss, reg-to-reg, not port-limited; the tool did no timing work. C0=9.9586, R1=10.00, so the rebuild has only 0.041 ns rounding margin. DELAY 0 ABC mapping ignores the clock, so the netlist is unchanged, but timing-driven placement reweights nets (IO delays scale 0.8x vs r2r 1.0x), giving a fresh PnR draw with ~0.1-0.2 ns spread around the source's critical delay. At 10 ns the resizer engages only below 0.025 ns on nominal-RC estimates, while max_ss signoff runs ~0.08 ns worse, so rescued runs often land slightly negative. Hold (+0.094, repairable), DRC (converged to 0) and DRV (0 vs 295) add ~5% risk. Net: mild lean to pass; claim roughly target-insensitive (slope ~0). Chain most likely keeps 10.00 (pass then stop/fail at 9.95, or fail then a step-back near 10.1).",
+ "arm_reported_by_reader": "rung1"
+}

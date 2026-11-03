@@ -1,0 +1,11 @@
+{
+ "packet_id": "Rc7ebda",
+ "arm": "rung2",
+ "p_pass": 0.13,
+ "call": "fail",
+ "slope": 0.36,
+ "claim1_ns": 13.726,
+ "kept_clock_ns": null,
+ "rationale": "Source WS is -1.765 at max_ss. The worst paths start at u_73a6fb1e6a, run through 5 slow clkdlybuf4s25_1/s15_2 fanout buffers and end in hold dlygates (~1.1ns at ss each) on self-loop flops; those flops need the dlygates at ff because of the 0.25ns uncertainty. All 18 non-default fanout buffers, 3 input buffers, the upsized gates and the 6 rebuffers sit on nets that miss setup at ss, while heavily loaded non-critical nets kept the default s25_1. So the multi-corner setup repair, driven by violations, made those changes, including upsizing the head buffer fanout_aaf264ae9a (~0.65ns gain). The PnR view is optimistic: post-GRT tt slack is 0.3-0.55ns better than signoff, about 1ns at ss. At R1 the repairs mostly don't trigger, so the critical group lands near -0.6 and other paths near -0.45 (C1 about 13.75). Losing the upsized buffers also pushes the 771 DRV count toward the 953 bar. The step-back near 13.85 is roughly a coin flip.",
+ "arm_reported_by_reader": "rung2"
+}

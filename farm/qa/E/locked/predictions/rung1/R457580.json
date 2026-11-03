@@ -1,0 +1,11 @@
+{
+ "packet_id": "R457580",
+ "arm": "rung1",
+ "p_pass": 0.95,
+ "call": "pass",
+ "slope": 0.166,
+ "claim1_ns": 9.279,
+ "kept_clock_ns": 9.3,
+ "rationale": "The source is port-limited. Its worst path (5.241 ns at max_ss) touches a port, and I/O delays are 20% of the period, so port slack falls only 0.8 x the clock change. Reg-to-reg slack (6.111) falls by the full change. This flow barely sees the clock: the DELAY 4 ABC script sets no delay target, placement is not timing-driven, design repair and CTS ignore the period, and post-CTS setup repair should stay idle (estimated slack about 1 ns, above the 0.157 margin). Hold fixes stay the same and post-GRT repair is off, so the R1 layout should match the source. At 10.15: reg-to-reg max_ss +0.871, ports +1.05 or more; hold +0.092, DRC 0 and DRV 40 unchanged, so it passes. C1 = 9.279, slope about 0.166. Chain: R2 = 9.30 gives reg-to-reg max_ss about +0.021 if the layout stays identical, so it passes; C2 about 9.279 rounds up to 9.30, which is not below 9.30, so the chain stops. Kept 9.30. Risk: if setup repair changes R2 and it fails, the kept clock is 10.15.",
+ "arm_reported_by_reader": "rung1"
+}

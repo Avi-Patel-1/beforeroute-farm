@@ -1,0 +1,11 @@
+{
+ "packet_id": "Rb80ed9",
+ "arm": "rung2",
+ "p_pass": 0.55,
+ "call": "abstain",
+ "slope": 0.01,
+ "claim1_ns": 17.1537,
+ "kept_clock_ns": 17.2,
+ "rationale": "C0=17.166 vs R1=17.2 leaves only 0.034 ns. max_ss report: the WS path is a 64-bit counter MSB carry chain (20 and4) ending in a resizer hold dlygate4sd3_1 (1.17 ns at ss); next endpoint (other counter MSB, also hold-buffered) is +0.24 ns, unbuffered paths >=+1.38. Metrics: 0 setup buffers and post-GRT timing repair off; at R1 the pre-hold slack (~1.2 ns) still clears the 0.118 margin and the hold-repair setup check, so the flow neither repairs this path nor drops the dlygate (both counter MSBs carry one): slope~0. Period-scaled I/O delays (tt-worst path is a feedthrough) change timing-driven placement weights, so the rebuild is a perturbed layout: C1~C0 +/-0.2 ns (RC-corner spread 0.33, postGRT-vs-signoff 0.36 at tt). Hold +0.106, DRV 792<<2881, DRC 0: small non-setup risk. ~55% pass: abstain; chain median keeps 17.2.",
+ "arm_reported_by_reader": "rung2"
+}

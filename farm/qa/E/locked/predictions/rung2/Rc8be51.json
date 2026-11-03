@@ -1,0 +1,11 @@
+{
+ "packet_id": "Rc8be51",
+ "arm": "rung2",
+ "p_pass": 0.72,
+ "call": "pass",
+ "slope": 0.1,
+ "claim1_ns": 8.0608,
+ "kept_clock_ns": 8.15,
+ "rationale": "Source passes (setup WS +0.485 at max_ss, r2r-limited, not port-limited; hold +0.090; DRC 0; DRV 0 vs bar 295), so C0=8.105 leaves only 0.045 ns cushion at R1=8.15. Synthesis (DELAY 2, no ABC buffering/sizing) should be clock-independent; differences come from timing-driven placement weights and the resizer. Resizer looks near its floor: post-GRT estimated WS 0.163-0.21 < GRT margin 0.267, RSZ-0062 'unable to repair', 0 setup buffers, upsized cells already concentrated on critical cones. Critical ss path: two OR4 stages (~3.0 of 7.6 ns, placement-insensitive) plus fanout buffer trees (~1.8 ns, placement-sensitive); 32 nets within 0.12 ns, second cone at +0.13. Expect C1 ~ C0-0.04 +/- 0.17 -> slope ~0.1, p_pass ~0.7. IO (>=1.7 ns slack), hold and DRV risks small. Chain Monte Carlo: kept clock mode/median 8.15.",
+ "arm_reported_by_reader": "rung2"
+}

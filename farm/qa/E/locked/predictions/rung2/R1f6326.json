@@ -1,0 +1,11 @@
+{
+ "packet_id": "R1f6326",
+ "arm": "rung2",
+ "p_pass": 0.1,
+ "call": "fail",
+ "slope": 0.27,
+ "claim1_ns": 14.386,
+ "kept_clock_ns": null,
+ "rationale": "The source fails only on ss setup (WS -0.799 at max_ss). Hold is +0.108, DRC is 0 and DRV is 289 against a bar of 295; all 27 violating nets are clkdlybuf4s25_1 fanout buffers, several within 5% of the slew limit. R1 leaves only 0.041 ns of margin. In the post-GRT per-net dumps, every or4_4/or3_4/or2_4 upsize sits on the paths with the worst estimated ss slack. So post-CTS setup repair at ss is binding and will make about 1-2 fewer upsizes at 14.2 ns. The max_ss arcs put each or4_2-to-or4_4 step near 0.55-0.6 ns. That leaves path A (7 or4_4, -0.355) and group B (+0.134) roughly 0.05-0.25 ns negative. The unrepaired fanout-buffer paths, with about 1 ns of estimate-vs-RCX error, stay near C=14.16. Expected C1 is about 14.3-14.45, so a fail. The step-back rebuild meets the same sawtooth risk plus the DRV knife-edge.",
+ "arm_reported_by_reader": "rung2"
+}

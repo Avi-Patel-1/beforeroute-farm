@@ -1,0 +1,11 @@
+{
+ "packet_id": "R78942e",
+ "arm": "rung1",
+ "p_pass": 0.06,
+ "call": "fail",
+ "slope": 0.088,
+ "claim1_ns": 8.038,
+ "kept_clock_ns": null,
+ "rationale": "The source's worst path is register-to-register at max_ss (C0=7.778), leaving only 0.022 ns of margin at R1=7.80. At tt and ff the worst paths are I/O paths (WS 0.459/1.693 vs r2r 0.734/2.201). Scaling them like the r2r path ((ss-tt)/(tt-ff) ~2.50) puts the worst I/O path at about 6.50 ns at max_ss. I/O delay grows from 0.968 to 1.56 ns, so at 7.80 that path's slack is about 6.24-6.50 = -0.25 ns: the rebuild becomes port-limited and fails. The resizer already worked on that path at T0, where it violated by about -2.6 ns, so little extra gain is likely. Hold, DRC and DRV look safe. C1 ~ 1.56+6.48 ~ 8.04, so slope ~0.088. The step-back to ceil05(C1) ~ 8.05 gives a port path only 0.8*dR more slack: s ~ 0.8*eps - 0.2*(C1-R1) ~ -0.03 ns. It most likely fails too, so the chain probably keeps no clock (about 65%).",
+ "arm_reported_by_reader": "rung1"
+}

@@ -1,0 +1,11 @@
+{
+ "packet_id": "R457580",
+ "arm": "rung2",
+ "p_pass": 0.95,
+ "call": "pass",
+ "slope": 0.166,
+ "claim1_ns": 9.279,
+ "kept_clock_ns": 9.3,
+ "rationale": "Synthesis (DELAY 4, ABC buffering/sizing off), non-timing-driven placement, repair_design and CTS ignore the clock. At R1 the post-CTS setup repair stays idle (estimated WS >> 0.157) and all 162 hold buffers still pass their setup checks, so the rebuild should reproduce the source layout with only the SDC changed. The worst source path is port-limited (input delay 0.2T), so in->reg slack drops only 0.8x5.24 to 1.049 ns. Reg-to-reg WS 6.111 ns (max_ss; includes a 1.17 ns dlygate hold buffer) drops to 0.871 ns: C1 = 9.279, slope 0.166. Hold: r2r 0.092 unchanged; IO hold shrinks 1.05 ns but stays positive. DRC 0, DRV 40 << 953. Chain: R2 = 9.30 leaves +0.021 ns r2r slack if the layout repeats, so it likely passes and C2 rounds back to 9.30, ending the chain. Main risk: resizer changes perturbing the layout at 9.30.",
+ "arm_reported_by_reader": "rung2"
+}

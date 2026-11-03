@@ -1,0 +1,11 @@
+{
+ "packet_id": "R5967c8",
+ "arm": "rung2",
+ "p_pass": 0.94,
+ "call": "pass",
+ "slope": 0.2,
+ "claim1_ns": 8.726,
+ "kept_clock_ns": 8.1,
+ "rationale": "The worst setup path runs from one input port to a register, with an input delay of 0.2T (3.656 ns at max_ss). Its claim is C(T)=0.2T+6.656, so at R1=10.35 the projected WS is about +1.62 ns, C1\u22488.73 and the slope is about 0.2. The reg-to-reg claim of 8.50 comes from a single path that carries a 1.175 ns dlygate hold cell, and it stays below. Hold WS +0.090 is reg-to-reg at ff. The 139 dlygates fixed violations that only ff showed, which points to multi-corner hold repair. DRV is 0 against a bar of 953, route DRC is 0, utilisation 29%. Chain: R2=8.75 (WS about 0.34), then R3\u22488.45. The post-GRT view is pessimistic (net caps +18%; reg-to-reg 9.496 vs 9.776 at signoff), so the resizer (margin 0.279) should over-repair. The weak buf_2 input buffer driving fanout 10 leaves repair headroom, so R4\u22488.05 likely passes. Kept is about 8.1, with 8.45 as the fallback.",
+ "arm_reported_by_reader": "rung2"
+}

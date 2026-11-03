@@ -1,0 +1,9 @@
+{
+ "packet_id": "R55c04c",
+ "arm": "law",
+ "p_pass": 1.0,
+ "call": "pass",
+ "slope": 0.2900000000000003,
+ "claim1_ns": 5.686155097250543,
+ "kept_clock_ns": 5.5
+}

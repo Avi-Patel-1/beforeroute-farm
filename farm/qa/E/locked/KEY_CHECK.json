@@ -1,0 +1,33 @@
+{
+ "ok": true,
+ "checks": {
+  "1_main_sources_equal_sources_json": true,
+  "1_main_fields_equal_sources_json": true,
+  "2_main_pids_rederive": true,
+  "2_main_salts": true,
+  "3_six_of_each_control": true,
+  "3_controls_are_first_6_sorted_main_pids": true,
+  "3_main_packet_links": true,
+  "3_rename_pids_salts": true,
+  "3_shuffle_pids_salts_seeds": true,
+  "3_control_fields_copy_their_source": true,
+  "4_no_unknown_kinds": true,
+  "4_exactly_47_entries": true,
+  "4_one_folder_per_entry_and_back": true,
+  "4_packets_index_agrees": true,
+  "4_views_per_kind": true,
+  "4_name_map_per_entry": true,
+  "5_manifest_lists_exactly_the_key_views": true,
+  "5_every_view_matches_committed_hash": true
+ },
+ "counts": {
+  "main": 35,
+  "rename": 6,
+  "shuffle": 6,
+  "views_in_manifest": 82,
+  "extra_name_maps": 0
+ },
+ "packet_key_sha256": "cfde66d627b5ce144e485af8471fc0a6c5a3c2f6bc9fa55bd331d1ab299b5cc0",
+ "sources_json_sha256": "0bbcc3f668c4bce4dff91fd3c152164e60dac12ed86fd93bba714d7b142a51f3",
+ "packets_manifest_sha256": "f22f10df8c8466d4853f8879f4dc1e572b02a25a8f0dbc682a8350c4fb70192d"
+}

@@ -1,0 +1,9 @@
+{
+ "packet_id": "Rdb7fef",
+ "arm": "handpicked",
+ "p_pass": 1.0,
+ "call": "pass",
+ "slope": 0.41201864294591534,
+ "claim1_ns": 8.227896946865938,
+ "kept_clock_ns": 6.4
+}

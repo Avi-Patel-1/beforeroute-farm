@@ -1,0 +1,11 @@
+{
+ "packet_id": "Rcc0dbf",
+ "arm": "rung2",
+ "p_pass": 0.52,
+ "call": "abstain",
+ "slope": 0.055,
+ "claim1_ns": 9.0942,
+ "kept_clock_ns": 9.1,
+ "rationale": "Source fails only on setup: WS -0.571 (reg-to-reg, max_ss). Hold is +0.094, DRV is 296 against a bar of 953 and DRC is 0. Repair ran out of moves: the post-GRT estimate stayed at -0.651 against a +0.336 margin (RSZ-0062). The worst path is set by delay-cell fanout buffers from repair_design and an OR4 chain already at max size. Synthesis is AREA 0 and placement is not timing-driven, so the netlist before repair should be the same at R1 and slope should be near 0. Holding today's delays at R1: reg-to-reg slack +0.039; input path through input_89726d3fd0 (-0.4645, with IO delay at 20% of the period) +0.023. Repair works from estimated parasitics, which are 0.08 ns too pessimistic on the reg-to-reg path but only 0.02 ns on the input path, so the input path could end near -0.02. With 0.03-0.05 ns of noise, pass is about even. Kept clock is most likely 9.10; on a fail, the step-back to 9.15 likely passes.",
+ "arm_reported_by_reader": "rung2"
+}

@@ -1,0 +1,11 @@
+{
+ "packet_id": "Rcc2069",
+ "arm": "rung2_rename",
+ "p_pass": 0.87,
+ "call": "pass",
+ "slope": 0.22,
+ "claim1_ns": 6.85,
+ "kept_clock_ns": 6.55,
+ "rationale": "The source passes with 1.434 ns setup slack at max_ss on a reg-to-reg path. The worst IO path has 2.30 ns and its slack shrinks only 0.8x as the period shrinks, so the same layout at R1=7.2 would still have +0.044 ns. The per-net dumps show the post-GRT estimate is pessimistic: the same critical path has 0.844 ns there against 1.434 ns at signoff (delta about 0.59 ns), and GRT wire cap is 1.49x the RCX value. At tt, STAMidPNR gives 4.47 ns against 4.79 ns at signoff. The resizer loads several corners (ff hold was repaired to about 0.09 ns), so at 7.2 it sees about -0.55 ns at ss and repairs to its margins. That should leave about 0.3 to 0.4 ns of real slack, limited by a 38-cell path whose delta is only 0.28 ns. Side risks are low: hold 0.092 ns, DRC converged by iteration 4, zero slew and cap violations. The chain probably runs 7.2, about 6.85, about 6.55. Later rungs are limited by how much the resizer can recover and by a hold delay cell on a near-critical path.",
+ "arm_reported_by_reader": "rung2"
+}

@@ -1,0 +1,11 @@
+{
+ "packet_id": "Rb80ed9",
+ "arm": "rung1",
+ "p_pass": 0.52,
+ "call": "abstain",
+ "slope": 0.0,
+ "claim1_ns": 17.166,
+ "kept_clock_ns": 17.2,
+ "rationale": "Only the clock changes. The AREA 2 ABC delay target likely limits nothing at either clock (the TT path is about 7.6 ns), so the netlist probably stays the same. Timing-driven placement weights do shift (IO delays scale with the period, plus floating-point noise), so R1 is in effect a new placement and route. Post-CTS setup repair likely sees only the nom corners. At R1 the natural nom_ss slack is about +0.19 plus any estimate optimism, above the 0.118 margin, so little repair happens. max_ss also sits about 0.16 ns below nom_ss, so any repair floor lands near or below zero. To pass, the new max_ss critical delay must come within +0.034 ns of the source, against noise of about 0.25-0.35 ns between runs. That is a coin flip, minus about 5% hold/DRC/DRV risk, plus a small chance of a near-identical layout. Slope is about 0. If R1 passes, the chain most likely keeps 17.2. If not, a step back to about 17.3-17.4 passes roughly two-thirds of the time; otherwise it keeps 18.47.",
+ "arm_reported_by_reader": "rung1"
+}
