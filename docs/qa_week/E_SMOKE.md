@@ -38,3 +38,23 @@ Asked for by Codex's audit of this receipt. All plumbing; nothing here enters an
   R1 8.35 failed (claim 9.163), step back to 9.20 failed (claim 10.034), chain ended, kept clock none. 
   `smoke-erk-xtea-01` (passing source xab1-xtea-001, 16.72 ns, claim 7.567): 7.60 → 5.75 → 5.40 → 5.05 ns all passed,
   stopped at the 4-rebuild cap, kept 5.05 ns, slope 0.200. Both match the registered rule; artifacts < 1 MB each.
+
+## Smoke after the fail-closed fixes (clarification 12), 2026-11-03 05:00–05:08Z
+- **Fixtures** on the fixed code: `test_failclosed.py` (judge with missing / NaN / infinite / string / boolean fields
+  and a missing bar; DRC-less and slew-less rebuilds fail with a defined slope; a worker that leaves neither metrics nor
+  a job record → infrastructure loss, no chain.json, exit 3; an invalid chain spec is refused before any build; the
+  chain writer admits no incomplete source and then writes nothing; the predictor runner refuses unhashed, unlisted or
+  changed dependencies and missing or changed packets and exits 1 on errors, invalid or non-deterministic outputs and
+  reads outside its roots; the packet verifier fails an empty or partial SPEF corner and a dump row without a corner
+  value). Run against the pre-fix code (ee8f951) the same fixture fails in every part. `test_chain.py` and
+  `test_score.py` pass.
+- **Chain writer**: `make_chains.py` with the fail-closed judge reproduces all 35 chain specs and chains.json byte for
+  byte (20 passing sources).
+- **Packet verifier**: all 47 rung-2 views pass the per-corner coverage check (every wired net has a populated D_NET at
+  min, nom and max; same net set at the three corners; total capacitance min < nom < max; every dump row carries all 9
+  corners).
+- **Runner-side chain smoke, re-run**: workflow run 41581313357 (farm.yml on `qa-e-reading` at 593a9e4, 2 jobs,
+  training designs, 05:00–05:08Z). Both chains are identical rebuild by rebuild (clock, setup WS, hold WS, DRC, drv,
+  verdict) to run 41575897220: usb_cdc_core fail at 8.35 → step back 9.20 fail → end, kept none; xtea 7.60 → 5.75 →
+  5.40 → 5.05 pass, kept 5.05 ns, slope 0.200. No judge field was missing in any rebuild. `phase2.py collect` kept only
+  the chain records and each rebuild's job/metrics (108 KB for both).

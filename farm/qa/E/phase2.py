@@ -330,9 +330,21 @@ def dispatch(a):
     if active:
         print(f"[dispatch] refusing: active run(s) on {BRANCH}: {active} (one active run per workstream)")
         return 1
-    tags = [c["tag"] for c in json.load(open(os.path.join(HERE, "chains.json")))["chains"]]
+    chains = json.load(open(os.path.join(HERE, "chains.json")))["chains"]
+    tags = [c["tag"] for c in chains]
     for t in tags:
         assert os.path.exists(os.path.join(WT, "farm", "jobs", t + ".json")), t
+    # Scheduling only (the jobs are independent and deterministic): longest first, by each source's own capture-flow
+    # time, so the long picorv32 chains do not start last behind the 4-job limit. Registered order if unavailable.
+    src_dir = os.path.join(R, "private", "sources")
+    try:
+        secs = {c["tag"]: float(json.load(open(os.path.join(src_dir, c["source"], "job.json")))["flow_seconds"])
+                for c in chains}
+        tags = sorted(tags, key=lambda t: (-secs[t], tags.index(t)))
+        order_note = "longest first by source capture-flow seconds"
+    except Exception as e:
+        order_note = f"registered order ({type(e).__name__})"
+    print(f"[dispatch] job order ({order_note}): {tags}")
     lock_time = sh(["git", "show", "-s", "--format=%cI", a.lock_commit]).strip()
     pt = push_time(a.lock_commit)
     if not pt:
@@ -355,21 +367,49 @@ def dispatch(a):
     with open(log, "a") as f:
         f.write(json.dumps({"lock_commit": a.lock_commit, "lock_commit_time": lock_time, "lock_push_time": pt,
                             "chain_run": run["id"] if run else None, "chain_run_created_at": created,
-                            "created_after_push": order_ok, "dispatch_output": out.strip()}) + "\n")
+                            "created_after_push": order_ok, "job_order": tags, "job_order_rule": order_note,
+                            "dispatch_output": out.strip()}) + "\n")
     print(f"[dispatch] lock commit {a.lock_commit} (commit time {lock_time}, pushed {pt}); chain run "
           f"{run['id'] if run else '?'} created {created}; created after the lock push: {order_ok}")
     return 0 if order_ok else 1
 
 
 def collect(a):
+    """Download each result-erk-* artifact of the run, keep ONLY the chain record (chain.json, or chain_partial.json
+    for an infrastructure loss), the job record and each rebuild's job.json + metrics.json (gzipped); delete the rest."""
+    import gzip as _gz
+    import tempfile
     os.makedirs(a.dest, exist_ok=True)
-    tags = [c["tag"] for c in json.load(open(os.path.join(HERE, "chains.json")))["chains"]]
+    tags = a.tags or [c["tag"] for c in json.load(open(os.path.join(HERE, "chains.json")))["chains"]]
+    got = 0
     for t in tags:
         if os.path.exists(os.path.join(a.dest, t, "chain.json")):
+            got += 1
             continue
-        r = subprocess.run(["gh", "run", "download", str(a.run), "-R", REPO, "-n", "result-" + t, "-D",
-                            os.path.join(a.dest, t)], capture_output=True, text=True)
-        print(t, "ok" if r.returncode == 0 else r.stderr.strip()[:200], flush=True)
+        tmp = tempfile.mkdtemp(prefix="e_collect_", dir=a.dest)
+        r = subprocess.run(["gh", "run", "download", str(a.run), "-R", REPO, "-n", "result-" + t, "-D", tmp],
+                           capture_output=True, text=True)
+        if r.returncode == 0:
+            dst = os.path.join(a.dest, t)
+            os.makedirs(dst, exist_ok=True)
+            for f in ("chain.json", "chain_partial.json", "job.json"):
+                if os.path.exists(os.path.join(tmp, f)):
+                    shutil.copy2(os.path.join(tmp, f), os.path.join(dst, f))
+            for sub in sorted(glob.glob(os.path.join(tmp, "rebuilds", "*", ""))):
+                k = os.path.basename(os.path.dirname(sub))
+                for f in ("job.json", "metrics.json"):
+                    if os.path.exists(os.path.join(sub, f)):
+                        os.makedirs(os.path.join(dst, "rebuilds", k), exist_ok=True)
+                        with open(os.path.join(sub, f), "rb") as fi, _gz.open(os.path.join(dst, "rebuilds", k, f + ".gz"), "wb") as fo:
+                            shutil.copyfileobj(fi, fo)
+            got += os.path.exists(os.path.join(dst, "chain.json"))
+            state = "chain.json" if os.path.exists(os.path.join(dst, "chain.json")) else \
+                ("INFRA LOSS (chain_partial.json)" if os.path.exists(os.path.join(dst, "chain_partial.json")) else "no chain record")
+        else:
+            state = "not downloadable: " + r.stderr.strip()[:160]
+        shutil.rmtree(tmp, ignore_errors=True)
+        print(t, state, flush=True)
+    print(f"[collect] {got}/{len(tags)} chain records in {a.dest}")
 
 
 def main() -> int:
@@ -394,6 +434,7 @@ def main() -> int:
     p3 = sp.add_parser("collect")
     p3.add_argument("--run", required=True)
     p3.add_argument("--dest", required=True)
+    p3.add_argument("--tags", nargs="*", help="override the 35 registered chain tags (smoke only)")
     a = ap.parse_args()
     return {"preflight": cmd_preflight, "lock": lock, "freeze": freeze, "dispatch": dispatch,
             "collect": collect}[a.cmd](a) or 0
