@@ -1,0 +1,2529 @@
+{
+ "batch": "m01",
+ "about": "AD main batch (registered in docs/qa_week/AD_PREREG.md): T2a/D sky130hd grid and chains, T2b ASAP7 ABC-told-the-clock grid, T3 re-time replays, D GT2N grid and chains, descriptive Yosys control",
+ "groups": [
+  {
+   "name": "p2-sky130hd-ibex-8000",
+   "num_cores": 4,
+   "timeout_s": 7200,
+   "parallel": 1,
+   "runs": [
+    {
+     "tag": "smoke-pilot2-sky130hd-ibex-8000",
+     "design": "ibex",
+     "platform": "sky130hd",
+     "period": 8000,
+     "vars": {},
+     "setting": "S0",
+     "kind": "pilot",
+     "arm": "smoke"
+    }
+   ]
+  },
+  {
+   "name": "p2-sky130hd-ibex-12800",
+   "num_cores": 4,
+   "timeout_s": 7200,
+   "parallel": 1,
+   "runs": [
+    {
+     "tag": "smoke-pilot2-sky130hd-ibex-12800",
+     "design": "ibex",
+     "platform": "sky130hd",
+     "period": 12800,
+     "vars": {},
+     "setting": "S0",
+     "kind": "pilot",
+     "arm": "smoke"
+    }
+   ]
+  },
+  {
+   "name": "p2-sky130hd-ibex-20000",
+   "num_cores": 4,
+   "timeout_s": 7200,
+   "parallel": 1,
+   "runs": [
+    {
+     "tag": "smoke-pilot2-sky130hd-ibex-20000",
+     "design": "ibex",
+     "platform": "sky130hd",
+     "period": 20000,
+     "vars": {},
+     "setting": "S0",
+     "kind": "pilot",
+     "arm": "smoke"
+    }
+   ]
+  },
+  {
+   "name": "p2-sky130hd-aes-3600",
+   "num_cores": 4,
+   "timeout_s": 7200,
+   "parallel": 1,
+   "runs": [
+    {
+     "tag": "smoke-pilot2-sky130hd-aes-3600",
+     "design": "aes",
+     "platform": "sky130hd",
+     "period": 3600,
+     "vars": {},
+     "setting": "S0",
+     "kind": "pilot",
+     "arm": "smoke"
+    }
+   ]
+  },
+  {
+   "name": "p2-sky130hd-aes-5760",
+   "num_cores": 4,
+   "timeout_s": 7200,
+   "parallel": 1,
+   "runs": [
+    {
+     "tag": "smoke-pilot2-sky130hd-aes-5760",
+     "design": "aes",
+     "platform": "sky130hd",
+     "period": 5760,
+     "vars": {},
+     "setting": "S0",
+     "kind": "pilot",
+     "arm": "smoke"
+    }
+   ]
+  },
+  {
+   "name": "p2-sky130hd-aes-9000",
+   "num_cores": 4,
+   "timeout_s": 7200,
+   "parallel": 1,
+   "runs": [
+    {
+     "tag": "smoke-pilot2-sky130hd-aes-9000",
+     "design": "aes",
+     "platform": "sky130hd",
+     "period": 9000,
+     "vars": {},
+     "setting": "S0",
+     "kind": "pilot",
+     "arm": "smoke"
+    }
+   ]
+  },
+  {
+   "name": "s-gcd",
+   "num_cores": 4,
+   "timeout_s": 3600,
+   "parallel": 1,
+   "runs": [
+    {
+     "tag": "ads-gcd-001",
+     "design": "gcd",
+     "platform": "sky130hd",
+     "period": 1845,
+     "vars": {},
+     "setting": "S0",
+     "kind": "grid",
+     "arm": "T2a",
+     "abc_d": 0
+    },
+    {
+     "tag": "ads-gcd-002",
+     "design": "gcd",
+     "platform": "sky130hd",
+     "period": 2240,
+     "vars": {},
+     "setting": "S0",
+     "kind": "grid",
+     "arm": "T2a",
+     "abc_d": 0
+    },
+    {
+     "tag": "ads-gcd-003",
+     "design": "gcd",
+     "platform": "sky130hd",
+     "period": 2635,
+     "vars": {},
+     "setting": "S0",
+     "kind": "grid",
+     "arm": "T2a",
+     "abc_d": 0
+    },
+    {
+     "tag": "ads-gcd-004",
+     "design": "gcd",
+     "platform": "sky130hd",
+     "period": 3690,
+     "vars": {},
+     "setting": "S0",
+     "kind": "grid",
+     "arm": "T2a",
+     "abc_d": 0
+    },
+    {
+     "tag": "ads-gcd-005",
+     "design": "gcd",
+     "platform": "sky130hd",
+     "period": 2110,
+     "vars": {
+      "CORE_UTILIZATION": 23
+     },
+     "setting": "S1",
+     "kind": "grid",
+     "arm": "T2a",
+     "abc_d": 0
+    },
+    {
+     "tag": "ads-gcd-006",
+     "design": "gcd",
+     "platform": "sky130hd",
+     "period": 3160,
+     "vars": {
+      "CORE_UTILIZATION": 23
+     },
+     "setting": "S1",
+     "kind": "grid",
+     "arm": "T2a",
+     "abc_d": 0
+    },
+    {
+     "tag": "ads-gcd-007",
+     "design": "gcd",
+     "platform": "sky130hd",
+     "period": 3820,
+     "vars": {
+      "CORE_UTILIZATION": 23
+     },
+     "setting": "S1",
+     "kind": "grid",
+     "arm": "T2a",
+     "abc_d": 0
+    },
+    {
+     "tag": "ads-gcd-008",
+     "design": "gcd",
+     "platform": "sky130hd",
+     "period": 2110,
+     "vars": {
+      "PLACE_DENSITY": 0.9
+     },
+     "setting": "S2",
+     "kind": "grid",
+     "arm": "T2a",
+     "abc_d": 0
+    },
+    {
+     "tag": "ads-gcd-009",
+     "design": "gcd",
+     "platform": "sky130hd",
+     "period": 3160,
+     "vars": {
+      "PLACE_DENSITY": 0.9
+     },
+     "setting": "S2",
+     "kind": "grid",
+     "arm": "T2a",
+     "abc_d": 0
+    },
+    {
+     "tag": "ads-gcd-010",
+     "design": "gcd",
+     "platform": "sky130hd",
+     "period": 3820,
+     "vars": {
+      "PLACE_DENSITY": 0.9
+     },
+     "setting": "S2",
+     "kind": "grid",
+     "arm": "T2a",
+     "abc_d": 0
+    }
+   ],
+   "await_chains": [
+    {
+     "key": "T2a/sky130hd/gcd",
+     "design": "gcd",
+     "platform": "sky130hd",
+     "grid_tags": [
+      "ads-gcd-001",
+      "ads-gcd-002",
+      "ads-gcd-003",
+      "ads-gcd-004",
+      "ads-gcd-005",
+      "ads-gcd-006",
+      "ads-gcd-007",
+      "ads-gcd-008",
+      "ads-gcd-009",
+      "ads-gcd-010"
+     ],
+     "grid_groups": [],
+     "ranks": [
+      1,
+      2,
+      3
+     ],
+     "chain_prefix": "adsk-gcd",
+     "arm": "T2a",
+     "max_wait_s": 9000
+    }
+   ]
+  },
+  {
+   "name": "b-gcd",
+   "num_cores": 4,
+   "timeout_s": 3600,
+   "parallel": 2,
+   "runs": [
+    {
+     "tag": "adb-gcd-001",
+     "design": "gcd",
+     "platform": "asap7",
+     "period": 215,
+     "vars": {
+      "SYNTH_USE_SYN": 0
+     },
+     "setting": "S0",
+     "kind": "grid",
+     "arm": "T2b",
+     "abc_d": 1
+    },
+    {
+     "tag": "adb-gcd-002",
+     "design": "gcd",
+     "platform": "asap7",
+     "period": 265,
+     "vars": {
+      "SYNTH_USE_SYN": 0
+     },
+     "setting": "S0",
+     "kind": "grid",
+     "arm": "T2b",
+     "abc_d": 1
+    },
+    {
+     "tag": "adb-gcd-003",
+     "design": "gcd",
+     "platform": "asap7",
+     "period": 310,
+     "vars": {
+      "SYNTH_USE_SYN": 0
+     },
+     "setting": "S0",
+     "kind": "grid",
+     "arm": "T2b",
+     "abc_d": 1
+    },
+    {
+     "tag": "adb-gcd-004",
+     "design": "gcd",
+     "platform": "asap7",
+     "period": 435,
+     "vars": {
+      "SYNTH_USE_SYN": 0
+     },
+     "setting": "S0",
+     "kind": "grid",
+     "arm": "T2b",
+     "abc_d": 1
+    },
+    {
+     "tag": "adb-gcd-005",
+     "design": "gcd",
+     "platform": "asap7",
+     "period": 250,
+     "vars": {
+      "SYNTH_USE_SYN": 0,
+      "CORE_UTILIZATION": 50
+     },
+     "setting": "S1",
+     "kind": "grid",
+     "arm": "T2b",
+     "abc_d": 1
+    },
+    {
+     "tag": "adb-gcd-006",
+     "design": "gcd",
+     "platform": "asap7",
+     "period": 370,
+     "vars": {
+      "SYNTH_USE_SYN": 0,
+      "CORE_UTILIZATION": 50
+     },
+     "setting": "S1",
+     "kind": "grid",
+     "arm": "T2b",
+     "abc_d": 1
+    },
+    {
+     "tag": "adb-gcd-007",
+     "design": "gcd",
+     "platform": "asap7",
+     "period": 450,
+     "vars": {
+      "SYNTH_USE_SYN": 0,
+      "CORE_UTILIZATION": 50
+     },
+     "setting": "S1",
+     "kind": "grid",
+     "arm": "T2b",
+     "abc_d": 1
+    },
+    {
+     "tag": "adb-gcd-008",
+     "design": "gcd",
+     "platform": "asap7",
+     "period": 250,
+     "vars": {
+      "SYNTH_USE_SYN": 0,
+      "PLACE_DENSITY": 0.9
+     },
+     "setting": "S2",
+     "kind": "grid",
+     "arm": "T2b",
+     "abc_d": 1
+    },
+    {
+     "tag": "adb-gcd-009",
+     "design": "gcd",
+     "platform": "asap7",
+     "period": 370,
+     "vars": {
+      "SYNTH_USE_SYN": 0,
+      "PLACE_DENSITY": 0.9
+     },
+     "setting": "S2",
+     "kind": "grid",
+     "arm": "T2b",
+     "abc_d": 1
+    },
+    {
+     "tag": "adb-gcd-010",
+     "design": "gcd",
+     "platform": "asap7",
+     "period": 450,
+     "vars": {
+      "SYNTH_USE_SYN": 0,
+      "PLACE_DENSITY": 0.9
+     },
+     "setting": "S2",
+     "kind": "grid",
+     "arm": "T2b",
+     "abc_d": 1
+    }
+   ]
+  },
+  {
+   "name": "b-aes-1",
+   "num_cores": 4,
+   "timeout_s": 5400,
+   "parallel": 1,
+   "runs": [
+    {
+     "tag": "adb-aes-001",
+     "design": "aes",
+     "platform": "asap7",
+     "period": 265,
+     "vars": {
+      "SYNTH_USE_SYN": 0
+     },
+     "setting": "S0",
+     "kind": "grid",
+     "arm": "T2b",
+     "abc_d": 1
+    },
+    {
+     "tag": "adb-aes-003",
+     "design": "aes",
+     "platform": "asap7",
+     "period": 380,
+     "vars": {
+      "SYNTH_USE_SYN": 0
+     },
+     "setting": "S0",
+     "kind": "grid",
+     "arm": "T2b",
+     "abc_d": 1
+    },
+    {
+     "tag": "adb-aes-005",
+     "design": "aes",
+     "platform": "asap7",
+     "period": 305,
+     "vars": {
+      "SYNTH_USE_SYN": 0,
+      "CORE_UTILIZATION": 55
+     },
+     "setting": "S1",
+     "kind": "grid",
+     "arm": "T2b",
+     "abc_d": 1
+    },
+    {
+     "tag": "adb-aes-007",
+     "design": "aes",
+     "platform": "asap7",
+     "period": 550,
+     "vars": {
+      "SYNTH_USE_SYN": 0,
+      "CORE_UTILIZATION": 55
+     },
+     "setting": "S1",
+     "kind": "grid",
+     "arm": "T2b",
+     "abc_d": 1
+    },
+    {
+     "tag": "adb-aes-009",
+     "design": "aes",
+     "platform": "asap7",
+     "period": 455,
+     "vars": {
+      "SYNTH_USE_SYN": 0,
+      "PLACE_DENSITY": 0.85
+     },
+     "setting": "S2",
+     "kind": "grid",
+     "arm": "T2b",
+     "abc_d": 1
+    }
+   ]
+  },
+  {
+   "name": "b-aes-2",
+   "num_cores": 4,
+   "timeout_s": 5400,
+   "parallel": 1,
+   "runs": [
+    {
+     "tag": "adb-aes-002",
+     "design": "aes",
+     "platform": "asap7",
+     "period": 325,
+     "vars": {
+      "SYNTH_USE_SYN": 0
+     },
+     "setting": "S0",
+     "kind": "grid",
+     "arm": "T2b",
+     "abc_d": 1
+    },
+    {
+     "tag": "adb-aes-004",
+     "design": "aes",
+     "platform": "asap7",
+     "period": 530,
+     "vars": {
+      "SYNTH_USE_SYN": 0
+     },
+     "setting": "S0",
+     "kind": "grid",
+     "arm": "T2b",
+     "abc_d": 1
+    },
+    {
+     "tag": "adb-aes-006",
+     "design": "aes",
+     "platform": "asap7",
+     "period": 455,
+     "vars": {
+      "SYNTH_USE_SYN": 0,
+      "CORE_UTILIZATION": 55
+     },
+     "setting": "S1",
+     "kind": "grid",
+     "arm": "T2b",
+     "abc_d": 1
+    },
+    {
+     "tag": "adb-aes-008",
+     "design": "aes",
+     "platform": "asap7",
+     "period": 305,
+     "vars": {
+      "SYNTH_USE_SYN": 0,
+      "PLACE_DENSITY": 0.85
+     },
+     "setting": "S2",
+     "kind": "grid",
+     "arm": "T2b",
+     "abc_d": 1
+    },
+    {
+     "tag": "adb-aes-010",
+     "design": "aes",
+     "platform": "asap7",
+     "period": 550,
+     "vars": {
+      "SYNTH_USE_SYN": 0,
+      "PLACE_DENSITY": 0.85
+     },
+     "setting": "S2",
+     "kind": "grid",
+     "arm": "T2b",
+     "abc_d": 1
+    }
+   ]
+  },
+  {
+   "name": "r-aes-gcd",
+   "num_cores": 4,
+   "timeout_s": 5400,
+   "parallel": 1,
+   "runs": [
+    {
+     "tag": "adr-aes-1",
+     "design": "aes",
+     "platform": "asap7",
+     "period": 380,
+     "vars": {},
+     "setting": "S0",
+     "kind": "replay",
+     "arm": "T3",
+     "retime": 1,
+     "replay_of": "e5g-aes-003"
+    },
+    {
+     "tag": "adr-aes-2",
+     "design": "aes",
+     "platform": "asap7",
+     "period": 305,
+     "vars": {
+      "CORE_UTILIZATION": 55
+     },
+     "setting": "S1",
+     "kind": "replay",
+     "arm": "T3",
+     "retime": 1,
+     "replay_of": "e5g-aes-005"
+    },
+    {
+     "tag": "adr-aes-3",
+     "design": "aes",
+     "platform": "asap7",
+     "period": 265,
+     "vars": {},
+     "setting": "S0",
+     "kind": "replay",
+     "arm": "T3",
+     "retime": 1,
+     "replay_of": "e5g-aes-001"
+    },
+    {
+     "tag": "adr-gcd-1",
+     "design": "gcd",
+     "platform": "asap7",
+     "period": 215,
+     "vars": {},
+     "setting": "S0",
+     "kind": "replay",
+     "arm": "T3",
+     "retime": 1,
+     "replay_of": "e5g-gcd-001"
+    },
+    {
+     "tag": "adr-gcd-2",
+     "design": "gcd",
+     "platform": "asap7",
+     "period": 250,
+     "vars": {
+      "CORE_UTILIZATION": 50
+     },
+     "setting": "S1",
+     "kind": "replay",
+     "arm": "T3",
+     "retime": 1,
+     "replay_of": "e5g-gcd-005"
+    },
+    {
+     "tag": "adr-gcd-3",
+     "design": "gcd",
+     "platform": "asap7",
+     "period": 265,
+     "vars": {},
+     "setting": "S0",
+     "kind": "replay",
+     "arm": "T3",
+     "retime": 1,
+     "replay_of": "e5g-gcd-002"
+    }
+   ]
+  },
+  {
+   "name": "p2-gt2n-aes-350",
+   "num_cores": 4,
+   "timeout_s": 7200,
+   "parallel": 1,
+   "runs": [
+    {
+     "tag": "smoke-pilot2-gt2n-aes-350",
+     "design": "aes",
+     "platform": "gt2n",
+     "period": 350,
+     "vars": {},
+     "setting": "S0",
+     "kind": "pilot",
+     "arm": "smoke"
+    }
+   ]
+  },
+  {
+   "name": "p2-gt2n-aes-490",
+   "num_cores": 4,
+   "timeout_s": 7200,
+   "parallel": 1,
+   "runs": [
+    {
+     "tag": "smoke-pilot2-gt2n-aes-490",
+     "design": "aes",
+     "platform": "gt2n",
+     "period": 490,
+     "vars": {},
+     "setting": "S0",
+     "kind": "pilot",
+     "arm": "smoke"
+    }
+   ]
+  },
+  {
+   "name": "p2-gt2n-aes-700",
+   "num_cores": 4,
+   "timeout_s": 7200,
+   "parallel": 1,
+   "runs": [
+    {
+     "tag": "smoke-pilot2-gt2n-aes-700",
+     "design": "aes",
+     "platform": "gt2n",
+     "period": 700,
+     "vars": {},
+     "setting": "S0",
+     "kind": "pilot",
+     "arm": "smoke"
+    }
+   ]
+  },
+  {
+   "name": "s-ibex-1",
+   "num_cores": 4,
+   "timeout_s": 10800,
+   "parallel": 1,
+   "anchor_grid": [
+    {
+     "key": "T2a/sky130hd/ibex",
+     "arm": "T2a",
+     "tag": "ads",
+     "design": "ibex",
+     "platform": "sky130hd",
+     "pilot_tags": [
+      "smoke-pilot2-sky130hd-ibex-8000",
+      "smoke-pilot2-sky130hd-ibex-12800",
+      "smoke-pilot2-sky130hd-ibex-20000"
+     ],
+     "pilot_groups": [
+      "p2-sky130hd-ibex-8000",
+      "p2-sky130hd-ibex-12800",
+      "p2-sky130hd-ibex-20000"
+     ],
+     "settings": [
+      {
+       "setting": "S0",
+       "vars": {},
+       "mult": [
+        0.7,
+        0.85,
+        1.0,
+        1.4
+       ]
+      },
+      {
+       "setting": "S1",
+       "vars": {
+        "CORE_UTILIZATION": 40
+       },
+       "mult": [
+        0.8,
+        1.2,
+        1.45
+       ]
+      },
+      {
+       "setting": "S2",
+       "vars": {
+        "PLACE_DENSITY_LB_ADDON": 0.45
+       },
+       "mult": [
+        0.8,
+        1.2,
+        1.45
+       ]
+      }
+     ],
+     "share": [
+      0,
+      5
+     ],
+     "max_wait_s": 9000,
+     "extra_vars": {}
+    }
+   ]
+  },
+  {
+   "name": "s-ibex-2",
+   "num_cores": 4,
+   "timeout_s": 10800,
+   "parallel": 1,
+   "anchor_grid": [
+    {
+     "key": "T2a/sky130hd/ibex",
+     "arm": "T2a",
+     "tag": "ads",
+     "design": "ibex",
+     "platform": "sky130hd",
+     "pilot_tags": [
+      "smoke-pilot2-sky130hd-ibex-8000",
+      "smoke-pilot2-sky130hd-ibex-12800",
+      "smoke-pilot2-sky130hd-ibex-20000"
+     ],
+     "pilot_groups": [
+      "p2-sky130hd-ibex-8000",
+      "p2-sky130hd-ibex-12800",
+      "p2-sky130hd-ibex-20000"
+     ],
+     "settings": [
+      {
+       "setting": "S0",
+       "vars": {},
+       "mult": [
+        0.7,
+        0.85,
+        1.0,
+        1.4
+       ]
+      },
+      {
+       "setting": "S1",
+       "vars": {
+        "CORE_UTILIZATION": 40
+       },
+       "mult": [
+        0.8,
+        1.2,
+        1.45
+       ]
+      },
+      {
+       "setting": "S2",
+       "vars": {
+        "PLACE_DENSITY_LB_ADDON": 0.45
+       },
+       "mult": [
+        0.8,
+        1.2,
+        1.45
+       ]
+      }
+     ],
+     "share": [
+      1,
+      6
+     ],
+     "max_wait_s": 9000,
+     "extra_vars": {}
+    }
+   ]
+  },
+  {
+   "name": "s-ibex-3",
+   "num_cores": 4,
+   "timeout_s": 10800,
+   "parallel": 1,
+   "anchor_grid": [
+    {
+     "key": "T2a/sky130hd/ibex",
+     "arm": "T2a",
+     "tag": "ads",
+     "design": "ibex",
+     "platform": "sky130hd",
+     "pilot_tags": [
+      "smoke-pilot2-sky130hd-ibex-8000",
+      "smoke-pilot2-sky130hd-ibex-12800",
+      "smoke-pilot2-sky130hd-ibex-20000"
+     ],
+     "pilot_groups": [
+      "p2-sky130hd-ibex-8000",
+      "p2-sky130hd-ibex-12800",
+      "p2-sky130hd-ibex-20000"
+     ],
+     "settings": [
+      {
+       "setting": "S0",
+       "vars": {},
+       "mult": [
+        0.7,
+        0.85,
+        1.0,
+        1.4
+       ]
+      },
+      {
+       "setting": "S1",
+       "vars": {
+        "CORE_UTILIZATION": 40
+       },
+       "mult": [
+        0.8,
+        1.2,
+        1.45
+       ]
+      },
+      {
+       "setting": "S2",
+       "vars": {
+        "PLACE_DENSITY_LB_ADDON": 0.45
+       },
+       "mult": [
+        0.8,
+        1.2,
+        1.45
+       ]
+      }
+     ],
+     "share": [
+      2,
+      7
+     ],
+     "max_wait_s": 9000,
+     "extra_vars": {}
+    }
+   ]
+  },
+  {
+   "name": "s-ibex-4",
+   "num_cores": 4,
+   "timeout_s": 10800,
+   "parallel": 1,
+   "anchor_grid": [
+    {
+     "key": "T2a/sky130hd/ibex",
+     "arm": "T2a",
+     "tag": "ads",
+     "design": "ibex",
+     "platform": "sky130hd",
+     "pilot_tags": [
+      "smoke-pilot2-sky130hd-ibex-8000",
+      "smoke-pilot2-sky130hd-ibex-12800",
+      "smoke-pilot2-sky130hd-ibex-20000"
+     ],
+     "pilot_groups": [
+      "p2-sky130hd-ibex-8000",
+      "p2-sky130hd-ibex-12800",
+      "p2-sky130hd-ibex-20000"
+     ],
+     "settings": [
+      {
+       "setting": "S0",
+       "vars": {},
+       "mult": [
+        0.7,
+        0.85,
+        1.0,
+        1.4
+       ]
+      },
+      {
+       "setting": "S1",
+       "vars": {
+        "CORE_UTILIZATION": 40
+       },
+       "mult": [
+        0.8,
+        1.2,
+        1.45
+       ]
+      },
+      {
+       "setting": "S2",
+       "vars": {
+        "PLACE_DENSITY_LB_ADDON": 0.45
+       },
+       "mult": [
+        0.8,
+        1.2,
+        1.45
+       ]
+      }
+     ],
+     "share": [
+      3,
+      8
+     ],
+     "max_wait_s": 9000,
+     "extra_vars": {}
+    }
+   ]
+  },
+  {
+   "name": "s-ibex-5",
+   "num_cores": 4,
+   "timeout_s": 10800,
+   "parallel": 1,
+   "anchor_grid": [
+    {
+     "key": "T2a/sky130hd/ibex",
+     "arm": "T2a",
+     "tag": "ads",
+     "design": "ibex",
+     "platform": "sky130hd",
+     "pilot_tags": [
+      "smoke-pilot2-sky130hd-ibex-8000",
+      "smoke-pilot2-sky130hd-ibex-12800",
+      "smoke-pilot2-sky130hd-ibex-20000"
+     ],
+     "pilot_groups": [
+      "p2-sky130hd-ibex-8000",
+      "p2-sky130hd-ibex-12800",
+      "p2-sky130hd-ibex-20000"
+     ],
+     "settings": [
+      {
+       "setting": "S0",
+       "vars": {},
+       "mult": [
+        0.7,
+        0.85,
+        1.0,
+        1.4
+       ]
+      },
+      {
+       "setting": "S1",
+       "vars": {
+        "CORE_UTILIZATION": 40
+       },
+       "mult": [
+        0.8,
+        1.2,
+        1.45
+       ]
+      },
+      {
+       "setting": "S2",
+       "vars": {
+        "PLACE_DENSITY_LB_ADDON": 0.45
+       },
+       "mult": [
+        0.8,
+        1.2,
+        1.45
+       ]
+      }
+     ],
+     "share": [
+      4,
+      9
+     ],
+     "max_wait_s": 9000,
+     "extra_vars": {}
+    }
+   ]
+  },
+  {
+   "name": "s-aes-1",
+   "num_cores": 4,
+   "timeout_s": 9000,
+   "parallel": 1,
+   "anchor_grid": [
+    {
+     "key": "T2a/sky130hd/aes",
+     "arm": "T2a",
+     "tag": "ads",
+     "design": "aes",
+     "platform": "sky130hd",
+     "pilot_tags": [
+      "smoke-pilot2-sky130hd-aes-3600",
+      "smoke-pilot2-sky130hd-aes-5760",
+      "smoke-pilot2-sky130hd-aes-9000"
+     ],
+     "pilot_groups": [
+      "p2-sky130hd-aes-3600",
+      "p2-sky130hd-aes-5760",
+      "p2-sky130hd-aes-9000"
+     ],
+     "settings": [
+      {
+       "setting": "S0",
+       "vars": {},
+       "mult": [
+        0.7,
+        0.85,
+        1.0,
+        1.4
+       ]
+      },
+      {
+       "setting": "S1",
+       "vars": {
+        "CORE_UTILIZATION": 20
+       },
+       "mult": [
+        0.8,
+        1.2,
+        1.45
+       ]
+      },
+      {
+       "setting": "S2",
+       "vars": {
+        "PLACE_DENSITY_LB_ADDON": 0.4
+       },
+       "mult": [
+        0.8,
+        1.2,
+        1.45
+       ]
+      }
+     ],
+     "share": [
+      0,
+      4,
+      8
+     ],
+     "max_wait_s": 9000,
+     "extra_vars": {}
+    }
+   ]
+  },
+  {
+   "name": "s-aes-2",
+   "num_cores": 4,
+   "timeout_s": 9000,
+   "parallel": 1,
+   "anchor_grid": [
+    {
+     "key": "T2a/sky130hd/aes",
+     "arm": "T2a",
+     "tag": "ads",
+     "design": "aes",
+     "platform": "sky130hd",
+     "pilot_tags": [
+      "smoke-pilot2-sky130hd-aes-3600",
+      "smoke-pilot2-sky130hd-aes-5760",
+      "smoke-pilot2-sky130hd-aes-9000"
+     ],
+     "pilot_groups": [
+      "p2-sky130hd-aes-3600",
+      "p2-sky130hd-aes-5760",
+      "p2-sky130hd-aes-9000"
+     ],
+     "settings": [
+      {
+       "setting": "S0",
+       "vars": {},
+       "mult": [
+        0.7,
+        0.85,
+        1.0,
+        1.4
+       ]
+      },
+      {
+       "setting": "S1",
+       "vars": {
+        "CORE_UTILIZATION": 20
+       },
+       "mult": [
+        0.8,
+        1.2,
+        1.45
+       ]
+      },
+      {
+       "setting": "S2",
+       "vars": {
+        "PLACE_DENSITY_LB_ADDON": 0.4
+       },
+       "mult": [
+        0.8,
+        1.2,
+        1.45
+       ]
+      }
+     ],
+     "share": [
+      1,
+      5,
+      9
+     ],
+     "max_wait_s": 9000,
+     "extra_vars": {}
+    }
+   ]
+  },
+  {
+   "name": "s-aes-3",
+   "num_cores": 4,
+   "timeout_s": 9000,
+   "parallel": 1,
+   "anchor_grid": [
+    {
+     "key": "T2a/sky130hd/aes",
+     "arm": "T2a",
+     "tag": "ads",
+     "design": "aes",
+     "platform": "sky130hd",
+     "pilot_tags": [
+      "smoke-pilot2-sky130hd-aes-3600",
+      "smoke-pilot2-sky130hd-aes-5760",
+      "smoke-pilot2-sky130hd-aes-9000"
+     ],
+     "pilot_groups": [
+      "p2-sky130hd-aes-3600",
+      "p2-sky130hd-aes-5760",
+      "p2-sky130hd-aes-9000"
+     ],
+     "settings": [
+      {
+       "setting": "S0",
+       "vars": {},
+       "mult": [
+        0.7,
+        0.85,
+        1.0,
+        1.4
+       ]
+      },
+      {
+       "setting": "S1",
+       "vars": {
+        "CORE_UTILIZATION": 20
+       },
+       "mult": [
+        0.8,
+        1.2,
+        1.45
+       ]
+      },
+      {
+       "setting": "S2",
+       "vars": {
+        "PLACE_DENSITY_LB_ADDON": 0.4
+       },
+       "mult": [
+        0.8,
+        1.2,
+        1.45
+       ]
+      }
+     ],
+     "share": [
+      2,
+      6
+     ],
+     "max_wait_s": 9000,
+     "extra_vars": {}
+    }
+   ]
+  },
+  {
+   "name": "s-aes-4",
+   "num_cores": 4,
+   "timeout_s": 9000,
+   "parallel": 1,
+   "anchor_grid": [
+    {
+     "key": "T2a/sky130hd/aes",
+     "arm": "T2a",
+     "tag": "ads",
+     "design": "aes",
+     "platform": "sky130hd",
+     "pilot_tags": [
+      "smoke-pilot2-sky130hd-aes-3600",
+      "smoke-pilot2-sky130hd-aes-5760",
+      "smoke-pilot2-sky130hd-aes-9000"
+     ],
+     "pilot_groups": [
+      "p2-sky130hd-aes-3600",
+      "p2-sky130hd-aes-5760",
+      "p2-sky130hd-aes-9000"
+     ],
+     "settings": [
+      {
+       "setting": "S0",
+       "vars": {},
+       "mult": [
+        0.7,
+        0.85,
+        1.0,
+        1.4
+       ]
+      },
+      {
+       "setting": "S1",
+       "vars": {
+        "CORE_UTILIZATION": 20
+       },
+       "mult": [
+        0.8,
+        1.2,
+        1.45
+       ]
+      },
+      {
+       "setting": "S2",
+       "vars": {
+        "PLACE_DENSITY_LB_ADDON": 0.4
+       },
+       "mult": [
+        0.8,
+        1.2,
+        1.45
+       ]
+      }
+     ],
+     "share": [
+      3,
+      7
+     ],
+     "max_wait_s": 9000,
+     "extra_vars": {}
+    }
+   ]
+  },
+  {
+   "name": "r-ibex",
+   "num_cores": 4,
+   "timeout_s": 5400,
+   "parallel": 1,
+   "runs": [
+    {
+     "tag": "adr-ibex-1",
+     "design": "ibex",
+     "platform": "asap7",
+     "period": 900,
+     "vars": {},
+     "setting": "S0",
+     "kind": "replay",
+     "arm": "T3",
+     "retime": 1,
+     "replay_of": "e5g-ibex-003"
+    },
+    {
+     "tag": "adr-ibex-2",
+     "design": "ibex",
+     "platform": "asap7",
+     "period": 720,
+     "vars": {
+      "PLACE_DENSITY_LB_ADDON": 0.4
+     },
+     "setting": "S2",
+     "kind": "replay",
+     "arm": "T3",
+     "retime": 1,
+     "replay_of": "e5g-ibex-008"
+    },
+    {
+     "tag": "adr-ibex-3",
+     "design": "ibex",
+     "platform": "asap7",
+     "period": 765,
+     "vars": {},
+     "setting": "S0",
+     "kind": "replay",
+     "arm": "T3",
+     "retime": 1,
+     "replay_of": "e5g-ibex-002"
+    }
+   ]
+  },
+  {
+   "name": "b-ibex-1",
+   "num_cores": 4,
+   "timeout_s": 5400,
+   "parallel": 1,
+   "runs": [
+    {
+     "tag": "adb-ibex-001",
+     "design": "ibex",
+     "platform": "asap7",
+     "period": 630,
+     "vars": {},
+     "setting": "S0",
+     "kind": "grid",
+     "arm": "T2b",
+     "abc_d": 1
+    },
+    {
+     "tag": "adb-ibex-004",
+     "design": "ibex",
+     "platform": "asap7",
+     "period": 1260,
+     "vars": {},
+     "setting": "S0",
+     "kind": "grid",
+     "arm": "T2b",
+     "abc_d": 1
+    },
+    {
+     "tag": "adb-ibex-007",
+     "design": "ibex",
+     "platform": "asap7",
+     "period": 1305,
+     "vars": {
+      "CORE_UTILIZATION": 30
+     },
+     "setting": "S1",
+     "kind": "grid",
+     "arm": "T2b",
+     "abc_d": 1
+    },
+    {
+     "tag": "adb-ibex-010",
+     "design": "ibex",
+     "platform": "asap7",
+     "period": 1305,
+     "vars": {
+      "PLACE_DENSITY_LB_ADDON": 0.4
+     },
+     "setting": "S2",
+     "kind": "grid",
+     "arm": "T2b",
+     "abc_d": 1
+    }
+   ]
+  },
+  {
+   "name": "b-ibex-2",
+   "num_cores": 4,
+   "timeout_s": 5400,
+   "parallel": 1,
+   "runs": [
+    {
+     "tag": "adb-ibex-002",
+     "design": "ibex",
+     "platform": "asap7",
+     "period": 765,
+     "vars": {},
+     "setting": "S0",
+     "kind": "grid",
+     "arm": "T2b",
+     "abc_d": 1
+    },
+    {
+     "tag": "adb-ibex-005",
+     "design": "ibex",
+     "platform": "asap7",
+     "period": 720,
+     "vars": {
+      "CORE_UTILIZATION": 30
+     },
+     "setting": "S1",
+     "kind": "grid",
+     "arm": "T2b",
+     "abc_d": 1
+    },
+    {
+     "tag": "adb-ibex-008",
+     "design": "ibex",
+     "platform": "asap7",
+     "period": 720,
+     "vars": {
+      "PLACE_DENSITY_LB_ADDON": 0.4
+     },
+     "setting": "S2",
+     "kind": "grid",
+     "arm": "T2b",
+     "abc_d": 1
+    }
+   ]
+  },
+  {
+   "name": "b-ibex-3",
+   "num_cores": 4,
+   "timeout_s": 5400,
+   "parallel": 1,
+   "runs": [
+    {
+     "tag": "adb-ibex-003",
+     "design": "ibex",
+     "platform": "asap7",
+     "period": 900,
+     "vars": {},
+     "setting": "S0",
+     "kind": "grid",
+     "arm": "T2b",
+     "abc_d": 1
+    },
+    {
+     "tag": "adb-ibex-006",
+     "design": "ibex",
+     "platform": "asap7",
+     "period": 1080,
+     "vars": {
+      "CORE_UTILIZATION": 30
+     },
+     "setting": "S1",
+     "kind": "grid",
+     "arm": "T2b",
+     "abc_d": 1
+    },
+    {
+     "tag": "adb-ibex-009",
+     "design": "ibex",
+     "platform": "asap7",
+     "period": 1080,
+     "vars": {
+      "PLACE_DENSITY_LB_ADDON": 0.4
+     },
+     "setting": "S2",
+     "kind": "grid",
+     "arm": "T2b",
+     "abc_d": 1
+    }
+   ]
+  },
+  {
+   "name": "ks-ibex-1",
+   "num_cores": 4,
+   "timeout_s": 10800,
+   "parallel": 1,
+   "await_chains": [
+    {
+     "key": "T2a/sky130hd/ibex",
+     "design": "ibex",
+     "platform": "sky130hd",
+     "grid_tags": [
+      "ads-ibex-001",
+      "ads-ibex-002",
+      "ads-ibex-003",
+      "ads-ibex-004",
+      "ads-ibex-005",
+      "ads-ibex-006",
+      "ads-ibex-007",
+      "ads-ibex-008",
+      "ads-ibex-009",
+      "ads-ibex-010"
+     ],
+     "grid_groups": [
+      "s-ibex-1",
+      "s-ibex-2",
+      "s-ibex-3",
+      "s-ibex-4",
+      "s-ibex-5"
+     ],
+     "ranks": [
+      1
+     ],
+     "chain_prefix": "adsk-ibex",
+     "arm": "T2a",
+     "max_wait_s": 9000
+    }
+   ]
+  },
+  {
+   "name": "ks-ibex-2",
+   "num_cores": 4,
+   "timeout_s": 10800,
+   "parallel": 1,
+   "await_chains": [
+    {
+     "key": "T2a/sky130hd/ibex",
+     "design": "ibex",
+     "platform": "sky130hd",
+     "grid_tags": [
+      "ads-ibex-001",
+      "ads-ibex-002",
+      "ads-ibex-003",
+      "ads-ibex-004",
+      "ads-ibex-005",
+      "ads-ibex-006",
+      "ads-ibex-007",
+      "ads-ibex-008",
+      "ads-ibex-009",
+      "ads-ibex-010"
+     ],
+     "grid_groups": [
+      "s-ibex-1",
+      "s-ibex-2",
+      "s-ibex-3",
+      "s-ibex-4",
+      "s-ibex-5"
+     ],
+     "ranks": [
+      2
+     ],
+     "chain_prefix": "adsk-ibex",
+     "arm": "T2a",
+     "max_wait_s": 9000
+    }
+   ]
+  },
+  {
+   "name": "ks-ibex-3",
+   "num_cores": 4,
+   "timeout_s": 10800,
+   "parallel": 1,
+   "await_chains": [
+    {
+     "key": "T2a/sky130hd/ibex",
+     "design": "ibex",
+     "platform": "sky130hd",
+     "grid_tags": [
+      "ads-ibex-001",
+      "ads-ibex-002",
+      "ads-ibex-003",
+      "ads-ibex-004",
+      "ads-ibex-005",
+      "ads-ibex-006",
+      "ads-ibex-007",
+      "ads-ibex-008",
+      "ads-ibex-009",
+      "ads-ibex-010"
+     ],
+     "grid_groups": [
+      "s-ibex-1",
+      "s-ibex-2",
+      "s-ibex-3",
+      "s-ibex-4",
+      "s-ibex-5"
+     ],
+     "ranks": [
+      3
+     ],
+     "chain_prefix": "adsk-ibex",
+     "arm": "T2a",
+     "max_wait_s": 9000
+    }
+   ]
+  },
+  {
+   "name": "ks-aes-1",
+   "num_cores": 4,
+   "timeout_s": 9000,
+   "parallel": 1,
+   "await_chains": [
+    {
+     "key": "T2a/sky130hd/aes",
+     "design": "aes",
+     "platform": "sky130hd",
+     "grid_tags": [
+      "ads-aes-001",
+      "ads-aes-002",
+      "ads-aes-003",
+      "ads-aes-004",
+      "ads-aes-005",
+      "ads-aes-006",
+      "ads-aes-007",
+      "ads-aes-008",
+      "ads-aes-009",
+      "ads-aes-010"
+     ],
+     "grid_groups": [
+      "s-aes-1",
+      "s-aes-2",
+      "s-aes-3",
+      "s-aes-4"
+     ],
+     "ranks": [
+      1
+     ],
+     "chain_prefix": "adsk-aes",
+     "arm": "T2a",
+     "max_wait_s": 9000
+    }
+   ]
+  },
+  {
+   "name": "ks-aes-2",
+   "num_cores": 4,
+   "timeout_s": 9000,
+   "parallel": 1,
+   "await_chains": [
+    {
+     "key": "T2a/sky130hd/aes",
+     "design": "aes",
+     "platform": "sky130hd",
+     "grid_tags": [
+      "ads-aes-001",
+      "ads-aes-002",
+      "ads-aes-003",
+      "ads-aes-004",
+      "ads-aes-005",
+      "ads-aes-006",
+      "ads-aes-007",
+      "ads-aes-008",
+      "ads-aes-009",
+      "ads-aes-010"
+     ],
+     "grid_groups": [
+      "s-aes-1",
+      "s-aes-2",
+      "s-aes-3",
+      "s-aes-4"
+     ],
+     "ranks": [
+      2
+     ],
+     "chain_prefix": "adsk-aes",
+     "arm": "T2a",
+     "max_wait_s": 9000
+    }
+   ]
+  },
+  {
+   "name": "ks-aes-3",
+   "num_cores": 4,
+   "timeout_s": 9000,
+   "parallel": 1,
+   "await_chains": [
+    {
+     "key": "T2a/sky130hd/aes",
+     "design": "aes",
+     "platform": "sky130hd",
+     "grid_tags": [
+      "ads-aes-001",
+      "ads-aes-002",
+      "ads-aes-003",
+      "ads-aes-004",
+      "ads-aes-005",
+      "ads-aes-006",
+      "ads-aes-007",
+      "ads-aes-008",
+      "ads-aes-009",
+      "ads-aes-010"
+     ],
+     "grid_groups": [
+      "s-aes-1",
+      "s-aes-2",
+      "s-aes-3",
+      "s-aes-4"
+     ],
+     "ranks": [
+      3
+     ],
+     "chain_prefix": "adsk-aes",
+     "arm": "T2a",
+     "max_wait_s": 9000
+    }
+   ]
+  },
+  {
+   "name": "g-gcd",
+   "num_cores": 4,
+   "timeout_s": 3600,
+   "parallel": 1,
+   "runs": [
+    {
+     "tag": "adg-gcd-001",
+     "design": "gcd",
+     "platform": "gt2n",
+     "period": 180,
+     "vars": {},
+     "setting": "S0",
+     "kind": "grid",
+     "arm": "DG",
+     "abc_d": 0
+    },
+    {
+     "tag": "adg-gcd-002",
+     "design": "gcd",
+     "platform": "gt2n",
+     "period": 220,
+     "vars": {},
+     "setting": "S0",
+     "kind": "grid",
+     "arm": "DG",
+     "abc_d": 0
+    },
+    {
+     "tag": "adg-gcd-003",
+     "design": "gcd",
+     "platform": "gt2n",
+     "period": 260,
+     "vars": {},
+     "setting": "S0",
+     "kind": "grid",
+     "arm": "DG",
+     "abc_d": 0
+    },
+    {
+     "tag": "adg-gcd-004",
+     "design": "gcd",
+     "platform": "gt2n",
+     "period": 365,
+     "vars": {},
+     "setting": "S0",
+     "kind": "grid",
+     "arm": "DG",
+     "abc_d": 0
+    },
+    {
+     "tag": "adg-gcd-005",
+     "design": "gcd",
+     "platform": "gt2n",
+     "period": 210,
+     "vars": {
+      "CORE_UTILIZATION": 10
+     },
+     "setting": "S1",
+     "kind": "grid",
+     "arm": "DG",
+     "abc_d": 0
+    },
+    {
+     "tag": "adg-gcd-006",
+     "design": "gcd",
+     "platform": "gt2n",
+     "period": 310,
+     "vars": {
+      "CORE_UTILIZATION": 10
+     },
+     "setting": "S1",
+     "kind": "grid",
+     "arm": "DG",
+     "abc_d": 0
+    },
+    {
+     "tag": "adg-gcd-007",
+     "design": "gcd",
+     "platform": "gt2n",
+     "period": 375,
+     "vars": {
+      "CORE_UTILIZATION": 10
+     },
+     "setting": "S1",
+     "kind": "grid",
+     "arm": "DG",
+     "abc_d": 0
+    },
+    {
+     "tag": "adg-gcd-008",
+     "design": "gcd",
+     "platform": "gt2n",
+     "period": 210,
+     "vars": {
+      "PLACE_DENSITY": 0.9
+     },
+     "setting": "S2",
+     "kind": "grid",
+     "arm": "DG",
+     "abc_d": 0
+    },
+    {
+     "tag": "adg-gcd-009",
+     "design": "gcd",
+     "platform": "gt2n",
+     "period": 310,
+     "vars": {
+      "PLACE_DENSITY": 0.9
+     },
+     "setting": "S2",
+     "kind": "grid",
+     "arm": "DG",
+     "abc_d": 0
+    },
+    {
+     "tag": "adg-gcd-010",
+     "design": "gcd",
+     "platform": "gt2n",
+     "period": 375,
+     "vars": {
+      "PLACE_DENSITY": 0.9
+     },
+     "setting": "S2",
+     "kind": "grid",
+     "arm": "DG",
+     "abc_d": 0
+    }
+   ],
+   "await_chains": [
+    {
+     "key": "DG/gt2n/gcd",
+     "design": "gcd",
+     "platform": "gt2n",
+     "grid_tags": [
+      "adg-gcd-001",
+      "adg-gcd-002",
+      "adg-gcd-003",
+      "adg-gcd-004",
+      "adg-gcd-005",
+      "adg-gcd-006",
+      "adg-gcd-007",
+      "adg-gcd-008",
+      "adg-gcd-009",
+      "adg-gcd-010"
+     ],
+     "grid_groups": [],
+     "ranks": [
+      1,
+      2,
+      3
+     ],
+     "chain_prefix": "adgk-gcd",
+     "arm": "DG",
+     "max_wait_s": 9000
+    }
+   ]
+  },
+  {
+   "name": "g-aes-1",
+   "num_cores": 4,
+   "timeout_s": 9000,
+   "parallel": 1,
+   "anchor_grid": [
+    {
+     "key": "DG/gt2n/aes",
+     "arm": "DG",
+     "tag": "adg",
+     "design": "aes",
+     "platform": "gt2n",
+     "pilot_tags": [
+      "smoke-pilot2-gt2n-aes-350",
+      "smoke-pilot2-gt2n-aes-490",
+      "smoke-pilot2-gt2n-aes-700"
+     ],
+     "pilot_groups": [
+      "p2-gt2n-aes-350",
+      "p2-gt2n-aes-490",
+      "p2-gt2n-aes-700"
+     ],
+     "settings": [
+      {
+       "setting": "S0",
+       "vars": {},
+       "mult": [
+        0.7,
+        0.85,
+        1.0,
+        1.4
+       ]
+      },
+      {
+       "setting": "S1",
+       "vars": {
+        "CORE_UTILIZATION": 15
+       },
+       "mult": [
+        0.8,
+        1.2,
+        1.45
+       ]
+      },
+      {
+       "setting": "S2",
+       "vars": {
+        "PLACE_DENSITY_LB_ADDON": 0.4
+       },
+       "mult": [
+        0.8,
+        1.2,
+        1.45
+       ]
+      }
+     ],
+     "share": [
+      0,
+      4,
+      8
+     ],
+     "max_wait_s": 9000,
+     "extra_vars": {}
+    }
+   ]
+  },
+  {
+   "name": "g-aes-2",
+   "num_cores": 4,
+   "timeout_s": 9000,
+   "parallel": 1,
+   "anchor_grid": [
+    {
+     "key": "DG/gt2n/aes",
+     "arm": "DG",
+     "tag": "adg",
+     "design": "aes",
+     "platform": "gt2n",
+     "pilot_tags": [
+      "smoke-pilot2-gt2n-aes-350",
+      "smoke-pilot2-gt2n-aes-490",
+      "smoke-pilot2-gt2n-aes-700"
+     ],
+     "pilot_groups": [
+      "p2-gt2n-aes-350",
+      "p2-gt2n-aes-490",
+      "p2-gt2n-aes-700"
+     ],
+     "settings": [
+      {
+       "setting": "S0",
+       "vars": {},
+       "mult": [
+        0.7,
+        0.85,
+        1.0,
+        1.4
+       ]
+      },
+      {
+       "setting": "S1",
+       "vars": {
+        "CORE_UTILIZATION": 15
+       },
+       "mult": [
+        0.8,
+        1.2,
+        1.45
+       ]
+      },
+      {
+       "setting": "S2",
+       "vars": {
+        "PLACE_DENSITY_LB_ADDON": 0.4
+       },
+       "mult": [
+        0.8,
+        1.2,
+        1.45
+       ]
+      }
+     ],
+     "share": [
+      1,
+      5,
+      9
+     ],
+     "max_wait_s": 9000,
+     "extra_vars": {}
+    }
+   ]
+  },
+  {
+   "name": "g-aes-3",
+   "num_cores": 4,
+   "timeout_s": 9000,
+   "parallel": 1,
+   "anchor_grid": [
+    {
+     "key": "DG/gt2n/aes",
+     "arm": "DG",
+     "tag": "adg",
+     "design": "aes",
+     "platform": "gt2n",
+     "pilot_tags": [
+      "smoke-pilot2-gt2n-aes-350",
+      "smoke-pilot2-gt2n-aes-490",
+      "smoke-pilot2-gt2n-aes-700"
+     ],
+     "pilot_groups": [
+      "p2-gt2n-aes-350",
+      "p2-gt2n-aes-490",
+      "p2-gt2n-aes-700"
+     ],
+     "settings": [
+      {
+       "setting": "S0",
+       "vars": {},
+       "mult": [
+        0.7,
+        0.85,
+        1.0,
+        1.4
+       ]
+      },
+      {
+       "setting": "S1",
+       "vars": {
+        "CORE_UTILIZATION": 15
+       },
+       "mult": [
+        0.8,
+        1.2,
+        1.45
+       ]
+      },
+      {
+       "setting": "S2",
+       "vars": {
+        "PLACE_DENSITY_LB_ADDON": 0.4
+       },
+       "mult": [
+        0.8,
+        1.2,
+        1.45
+       ]
+      }
+     ],
+     "share": [
+      2,
+      6
+     ],
+     "max_wait_s": 9000,
+     "extra_vars": {}
+    }
+   ]
+  },
+  {
+   "name": "g-aes-4",
+   "num_cores": 4,
+   "timeout_s": 9000,
+   "parallel": 1,
+   "anchor_grid": [
+    {
+     "key": "DG/gt2n/aes",
+     "arm": "DG",
+     "tag": "adg",
+     "design": "aes",
+     "platform": "gt2n",
+     "pilot_tags": [
+      "smoke-pilot2-gt2n-aes-350",
+      "smoke-pilot2-gt2n-aes-490",
+      "smoke-pilot2-gt2n-aes-700"
+     ],
+     "pilot_groups": [
+      "p2-gt2n-aes-350",
+      "p2-gt2n-aes-490",
+      "p2-gt2n-aes-700"
+     ],
+     "settings": [
+      {
+       "setting": "S0",
+       "vars": {},
+       "mult": [
+        0.7,
+        0.85,
+        1.0,
+        1.4
+       ]
+      },
+      {
+       "setting": "S1",
+       "vars": {
+        "CORE_UTILIZATION": 15
+       },
+       "mult": [
+        0.8,
+        1.2,
+        1.45
+       ]
+      },
+      {
+       "setting": "S2",
+       "vars": {
+        "PLACE_DENSITY_LB_ADDON": 0.4
+       },
+       "mult": [
+        0.8,
+        1.2,
+        1.45
+       ]
+      }
+     ],
+     "share": [
+      3,
+      7
+     ],
+     "max_wait_s": 9000,
+     "extra_vars": {}
+    }
+   ]
+  },
+  {
+   "name": "kg-aes-1",
+   "num_cores": 4,
+   "timeout_s": 9000,
+   "parallel": 1,
+   "await_chains": [
+    {
+     "key": "DG/gt2n/aes",
+     "design": "aes",
+     "platform": "gt2n",
+     "grid_tags": [
+      "adg-aes-001",
+      "adg-aes-002",
+      "adg-aes-003",
+      "adg-aes-004",
+      "adg-aes-005",
+      "adg-aes-006",
+      "adg-aes-007",
+      "adg-aes-008",
+      "adg-aes-009",
+      "adg-aes-010"
+     ],
+     "grid_groups": [
+      "g-aes-1",
+      "g-aes-2",
+      "g-aes-3",
+      "g-aes-4"
+     ],
+     "ranks": [
+      1
+     ],
+     "chain_prefix": "adgk-aes",
+     "arm": "DG",
+     "max_wait_s": 9000
+    }
+   ]
+  },
+  {
+   "name": "kg-aes-2",
+   "num_cores": 4,
+   "timeout_s": 9000,
+   "parallel": 1,
+   "await_chains": [
+    {
+     "key": "DG/gt2n/aes",
+     "design": "aes",
+     "platform": "gt2n",
+     "grid_tags": [
+      "adg-aes-001",
+      "adg-aes-002",
+      "adg-aes-003",
+      "adg-aes-004",
+      "adg-aes-005",
+      "adg-aes-006",
+      "adg-aes-007",
+      "adg-aes-008",
+      "adg-aes-009",
+      "adg-aes-010"
+     ],
+     "grid_groups": [
+      "g-aes-1",
+      "g-aes-2",
+      "g-aes-3",
+      "g-aes-4"
+     ],
+     "ranks": [
+      2
+     ],
+     "chain_prefix": "adgk-aes",
+     "arm": "DG",
+     "max_wait_s": 9000
+    }
+   ]
+  },
+  {
+   "name": "kg-aes-3",
+   "num_cores": 4,
+   "timeout_s": 9000,
+   "parallel": 1,
+   "await_chains": [
+    {
+     "key": "DG/gt2n/aes",
+     "design": "aes",
+     "platform": "gt2n",
+     "grid_tags": [
+      "adg-aes-001",
+      "adg-aes-002",
+      "adg-aes-003",
+      "adg-aes-004",
+      "adg-aes-005",
+      "adg-aes-006",
+      "adg-aes-007",
+      "adg-aes-008",
+      "adg-aes-009",
+      "adg-aes-010"
+     ],
+     "grid_groups": [
+      "g-aes-1",
+      "g-aes-2",
+      "g-aes-3",
+      "g-aes-4"
+     ],
+     "ranks": [
+      3
+     ],
+     "chain_prefix": "adgk-aes",
+     "arm": "DG",
+     "max_wait_s": 9000
+    }
+   ]
+  },
+  {
+   "name": "c-gcd",
+   "num_cores": 4,
+   "timeout_s": 3600,
+   "parallel": 2,
+   "runs": [
+    {
+     "tag": "adc-gcd-001",
+     "design": "gcd",
+     "platform": "asap7",
+     "period": 215,
+     "vars": {
+      "SYNTH_USE_SYN": 0
+     },
+     "setting": "S0",
+     "kind": "grid",
+     "arm": "C",
+     "abc_d": 0
+    },
+    {
+     "tag": "adc-gcd-002",
+     "design": "gcd",
+     "platform": "asap7",
+     "period": 265,
+     "vars": {
+      "SYNTH_USE_SYN": 0
+     },
+     "setting": "S0",
+     "kind": "grid",
+     "arm": "C",
+     "abc_d": 0
+    },
+    {
+     "tag": "adc-gcd-003",
+     "design": "gcd",
+     "platform": "asap7",
+     "period": 310,
+     "vars": {
+      "SYNTH_USE_SYN": 0
+     },
+     "setting": "S0",
+     "kind": "grid",
+     "arm": "C",
+     "abc_d": 0
+    },
+    {
+     "tag": "adc-gcd-004",
+     "design": "gcd",
+     "platform": "asap7",
+     "period": 435,
+     "vars": {
+      "SYNTH_USE_SYN": 0
+     },
+     "setting": "S0",
+     "kind": "grid",
+     "arm": "C",
+     "abc_d": 0
+    },
+    {
+     "tag": "adc-gcd-005",
+     "design": "gcd",
+     "platform": "asap7",
+     "period": 250,
+     "vars": {
+      "SYNTH_USE_SYN": 0,
+      "CORE_UTILIZATION": 50
+     },
+     "setting": "S1",
+     "kind": "grid",
+     "arm": "C",
+     "abc_d": 0
+    },
+    {
+     "tag": "adc-gcd-006",
+     "design": "gcd",
+     "platform": "asap7",
+     "period": 370,
+     "vars": {
+      "SYNTH_USE_SYN": 0,
+      "CORE_UTILIZATION": 50
+     },
+     "setting": "S1",
+     "kind": "grid",
+     "arm": "C",
+     "abc_d": 0
+    },
+    {
+     "tag": "adc-gcd-007",
+     "design": "gcd",
+     "platform": "asap7",
+     "period": 450,
+     "vars": {
+      "SYNTH_USE_SYN": 0,
+      "CORE_UTILIZATION": 50
+     },
+     "setting": "S1",
+     "kind": "grid",
+     "arm": "C",
+     "abc_d": 0
+    },
+    {
+     "tag": "adc-gcd-008",
+     "design": "gcd",
+     "platform": "asap7",
+     "period": 250,
+     "vars": {
+      "SYNTH_USE_SYN": 0,
+      "PLACE_DENSITY": 0.9
+     },
+     "setting": "S2",
+     "kind": "grid",
+     "arm": "C",
+     "abc_d": 0
+    },
+    {
+     "tag": "adc-gcd-009",
+     "design": "gcd",
+     "platform": "asap7",
+     "period": 370,
+     "vars": {
+      "SYNTH_USE_SYN": 0,
+      "PLACE_DENSITY": 0.9
+     },
+     "setting": "S2",
+     "kind": "grid",
+     "arm": "C",
+     "abc_d": 0
+    },
+    {
+     "tag": "adc-gcd-010",
+     "design": "gcd",
+     "platform": "asap7",
+     "period": 450,
+     "vars": {
+      "SYNTH_USE_SYN": 0,
+      "PLACE_DENSITY": 0.9
+     },
+     "setting": "S2",
+     "kind": "grid",
+     "arm": "C",
+     "abc_d": 0
+    }
+   ]
+  },
+  {
+   "name": "c-aes",
+   "num_cores": 4,
+   "timeout_s": 5400,
+   "parallel": 1,
+   "runs": [
+    {
+     "tag": "adc-aes-001",
+     "design": "aes",
+     "platform": "asap7",
+     "period": 265,
+     "vars": {
+      "SYNTH_USE_SYN": 0
+     },
+     "setting": "S0",
+     "kind": "grid",
+     "arm": "C",
+     "abc_d": 0
+    },
+    {
+     "tag": "adc-aes-002",
+     "design": "aes",
+     "platform": "asap7",
+     "period": 325,
+     "vars": {
+      "SYNTH_USE_SYN": 0
+     },
+     "setting": "S0",
+     "kind": "grid",
+     "arm": "C",
+     "abc_d": 0
+    },
+    {
+     "tag": "adc-aes-003",
+     "design": "aes",
+     "platform": "asap7",
+     "period": 380,
+     "vars": {
+      "SYNTH_USE_SYN": 0
+     },
+     "setting": "S0",
+     "kind": "grid",
+     "arm": "C",
+     "abc_d": 0
+    },
+    {
+     "tag": "adc-aes-004",
+     "design": "aes",
+     "platform": "asap7",
+     "period": 530,
+     "vars": {
+      "SYNTH_USE_SYN": 0
+     },
+     "setting": "S0",
+     "kind": "grid",
+     "arm": "C",
+     "abc_d": 0
+    },
+    {
+     "tag": "adc-aes-005",
+     "design": "aes",
+     "platform": "asap7",
+     "period": 305,
+     "vars": {
+      "SYNTH_USE_SYN": 0,
+      "CORE_UTILIZATION": 55
+     },
+     "setting": "S1",
+     "kind": "grid",
+     "arm": "C",
+     "abc_d": 0
+    },
+    {
+     "tag": "adc-aes-006",
+     "design": "aes",
+     "platform": "asap7",
+     "period": 455,
+     "vars": {
+      "SYNTH_USE_SYN": 0,
+      "CORE_UTILIZATION": 55
+     },
+     "setting": "S1",
+     "kind": "grid",
+     "arm": "C",
+     "abc_d": 0
+    },
+    {
+     "tag": "adc-aes-007",
+     "design": "aes",
+     "platform": "asap7",
+     "period": 550,
+     "vars": {
+      "SYNTH_USE_SYN": 0,
+      "CORE_UTILIZATION": 55
+     },
+     "setting": "S1",
+     "kind": "grid",
+     "arm": "C",
+     "abc_d": 0
+    },
+    {
+     "tag": "adc-aes-008",
+     "design": "aes",
+     "platform": "asap7",
+     "period": 305,
+     "vars": {
+      "SYNTH_USE_SYN": 0,
+      "PLACE_DENSITY": 0.85
+     },
+     "setting": "S2",
+     "kind": "grid",
+     "arm": "C",
+     "abc_d": 0
+    },
+    {
+     "tag": "adc-aes-009",
+     "design": "aes",
+     "platform": "asap7",
+     "period": 455,
+     "vars": {
+      "SYNTH_USE_SYN": 0,
+      "PLACE_DENSITY": 0.85
+     },
+     "setting": "S2",
+     "kind": "grid",
+     "arm": "C",
+     "abc_d": 0
+    },
+    {
+     "tag": "adc-aes-010",
+     "design": "aes",
+     "platform": "asap7",
+     "period": 550,
+     "vars": {
+      "SYNTH_USE_SYN": 0,
+      "PLACE_DENSITY": 0.85
+     },
+     "setting": "S2",
+     "kind": "grid",
+     "arm": "C",
+     "abc_d": 0
+    }
+   ]
+  }
+ ]
+}
