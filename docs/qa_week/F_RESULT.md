@@ -150,6 +150,8 @@ Landed so far (each chain: every clock tried, pass/fail; units as above):
 | config | chain after the replay | outcome |
 |---|---|---|
 | ee016 | 510 fail (−1.3), **515 fail (−35.3; own claim 550.3)** | ends with no passing rebuild near the claim: the flow is not monotonic in the clock. Only the replay passed, at the evaluation clock 560.5 with the flow asked for 400 |
+| ee008 | 535 fail (setup −2.1, hold −0.8), **540: setup +10.4 (own claim 529.6) but hold −0.27** | ends with no pass under the registered judge (setup + hold). Judged on setup alone, it would keep 540 ps, 1.8 % above its claim |
+| oa-aes-s130 | 3.85 fail (−0.171); 4.05: flow completed but its result was lost to a path bug in the continuation phase (F_LOG.md) | rerun in batch r01c |
 
 (E5's convention counts the replay's own target as the kept clock where the replay met timing; for EDA-env that
 target is the evaluation clock, not the clock the flow was asked for, so kept clocks are shown as chains here.)
