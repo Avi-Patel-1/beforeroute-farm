@@ -1,0 +1,61 @@
+--- a/tools/AutoTuner/src/autotuner/utils.py
++++ b/tools/AutoTuner/src/autotuner/utils.py
+@@ -89,15 +89,30 @@
+     return (score, effective_clk_period, num_drc, metrics["die_area"])
+ 
+ 
++def _sdc_number(sdc, name):
++    """Value of a literal `set <name> <number>` line in an SDC, or None."""
++    match = re.search(rf"^set {name}\s+([0-9.eE+-]+)\s*$", sdc, flags=re.M)
++    return float(match.group(1)) if match else None
++
++
+ def write_sdc(variables, path, sdc_original, constraints_sdc):
+     """
+     Create a SDC file with parameters for current tuning iteration.
++
++    I/O budgets written as `clk_period * clk_io_pct` are held at their value at
++    the SDC's own period P0: tuning CLK_PERIOD to P rewrites clk_io_pct to
++    clk_io_pct * P0 / P, so the tuned knob moves the clock, not the I/O delays.
++    IO_DELAY (an absolute delay) sets clk_io_pct = IO_DELAY / P when the SDC
++    has no `set io_delay` line.
+     """
+     # Handle case where the reference file does not exist
+     if sdc_original == "":
+         print("[ERROR TUN-0020] No SDC reference file provided.")
+         sys.exit(1)
+     new_file = sdc_original
++    period0 = _sdc_number(sdc_original, "clk_period")
++    io_pct0 = _sdc_number(sdc_original, "clk_io_pct")
++    period = float(variables.get("CLK_PERIOD", period0 or 0))
+     for key, value in variables.items():
+         if key == "CLK_PERIOD":
+             if new_file.find("set clk_period") != -1:
+@@ -109,6 +124,13 @@
+                     r"-period [0-9\.]+ (.*)", f"-period {value} \\1", new_file
+                 )
+                 new_file = re.sub(r"-waveform [{}\s0-9\.]+[\s|\n]", "", new_file)
++            if period0 and io_pct0 is not None and "IO_DELAY" not in variables:
++                new_file = re.sub(
++                    r"^set clk_io_pct .*$",
++                    f"set clk_io_pct {io_pct0 * period0 / float(value):.8g}",
++                    new_file,
++                    flags=re.M,
++                )
+         elif key == "UNCERTAINTY":
+             if new_file.find("set uncertainty") != -1:
+                 new_file = re.sub(
+@@ -123,6 +145,13 @@
+                 new_file = re.sub(
+                     r"set io_delay .*\n(.*)", f"set io_delay {value}\n\\1", new_file
+                 )
++            elif io_pct0 is not None and period:
++                new_file = re.sub(
++                    r"^set clk_io_pct .*$",
++                    f"set clk_io_pct {float(value) / period:.8g}",
++                    new_file,
++                    flags=re.M,
++                )
+             else:
+                 new_file += f"\nset io_delay {value}\n"
+         else:
