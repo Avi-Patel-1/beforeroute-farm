@@ -1,0 +1,2409 @@
+{
+ "n_runs": 141,
+ "T2a": {
+  "label": "T2a sky130hd grid",
+  "n_runs": 30,
+  "n_with_claim": 30,
+  "settings": {
+   "{\"design\": \"aes\", \"platform\": \"sky130hd\", \"vars\": {}}": {
+    "F": 4602.489715293888,
+    "how": "interpolated"
+   },
+   "{\"design\": \"aes\", \"platform\": \"sky130hd\", \"vars\": {\"CORE_UTILIZATION\": 20}}": {
+    "F": 3618.9845017120206,
+    "how": "interpolated"
+   },
+   "{\"design\": \"aes\", \"platform\": \"sky130hd\", \"vars\": {\"PLACE_DENSITY_LB_ADDON\": 0.4}}": {
+    "F": 5233.664509422222,
+    "how": "interpolated"
+   },
+   "{\"design\": \"gcd\", \"platform\": \"sky130hd\", \"vars\": {}}": {
+    "F": 2519.8115018510634,
+    "how": "interpolated"
+   },
+   "{\"design\": \"gcd\", \"platform\": \"sky130hd\", \"vars\": {\"CORE_UTILIZATION\": 23}}": {
+    "F": 2831.2119005008253,
+    "how": "interpolated"
+   },
+   "{\"design\": \"gcd\", \"platform\": \"sky130hd\", \"vars\": {\"PLACE_DENSITY\": 0.9}}": {
+    "F": 2752.8962691843776,
+    "how": "interpolated"
+   },
+   "{\"design\": \"ibex\", \"platform\": \"sky130hd\", \"vars\": {}}": {
+    "F": 9868.065731295477,
+    "how": "interpolated"
+   },
+   "{\"design\": \"ibex\", \"platform\": \"sky130hd\", \"vars\": {\"CORE_UTILIZATION\": 40}}": {
+    "F": 10541.690504360937,
+    "how": "interpolated"
+   },
+   "{\"design\": \"ibex\", \"platform\": \"sky130hd\", \"vars\": {\"PLACE_DENSITY_LB_ADDON\": 0.45}}": {
+    "F": 11062.20322319604,
+    "how": "interpolated"
+   }
+  },
+  "interpolated_settings": 9,
+  "law": {
+   "s_minus": 0.6007293173212792,
+   "n_minus": 15,
+   "s_plus": 0.5789184562078364,
+   "n_plus": 15
+  },
+  "per_design": {
+   "aes": {
+    "s_minus": 0.7477265053087904,
+    "n_minus": 6,
+    "s_plus": 0.6746671840990709,
+    "n_plus": 4
+   },
+   "gcd": {
+    "s_minus": 0.3976496355104399,
+    "n_minus": 4,
+    "s_plus": 0.4372002277828934,
+    "n_plus": 6
+   },
+   "ibex": {
+    "s_minus": 0.58132018857462,
+    "n_minus": 5,
+    "s_plus": 0.6047795499775572,
+    "n_plus": 5
+   }
+  },
+  "bins": {
+   "tight (<0.9)": {
+    "n": 11,
+    "median": -0.1498124885762861
+   },
+   "near (0.9-1.1)": {
+    "n": 7,
+    "median": 0.00016708953663407803
+   },
+   "loose (1.1-1.5)": {
+    "n": 11,
+    "median": 0.14336236901964777
+   },
+   "very loose (>1.5)": {
+    "n": 1,
+    "median": 0.45570394056890956
+   }
+  },
+  "points": [
+   {
+    "tag": "ads-aes-001",
+    "design": "aes",
+    "key": "{\"design\": \"aes\", \"platform\": \"sky130hd\", \"vars\": {}}",
+    "F": 4602.489715293888,
+    "r": 0.6376983288516893,
+    "e": -0.20203124239562015,
+    "port": false
+   },
+   {
+    "tag": "ads-aes-002",
+    "design": "aes",
+    "key": "{\"design\": \"aes\", \"platform\": \"sky130hd\", \"vars\": {}}",
+    "F": 4602.489715293888,
+    "r": 0.7734943954725771,
+    "e": -0.1971147729628242,
+    "port": true
+   },
+   {
+    "tag": "ads-aes-003",
+    "design": "aes",
+    "key": "{\"design\": \"aes\", \"platform\": \"sky130hd\", \"vars\": {}}",
+    "F": 4602.489715293888,
+    "r": 0.9103768306264322,
+    "e": -0.06439095655316729,
+    "port": false
+   },
+   {
+    "tag": "ads-aes-004",
+    "design": "aes",
+    "key": "{\"design\": \"aes\", \"platform\": \"sky130hd\", \"vars\": {}}",
+    "F": 4602.489715293888,
+    "r": 1.2743102891704114,
+    "e": 0.19708187107772632,
+    "port": false
+   },
+   {
+    "tag": "ads-aes-005",
+    "design": "aes",
+    "key": "{\"design\": \"aes\", \"platform\": \"sky130hd\", \"vars\": {\"CORE_UTILIZATION\": 20}}",
+    "F": 3618.9845017120206,
+    "r": 0.925674038784976,
+    "e": -0.05782857086373723,
+    "port": false
+   },
+   {
+    "tag": "ads-aes-006",
+    "design": "aes",
+    "key": "{\"design\": \"aes\", \"platform\": \"sky130hd\", \"vars\": {\"CORE_UTILIZATION\": 20}}",
+    "F": 3618.9845017120206,
+    "r": 1.3898926612204268,
+    "e": 0.30335208613594067,
+    "port": false
+   },
+   {
+    "tag": "ads-aes-007",
+    "design": "aes",
+    "key": "{\"design\": \"aes\", \"platform\": \"sky130hd\", \"vars\": {\"CORE_UTILIZATION\": 20}}",
+    "F": 3618.9845017120206,
+    "r": 1.6786476971996207,
+    "e": 0.45570394056890956,
+    "port": false
+   },
+   {
+    "tag": "ads-aes-008",
+    "design": "aes",
+    "key": "{\"design\": \"aes\", \"platform\": \"sky130hd\", \"vars\": {\"PLACE_DENSITY_LB_ADDON\": 0.4}}",
+    "F": 5233.664509422222,
+    "r": 0.6400868825215983,
+    "e": -0.3243325028507825,
+    "port": false
+   },
+   {
+    "tag": "ads-aes-009",
+    "design": "aes",
+    "key": "{\"design\": \"aes\", \"platform\": \"sky130hd\", \"vars\": {\"PLACE_DENSITY_LB_ADDON\": 0.4}}",
+    "F": 5233.664509422222,
+    "r": 0.9610856773383998,
+    "e": 0.00016708953663407803,
+    "port": false
+   },
+   {
+    "tag": "ads-aes-010",
+    "design": "aes",
+    "key": "{\"design\": \"aes\", \"platform\": \"sky130hd\", \"vars\": {\"PLACE_DENSITY_LB_ADDON\": 0.4}}",
+    "F": 5233.664509422222,
+    "r": 1.1607545705428983,
+    "e": -0.000690244744522478,
+    "port": false
+   },
+   {
+    "tag": "ads-gcd-001",
+    "design": "gcd",
+    "key": "{\"design\": \"gcd\", \"platform\": \"sky130hd\", \"vars\": {}}",
+    "F": 2519.8115018510634,
+    "r": 0.7321976261496765,
+    "e": -0.07729407604814373,
+    "port": false
+   },
+   {
+    "tag": "ads-gcd-002",
+    "design": "gcd",
+    "key": "{\"design\": \"gcd\", \"platform\": \"sky130hd\", \"vars\": {}}",
+    "F": 2519.8115018510634,
+    "r": 0.8889553835096344,
+    "e": -0.04482061525955326,
+    "port": true
+   },
+   {
+    "tag": "ads-gcd-003",
+    "design": "gcd",
+    "key": "{\"design\": \"gcd\", \"platform\": \"sky130hd\", \"vars\": {}}",
+    "F": 2519.8115018510634,
+    "r": 1.0457131408695923,
+    "e": 0.018451061960302433,
+    "port": true
+   },
+   {
+    "tag": "ads-gcd-004",
+    "design": "gcd",
+    "key": "{\"design\": \"gcd\", \"platform\": \"sky130hd\", \"vars\": {}}",
+    "F": 2519.8115018510634,
+    "r": 1.464395252299353,
+    "e": 0.25860604956769195,
+    "port": false
+   },
+   {
+    "tag": "ads-gcd-005",
+    "design": "gcd",
+    "key": "{\"design\": \"gcd\", \"platform\": \"sky130hd\", \"vars\": {\"CORE_UTILIZATION\": 23}}",
+    "F": 2831.2119005008253,
+    "r": 0.7452638919844724,
+    "e": -0.1498124885762861,
+    "port": true
+   },
+   {
+    "tag": "ads-gcd-006",
+    "design": "gcd",
+    "key": "{\"design\": \"gcd\", \"platform\": \"sky130hd\", \"vars\": {\"CORE_UTILIZATION\": 23}}",
+    "F": 2831.2119005008253,
+    "r": 1.1161298097966506,
+    "e": 0.06829693653977989,
+    "port": true
+   },
+   {
+    "tag": "ads-gcd-007",
+    "design": "gcd",
+    "key": "{\"design\": \"gcd\", \"platform\": \"sky130hd\", \"vars\": {\"CORE_UTILIZATION\": 23}}",
+    "F": 2831.2119005008253,
+    "r": 1.3492455295643055,
+    "e": 0.10992116112683879,
+    "port": true
+   },
+   {
+    "tag": "ads-gcd-008",
+    "design": "gcd",
+    "key": "{\"design\": \"gcd\", \"platform\": \"sky130hd\", \"vars\": {\"PLACE_DENSITY\": 0.9}}",
+    "F": 2752.8962691843776,
+    "r": 0.76646549440279,
+    "e": -0.07310964508081798,
+    "port": false
+   },
+   {
+    "tag": "ads-gcd-009",
+    "design": "gcd",
+    "key": "{\"design\": \"gcd\", \"platform\": \"sky130hd\", \"vars\": {\"PLACE_DENSITY\": 0.9}}",
+    "F": 2752.8962691843776,
+    "r": 1.1478819726601026,
+    "e": 0.04629550784104985,
+    "port": false
+   },
+   {
+    "tag": "ads-gcd-010",
+    "design": "gcd",
+    "key": "{\"design\": \"gcd\", \"platform\": \"sky130hd\", \"vars\": {\"PLACE_DENSITY\": 0.9}}",
+    "F": 2752.8962691843776,
+    "r": 1.3876294732789847,
+    "e": 0.14336236901964777,
+    "port": true
+   },
+   {
+    "tag": "ads-ibex-001",
+    "design": "ibex",
+    "key": "{\"design\": \"ibex\", \"platform\": \"sky130hd\", \"vars\": {}}",
+    "F": 9868.065731295477,
+    "r": 0.6612238079552597,
+    "e": -0.13686124191616794,
+    "port": false
+   },
+   {
+    "tag": "ads-ibex-002",
+    "design": "ibex",
+    "key": "{\"design\": \"ibex\", \"platform\": \"sky130hd\", \"vars\": {}}",
+    "F": 9868.065731295477,
+    "r": 0.8025888979319015,
+    "e": -0.13924418104935837,
+    "port": false
+   },
+   {
+    "tag": "ads-ibex-003",
+    "design": "ibex",
+    "key": "{\"design\": \"ibex\", \"platform\": \"sky130hd\", \"vars\": {}}",
+    "F": 9868.065731295477,
+    "r": 0.9444606728188537,
+    "e": -0.034155197226400064,
+    "port": false
+   },
+   {
+    "tag": "ads-ibex-004",
+    "design": "ibex",
+    "key": "{\"design\": \"ibex\", \"platform\": \"sky130hd\", \"vars\": {}}",
+    "F": 9868.065731295477,
+    "r": 1.3224476159105194,
+    "e": 0.19829663907676798,
+    "port": true
+   },
+   {
+    "tag": "ads-ibex-005",
+    "design": "ibex",
+    "key": "{\"design\": \"ibex\", \"platform\": \"sky130hd\", \"vars\": {\"CORE_UTILIZATION\": 40}}",
+    "F": 10541.690504360937,
+    "r": 0.7071920767277298,
+    "e": -0.18784468236301932,
+    "port": false
+   },
+   {
+    "tag": "ads-ibex-006",
+    "design": "ibex",
+    "key": "{\"design\": \"ibex\", \"platform\": \"sky130hd\", \"vars\": {\"CORE_UTILIZATION\": 40}}",
+    "F": 10541.690504360937,
+    "r": 1.0610252687055208,
+    "e": 0.03914946046540967,
+    "port": false
+   },
+   {
+    "tag": "ads-ibex-007",
+    "design": "ibex",
+    "key": "{\"design\": \"ibex\", \"platform\": \"sky130hd\", \"vars\": {\"CORE_UTILIZATION\": 40}}",
+    "F": 10541.690504360937,
+    "r": 1.282052436884677,
+    "e": 0.1810544044002711,
+    "port": true
+   },
+   {
+    "tag": "ads-ibex-008",
+    "design": "ibex",
+    "key": "{\"design\": \"ibex\", \"platform\": \"sky130hd\", \"vars\": {\"PLACE_DENSITY_LB_ADDON\": 0.45}}",
+    "F": 11062.20322319604,
+    "r": 0.6739163844294425,
+    "e": -0.22100147446845675,
+    "port": false
+   },
+   {
+    "tag": "ads-ibex-009",
+    "design": "ibex",
+    "key": "{\"design\": \"ibex\", \"platform\": \"sky130hd\", \"vars\": {\"PLACE_DENSITY_LB_ADDON\": 0.45}}",
+    "F": 11062.20322319604,
+    "r": 1.0111005714075538,
+    "e": 0.007523354536594206,
+    "port": false
+   },
+   {
+    "tag": "ads-ibex-010",
+    "design": "ibex",
+    "key": "{\"design\": \"ibex\", \"platform\": \"sky130hd\", \"vars\": {\"PLACE_DENSITY_LB_ADDON\": 0.45}}",
+    "F": 11062.20322319604,
+    "r": 1.2217276908871784,
+    "e": 0.11533387617836109,
+    "port": false
+   }
+  ],
+  "verdict": "NODE, NOT FLOW (s- >= 0.45)",
+  "with_chains": {
+   "label": "T2a sky130hd grid + chains",
+   "n_runs": 50,
+   "n_with_claim": 50,
+   "settings": {
+    "{\"design\": \"aes\", \"platform\": \"sky130hd\", \"vars\": {}}": {
+     "F": 4602.489715293888,
+     "how": "interpolated"
+    },
+    "{\"design\": \"aes\", \"platform\": \"sky130hd\", \"vars\": {\"CORE_UTILIZATION\": 20}}": {
+     "F": 3932.4409891943847,
+     "how": "interpolated"
+    },
+    "{\"design\": \"aes\", \"platform\": \"sky130hd\", \"vars\": {\"PLACE_DENSITY_LB_ADDON\": 0.4}}": {
+     "F": 5233.664509422222,
+     "how": "interpolated"
+    },
+    "{\"design\": \"gcd\", \"platform\": \"sky130hd\", \"vars\": {}}": {
+     "F": 2461.8166996477867,
+     "how": "interpolated"
+    },
+    "{\"design\": \"gcd\", \"platform\": \"sky130hd\", \"vars\": {\"CORE_UTILIZATION\": 23}}": {
+     "F": 2478.9941370247484,
+     "how": "interpolated"
+    },
+    "{\"design\": \"gcd\", \"platform\": \"sky130hd\", \"vars\": {\"PLACE_DENSITY\": 0.9}}": {
+     "F": 2752.8962691843776,
+     "how": "interpolated"
+    },
+    "{\"design\": \"ibex\", \"platform\": \"sky130hd\", \"vars\": {}}": {
+     "F": 9868.065731295477,
+     "how": "interpolated"
+    },
+    "{\"design\": \"ibex\", \"platform\": \"sky130hd\", \"vars\": {\"CORE_UTILIZATION\": 40}}": {
+     "F": 9597.632595680665,
+     "how": "interpolated"
+    },
+    "{\"design\": \"ibex\", \"platform\": \"sky130hd\", \"vars\": {\"PLACE_DENSITY_LB_ADDON\": 0.45}}": {
+     "F": 11062.20322319604,
+     "how": "interpolated"
+    }
+   },
+   "interpolated_settings": 9,
+   "law": {
+    "s_minus": 0.6717721110239934,
+    "n_minus": 33,
+    "s_plus": 0.583322539851718,
+    "n_plus": 17
+   },
+   "per_design": {
+    "aes": {
+     "s_minus": 0.8199206285960768,
+     "n_minus": 12,
+     "s_plus": 0.6192988224627448,
+     "n_plus": 4
+    },
+    "gcd": {
+     "s_minus": 0.2493771478525517,
+     "n_minus": 10,
+     "s_plus": 0.5217756851933983,
+     "n_plus": 8
+    },
+    "ibex": {
+     "s_minus": 0.5949203648064687,
+     "n_minus": 11,
+     "s_plus": 0.6747924982777568,
+     "n_plus": 5
+    }
+   },
+   "bins": {
+    "tight (<0.9)": {
+     "n": 22,
+     "median": -0.12241766386760353
+    },
+    "near (0.9-1.1)": {
+     "n": 15,
+     "median": 0.00016708953663407803
+    },
+    "loose (1.1-1.5)": {
+     "n": 11,
+     "median": 0.19708187107772632
+    },
+    "very loose (>1.5)": {
+     "n": 2,
+     "median": 0.3036444800621202
+    }
+   }
+  }
+ },
+ "T2b": {
+  "label": "T2b asap7 ABC -D grid",
+  "n_runs": 30,
+  "n_with_claim": 30,
+  "settings": {
+   "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {\"SYNTH_USE_SYN\": 0}}": {
+    "F": 426.52281211574467,
+    "how": "interpolated"
+   },
+   "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {\"CORE_UTILIZATION\": 55, \"SYNTH_USE_SYN\": 0}}": {
+    "F": 486.0963009448669,
+    "how": "interpolated"
+   },
+   "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY\": 0.85, \"SYNTH_USE_SYN\": 0}}": {
+    "F": 474.3651707753149,
+    "how": "interpolated"
+   },
+   "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"SYNTH_USE_SYN\": 0}}": {
+    "F": 382.3142363108021,
+    "how": "interpolated"
+   },
+   "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"CORE_UTILIZATION\": 50, \"SYNTH_USE_SYN\": 0}}": {
+    "F": 356.2143885710784,
+    "how": "interpolated"
+   },
+   "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY\": 0.9, \"SYNTH_USE_SYN\": 0}}": {
+    "F": 367.0150394453483,
+    "how": "interpolated"
+   },
+   "{\"design\": \"ibex\", \"platform\": \"asap7\", \"vars\": {}}": {
+    "F": 968.2044247125433,
+    "how": "interpolated"
+   },
+   "{\"design\": \"ibex\", \"platform\": \"asap7\", \"vars\": {\"CORE_UTILIZATION\": 30}}": {
+    "F": 1058.947518764651,
+    "how": "interpolated"
+   },
+   "{\"design\": \"ibex\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY_LB_ADDON\": 0.4}}": {
+    "F": 1094.819571509694,
+    "how": "interpolated"
+   }
+  },
+  "interpolated_settings": 9,
+  "law": {
+   "s_minus": 0.29832204469578527,
+   "n_minus": 18,
+   "s_plus": 0.6407726932146699,
+   "n_plus": 12
+  },
+  "per_design": {
+   "aes": {
+    "s_minus": 0.4721340336919398,
+    "n_minus": 7,
+    "s_plus": 0.8248182738475535,
+    "n_plus": 3
+   },
+   "gcd": {
+    "s_minus": 0.1367958998793609,
+    "n_minus": 5,
+    "s_plus": 0.43883769585231847,
+    "n_plus": 5
+   },
+   "ibex": {
+    "s_minus": 0.2946919747712439,
+    "n_minus": 6,
+    "s_plus": 0.6944900694118411,
+    "n_plus": 4
+   }
+  },
+  "bins": {
+   "tight (<0.9)": {
+    "n": 14,
+    "median": -0.08251471804263177
+   },
+   "near (0.9-1.1)": {
+    "n": 7,
+    "median": -0.009000662543971217
+   },
+   "loose (1.1-1.5)": {
+    "n": 9,
+    "median": 0.12561196742830422
+   },
+   "very loose (>1.5)": {
+    "n": 0,
+    "median": null
+   }
+  },
+  "points": [
+   {
+    "tag": "adb-aes-001",
+    "design": "aes",
+    "key": "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {\"SYNTH_USE_SYN\": 0}}",
+    "F": 426.52281211574467,
+    "r": 0.6213032280395063,
+    "e": -0.11223036788652375,
+    "port": false
+   },
+   {
+    "tag": "adb-aes-002",
+    "design": "aes",
+    "key": "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {\"SYNTH_USE_SYN\": 0}}",
+    "F": 426.52281211574467,
+    "r": 0.7619756570295831,
+    "e": -0.09974944107842751,
+    "port": false
+   },
+   {
+    "tag": "adb-aes-003",
+    "design": "aes",
+    "key": "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {\"SYNTH_USE_SYN\": 0}}",
+    "F": 426.52281211574467,
+    "r": 0.8909253836038203,
+    "e": -0.09559718954652259,
+    "port": false
+   },
+   {
+    "tag": "adb-aes-004",
+    "design": "aes",
+    "key": "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {\"SYNTH_USE_SYN\": 0}}",
+    "F": 426.52281211574467,
+    "r": 1.2426064560790127,
+    "e": 0.2126296303693238,
+    "port": true
+   },
+   {
+    "tag": "adb-aes-005",
+    "design": "aes",
+    "key": "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {\"CORE_UTILIZATION\": 55, \"SYNTH_USE_SYN\": 0}}",
+    "F": 486.0963009448669,
+    "r": 0.6274476876436735,
+    "e": -0.23056563221528958,
+    "port": true
+   },
+   {
+    "tag": "adb-aes-006",
+    "design": "aes",
+    "key": "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {\"CORE_UTILIZATION\": 55, \"SYNTH_USE_SYN\": 0}}",
+    "F": 486.0963009448669,
+    "r": 0.9360285176323655,
+    "e": -0.04566568579460274,
+    "port": true
+   },
+   {
+    "tag": "adb-aes-007",
+    "design": "aes",
+    "key": "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {\"CORE_UTILIZATION\": 55, \"SYNTH_USE_SYN\": 0}}",
+    "F": 486.0963009448669,
+    "r": 1.1314630432918704,
+    "e": 0.09384416002850232,
+    "port": true
+   },
+   {
+    "tag": "adb-aes-008",
+    "design": "aes",
+    "key": "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY\": 0.85, \"SYNTH_USE_SYN\": 0}}",
+    "F": 474.3651707753149,
+    "r": 0.6429645741096464,
+    "e": -0.17286191277764443,
+    "port": true
+   },
+   {
+    "tag": "adb-aes-009",
+    "design": "aes",
+    "key": "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY\": 0.85, \"SYNTH_USE_SYN\": 0}}",
+    "F": 474.3651707753149,
+    "r": 0.9591766597373413,
+    "e": -0.031872788532521096,
+    "port": true
+   },
+   {
+    "tag": "adb-aes-010",
+    "design": "aes",
+    "key": "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY\": 0.85, \"SYNTH_USE_SYN\": 0}}",
+    "F": 474.3651707753149,
+    "r": 1.1594443139682147,
+    "e": 0.12448601386178773,
+    "port": true
+   },
+   {
+    "tag": "adb-gcd-001",
+    "design": "gcd",
+    "key": "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"SYNTH_USE_SYN\": 0}}",
+    "F": 382.3142363108021,
+    "r": 0.5623646194153646,
+    "e": -0.05021585514590907,
+    "port": false
+   },
+   {
+    "tag": "adb-gcd-002",
+    "design": "gcd",
+    "key": "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"SYNTH_USE_SYN\": 0}}",
+    "F": 382.3142363108021,
+    "r": 0.6931470890468449,
+    "e": -0.0599274997758035,
+    "port": false
+   },
+   {
+    "tag": "adb-gcd-003",
+    "design": "gcd",
+    "key": "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"SYNTH_USE_SYN\": 0}}",
+    "F": 382.3142363108021,
+    "r": 0.810851311715177,
+    "e": -0.06943224653874097,
+    "port": false
+   },
+   {
+    "tag": "adb-gcd-004",
+    "design": "gcd",
+    "key": "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"SYNTH_USE_SYN\": 0}}",
+    "F": 382.3142363108021,
+    "r": 1.1378074857938774,
+    "e": 0.0505860411472506,
+    "port": false
+   },
+   {
+    "tag": "adb-gcd-005",
+    "design": "gcd",
+    "key": "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"CORE_UTILIZATION\": 50, \"SYNTH_USE_SYN\": 0}}",
+    "F": 356.2143885710784,
+    "r": 0.7018245416835974,
+    "e": -0.014321118783388207,
+    "port": false
+   },
+   {
+    "tag": "adb-gcd-006",
+    "design": "gcd",
+    "key": "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"CORE_UTILIZATION\": 50, \"SYNTH_USE_SYN\": 0}}",
+    "F": 356.2143885710784,
+    "r": 1.038700321691724,
+    "e": 0.0018587442005855096,
+    "port": false
+   },
+   {
+    "tag": "adb-gcd-007",
+    "design": "gcd",
+    "key": "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"CORE_UTILIZATION\": 50, \"SYNTH_USE_SYN\": 0}}",
+    "F": 356.2143885710784,
+    "r": 1.2632841750304753,
+    "e": 0.1391530298025308,
+    "port": false
+   },
+   {
+    "tag": "adb-gcd-008",
+    "design": "gcd",
+    "key": "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY\": 0.9, \"SYNTH_USE_SYN\": 0}}",
+    "F": 367.0150394453483,
+    "r": 0.6811709960927287,
+    "e": -0.0384971674912855,
+    "port": false
+   },
+   {
+    "tag": "adb-gcd-009",
+    "design": "gcd",
+    "key": "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY\": 0.9, \"SYNTH_USE_SYN\": 0}}",
+    "F": 367.0150394453483,
+    "r": 1.0081330742172385,
+    "e": 0.0009820321128975208,
+    "port": false
+   },
+   {
+    "tag": "adb-gcd-010",
+    "design": "gcd",
+    "key": "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY\": 0.9, \"SYNTH_USE_SYN\": 0}}",
+    "F": 367.0150394453483,
+    "r": 1.2261077929669115,
+    "e": 0.0804369232368957,
+    "port": false
+   },
+   {
+    "tag": "adb-ibex-001",
+    "design": "ibex",
+    "key": "{\"design\": \"ibex\", \"platform\": \"asap7\", \"vars\": {}}",
+    "F": 968.2044247125433,
+    "r": 0.6506890321091487,
+    "e": -0.03296455159458621,
+    "port": false
+   },
+   {
+    "tag": "adb-ibex-002",
+    "design": "ibex",
+    "key": "{\"design\": \"ibex\", \"platform\": \"asap7\", \"vars\": {}}",
+    "F": 968.2044247125433,
+    "r": 0.7901223961325378,
+    "e": -0.04451996253305787,
+    "port": false
+   },
+   {
+    "tag": "adb-ibex-003",
+    "design": "ibex",
+    "key": "{\"design\": \"ibex\", \"platform\": \"asap7\", \"vars\": {}}",
+    "F": 968.2044247125433,
+    "r": 0.9295557601559268,
+    "e": -0.05632263530373106,
+    "port": false
+   },
+   {
+    "tag": "adb-ibex-004",
+    "design": "ibex",
+    "key": "{\"design\": \"ibex\", \"platform\": \"asap7\", \"vars\": {}}",
+    "F": 968.2044247125433,
+    "r": 1.3013780642182975,
+    "e": 0.2409623105747766,
+    "port": false
+   },
+   {
+    "tag": "adb-ibex-005",
+    "design": "ibex",
+    "key": "{\"design\": \"ibex\", \"platform\": \"asap7\", \"vars\": {\"CORE_UTILIZATION\": 30}}",
+    "F": 1058.947518764651,
+    "r": 0.6799203806057725,
+    "e": -0.10593586252085346,
+    "port": false
+   },
+   {
+    "tag": "adb-ibex-006",
+    "design": "ibex",
+    "key": "{\"design\": \"ibex\", \"platform\": \"asap7\", \"vars\": {\"CORE_UTILIZATION\": 30}}",
+    "F": 1058.947518764651,
+    "r": 1.019880570908659,
+    "e": 0.006579817329830719,
+    "port": false
+   },
+   {
+    "tag": "adb-ibex-007",
+    "design": "ibex",
+    "key": "{\"design\": \"ibex\", \"platform\": \"asap7\", \"vars\": {\"CORE_UTILIZATION\": 30}}",
+    "F": 1058.947518764651,
+    "r": 1.2323556898479628,
+    "e": 0.12561196742830422,
+    "port": false
+   },
+   {
+    "tag": "adb-ibex-008",
+    "design": "ibex",
+    "key": "{\"design\": \"ibex\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY_LB_ADDON\": 0.4}}",
+    "F": 1094.819571509694,
+    "r": 0.6576426095554365,
+    "e": -0.16453813596087957,
+    "port": false
+   },
+   {
+    "tag": "adb-ibex-009",
+    "design": "ibex",
+    "key": "{\"design\": \"ibex\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY_LB_ADDON\": 0.4}}",
+    "F": 1094.819571509694,
+    "r": 0.9864639143331547,
+    "e": -0.009000662543971217,
+    "port": false
+   },
+   {
+    "tag": "adb-ibex-010",
+    "design": "ibex",
+    "key": "{\"design\": \"ibex\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY_LB_ADDON\": 0.4}}",
+    "F": 1094.819571509694,
+    "r": 1.1919772298192286,
+    "e": 0.12765302350010885,
+    "port": false
+   }
+  ],
+  "verdict": "NOT SYNTHESIS (s- < 0.30)",
+  "abc_d_evidence": {
+   "adb-aes-001": {
+    "log_hits": 2,
+    "synth_sha1": "a7cef35fedeeb07b27883730dafe0585f5d2ceac",
+    "synth_cells": 14306,
+    "synth_area": 1552.68
+   },
+   "adb-aes-002": {
+    "log_hits": 2,
+    "synth_sha1": "912a991361477d9fc2a02f048d9f56f84f376db5",
+    "synth_cells": 14306,
+    "synth_area": 1545.04
+   },
+   "adb-aes-003": {
+    "log_hits": 2,
+    "synth_sha1": "c783d6e91b3a8f69f79cd150bbf1fdc04781000e",
+    "synth_cells": 14306,
+    "synth_area": 1544.82
+   },
+   "adb-aes-004": {
+    "log_hits": 2,
+    "synth_sha1": "c783d6e91b3a8f69f79cd150bbf1fdc04781000e",
+    "synth_cells": 14306,
+    "synth_area": 1544.82
+   },
+   "adb-aes-005": {
+    "log_hits": 2,
+    "synth_sha1": "75f8d998a39703932431c8c59a3e34a85e9947e6",
+    "synth_cells": 14306,
+    "synth_area": 1547.83
+   },
+   "adb-aes-006": {
+    "log_hits": 2,
+    "synth_sha1": "c783d6e91b3a8f69f79cd150bbf1fdc04781000e",
+    "synth_cells": 14306,
+    "synth_area": 1544.82
+   },
+   "adb-aes-007": {
+    "log_hits": 2,
+    "synth_sha1": "c783d6e91b3a8f69f79cd150bbf1fdc04781000e",
+    "synth_cells": 14306,
+    "synth_area": 1544.82
+   },
+   "adb-aes-008": {
+    "log_hits": 2,
+    "synth_sha1": "75f8d998a39703932431c8c59a3e34a85e9947e6",
+    "synth_cells": 14306,
+    "synth_area": 1547.83
+   },
+   "adb-aes-009": {
+    "log_hits": 2,
+    "synth_sha1": "c783d6e91b3a8f69f79cd150bbf1fdc04781000e",
+    "synth_cells": 14306,
+    "synth_area": 1544.82
+   },
+   "adb-aes-010": {
+    "log_hits": 2,
+    "synth_sha1": "c783d6e91b3a8f69f79cd150bbf1fdc04781000e",
+    "synth_cells": 14306,
+    "synth_area": 1544.82
+   },
+   "adb-gcd-001": {
+    "log_hits": 1,
+    "synth_sha1": "fb441a28389949b2151d5056f41ff01301dbee04",
+    "synth_cells": 314,
+    "synth_area": 38.2579
+   },
+   "adb-gcd-002": {
+    "log_hits": 1,
+    "synth_sha1": "fb441a28389949b2151d5056f41ff01301dbee04",
+    "synth_cells": 314,
+    "synth_area": 38.2579
+   },
+   "adb-gcd-003": {
+    "log_hits": 1,
+    "synth_sha1": "fb441a28389949b2151d5056f41ff01301dbee04",
+    "synth_cells": 314,
+    "synth_area": 38.2579
+   },
+   "adb-gcd-004": {
+    "log_hits": 1,
+    "synth_sha1": "fb441a28389949b2151d5056f41ff01301dbee04",
+    "synth_cells": 314,
+    "synth_area": 38.2579
+   },
+   "adb-gcd-005": {
+    "log_hits": 1,
+    "synth_sha1": "fb441a28389949b2151d5056f41ff01301dbee04",
+    "synth_cells": 314,
+    "synth_area": 38.2579
+   },
+   "adb-gcd-006": {
+    "log_hits": 1,
+    "synth_sha1": "fb441a28389949b2151d5056f41ff01301dbee04",
+    "synth_cells": 314,
+    "synth_area": 38.2579
+   },
+   "adb-gcd-007": {
+    "log_hits": 1,
+    "synth_sha1": "fb441a28389949b2151d5056f41ff01301dbee04",
+    "synth_cells": 314,
+    "synth_area": 38.2579
+   },
+   "adb-gcd-008": {
+    "log_hits": 1,
+    "synth_sha1": "fb441a28389949b2151d5056f41ff01301dbee04",
+    "synth_cells": 314,
+    "synth_area": 38.2579
+   },
+   "adb-gcd-009": {
+    "log_hits": 1,
+    "synth_sha1": "fb441a28389949b2151d5056f41ff01301dbee04",
+    "synth_cells": 314,
+    "synth_area": 38.2579
+   },
+   "adb-gcd-010": {
+    "log_hits": 1,
+    "synth_sha1": "fb441a28389949b2151d5056f41ff01301dbee04",
+    "synth_cells": 314,
+    "synth_area": 38.2579
+   },
+   "adb-ibex-001": {
+    "log_hits": 2,
+    "synth_sha1": "364246e8431b86fe18768c3b6eff369bab230af6",
+    "synth_cells": 16698,
+    "synth_area": 2115.66
+   },
+   "adb-ibex-002": {
+    "log_hits": 2,
+    "synth_sha1": "364246e8431b86fe18768c3b6eff369bab230af6",
+    "synth_cells": 16698,
+    "synth_area": 2115.66
+   },
+   "adb-ibex-003": {
+    "log_hits": 2,
+    "synth_sha1": "364246e8431b86fe18768c3b6eff369bab230af6",
+    "synth_cells": 16698,
+    "synth_area": 2115.66
+   },
+   "adb-ibex-004": {
+    "log_hits": 2,
+    "synth_sha1": "364246e8431b86fe18768c3b6eff369bab230af6",
+    "synth_cells": 16698,
+    "synth_area": 2115.66
+   },
+   "adb-ibex-005": {
+    "log_hits": 2,
+    "synth_sha1": "364246e8431b86fe18768c3b6eff369bab230af6",
+    "synth_cells": 16698,
+    "synth_area": 2115.66
+   },
+   "adb-ibex-006": {
+    "log_hits": 2,
+    "synth_sha1": "364246e8431b86fe18768c3b6eff369bab230af6",
+    "synth_cells": 16698,
+    "synth_area": 2115.66
+   },
+   "adb-ibex-007": {
+    "log_hits": 2,
+    "synth_sha1": "364246e8431b86fe18768c3b6eff369bab230af6",
+    "synth_cells": 16698,
+    "synth_area": 2115.66
+   },
+   "adb-ibex-008": {
+    "log_hits": 2,
+    "synth_sha1": "364246e8431b86fe18768c3b6eff369bab230af6",
+    "synth_cells": 16698,
+    "synth_area": 2115.66
+   },
+   "adb-ibex-009": {
+    "log_hits": 2,
+    "synth_sha1": "364246e8431b86fe18768c3b6eff369bab230af6",
+    "synth_cells": 16698,
+    "synth_area": 2115.66
+   },
+   "adb-ibex-010": {
+    "log_hits": 2,
+    "synth_sha1": "364246e8431b86fe18768c3b6eff369bab230af6",
+    "synth_cells": 16698,
+    "synth_area": 2115.66
+   }
+  },
+  "netlist_check": {
+   "aes": {
+    "runs": 10,
+    "log_hits_all": true,
+    "distinct_netlists": 4,
+    "note": "netlist varied with the target"
+   },
+   "gcd": {
+    "runs": 10,
+    "log_hits_all": true,
+    "distinct_netlists": 1,
+    "note": "patch ran but ABC's mapping did not depend on the target"
+   },
+   "ibex": {
+    "runs": 10,
+    "log_hits_all": true,
+    "distinct_netlists": 1,
+    "note": "patch ran but ABC's mapping did not depend on the target"
+   }
+  }
+ },
+ "control": {
+  "label": "control asap7 Yosys no -D",
+  "n_runs": 20,
+  "n_with_claim": 20,
+  "settings": {
+   "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {\"SYNTH_USE_SYN\": 0}}": {
+    "F": null,
+    "how": "extrapolated above (no crossing: slope >= 1)"
+   },
+   "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {\"CORE_UTILIZATION\": 55, \"SYNTH_USE_SYN\": 0}}": {
+    "F": 787.7423300020981,
+    "how": "extrapolated above"
+   },
+   "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY\": 0.85, \"SYNTH_USE_SYN\": 0}}": {
+    "F": 494.0667821474161,
+    "how": "interpolated"
+   },
+   "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"SYNTH_USE_SYN\": 0}}": {
+    "F": 383.9191335930445,
+    "how": "interpolated"
+   },
+   "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"CORE_UTILIZATION\": 50, \"SYNTH_USE_SYN\": 0}}": {
+    "F": 362.8235524548293,
+    "how": "interpolated"
+   },
+   "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY\": 0.9, \"SYNTH_USE_SYN\": 0}}": {
+    "F": 362.95831459796,
+    "how": "interpolated"
+   }
+  },
+  "interpolated_settings": 4,
+  "law": {
+   "s_minus": 0.246284913587959,
+   "n_minus": 7,
+   "s_plus": 0.5851926620025389,
+   "n_plus": 6
+  },
+  "per_design": {
+   "aes": {
+    "s_minus": 0.4476849515268007,
+    "n_minus": 2,
+    "s_plus": 0.6396452631578953,
+    "n_plus": 1
+   },
+   "gcd": {
+    "s_minus": 0.1871637243607855,
+    "n_minus": 5,
+    "s_plus": 0.5799732593267711,
+    "n_plus": 5
+   }
+  },
+  "bins": {
+   "tight (<0.9)": {
+    "n": 6,
+    "median": -0.08101584649337726
+   },
+   "near (0.9-1.1)": {
+    "n": 3,
+    "median": 0.0002868797816501889
+   },
+   "loose (1.1-1.5)": {
+    "n": 4,
+    "median": 0.10881446384279735
+   },
+   "very loose (>1.5)": {
+    "n": 0,
+    "median": null
+   }
+  },
+  "points": [
+   {
+    "tag": "adc-aes-008",
+    "design": "aes",
+    "key": "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY\": 0.85, \"SYNTH_USE_SYN\": 0}}",
+    "F": 494.0667821474161,
+    "r": 0.6173254527947525,
+    "e": -0.16818127660042423,
+    "port": false
+   },
+   {
+    "tag": "adc-aes-009",
+    "design": "aes",
+    "key": "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY\": 0.85, \"SYNTH_USE_SYN\": 0}}",
+    "F": 494.0667821474161,
+    "r": 0.9209281344970898,
+    "e": -0.050577944217994636,
+    "port": true
+   },
+   {
+    "tag": "adc-aes-010",
+    "design": "aes",
+    "key": "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY\": 0.85, \"SYNTH_USE_SYN\": 0}}",
+    "F": 494.0667821474161,
+    "r": 1.11320983290857,
+    "e": 0.07241413336286362,
+    "port": true
+   },
+   {
+    "tag": "adc-gcd-001",
+    "design": "gcd",
+    "key": "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"SYNTH_USE_SYN\": 0}}",
+    "F": 383.9191335930445,
+    "r": 0.5600137664092061,
+    "e": -0.08633102831539881,
+    "port": false
+   },
+   {
+    "tag": "adc-gcd-002",
+    "design": "gcd",
+    "key": "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"SYNTH_USE_SYN\": 0}}",
+    "F": 383.9191335930445,
+    "r": 0.690249526039254,
+    "e": -0.08641333731548492,
+    "port": false
+   },
+   {
+    "tag": "adc-gcd-003",
+    "design": "gcd",
+    "key": "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"SYNTH_USE_SYN\": 0}}",
+    "F": 383.9191335930445,
+    "r": 0.8074617097062972,
+    "e": -0.07570066467135571,
+    "port": false
+   },
+   {
+    "tag": "adc-gcd-004",
+    "design": "gcd",
+    "key": "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"SYNTH_USE_SYN\": 0}}",
+    "F": 383.9191335930445,
+    "r": 1.133051108781417,
+    "e": 0.05231197054180731,
+    "port": false
+   },
+   {
+    "tag": "adc-gcd-005",
+    "design": "gcd",
+    "key": "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"CORE_UTILIZATION\": 50, \"SYNTH_USE_SYN\": 0}}",
+    "F": 362.8235524548293,
+    "r": 0.6890401637614868,
+    "e": -0.05336933703398444,
+    "port": false
+   },
+   {
+    "tag": "adc-gcd-006",
+    "design": "gcd",
+    "key": "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"CORE_UTILIZATION\": 50, \"SYNTH_USE_SYN\": 0}}",
+    "F": 362.8235524548293,
+    "r": 1.0197794423670006,
+    "e": 0.003394701189702975,
+    "port": false
+   },
+   {
+    "tag": "adc-gcd-007",
+    "design": "gcd",
+    "key": "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"CORE_UTILIZATION\": 50, \"SYNTH_USE_SYN\": 0}}",
+    "F": 362.8235524548293,
+    "r": 1.2402722947706764,
+    "e": 0.14521479432273107,
+    "port": false
+   },
+   {
+    "tag": "adc-gcd-008",
+    "design": "gcd",
+    "key": "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY\": 0.9, \"SYNTH_USE_SYN\": 0}}",
+    "F": 362.95831459796,
+    "r": 0.6887843312720879,
+    "e": -0.004601946093479504,
+    "port": false
+   },
+   {
+    "tag": "adc-gcd-009",
+    "design": "gcd",
+    "key": "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY\": 0.9, \"SYNTH_USE_SYN\": 0}}",
+    "F": 362.95831459796,
+    "r": 1.0194008102826901,
+    "e": 0.0002868797816501889,
+    "port": false
+   },
+   {
+    "tag": "adc-gcd-010",
+    "design": "gcd",
+    "key": "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY\": 0.9, \"SYNTH_USE_SYN\": 0}}",
+    "F": 362.95831459796,
+    "r": 1.2398117962897583,
+    "e": 0.1485525561296594,
+    "port": false
+   }
+  ],
+  "synth": {
+   "adc-aes-001": {
+    "synth_sha1": "a7cef35fedeeb07b27883730dafe0585f5d2ceac",
+    "synth_cells": 14306
+   },
+   "adc-aes-002": {
+    "synth_sha1": "a7cef35fedeeb07b27883730dafe0585f5d2ceac",
+    "synth_cells": 14306
+   },
+   "adc-aes-003": {
+    "synth_sha1": "a7cef35fedeeb07b27883730dafe0585f5d2ceac",
+    "synth_cells": 14306
+   },
+   "adc-aes-004": {
+    "synth_sha1": "a7cef35fedeeb07b27883730dafe0585f5d2ceac",
+    "synth_cells": 14306
+   },
+   "adc-aes-005": {
+    "synth_sha1": "a7cef35fedeeb07b27883730dafe0585f5d2ceac",
+    "synth_cells": 14306
+   },
+   "adc-aes-006": {
+    "synth_sha1": "a7cef35fedeeb07b27883730dafe0585f5d2ceac",
+    "synth_cells": 14306
+   },
+   "adc-aes-007": {
+    "synth_sha1": "a7cef35fedeeb07b27883730dafe0585f5d2ceac",
+    "synth_cells": 14306
+   },
+   "adc-aes-008": {
+    "synth_sha1": "a7cef35fedeeb07b27883730dafe0585f5d2ceac",
+    "synth_cells": 14306
+   },
+   "adc-aes-009": {
+    "synth_sha1": "a7cef35fedeeb07b27883730dafe0585f5d2ceac",
+    "synth_cells": 14306
+   },
+   "adc-aes-010": {
+    "synth_sha1": "a7cef35fedeeb07b27883730dafe0585f5d2ceac",
+    "synth_cells": 14306
+   },
+   "adc-gcd-001": {
+    "synth_sha1": "cc7bef9c286e7dacdb69a033c59a42e1c6b5be8d",
+    "synth_cells": 314
+   },
+   "adc-gcd-002": {
+    "synth_sha1": "cc7bef9c286e7dacdb69a033c59a42e1c6b5be8d",
+    "synth_cells": 314
+   },
+   "adc-gcd-003": {
+    "synth_sha1": "cc7bef9c286e7dacdb69a033c59a42e1c6b5be8d",
+    "synth_cells": 314
+   },
+   "adc-gcd-004": {
+    "synth_sha1": "cc7bef9c286e7dacdb69a033c59a42e1c6b5be8d",
+    "synth_cells": 314
+   },
+   "adc-gcd-005": {
+    "synth_sha1": "cc7bef9c286e7dacdb69a033c59a42e1c6b5be8d",
+    "synth_cells": 314
+   },
+   "adc-gcd-006": {
+    "synth_sha1": "cc7bef9c286e7dacdb69a033c59a42e1c6b5be8d",
+    "synth_cells": 314
+   },
+   "adc-gcd-007": {
+    "synth_sha1": "cc7bef9c286e7dacdb69a033c59a42e1c6b5be8d",
+    "synth_cells": 314
+   },
+   "adc-gcd-008": {
+    "synth_sha1": "cc7bef9c286e7dacdb69a033c59a42e1c6b5be8d",
+    "synth_cells": 314
+   },
+   "adc-gcd-009": {
+    "synth_sha1": "cc7bef9c286e7dacdb69a033c59a42e1c6b5be8d",
+    "synth_cells": 314
+   },
+   "adc-gcd-010": {
+    "synth_sha1": "cc7bef9c286e7dacdb69a033c59a42e1c6b5be8d",
+    "synth_cells": 314
+   }
+  }
+ },
+ "E5_baseline": {
+  "grid": {
+   "label": "E5 asap7 grid",
+   "n_runs": 30,
+   "n_with_claim": 30,
+   "settings": {
+    "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {}}": {
+     "F": 386.68516455824494,
+     "how": "interpolated"
+    },
+    "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {\"CORE_UTILIZATION\": 55}}": {
+     "F": 429.7469484257798,
+     "how": "interpolated"
+    },
+    "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY\": 0.85}}": {
+     "F": 439.7874376095597,
+     "how": "interpolated"
+    },
+    "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {}}": {
+     "F": 373.5579488416261,
+     "how": "interpolated"
+    },
+    "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"CORE_UTILIZATION\": 50}}": {
+     "F": 356.1317191314009,
+     "how": "interpolated"
+    },
+    "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY\": 0.9}}": {
+     "F": 359.56441199705796,
+     "how": "interpolated"
+    },
+    "{\"design\": \"ibex\", \"platform\": \"asap7\", \"vars\": {}}": {
+     "F": 968.2044247125433,
+     "how": "interpolated"
+    },
+    "{\"design\": \"ibex\", \"platform\": \"asap7\", \"vars\": {\"CORE_UTILIZATION\": 30}}": {
+     "F": 1058.947518764651,
+     "how": "interpolated"
+    },
+    "{\"design\": \"ibex\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY_LB_ADDON\": 0.4}}": {
+     "F": 1094.819571509694,
+     "how": "interpolated"
+    }
+   },
+   "interpolated_settings": 9,
+   "law": {
+    "s_minus": 0.2591819688664724,
+    "n_minus": 16,
+    "s_plus": 0.5658836179392184,
+    "n_plus": 14
+   },
+   "per_design": {
+    "aes": {
+     "s_minus": 0.18579165278337031,
+     "n_minus": 5,
+     "s_plus": 0.5288778569771592,
+     "n_plus": 5
+    },
+    "gcd": {
+     "s_minus": 0.27676352016646055,
+     "n_minus": 5,
+     "s_plus": 0.486088741779009,
+     "n_plus": 5
+    },
+    "ibex": {
+     "s_minus": 0.2946919747712439,
+     "n_minus": 6,
+     "s_plus": 0.6944900694118411,
+     "n_plus": 4
+    }
+   },
+   "bins": {
+    "tight (<0.9)": {
+     "n": 13,
+     "median": -0.07744522625450118
+    },
+    "near (0.9-1.1)": {
+     "n": 8,
+     "median": 0.006081936930157709
+    },
+    "loose (1.1-1.5)": {
+     "n": 9,
+     "median": 0.12765302350010885
+    },
+    "very loose (>1.5)": {
+     "n": 0,
+     "median": null
+    }
+   }
+  },
+  "grid_and_chains": {
+   "label": "E5 asap7 grid + chains",
+   "n_runs": 46,
+   "n_with_claim": 46,
+   "settings": {
+    "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {}}": {
+     "F": 410.50122858131,
+     "how": "interpolated"
+    },
+    "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {\"CORE_UTILIZATION\": 55}}": {
+     "F": 421.3223473943486,
+     "how": "interpolated"
+    },
+    "{\"design\": \"aes\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY\": 0.85}}": {
+     "F": 439.7874376095597,
+     "how": "interpolated"
+    },
+    "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {}}": {
+     "F": 357.58930582298274,
+     "how": "interpolated"
+    },
+    "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"CORE_UTILIZATION\": 50}}": {
+     "F": 353.3636064039127,
+     "how": "interpolated"
+    },
+    "{\"design\": \"gcd\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY\": 0.9}}": {
+     "F": 359.56441199705796,
+     "how": "interpolated"
+    },
+    "{\"design\": \"ibex\", \"platform\": \"asap7\", \"vars\": {}}": {
+     "F": 916.6236449871275,
+     "how": "interpolated"
+    },
+    "{\"design\": \"ibex\", \"platform\": \"asap7\", \"vars\": {\"CORE_UTILIZATION\": 30}}": {
+     "F": 1058.947518764651,
+     "how": "interpolated"
+    },
+    "{\"design\": \"ibex\", \"platform\": \"asap7\", \"vars\": {\"PLACE_DENSITY_LB_ADDON\": 0.4}}": {
+     "F": 914.1506636480523,
+     "how": "interpolated"
+    }
+   },
+   "interpolated_settings": 9,
+   "law": {
+    "s_minus": 0.20116822330833645,
+    "n_minus": 25,
+    "s_plus": 0.6491507248091245,
+    "n_plus": 19
+   },
+   "per_design": {
+    "aes": {
+     "s_minus": 0.2703804840192232,
+     "n_minus": 9,
+     "s_plus": 0.49420824272901653,
+     "n_plus": 5
+    },
+    "gcd": {
+     "s_minus": 0.21132337895681516,
+     "n_minus": 10,
+     "s_plus": 0.5185632571657531,
+     "n_plus": 6
+    },
+    "ibex": {
+     "s_minus": 0.09375932788614064,
+     "n_minus": 6,
+     "s_plus": 0.8026547758806286,
+     "n_plus": 8
+    }
+   },
+   "bins": {
+    "tight (<0.9)": {
+     "n": 13,
+     "median": -0.055755618424927045
+    },
+    "near (0.9-1.1)": {
+     "n": 21,
+     "median": -0.004190661741222587
+    },
+    "loose (1.1-1.5)": {
+     "n": 10,
+     "median": 0.1523097047237985
+    },
+    "very loose (>1.5)": {
+     "n": 0,
+     "median": null
+    }
+   }
+  }
+ },
+ "D": {
+  "chains": [
+   {
+    "chain_id": "adgk-aes-1",
+    "platform": "gt2n",
+    "design": "aes",
+    "winner": "adg-aes-001",
+    "T0": 365,
+    "C0": 405.3129,
+    "R1": 410,
+    "first_pass": false,
+    "first_is_winner": false,
+    "C1": 451.5232,
+    "d1": 0.11401142179289137,
+    "kept": null,
+    "chain": [
+     [
+      365,
+      405.3129,
+      false
+     ],
+     [
+      410,
+      451.5232,
+      false
+     ],
+     [
+      455,
+      440.7108,
+      false
+     ]
+    ]
+   },
+   {
+    "chain_id": "adgk-aes-2",
+    "platform": "gt2n",
+    "design": "aes",
+    "winner": "adg-aes-008",
+    "T0": 415,
+    "C0": 408.61799,
+    "R1": 410,
+    "first_pass": false,
+    "first_is_winner": false,
+    "C1": 417.9286,
+    "d1": 0.022785609610580293,
+    "kept": null,
+    "chain": [
+     [
+      415,
+      408.61799,
+      false
+     ],
+     [
+      410,
+      417.9286,
+      false
+     ],
+     [
+      420,
+      402.1524,
+      false
+     ]
+    ]
+   },
+   {
+    "chain_id": "adgk-aes-3",
+    "platform": "gt2n",
+    "design": "aes",
+    "winner": "adg-aes-002",
+    "T0": 440,
+    "C0": 439.15995,
+    "R1": 440,
+    "first_pass": false,
+    "first_is_winner": false,
+    "C1": 439.15995,
+    "d1": 0.0,
+    "kept": null,
+    "chain": [
+     [
+      440,
+      439.15995,
+      false
+     ],
+     [
+      440,
+      439.15995,
+      false
+     ],
+     [
+      445,
+      439.14751,
+      false
+     ]
+    ]
+   },
+   {
+    "chain_id": "adgk-gcd-1",
+    "platform": "gt2n",
+    "design": "gcd",
+    "winner": "adg-gcd-001",
+    "T0": 180,
+    "C0": 218.7974,
+    "R1": 220,
+    "first_pass": false,
+    "first_is_winner": false,
+    "C1": 226.29413,
+    "d1": 0.03426334133769404,
+    "kept": null,
+    "chain": [
+     [
+      180,
+      218.7974,
+      false
+     ],
+     [
+      220,
+      226.29413,
+      false
+     ],
+     [
+      230,
+      232.22389,
+      false
+     ]
+    ]
+   },
+   {
+    "chain_id": "adgk-gcd-2",
+    "platform": "gt2n",
+    "design": "gcd",
+    "winner": "adg-gcd-008",
+    "T0": 210,
+    "C0": 219.82874,
+    "R1": 220,
+    "first_pass": false,
+    "first_is_winner": false,
+    "C1": 228.59728,
+    "d1": 0.03988805103463733,
+    "kept": 230,
+    "chain": [
+     [
+      210,
+      219.82874,
+      false
+     ],
+     [
+      220,
+      228.59728,
+      false
+     ],
+     [
+      230,
+      229.502037,
+      true
+     ]
+    ]
+   },
+   {
+    "chain_id": "adgk-gcd-3",
+    "platform": "gt2n",
+    "design": "gcd",
+    "winner": "adg-gcd-002",
+    "T0": 220,
+    "C0": 226.29413,
+    "R1": 230,
+    "first_pass": false,
+    "first_is_winner": false,
+    "C1": 232.22389,
+    "d1": 0.026203772939227488,
+    "kept": 235,
+    "chain": [
+     [
+      220,
+      226.29413,
+      false
+     ],
+     [
+      230,
+      232.22389,
+      false
+     ],
+     [
+      235,
+      234.764674,
+      true
+     ]
+    ]
+   },
+   {
+    "chain_id": "adsk-aes-1",
+    "platform": "sky130hd",
+    "design": "aes",
+    "winner": "ads-aes-005",
+    "T0": 3350,
+    "C0": 3409.7038000000002,
+    "R1": 3410,
+    "first_pass": false,
+    "first_is_winner": false,
+    "C1": 3492.3777,
+    "d1": 0.024246651571318223,
+    "kept": null,
+    "chain": [
+     [
+      3350,
+      3409.7038000000002,
+      false
+     ],
+     [
+      3410,
+      3492.3777,
+      false
+     ],
+     [
+      3495,
+      3619.824,
+      false
+     ]
+    ]
+   },
+   {
+    "chain_id": "adsk-aes-2",
+    "platform": "sky130hd",
+    "design": "aes",
+    "winner": "ads-aes-008",
+    "T0": 3350,
+    "C0": 3536.217,
+    "R1": 3540,
+    "first_pass": false,
+    "first_is_winner": false,
+    "C1": 3670.383,
+    "d1": 0.037940544938277254,
+    "kept": null,
+    "chain": [
+     [
+      3350,
+      3536.217,
+      false
+     ],
+     [
+      3540,
+      3670.383,
+      false
+     ],
+     [
+      3675,
+      3781.554,
+      false
+     ]
+    ]
+   },
+   {
+    "chain_id": "adsk-aes-3",
+    "platform": "sky130hd",
+    "design": "aes",
+    "winner": "ads-aes-001",
+    "T0": 2935,
+    "C0": 3672.643,
+    "R1": 3675,
+    "first_pass": false,
+    "first_is_winner": false,
+    "C1": 3801.655,
+    "d1": 0.03512783573029021,
+    "kept": null,
+    "chain": [
+     [
+      2935,
+      3672.643,
+      false
+     ],
+     [
+      3675,
+      3801.655,
+      false
+     ],
+     [
+      3805,
+      3945.38,
+      false
+     ]
+    ]
+   },
+   {
+    "chain_id": "adsk-gcd-1",
+    "platform": "sky130hd",
+    "design": "gcd",
+    "winner": "ads-gcd-001",
+    "T0": 1845,
+    "C0": 2325.045,
+    "R1": 2330,
+    "first_pass": false,
+    "first_is_winner": false,
+    "C1": 2413.5019,
+    "d1": 0.03804524213509852,
+    "kept": null,
+    "chain": [
+     [
+      1845,
+      2325.045,
+      false
+     ],
+     [
+      2330,
+      2413.5019,
+      false
+     ],
+     [
+      2415,
+      2476.6203,
+      false
+     ]
+    ]
+   },
+   {
+    "chain_id": "adsk-gcd-2",
+    "platform": "sky130hd",
+    "design": "gcd",
+    "winner": "ads-gcd-002",
+    "T0": 2240,
+    "C0": 2406.872,
+    "R1": 2410,
+    "first_pass": false,
+    "first_is_winner": false,
+    "C1": 2474.9409,
+    "d1": 0.0282810635546884,
+    "kept": 2475,
+    "chain": [
+     [
+      2240,
+      2406.872,
+      false
+     ],
+     [
+      2410,
+      2474.9409,
+      false
+     ],
+     [
+      2475,
+      2453.8147,
+      true
+     ],
+     [
+      2455,
+      2465.9543,
+      false
+     ]
+    ]
+   },
+   {
+    "chain_id": "adsk-gcd-3",
+    "platform": "sky130hd",
+    "design": "gcd",
+    "winner": "ads-gcd-005",
+    "T0": 2110,
+    "C0": 2407.061,
+    "R1": 2410,
+    "first_pass": false,
+    "first_is_winner": false,
+    "C1": 2496.589,
+    "d1": 0.03719390576308612,
+    "kept": 2500,
+    "chain": [
+     [
+      2110,
+      2407.061,
+      false
+     ],
+     [
+      2410,
+      2496.589,
+      false
+     ],
+     [
+      2500,
+      2464.6736,
+      true
+     ],
+     [
+      2465,
+      2488.5345,
+      false
+     ]
+    ]
+   },
+   {
+    "chain_id": "adsk-ibex-1",
+    "platform": "sky130hd",
+    "design": "ibex",
+    "winner": "ads-ibex-002",
+    "T0": 7920,
+    "C0": 8493.995,
+    "R1": 8495,
+    "first_pass": false,
+    "first_is_winner": false,
+    "C1": 8797.614,
+    "d1": 0.035745135239660275,
+    "kept": null,
+    "chain": [
+     [
+      7920,
+      8493.995,
+      false
+     ],
+     [
+      8495,
+      8797.614,
+      false
+     ],
+     [
+      8800,
+      9215.713,
+      false
+     ]
+    ]
+   },
+   {
+    "chain_id": "adsk-ibex-2",
+    "platform": "sky130hd",
+    "design": "ibex",
+    "winner": "ads-ibex-001",
+    "T0": 6525,
+    "C0": 8517.51,
+    "R1": 8520,
+    "first_pass": false,
+    "first_is_winner": false,
+    "C1": 8857.177,
+    "d1": 0.03987867346207974,
+    "kept": null,
+    "chain": [
+     [
+      6525,
+      8517.51,
+      false
+     ],
+     [
+      8520,
+      8857.177,
+      false
+     ],
+     [
+      8860,
+      9053.968,
+      false
+     ]
+    ]
+   },
+   {
+    "chain_id": "adsk-ibex-3",
+    "platform": "sky130hd",
+    "design": "ibex",
+    "winner": "ads-ibex-005",
+    "T0": 7455,
+    "C0": 8561.49,
+    "R1": 8565,
+    "first_pass": false,
+    "first_is_winner": false,
+    "C1": 8700.519,
+    "d1": 0.016238878980177507,
+    "kept": null,
+    "chain": [
+     [
+      7455,
+      8561.49,
+      false
+     ],
+     [
+      8565,
+      8700.519,
+      false
+     ],
+     [
+      8705,
+      8834.679,
+      false
+     ]
+    ]
+   }
+  ],
+  "n_winners": 15,
+  "first_rebuild_fails": 15,
+  "fail_fraction": 1.0,
+  "first_rebuild_verdict": "PREDICTION HELD (>= 55% fail)",
+  "sky130hd_tight_bin": {
+   "n": 22,
+   "median": -0.12241766386760353
+  },
+  "tight_verdict": "NEARER LIBRELANE (median <= -10.05%)",
+  "sky130hd_bins": {
+   "tight (<0.9)": {
+    "n": 22,
+    "median": -0.12241766386760353
+   },
+   "near (0.9-1.1)": {
+    "n": 15,
+    "median": 0.00016708953663407803
+   },
+   "loose (1.1-1.5)": {
+    "n": 11,
+    "median": 0.19708187107772632
+   },
+   "very loose (>1.5)": {
+    "n": 2,
+    "median": 0.3036444800621202
+   }
+  },
+  "gt2n": {
+   "label": "D gt2n grid + chains",
+   "n_runs": 31,
+   "n_with_claim": 31,
+   "settings": {
+    "{\"design\": \"aes\", \"platform\": \"gt2n\", \"vars\": {}}": {
+     "F": 439.40510938136237,
+     "how": "interpolated"
+    },
+    "{\"design\": \"aes\", \"platform\": \"gt2n\", \"vars\": {\"CORE_UTILIZATION\": 15}}": {
+     "F": 466.8149527785058,
+     "how": "interpolated"
+    },
+    "{\"design\": \"aes\", \"platform\": \"gt2n\", \"vars\": {\"PLACE_DENSITY_LB_ADDON\": 0.4}}": {
+     "F": 412.77018240312606,
+     "how": "interpolated"
+    },
+    "{\"design\": \"gcd\", \"platform\": \"gt2n\", \"vars\": {}}": {
+     "F": 234.52154263797897,
+     "how": "interpolated"
+    },
+    "{\"design\": \"gcd\", \"platform\": \"gt2n\", \"vars\": {\"CORE_UTILIZATION\": 10}}": {
+     "F": 255.3648114831039,
+     "how": "interpolated"
+    },
+    "{\"design\": \"gcd\", \"platform\": \"gt2n\", \"vars\": {\"PLACE_DENSITY\": 0.9}}": {
+     "F": 229.45250170886032,
+     "how": "interpolated"
+    }
+   },
+   "interpolated_settings": 6,
+   "law": {
+    "s_minus": 0.3850571230496877,
+    "n_minus": 10,
+    "s_plus": 0.545395144977764,
+    "n_plus": 19
+   },
+   "per_design": {
+    "aes": {
+     "s_minus": 0.33446964296336695,
+     "n_minus": 4,
+     "s_plus": 0.49638571252568064,
+     "n_plus": 11
+    },
+    "gcd": {
+     "s_minus": 0.4083872477002636,
+     "n_minus": 6,
+     "s_plus": 0.6300215707960968,
+     "n_plus": 8
+    }
+   },
+   "bins": {
+    "tight (<0.9)": {
+     "n": 4,
+     "median": -0.07231747377449195
+    },
+    "near (0.9-1.1)": {
+     "n": 13,
+     "median": -0.0005862457578725649
+    },
+    "loose (1.1-1.5)": {
+     "n": 6,
+     "median": 0.12971053115889505
+    },
+    "very loose (>1.5)": {
+     "n": 6,
+     "median": 0.3589723893271506
+    }
+   }
+  },
+  "registered_count": "15 winners if every chain started (sky130hd 9, gt2n 6)"
+ },
+ "T3": {
+  "rows": [
+   {
+    "tag": "adr-aes-1",
+    "design": "aes",
+    "T0": 380,
+    "ws": -2.46275,
+    "hold": 35.4911,
+    "drc": 0,
+    "retime": {
+     "T0": 380,
+     "c_r2r": 382.4628,
+     "c_port": 260.88225,
+     "cstar": 382.4628,
+     "tstar_value": 385,
+     "t0": {
+      "ws_all": -2.4628,
+      "ws_r2r": -2.4628,
+      "ws_in": 95.2942,
+      "ws_out": 229.1654,
+      "hold_ws_all": 35.4911,
+      "worst_start": "u2638/QN",
+      "worst_end": "u142/D"
+     },
+     "tstar": {
+      "ws_all": 2.5372,
+      "ws_r2r": 2.5372,
+      "ws_in": 99.2942,
+      "ws_out": 233.1654,
+      "hold_ws_all": 35.4911,
+      "worst_start": "u2638/QN",
+      "worst_end": "u142/D"
+     }
+    },
+    "replay_of": "e5g-aes-003",
+    "replay_identical": true,
+    "t0_reproduces_flow": true,
+    "Tstar": 385,
+    "ws_at_Tstar": 2.5372,
+    "hold_at_Tstar": 35.4911,
+    "pass_at_Tstar": true
+   },
+   {
+    "tag": "adr-aes-2",
+    "design": "aes",
+    "T0": 305,
+    "ws": -78.6863,
+    "hold": 35.2219,
+    "drc": 0,
+    "retime": {
+     "T0": 305,
+     "c_r2r": 383.6863,
+     "c_port": 227.00075,
+     "cstar": 383.6863,
+     "tstar_value": 385,
+     "t0": {
+      "ws_all": -78.6863,
+      "ws_r2r": -78.6863,
+      "ws_in": 62.3994,
+      "ws_out": 172.4244,
+      "hold_ws_all": 35.2219,
+      "worst_start": "u2643/QN",
+      "worst_end": "u145/D"
+     },
+     "tstar": {
+      "ws_all": 1.3137,
+      "ws_r2r": 1.3137,
+      "ws_in": 126.3994,
+      "ws_out": 236.4244,
+      "hold_ws_all": 35.2219,
+      "worst_start": "u2643/QN",
+      "worst_end": "u145/D"
+     }
+    },
+    "replay_of": "e5g-aes-005",
+    "replay_identical": true,
+    "t0_reproduces_flow": true,
+    "Tstar": 385,
+    "ws_at_Tstar": 1.3137,
+    "hold_at_Tstar": 35.2219,
+    "pass_at_Tstar": true
+   },
+   {
+    "tag": "adr-aes-3",
+    "design": "aes",
+    "T0": 265,
+    "ws": -118.938,
+    "hold": 35.1465,
+    "drc": 0,
+    "retime": {
+     "T0": 265,
+     "c_r2r": 383.9384,
+     "c_port": 238.164625,
+     "cstar": 383.9384,
+     "tstar_value": 385,
+     "t0": {
+      "ws_all": -118.9384,
+      "ws_r2r": -118.9384,
+      "ws_in": 21.4683,
+      "ws_out": 154.2263,
+      "hold_ws_all": 35.1465,
+      "worst_start": "u147/QN",
+      "worst_end": "u2643/D"
+     },
+     "tstar": {
+      "ws_all": 1.0616,
+      "ws_r2r": 1.0616,
+      "ws_in": 117.4683,
+      "ws_out": 250.2264,
+      "hold_ws_all": 35.1465,
+      "worst_start": "u147/QN",
+      "worst_end": "u2643/D"
+     }
+    },
+    "replay_of": "e5g-aes-001",
+    "replay_identical": true,
+    "t0_reproduces_flow": true,
+    "Tstar": 385,
+    "ws_at_Tstar": 1.0616,
+    "hold_at_Tstar": 35.1465,
+    "pass_at_Tstar": true
+   },
+   {
+    "tag": "adr-gcd-1",
+    "design": "gcd",
+    "T0": 215,
+    "ws": -111.423,
+    "hold": 41.9131,
+    "drc": 0,
+    "retime": {
+     "T0": 215,
+     "c_r2r": 322.9129,
+     "c_port": 354.27875,
+     "cstar": 354.27875,
+     "tstar_value": 355,
+     "t0": {
+      "ws_all": -111.423,
+      "ws_r2r": -107.9129,
+      "ws_in": 95.2224,
+      "ws_out": -111.423,
+      "hold_ws_all": 41.9131,
+      "worst_start": "u5/QN",
+      "worst_end": "resp_msg[15]"
+     },
+     "tstar": {
+      "ws_all": 0.577,
+      "ws_r2r": 32.0871,
+      "ws_in": 207.2224,
+      "ws_out": 0.577,
+      "hold_ws_all": 41.9131,
+      "worst_start": "u5/QN",
+      "worst_end": "resp_msg[15]"
+     }
+    },
+    "replay_of": "e5g-gcd-001",
+    "replay_identical": true,
+    "t0_reproduces_flow": true,
+    "Tstar": 355,
+    "ws_at_Tstar": 0.577,
+    "hold_at_Tstar": 41.9131,
+    "pass_at_Tstar": true
+   },
+   {
+    "tag": "adr-gcd-2",
+    "design": "gcd",
+    "T0": 250,
+    "ws": -83.6616,
+    "hold": 42.8901,
+    "drc": 0,
+    "retime": {
+     "T0": 250,
+     "c_r2r": 310.0745,
+     "c_port": 354.577,
+     "cstar": 354.577,
+     "tstar_value": 355,
+     "t0": {
+      "ws_all": -83.6616,
+      "ws_r2r": -60.0745,
+      "ws_in": 123.2542,
+      "ws_out": -83.6616,
+      "hold_ws_all": 42.8901,
+      "worst_start": "u5/QN",
+      "worst_end": "resp_msg[15]"
+     },
+     "tstar": {
+      "ws_all": 0.3385,
+      "ws_r2r": 44.9255,
+      "ws_in": 207.2542,
+      "ws_out": 0.3385,
+      "hold_ws_all": 42.8901,
+      "worst_start": "u5/QN",
+      "worst_end": "resp_msg[15]"
+     }
+    },
+    "replay_of": "e5g-gcd-005",
+    "replay_identical": true,
+    "t0_reproduces_flow": true,
+    "Tstar": 355,
+    "ws_at_Tstar": 0.3385,
+    "hold_at_Tstar": 42.8901,
+    "pass_at_Tstar": true
+   },
+   {
+    "tag": "adr-gcd-3",
+    "design": "gcd",
+    "T0": 265,
+    "ws": -72.9311,
+    "hold": 42.0431,
+    "drc": 0,
+    "retime": {
+     "T0": 265,
+     "c_r2r": 326.2344,
+     "c_port": 356.16387499999996,
+     "cstar": 356.16387499999996,
+     "tstar_value": 360,
+     "t0": {
+      "ws_all": -72.9311,
+      "ws_r2r": -61.2344,
+      "ws_in": 135.4949,
+      "ws_out": -72.9311,
+      "hold_ws_all": 42.0431,
+      "worst_start": "u5/QN",
+      "worst_end": "resp_msg[15]"
+     },
+     "tstar": {
+      "ws_all": 3.0689,
+      "ws_r2r": 33.7656,
+      "ws_in": 211.495,
+      "ws_out": 3.0689,
+      "hold_ws_all": 42.0431,
+      "worst_start": "u5/QN",
+      "worst_end": "resp_msg[15]"
+     }
+    },
+    "replay_of": "e5g-gcd-002",
+    "replay_identical": true,
+    "t0_reproduces_flow": true,
+    "Tstar": 360,
+    "ws_at_Tstar": 3.0689,
+    "hold_at_Tstar": 42.0431,
+    "pass_at_Tstar": true
+   },
+   {
+    "tag": "adr-ibex-1",
+    "design": "ibex",
+    "T0": 900,
+    "ws": -13.6726,
+    "hold": 35.3144,
+    "drc": 0,
+    "retime": {
+     "T0": 900,
+     "c_r2r": 913.6726,
+     "c_port": 889.763,
+     "cstar": 913.6726,
+     "tstar_value": 915,
+     "t0": {
+      "ws_all": -13.6726,
+      "ws_r2r": -13.6726,
+      "ws_in": 36.2274,
+      "ws_out": 8.1896,
+      "hold_ws_all": 35.3144,
+      "worst_start": "if_stage_i.instr_rdata_id_o[20]$_DFFE_PP_/QN",
+      "worst_end": "gen_regfile_ff.register_file_i.rf_reg[219]$_DFFE_PN0P_/D"
+     },
+     "tstar": {
+      "ws_all": 1.3274,
+      "ws_r2r": 1.3274,
+      "ws_in": 40.7274,
+      "ws_out": 20.1896,
+      "hold_ws_all": 35.3144,
+      "worst_start": "if_stage_i.instr_rdata_id_o[20]$_DFFE_PP_/QN",
+      "worst_end": "gen_regfile_ff.register_file_i.rf_reg[219]$_DFFE_PN0P_/D"
+     }
+    },
+    "replay_of": "e5g-ibex-003",
+    "replay_identical": true,
+    "t0_reproduces_flow": true,
+    "Tstar": 915,
+    "ws_at_Tstar": 1.3274,
+    "hold_at_Tstar": 35.3144,
+    "pass_at_Tstar": true
+   },
+   {
+    "tag": "adr-ibex-2",
+    "design": "ibex",
+    "T0": 720,
+    "ws": -194.68,
+    "hold": 35.2422,
+    "drc": 0,
+    "retime": {
+     "T0": 720,
+     "c_r2r": 914.6804999999999,
+     "c_port": 858.708,
+     "cstar": 914.6804999999999,
+     "tstar_value": 915,
+     "t0": {
+      "ws_all": -194.6805,
+      "ws_r2r": -194.6805,
+      "ws_in": -25.7099,
+      "ws_out": -110.9664,
+      "hold_ws_all": 35.2422,
+      "worst_start": "if_stage_i.instr_rdata_id_o[21]$_DFFE_PP_/QN",
+      "worst_end": "gen_regfile_ff.register_file_i.rf_reg[819]$_DFFE_PN0P_/D"
+     },
+     "tstar": {
+      "ws_all": 0.3195,
+      "ws_r2r": 0.3195,
+      "ws_in": 32.3343,
+      "ws_out": 45.0336,
+      "hold_ws_all": 35.2422,
+      "worst_start": "if_stage_i.instr_rdata_id_o[21]$_DFFE_PP_/QN",
+      "worst_end": "gen_regfile_ff.register_file_i.rf_reg[819]$_DFFE_PN0P_/D"
+     }
+    },
+    "replay_of": "e5g-ibex-008",
+    "replay_identical": true,
+    "t0_reproduces_flow": true,
+    "Tstar": 915,
+    "ws_at_Tstar": 0.3195,
+    "hold_at_Tstar": 35.2422,
+    "pass_at_Tstar": true
+   },
+   {
+    "tag": "adr-ibex-3",
+    "design": "ibex",
+    "T0": 765,
+    "ws": -160.1,
+    "hold": 34.9466,
+    "drc": 0,
+    "retime": {
+     "T0": 765,
+     "c_r2r": 925.0998,
+     "c_port": 869.139625,
+     "cstar": 925.0998,
+     "tstar_value": 930,
+     "t0": {
+      "ws_all": -160.0998,
+      "ws_r2r": -160.0998,
+      "ws_in": -1.9729,
+      "ws_out": -83.3117,
+      "hold_ws_all": 34.9466,
+      "worst_start": "if_stage_i.instr_rdata_id_o[16]$_DFFE_PP_/QN",
+      "worst_end": "gen_regfile_ff.register_file_i.rf_reg[415]$_DFFE_PN0P_/D"
+     },
+     "tstar": {
+      "ws_all": 4.9002,
+      "ws_r2r": 4.9002,
+      "ws_in": 59.4827,
+      "ws_out": 48.6883,
+      "hold_ws_all": 34.9466,
+      "worst_start": "if_stage_i.instr_rdata_id_o[16]$_DFFE_PP_/QN",
+      "worst_end": "gen_regfile_ff.register_file_i.rf_reg[415]$_DFFE_PN0P_/D"
+     }
+    },
+    "replay_of": "e5g-ibex-002",
+    "replay_identical": true,
+    "t0_reproduces_flow": true,
+    "Tstar": 930,
+    "ws_at_Tstar": 4.9002,
+    "hold_at_Tstar": 34.9466,
+    "pass_at_Tstar": true
+   }
+  ],
+  "n": 9,
+  "pass": 9,
+  "aes_S0_265_meets_385": true,
+  "verdict": "PREDICTION HELD (>= 8 of 9 pass and aes S0 meets 385 ps)"
+ }
+}
