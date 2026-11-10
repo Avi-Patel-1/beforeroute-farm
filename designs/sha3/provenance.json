@@ -1,0 +1,8 @@
+{
+ "copied_at": "2026-11-10",
+ "origin": "https://github.com/The-OpenROAD-Project/OpenLane OpenLane designs/sha3 (tag v0.21, a6ac8cf8), unmodified",
+ "files_sha256": {
+  "sha3.v": "9573f0715b2b1f943e04eb62ea7216784f8b95fb05085db5223225fb6b61a4ec"
+ },
+ "local_modifications": "config_sky130.json is local (the template of designs/xtea); clock period from OpenLane's sky130_fd_sc_hd config"
+}

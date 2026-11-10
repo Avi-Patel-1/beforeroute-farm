@@ -1,0 +1,186 @@
+{
+ "blocks": {
+  "x": {
+   "design": "xtea_live",
+   "period": 26.03
+  },
+  "u": {
+   "design": "usb",
+   "period": 12.55
+  },
+  "s": {
+   "design": "sha3",
+   "period": 12.71
+  }
+ },
+ "sources": [
+  {
+   "source_design": "blabla",
+   "tag": "x2t-blabla-021",
+   "params": {
+    "period_frac": 0.928473063355609,
+    "FP_CORE_UTIL": 27,
+    "density_delta": 25,
+    "SYNTH_STRATEGY": "AREA 3",
+    "SYNTH_ABC_BUFFERING": true,
+    "SYNTH_SIZING": true,
+    "PL_TIMING_DRIVEN": false,
+    "PL_ROUTABILITY_DRIVEN": true,
+    "RUN_POST_GRT_RESIZER_TIMING": true,
+    "RUN_POST_GRT_DESIGN_REPAIR": false,
+    "PL_RESIZER_SETUP_SLACK_MARGIN": 0.3734844189074291,
+    "GRT_RESIZER_SETUP_SLACK_MARGIN": 0.16520668545533518,
+    "DESIGN_REPAIR_MAX_SLEW_PCT": 39,
+    "DESIGN_REPAIR_MAX_CAP_PCT": 18,
+    "RC_MODEL": "orfs"
+   }
+  },
+  {
+   "source_design": "des",
+   "tag": "x3p-des-027",
+   "params": {
+    "period_frac": 0.48352759747215784,
+    "FP_CORE_UTIL": 27,
+    "density_delta": 19,
+    "SYNTH_STRATEGY": "DELAY 4",
+    "SYNTH_ABC_BUFFERING": false,
+    "SYNTH_SIZING": false,
+    "PL_TIMING_DRIVEN": false,
+    "PL_ROUTABILITY_DRIVEN": false,
+    "RUN_POST_GRT_RESIZER_TIMING": true,
+    "RUN_POST_GRT_DESIGN_REPAIR": false,
+    "PL_RESIZER_SETUP_SLACK_MARGIN": 0.16636921385131967,
+    "GRT_RESIZER_SETUP_SLACK_MARGIN": 0.25116636617682997,
+    "DESIGN_REPAIR_MAX_SLEW_PCT": 25,
+    "DESIGN_REPAIR_MAX_CAP_PCT": 40,
+    "RC_MODEL": "cap213"
+   }
+  },
+  {
+   "source_design": "bm64",
+   "tag": "x2t-bm64-007",
+   "params": {
+    "period_frac": 0.503863953041454,
+    "FP_CORE_UTIL": 21,
+    "density_delta": 14,
+    "SYNTH_STRATEGY": "DELAY 3",
+    "SYNTH_ABC_BUFFERING": false,
+    "SYNTH_SIZING": true,
+    "PL_TIMING_DRIVEN": true,
+    "PL_ROUTABILITY_DRIVEN": false,
+    "RUN_POST_GRT_RESIZER_TIMING": false,
+    "RUN_POST_GRT_DESIGN_REPAIR": true,
+    "PL_RESIZER_SETUP_SLACK_MARGIN": 0.24619915855228341,
+    "GRT_RESIZER_SETUP_SLACK_MARGIN": 0.10560593983481525,
+    "DESIGN_REPAIR_MAX_SLEW_PCT": 30,
+    "DESIGN_REPAIR_MAX_CAP_PCT": 11,
+    "RC_MODEL": "orfs"
+   }
+  },
+  {
+   "source_design": "ocs_blitter",
+   "tag": "x2t-ocs_blitter-022",
+   "params": {
+    "period_frac": 0.6171955706800487,
+    "FP_CORE_UTIL": 40,
+    "density_delta": 15,
+    "SYNTH_STRATEGY": "AREA 3",
+    "SYNTH_ABC_BUFFERING": false,
+    "SYNTH_SIZING": false,
+    "PL_TIMING_DRIVEN": true,
+    "PL_ROUTABILITY_DRIVEN": false,
+    "RUN_POST_GRT_RESIZER_TIMING": true,
+    "RUN_POST_GRT_DESIGN_REPAIR": false,
+    "PL_RESIZER_SETUP_SLACK_MARGIN": 0.32283309180712455,
+    "GRT_RESIZER_SETUP_SLACK_MARGIN": 0.21234668380681754,
+    "DESIGN_REPAIR_MAX_SLEW_PCT": 22,
+    "DESIGN_REPAIR_MAX_CAP_PCT": 29,
+    "RC_MODEL": "cap213"
+   }
+  },
+  {
+   "source_design": "md5",
+   "tag": "x3p-md5-018",
+   "params": {
+    "period_frac": 0.49666758392155613,
+    "FP_CORE_UTIL": 30,
+    "density_delta": 11,
+    "SYNTH_STRATEGY": "AREA 3",
+    "SYNTH_ABC_BUFFERING": true,
+    "SYNTH_SIZING": true,
+    "PL_TIMING_DRIVEN": true,
+    "PL_ROUTABILITY_DRIVEN": false,
+    "RUN_POST_GRT_RESIZER_TIMING": true,
+    "RUN_POST_GRT_DESIGN_REPAIR": true,
+    "PL_RESIZER_SETUP_SLACK_MARGIN": 0.17835233972832615,
+    "GRT_RESIZER_SETUP_SLACK_MARGIN": 0.09022060448969806,
+    "DESIGN_REPAIR_MAX_SLEW_PCT": 25,
+    "DESIGN_REPAIR_MAX_CAP_PCT": 20,
+    "RC_MODEL": "cap213"
+   }
+  },
+  {
+   "source_design": "picorv32",
+   "tag": "x1t-picorv32-014",
+   "params": {
+    "period_frac": 0.5222176203433402,
+    "FP_CORE_UTIL": 38,
+    "density_delta": 5,
+    "SYNTH_STRATEGY": "AREA 3",
+    "SYNTH_ABC_BUFFERING": false,
+    "SYNTH_SIZING": false,
+    "PL_TIMING_DRIVEN": true,
+    "PL_ROUTABILITY_DRIVEN": true,
+    "RUN_POST_GRT_RESIZER_TIMING": false,
+    "RUN_POST_GRT_DESIGN_REPAIR": false,
+    "PL_RESIZER_SETUP_SLACK_MARGIN": 0.2585143226133421,
+    "GRT_RESIZER_SETUP_SLACK_MARGIN": 0.0285628051553697,
+    "DESIGN_REPAIR_MAX_SLEW_PCT": 22,
+    "DESIGN_REPAIR_MAX_CAP_PCT": 20,
+    "RC_MODEL": "stock"
+   }
+  },
+  {
+   "source_design": "y_huff",
+   "tag": "x3p-y_huff-006",
+   "params": {
+    "period_frac": 0.976013443761732,
+    "FP_CORE_UTIL": 37,
+    "density_delta": 18,
+    "SYNTH_STRATEGY": "AREA 3",
+    "SYNTH_ABC_BUFFERING": true,
+    "SYNTH_SIZING": true,
+    "PL_TIMING_DRIVEN": false,
+    "PL_ROUTABILITY_DRIVEN": true,
+    "RUN_POST_GRT_RESIZER_TIMING": true,
+    "RUN_POST_GRT_DESIGN_REPAIR": true,
+    "PL_RESIZER_SETUP_SLACK_MARGIN": 0.041485267124613805,
+    "GRT_RESIZER_SETUP_SLACK_MARGIN": 0.03869271067313256,
+    "DESIGN_REPAIR_MAX_SLEW_PCT": 22,
+    "DESIGN_REPAIR_MAX_CAP_PCT": 27,
+    "RC_MODEL": "stock"
+   }
+  },
+  {
+   "source_design": "aes_cipher",
+   "tag": "x3p-aes_cipher-002",
+   "params": {
+    "period_frac": 0.5759360256713374,
+    "FP_CORE_UTIL": 23,
+    "density_delta": 7,
+    "SYNTH_STRATEGY": "AREA 2",
+    "SYNTH_ABC_BUFFERING": true,
+    "SYNTH_SIZING": false,
+    "PL_TIMING_DRIVEN": true,
+    "PL_ROUTABILITY_DRIVEN": false,
+    "RUN_POST_GRT_RESIZER_TIMING": true,
+    "RUN_POST_GRT_DESIGN_REPAIR": true,
+    "PL_RESIZER_SETUP_SLACK_MARGIN": 0.09845674949215728,
+    "GRT_RESIZER_SETUP_SLACK_MARGIN": 0.3225578512156802,
+    "DESIGN_REPAIR_MAX_SLEW_PCT": 38,
+    "DESIGN_REPAIR_MAX_CAP_PCT": 26,
+    "RC_MODEL": "stock"
+   }
+  }
+ ]
+}

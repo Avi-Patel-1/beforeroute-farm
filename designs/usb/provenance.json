@@ -1,0 +1,8 @@
+{
+ "copied_at": "2026-11-10",
+ "origin": "https://github.com/The-OpenROAD-Project/OpenLane OpenLane designs/usb (tag v0.21, a6ac8cf8), unmodified",
+ "files_sha256": {
+  "usb2p0_core.v": "09f63197ff1300cd55c2353f4d1a3a2e5ae90ab22f1c73a71dd3a0ba1989cbdc"
+ },
+ "local_modifications": "config_sky130.json is local (the template of designs/xtea); clock period from OpenLane's sky130_fd_sc_hd config"
+}

@@ -1,0 +1,150 @@
+name: L loop hands-off (sky130)
+
+# Workstream L (docs/qa_week/L_PREREG.md). Runs only on pushes to qa-l-loop that change farm/qa/L/dispatch.json.
+# smoke -> prep (one job per block) -> arm (block x seed x arm). No step waits for a person or a model.
+
+on:
+  push:
+    branches: [qa-l-loop]
+    paths: ['farm/qa/L/dispatch.json']
+
+permissions:
+  contents: read
+
+env:
+  IMAGE: ghcr.io/librelane/librelane@sha256:4bc9042ba177f73f275b5b39e7d372a07d3f4043f548a0ba7f640097b7205051
+  PDK_VERSION: 8afc8346a57fe1ab7934ba5a6056ea8b43078e71
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+      - name: Restore PDK cache
+        id: pdk-cache
+        uses: actions/cache@v4
+        with:
+          path: pdk
+          key: sky130-${{ env.PDK_VERSION }}-v1
+      - name: Pull toolchain image
+        run: |
+          for i in 1 2 3 4 5; do docker pull -q "$IMAGE" && break; echo "pull failed ($i)"; sleep $((60 * i)); done
+      - name: Fetch PDK (cache miss only)
+        if: steps.pdk-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p pdk
+          docker run --rm -v "$PWD:/work" -w /work -e PDK_ROOT=/work/pdk "$IMAGE" \
+            ciel enable --pdk-family sky130 "$PDK_VERSION"
+      - name: Install Optuna
+        run: |
+          python3 -m pip install --user --quiet optuna==5.0.0 || python3 -m pip install --user --quiet --break-system-packages optuna==5.0.0
+      - name: Smoke
+        run: python3 farm/qa/L/loop.py smoke --image "$IMAGE" --results results
+      - name: Fix ownership
+        if: always()
+        run: sudo chown -R "$(id -u):$(id -g)" results || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: l-smoke
+          path: results/
+          retention-days: 30
+          if-no-files-found: warn
+
+  prep:
+    needs: smoke
+    name: prep ${{ matrix.block }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        block: [x, u, s]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Restore PDK cache
+        id: pdk-cache
+        uses: actions/cache@v4
+        with:
+          path: pdk
+          key: sky130-${{ env.PDK_VERSION }}-v1
+      - name: Pull toolchain image
+        run: |
+          for i in 1 2 3 4 5; do docker pull -q "$IMAGE" && break; echo "pull failed ($i)"; sleep $((60 * i)); done
+      - name: Fetch PDK (cache miss only)
+        if: steps.pdk-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p pdk
+          docker run --rm -v "$PWD:/work" -w /work -e PDK_ROOT=/work/pdk "$IMAGE" \
+            ciel enable --pdk-family sky130 "$PDK_VERSION"
+      - name: Install Optuna
+        run: |
+          python3 -m pip install --user --quiet optuna==5.0.0 || python3 -m pip install --user --quiet --break-system-packages optuna==5.0.0
+      - name: Prep
+        run: python3 farm/qa/L/loop.py prep --block "${{ matrix.block }}" --image "$IMAGE" --results results
+      - name: Fix ownership
+        if: always()
+        run: sudo chown -R "$(id -u):$(id -g)" results || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: l-prep-${{ matrix.block }}
+          path: results/
+          retention-days: 30
+          if-no-files-found: warn
+
+  arm:
+    needs: [smoke, prep]
+    if: ${{ !cancelled() && needs.smoke.result == 'success' }}
+    name: arm ${{ matrix.block }}${{ matrix.seed }}${{ matrix.arm }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        block: [x, u, s]
+        seed: [1, 2]
+        arm: [b, L]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: l-prep-${{ matrix.block }}
+          path: prep_art
+      - name: Keep only the prep record and start-run metrics
+        run: |
+          mkdir -p results/prep
+          cp prep_art/prep/*.json results/prep/
+          for d in prep_art/l*; do [ -d "$d" ] && mkdir -p "results/$(basename "$d")" && cp "$d"/metrics.json "$d"/job.json "results/$(basename "$d")/" 2>/dev/null || true; done
+          rm -rf prep_art
+      - name: Restore PDK cache
+        id: pdk-cache
+        uses: actions/cache@v4
+        with:
+          path: pdk
+          key: sky130-${{ env.PDK_VERSION }}-v1
+      - name: Pull toolchain image
+        run: |
+          for i in 1 2 3 4 5; do docker pull -q "$IMAGE" && break; echo "pull failed ($i)"; sleep $((60 * i)); done
+      - name: Fetch PDK (cache miss only)
+        if: steps.pdk-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p pdk
+          docker run --rm -v "$PWD:/work" -w /work -e PDK_ROOT=/work/pdk "$IMAGE" \
+            ciel enable --pdk-family sky130 "$PDK_VERSION"
+      - name: Install Optuna
+        run: |
+          python3 -m pip install --user --quiet optuna==5.0.0 || python3 -m pip install --user --quiet --break-system-packages optuna==5.0.0
+      - name: Arm
+        run: python3 farm/qa/L/loop.py arm --block "${{ matrix.block }}" --seed "${{ matrix.seed }}" --arm "${{ matrix.arm }}" --image "$IMAGE" --results results
+      - name: Fix ownership
+        if: always()
+        run: sudo chown -R "$(id -u):$(id -g)" results || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: l-arm-${{ matrix.block }}${{ matrix.seed }}${{ matrix.arm }}
+          path: results/
+          retention-days: 30
+          if-no-files-found: warn

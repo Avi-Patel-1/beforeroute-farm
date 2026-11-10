@@ -1,0 +1,8 @@
+{
+ "copied_at": "2026-11-10",
+ "origin": "https://github.com/The-OpenROAD-Project/OpenLane OpenLane designs/xtea (tag v0.21, a6ac8cf8), one line changed: line 74 `s3: state = while_flag ? s4 : s15;` (was s14), so the loop exit reaches the states that write the outputs. Checked on Yosys-synthesized logic against a reference XTEA decipher: 500 of 500 vectors.",
+ "files_sha256": {
+  "xtea.v": "14ffedd08836fcec181860608047104b041b15ff44f5180109c687052c41573e"
+ },
+ "local_modifications": "config_sky130.json is local (the template of designs/xtea); clock period from OpenLane's sky130_fd_sc_hd config"
+}
