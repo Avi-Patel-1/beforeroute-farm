@@ -1,0 +1,143 @@
+{
+ "races_scored": 4,
+ "match_or_beat": 2,
+ "beat": 1,
+ "P1 (>= 4 of 6 match or beat)": null,
+ "loop_kept": 4,
+ "signoff_clean": 4,
+ "P2 (every loop kept build signoff-clean)": null,
+ "rows": [
+  {
+   "block": "xtea_live",
+   "seed": 1,
+   "bayes_kept_ns": 9.75,
+   "loop_kept_ns": 11.35,
+   "loop_vs_bayes": 0.859,
+   "verdict": "loss",
+   "bayes_search_runs": 8,
+   "loop_search_runs": 2,
+   "bayes_flows": 12,
+   "loop_flows": 4,
+   "loop_pins": {
+    "period_frac": 0.45,
+    "SYNTH_STRATEGY": "AREA 3",
+    "RC_MODEL": "stock",
+    "FP_CORE_UTIL": 38
+   },
+   "signoff_clean": true,
+   "signoff": {
+    "magic__drc_error__count": 0,
+    "klayout__drc_error__count": 0,
+    "design__lvs_error__count": 0,
+    "route__antenna_violation__count": 0,
+    "design__xor_difference__count": 0,
+    "magic__illegal_overlap__count": 0,
+    "antenna__violating__nets": 0
+   },
+   "signoff_clock": 11.35
+  },
+  {
+   "block": "xtea_live",
+   "seed": 2,
+   "bayes_kept_ns": 10.7,
+   "loop_kept_ns": 11.6,
+   "loop_vs_bayes": 0.9224,
+   "verdict": "loss",
+   "bayes_search_runs": 8,
+   "loop_search_runs": 2,
+   "bayes_flows": 12,
+   "loop_flows": 4,
+   "loop_pins": {
+    "period_frac": 0.45,
+    "SYNTH_STRATEGY": "AREA 3",
+    "RC_MODEL": "stock",
+    "FP_CORE_UTIL": 38
+   },
+   "signoff_clean": true,
+   "signoff": {
+    "magic__drc_error__count": 0,
+    "klayout__drc_error__count": 0,
+    "design__lvs_error__count": 0,
+    "route__antenna_violation__count": 0,
+    "design__xor_difference__count": 0,
+    "magic__illegal_overlap__count": 0,
+    "antenna__violating__nets": 0
+   },
+   "signoff_clock": 11.6
+  },
+  {
+   "block": "usb",
+   "seed": 1,
+   "bayes_kept_ns": 4.9,
+   "loop_kept_ns": 4.7,
+   "loop_vs_bayes": 1.0426,
+   "verdict": "beat",
+   "bayes_search_runs": 8,
+   "loop_search_runs": 2,
+   "bayes_flows": 12,
+   "loop_flows": 6,
+   "loop_pins": {
+    "period_frac": 0.45,
+    "SYNTH_STRATEGY": "AREA 3",
+    "RC_MODEL": "cap213",
+    "FP_CORE_UTIL": 30
+   },
+   "signoff_clean": true,
+   "signoff": {
+    "magic__drc_error__count": 0,
+    "klayout__drc_error__count": 0,
+    "design__lvs_error__count": 0,
+    "route__antenna_violation__count": 0,
+    "design__xor_difference__count": 0,
+    "magic__illegal_overlap__count": 0,
+    "antenna__violating__nets": 0
+   },
+   "signoff_clock": 4.7
+  },
+  {
+   "block": "usb",
+   "seed": 2,
+   "bayes_kept_ns": 4.8,
+   "loop_kept_ns": 4.8,
+   "loop_vs_bayes": 1.0,
+   "verdict": "match",
+   "bayes_search_runs": 8,
+   "loop_search_runs": 2,
+   "bayes_flows": 12,
+   "loop_flows": 6,
+   "loop_pins": {
+    "period_frac": 0.45,
+    "SYNTH_STRATEGY": "AREA 3",
+    "RC_MODEL": "cap213",
+    "FP_CORE_UTIL": 30
+   },
+   "signoff_clean": true,
+   "signoff": {
+    "magic__drc_error__count": 0,
+    "klayout__drc_error__count": 0,
+    "design__lvs_error__count": 0,
+    "route__antenna_violation__count": 0,
+    "design__xor_difference__count": 0,
+    "magic__illegal_overlap__count": 0,
+    "antenna__violating__nets": 0
+   },
+   "signoff_clock": 4.8
+  },
+  {
+   "block": "sha3",
+   "seed": 1,
+   "missing": [
+    "b",
+    "L"
+   ]
+  },
+  {
+   "block": "sha3",
+   "seed": 2,
+   "missing": [
+    "b",
+    "L"
+   ]
+  }
+ ]
+}
