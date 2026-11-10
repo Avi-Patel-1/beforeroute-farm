@@ -1,1 +1,1 @@
-{"batch": "l1", "note": "Workstream L: the finished loop, hands-off, on three fresh blocks. Pushing a change to this file starts the run."}
+{"batch": "l1s", "blocks": ["s"], "smoke": false, "note": "Amendment L.1: block s only, after the synthesis-check config fix. Blocks x and u run in 42742364760."}

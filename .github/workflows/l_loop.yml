@@ -16,7 +16,26 @@ env:
   PDK_VERSION: 8afc8346a57fe1ab7934ba5a6056ea8b43078e71
 
 jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      blocks: ${{ steps.p.outputs.blocks }}
+      smoke: ${{ steps.p.outputs.smoke }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: p
+        run: |
+          python3 - <<'PY'
+          import json, os
+          d = json.load(open("farm/qa/L/dispatch.json"))
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write("blocks=" + json.dumps(d.get("blocks", ["x", "u", "s"])) + "\n")
+              f.write("smoke=" + ("true" if d.get("smoke", True) else "false") + "\n")
+          PY
+
   smoke:
+    needs: plan
+    if: needs.plan.outputs.smoke == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 150
     steps:
@@ -53,14 +72,15 @@ jobs:
           if-no-files-found: warn
 
   prep:
-    needs: smoke
+    needs: [plan, smoke]
+    if: ${{ !cancelled() && (needs.smoke.result == 'success' || needs.smoke.result == 'skipped') }}
     name: prep ${{ matrix.block }}
     runs-on: ubuntu-latest
     timeout-minutes: 350
     strategy:
       fail-fast: false
       matrix:
-        block: [x, u, s]
+        block: ${{ fromJSON(needs.plan.outputs.blocks) }}
     steps:
       - uses: actions/checkout@v4
       - name: Restore PDK cache
@@ -95,15 +115,15 @@ jobs:
           if-no-files-found: warn
 
   arm:
-    needs: [smoke, prep]
-    if: ${{ !cancelled() && needs.smoke.result == 'success' }}
+    needs: [plan, smoke, prep]
+    if: ${{ !cancelled() && (needs.smoke.result == 'success' || needs.smoke.result == 'skipped') }}
     name: arm ${{ matrix.block }}${{ matrix.seed }}${{ matrix.arm }}
     runs-on: ubuntu-latest
     timeout-minutes: 350
     strategy:
       fail-fast: false
       matrix:
-        block: [x, u, s]
+        block: ${{ fromJSON(needs.plan.outputs.blocks) }}
         seed: [1, 2]
         arm: [b, L]
     steps:
